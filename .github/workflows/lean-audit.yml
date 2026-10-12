@@ -1,0 +1,23 @@
+name: Lean degenerate-witness audit
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the audited upstream source
+        run: |
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture/main/ErdosSelfridge_v17_fixed.lean \
+            --output ErdosSelfridge_v17_fixed.lean
+      - uses: leanprover/lean-action@v1
+        with:
+          build: true
+          use-mathlib-cache: true
+      - name: Run focused degenerate-witness tests
+        run: lake env lean AuditCheck.lean
