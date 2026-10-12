@@ -8,23 +8,25 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Install Lean and generate lake manifest
         run: |
-          curl --fail --location --retry 3 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
           sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.elan/bin:$PATH"
           lake update
       - name: Fetch the audited upstream source
         run: |
-          curl --fail --location --retry 3 \
+          curl --fail --location --retry 3 --max-time 60 \
             https://raw.githubusercontent.com/axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture/main/ErdosSelfridge_v17_fixed.lean \
             --output ErdosSelfridge_v17_fixed.lean
-      - uses: leanprover/lean-action@v1
+      - name: Install dependencies and restore Mathlib cache
+        uses: leanprover/lean-action@v1
         with:
-          build: true
+          build: false
           use-mathlib-cache: true
       - name: Compile audited upstream source
         run: |
