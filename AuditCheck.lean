@@ -11,10 +11,10 @@ example : sieveTerm 1 1 [1] [] 0 = 0 := by
   norm_num [sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
 example : sieveSum 1 1 [1, 1] [] = 0 := by
-  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+  norm_num [sieveSum, List.range, List.foldl, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
 example : sieveSum 1 1 [1, 1] [] < 1 := by
-  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+  norm_num [sieveSum, List.range, List.foldl, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
