@@ -24,7 +24,7 @@ theorem degenerate_sieveTerm (ss : List ℚ) (k : Nat) :
 
 theorem degenerate_sieveSum (ss : List ℚ) :
     sieveSum 1 1 ss [] = 0 := by
-  simp [sieveSum, degenerate_sieveTerm]
+  simp [sieveSum, List.range, List.range.loop, List.foldl, degenerate_sieveTerm]
 
 /- This makes the axiom sieve_criterion alone yield the target conclusion;
    it does not establish the mathematical conjecture independently. -/
