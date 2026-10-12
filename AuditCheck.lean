@@ -15,11 +15,12 @@ is zero because its denominator is zero (Lean's division-by-zero convention). -/
 theorem degenerate_sieveTerm (ss : List ℚ) (k : Nat)
     (hsk : 0 < ss.getD k 1) :
     sieveTerm 1 1 ss [] k = 0 := by
+  have hprod : ∀ xs : List ℚ, sieveProd xs [] 1 = 1 := by
+    intro xs
+    cases xs <;> rfl
   have hM1 : 0 ≤ (1 : ℚ) / ss.getD k 1 :=
     div_nonneg (by norm_num) hsk.le
-  have hM1' : 0 ≤ (1 : ℚ) / (ss[k]?.getD 1) := by
-    simpa [List.getD] using hM1
-  simp [sieveTerm, M1bound, M2bound, ck, sieveProd, List.take_nil, hM1, hM1']
+  simp [sieveTerm, M1bound, M2bound, ck, hprod, hM1]
 
 /-- The whole sieve sum vanishes for any list whose in-range block sizes
 are positive. -/
