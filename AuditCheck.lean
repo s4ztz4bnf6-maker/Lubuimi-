@@ -17,7 +17,9 @@ theorem degenerate_sieveTerm (ss : List ℚ) (k : Nat)
     sieveTerm 1 1 ss [] k = 0 := by
   have hM1 : 0 ≤ (1 : ℚ) / ss.getD k 1 :=
     div_nonneg (by norm_num) hsk.le
-  simp [sieveTerm, M1bound, M2bound, ck, sieveProd, List.take_nil, hM1]
+  have hM1' : 0 ≤ (1 : ℚ) / (ss[k]?.getD 1) := by
+    simpa [List.getD] using hM1
+  simp [sieveTerm, M1bound, M2bound, ck, sieveProd, List.take_nil, hM1, hM1']
 
 /-- The whole sieve sum vanishes for any list whose in-range block sizes
 are positive. -/
