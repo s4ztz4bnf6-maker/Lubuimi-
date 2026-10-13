@@ -28,8 +28,7 @@ def firstZeroIndicator (x : TinyQ) : ℚ :=
 /-- The first-coordinate event has probability one half under the uniform law. -/
 theorem firstZero_probability :
     (∑ x : TinyQ, firstZeroIndicator x * tinyWeight x) = 1 / 2 := by
-  norm_num [firstZeroIndicator, tinyWeight, Finset.sum_product,
-    Finset.sum_ite_irrel, Finset.sum_ite_eq']
+  norm_num [firstZeroIndicator, tinyWeight, Fintype.sum_prod_type]
 
 /-- The first moment of this indicator is bounded by one. -/
 theorem firstZero_moment_le_one :
