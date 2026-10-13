@@ -3,38 +3,41 @@ import Mathlib
 /-!
 # BBMST coordinate geometry sandbox
 
-This file is deliberately independent of the audited Erdős–Selfridge file and
-its project axioms. It is a foundational model, not yet a formalization of
-BBMST Theorems 3.1 or 3.2.
+This file is independent of the audited Erdős–Selfridge development.
+It is a finite-coordinate model, not yet a formalization of BBMST
+Theorems 3.1 or 3.2.
 -/
 
 open scoped BigOperators
 
-/-- A finite coordinate space: each coordinate has a finite, nonempty domain. -/
+/-- Each coordinate has a finite, nonempty set of rational values. -/
 structure CoordinateSpace (n : ℕ) where
   S : Fin n → Finset ℚ
   h_nonempty : ∀ i, (S i).Nonempty
 
-/-- A point of the product Q = S₁ × ⋯ × Sₙ. -/
-abbrev CoordinatePoint {n : ℕ} (space : CoordinateSpace n) :=
-  ∀ i : Fin n, space.S i
+/-- The allowed values at coordinate i, represented as a subtype. -/
+abbrev CoordinateValue {n : ℕ} (space : CoordinateSpace n) (i : Fin n) :=
+  {q : ℚ // q ∈ space.S i}
 
-/-- A coordinate hyperplane fixes a finite set of coordinates to specified
-values belonging to the corresponding coordinate domains. -/
+/-- A point in the finite product of the coordinate domains. -/
+abbrev CoordinatePoint {n : ℕ} (space : CoordinateSpace n) :=
+  ∀ i : Fin n, CoordinateValue space i
+
+/-- A coordinate cylinder fixes a finite set of coordinates to allowed values. -/
 structure CoordinateHypersurface {n : ℕ} (space : CoordinateSpace n) where
   fixed : Finset (Fin n)
-  value : ∀ i : Fin n, i ∈ fixed → space.S i
+  value : ∀ i : Fin n, i ∈ fixed → CoordinateValue space i
 
 namespace CoordinateHypersurface
 
-/-- The point lies on the coordinate hyperplane exactly when all its fixed
-coordinates equal the prescribed values. -/
+/-- A point belongs to the cylinder when it agrees on every fixed coordinate. -/
 def Contains {n : ℕ} {space : CoordinateSpace n}
     (H : CoordinateHypersurface space) (x : CoordinatePoint space) : Prop :=
   ∀ i (hi : i ∈ H.fixed), x i = H.value i hi
 
-/-- In this coordinate model, hyperplanes with the same fixed-coordinate
-index set are parallel. Thus non-parallelity is inequality of those sets. -/
+/-- Preliminary combinatorial convention: cylinders are non-parallel when
+their sets of fixed coordinates differ. This is not asserted to be the full
+geometric definition used in BBMST. -/
 def NotParallel {n : ℕ} {space : CoordinateSpace n}
     (H₁ H₂ : CoordinateHypersurface space) : Prop :=
   H₁.fixed ≠ H₂.fixed
@@ -45,9 +48,7 @@ theorem contains_iff {n : ℕ} {space : CoordinateSpace n}
 
 end CoordinateHypersurface
 
-/-- A rational-valued weight on the finite product space, normalized to total
-mass one. This is only the probability layer; BBMST's specific measures and
-moment definitions still need to be encoded separately. -/
+/-- A rational probability weight on the finite product space. -/
 structure ProductDistribution {n : ℕ} (space : CoordinateSpace n) where
   weight : CoordinatePoint space → ℚ
   h_nonneg : ∀ x, 0 ≤ weight x
