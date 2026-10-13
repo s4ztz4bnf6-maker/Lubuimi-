@@ -58,3 +58,38 @@ example : ¬ ∃ p : AuditedDeltaParameters ([1] : List ℚ), p.delta = [] := by
   rintro ⟨p, hp⟩
   have h_nonempty : 0 < ([1] : List ℚ).length := by simp
   exact (empty_delta_rejected_for_nonempty_blocks h_nonempty p) hp
+
+
+/-- Candidate validated input bundle. This is still only a data/interface
+specification: it does not assert the BBMST sieve theorem. The moment
+inequalities are explicit, and the delta list is aligned with the block list. -/
+structure AuditedSieveParameters (ss : List ℚ) where
+  delta : List ℚ
+  ca1 : ℚ
+  ca3 : ℚ
+  length_eq : delta.length = ss.length
+  delta_bounds :
+    ∀ i, i < delta.length →
+      0 ≤ delta.getD i 0 ∧ delta.getD i 0 ≤ (1 : ℚ) / 2
+  ca1_ge_one : 1 ≤ ca1
+  ca1_le_ca3 : ca1 ≤ ca3
+  moment_numerator_nonneg : 0 ≤ ca3 - 2 * ca1 + 1
+
+/-- The full candidate interface rejects the empty-list witness whenever
+there is at least one sieve block. -/
+theorem audited_sieve_rejects_empty_delta
+    {ss : List ℚ} (hss : 0 < ss.length)
+    (params : AuditedSieveParameters ss) :
+    params.delta ≠ [] := by
+  intro h_empty
+  have h_len : 0 = ss.length := by
+    simpa [h_empty] using params.length_eq
+  omega
+
+/-- Regression guard: even moment constants satisfying the listed scalar
+constraints cannot make an empty delta list admissible for a nonempty block
+list under the validated interface. -/
+example : ¬ ∃ p : AuditedSieveParameters ([1] : List ℚ), p.delta = [] := by
+  rintro ⟨p, hp⟩
+  have h_nonempty : 0 < ([1] : List ℚ).length := by simp
+  exact (audited_sieve_rejects_empty_delta h_nonempty p) hp
