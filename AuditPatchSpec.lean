@@ -138,3 +138,43 @@ theorem po1_take_get?_eq {α : Type} (xs : List α) (k i : Nat)
           | zero => simp
           | succ i =>
               simpa using (ih (k := k) (i := i) (by omega))
+
+
+/-! ## PO-1c: prefix-product recurrence target
+
+This theorem states the recurrence that connects synchronized prefixes to the
+paired update factors. It is still only a list-level algebraic identity; it
+does not identify the product with BBMST's probabilistic quantity `c_k(x)`.
+-/
+
+/-- Extending both aligned prefixes by one entry adds exactly the update
+factor at the same original index. -/
+theorem po1_sieveProd_take_succ
+    (ss δs : List ℚ) (h_align : ss.length = δs.length)
+    (k : Nat) (hk : k < ss.length) (x : ℚ) :
+    sieveProd (ss.take (k + 1)) (δs.take (k + 1)) x =
+      updateFactor (ss.getD k 1) (δs.getD k 0) x *
+        sieveProd (ss.take k) (δs.take k) x := by
+  induction k generalizing ss δs with
+  | zero =>
+      cases ss with
+      | nil => simp at hk
+      | cons s ss =>
+          cases δs with
+          | nil => simp at h_align
+          | cons d δs =>
+              simp [sieveProd, updateFactor]
+  | succ k ih =>
+      cases ss with
+      | nil => simp at hk
+      | cons s ss =>
+          cases δs with
+          | nil => simp at h_align
+          | cons d δs =>
+              have h_tail : ss.length = δs.length := by
+                simpa using Nat.succ.inj h_align
+              have hk_tail : k < ss.length := by omega
+              have h_ih := ih ss δs h_tail hk_tail x
+              simp only [List.take_succ_cons, List.getD_succ_cons, sieveProd] at h_ih ⊢
+              rw [h_ih]
+              ring
