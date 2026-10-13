@@ -220,3 +220,33 @@ theorem po2_zero_delta_denominator :
 theorem po2_zero_delta_quotient (numerator : ℚ) :
     numerator / (4 * (0 : ℚ) * (1 - (0 : ℚ))) = 0 := by
   simp
+
+
+/-! ## PO-2c: candidate totalized interface for the BBMST bound
+
+The published statement lists δ in `[0, 1/2]`, but the proof of Theorem 3.1
+uses `max (a - δ) 0 ≤ a^2 / (4δ)` for `a, δ > 0`. Thus the displayed
+quotient estimate is justified by that proof only for positive δ. At δ = 0,
+the first-moment estimate remains available and should be used directly; the
+raw Lean expression `min M1 (M2 / 0)` incorrectly selects zero.
+
+This helper is an audit candidate for representing that boundary explicitly.
+It is not a replacement for the upstream theorem or a claim that the full
+formalization has been repaired.
+-/
+
+/-- Candidate cost that uses the first-moment bound at the zero boundary. -/
+def po2_bbmstMomentCost (m1 m2 δ : ℚ) : ℚ :=
+  if δ = 0 then m1 else min m1 (m2 / (4 * δ * (1 - δ)))
+
+/-- The boundary branch retains the first-moment estimate instead of dividing
+by zero and accidentally making the minimum vanish. -/
+theorem po2_bbmstMomentCost_zero (m1 m2 : ℚ) :
+    po2_bbmstMomentCost m1 m2 0 = m1 := by
+  simp [po2_bbmstMomentCost]
+
+/-- On the positive interior, the candidate agrees with the usual quotient
+expression. -/
+theorem po2_bbmstMomentCost_of_pos {m1 m2 δ : ℚ} (hδ : 0 < δ) :
+    po2_bbmstMomentCost m1 m2 δ = min m1 (m2 / (4 * δ * (1 - δ))) := by
+  simp [po2_bbmstMomentCost, ne_of_gt hδ]
