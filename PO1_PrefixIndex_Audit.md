@@ -96,3 +96,27 @@ PO-1 is not complete merely because a length equality has been added. Completion
 **OPEN — source correspondence not yet proved.**
 
 The most important unresolved question is the semantic role of `take k`: whether it exactly models the prior-stage product in BBMST or introduces an indexing mismatch. The audit must answer this from the paper's definitions and the upstream code together.
+
+
+## Source cross-check update (2026-10-13)
+
+### Preliminary interpretation of `take k`
+
+The pinned source defines
+`M1bound = ck ca1 (ss.take k) (δs.take k) 1 / sk`
+and analogously uses the same prefixes in `M2bound`. The BBMST moment notation describes the stage-(k) quantities using the distribution constructed from preceding stages (the (E_{k-1}) convention). Under a zero-based Lean list convention where the current stage is at index `k`, `take k` is therefore structurally consistent with the prior-stage prefix: it includes indices below `k` and excludes the current entry.
+
+This is a **preliminary index-convention match**, not yet a kernel-checked correspondence theorem. It does not by itself prove that the Lean `ck` recurrence is exactly BBMST's (c_k(x)), or that the stage index in every call to `sieveTerm` corresponds to the same mathematical index.
+
+### Concrete next lemmas
+
+1. Prove the list identity that, for an aligned list and (k < ss.length), `(ss.take k).length = k` and similarly for `δs`; separately prove that corresponding entries of both prefixes retain their original order.
+2. Prove a paired-prefix lemma under the explicit hypothesis `ss.length = δs.length`, showing both prefixes have the same length and each prefix index selects the original paired entries.
+3. Prove a recurrence-unfolding lemma for `sieveProd (ss.take k) (δs.take k) x`, making explicit that its factors are precisely the first `k` paired updates.
+4. Only after these list-level lemmas, prove the semantic bridge between that recurrence and the published (c_{k-1}(x))/(c_k(x)) notation, with the exact shift stated in the theorem.
+
+### Current conclusion
+
+No off-by-one defect has been established. The use of `take k` is plausibly intentional for a prior-stage expectation. The demonstrated concern that remains is that the theorem interface does not itself enforce the required pairing of `ss` and `δs`, and the mathematical recurrence correspondence has not yet been proved in Lean.
+
+**Status remains OPEN.** This update records the refined source interpretation; it does not claim a Lean build or a completed proof.
