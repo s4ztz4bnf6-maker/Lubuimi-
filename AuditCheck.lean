@@ -102,6 +102,13 @@ claim that every nonempty parameter choice satisfies or violates the bound. -/
 example : sieveSum 1 2 [1] [1 / 2] = 1 := by
   norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
+/-- A nonempty delta list is still insufficient: delta = 0 makes the
+outer denominator 4 * delta * (1 - delta) zero, and Lean's rational
+division-by-zero convention makes this sieve term vanish. The axiom needs
+range constraints, not merely nonemptiness. -/
+example : sieveSum 1 1 [1] [0] = 0 := by
+  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+
 #print axioms degenerate_sieveTerm
 #print axioms degenerate_sieveSum
 #print axioms extractPrimes_valid
