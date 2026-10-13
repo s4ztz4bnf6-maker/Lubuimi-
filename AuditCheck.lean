@@ -108,3 +108,11 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
 #print axioms sf_sieve_lt_one
+
+
+/-- Regression sentinel: even with aligned nonempty lists, δ = 0 makes
+the quotient denominator vanish and the current totalized rational division
+can collapse the sieve term to zero. This documents the remaining edge case;
+it is not a mathematical counterexample to BBMST. -/
+example : sieveTerm 1 1 ([1] : List ℚ) ([0] : List ℚ) 0 = 0 := by
+  norm_num [sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
