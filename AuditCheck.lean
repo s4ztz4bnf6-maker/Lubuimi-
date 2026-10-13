@@ -96,6 +96,12 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, List.take,
     sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
+/-- Nonempty contrast: with a genuine delta in (0,1), the same toy block-size
+list does not collapse to zero. This is a concrete contrast, not a general
+claim that every nonempty parameter choice satisfies or violates the bound. -/
+example : sieveSum 1 1 [1] [1 / 2] = 2 := by
+  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+
 #print axioms degenerate_sieveTerm
 #print axioms degenerate_sieveSum
 #print axioms extractPrimes_valid
