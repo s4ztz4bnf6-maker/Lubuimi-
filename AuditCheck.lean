@@ -96,6 +96,13 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, List.take,
     sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
+#print axioms degenerate_sieveTerm
+#print axioms degenerate_sieveSum
+#print axioms extractPrimes_valid
+#print axioms sfBlockSizes_pos
+#print axioms sf_le_nonsf_blocks
+#print axioms blocks_length_eq
+#print axioms nonsfBlockSizes_pos_audit
 #print axioms degenerate_actual_sieveSum_lt_one
 #print axioms degenerate_axiom_acceptance
 #print axioms erdos_selfridge
