@@ -201,3 +201,22 @@ theorem po2_denominator_ne_zero {δ : ℚ}
     (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     4 * δ * (1 - δ) ≠ 0 :=
   ne_of_gt (po2_denominator_pos hδ0 hδ1)
+
+
+/-! ## PO-2b: explicit zero-boundary regression
+
+Lean's rational division is totalized: division by zero evaluates to zero.
+Consequently the strict-positivity lemma above cannot simply be applied at
+`δ = 0`, and a proof that uses the quotient must either exclude that boundary
+by a justified hypothesis or model the boundary case separately.
+-/
+
+/-- At the allowed boundary `δ = 0`, the denominator vanishes. -/
+theorem po2_zero_delta_denominator :
+    4 * (0 : ℚ) * (1 - (0 : ℚ)) = 0 := by
+  norm_num
+
+/-- Rational division by the zero denominator returns zero in Lean. -/
+theorem po2_zero_delta_quotient (numerator : ℚ) :
+    numerator / (4 * (0 : ℚ) * (1 - (0 : ℚ))) = 0 := by
+  simp
