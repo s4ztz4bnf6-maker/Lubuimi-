@@ -93,3 +93,24 @@ example : ¬ ∃ p : AuditedSieveParameters ([1] : List ℚ), p.delta = [] := by
   rintro ⟨p, hp⟩
   have h_nonempty : 0 < ([1] : List ℚ).length := by simp
   exact (audited_sieve_rejects_empty_delta h_nonempty p) hp
+
+
+/-! ## PO-1a: prefix-length lemma
+
+This is the first small, kernel-checkable list lemma for PO-1. It establishes
+only the length of a prefix when the requested length is in range; it does
+not yet prove the BBMST semantic correspondence.
+-/
+
+/-- If `k` is within the list, `take k` has exactly `k` entries. -/
+theorem po1_take_length_eq {α : Type} (xs : List α) (k : Nat)
+    (hk : k ≤ xs.length) :
+    (xs.take k).length = k := by
+  simp [List.length_take, Nat.min_eq_left hk]
+
+/-- Under whole-list alignment, both prefixes have the same length. -/
+theorem po1_aligned_prefix_lengths {α β : Type}
+    (ss : List α) (δs : List β)
+    (h_align : ss.length = δs.length) (k : Nat) :
+    (ss.take k).length = (δs.take k).length := by
+  simp [List.length_take, h_align]
