@@ -178,3 +178,26 @@ theorem po1_sieveProd_take_succ
               simp only [List.take_succ_cons, List.getD_succ_cons, sieveProd] at h_ih ⊢
               rw [h_ih]
               ring
+
+
+/-! ## PO-2a: denominator-domain guard
+
+The quotient in the second sieve term has denominator `4 * δ * (1 - δ)`.
+Strict positivity makes this denominator nonzero. This guard does not by itself
+resolve the BBMST boundary case `δ = 0`: the source allows parameters in
+`[0, 1/2]`, so a faithful formalization must handle that boundary explicitly
+rather than silently using Lean's totalized rational division by zero.
+-/
+
+/-- The sieve denominator is strictly positive when `0 < δ < 1`. -/
+theorem po2_denominator_pos {δ : ℚ}
+    (hδ0 : 0 < δ) (hδ1 : δ < 1) :
+    0 < 4 * δ * (1 - δ) := by
+  have hsub : 0 < 1 - δ := by linarith
+  positivity
+
+/-- In the strict interior, the sieve denominator is nonzero. -/
+theorem po2_denominator_ne_zero {δ : ℚ}
+    (hδ0 : 0 < δ) (hδ1 : δ < 1) :
+    4 * δ * (1 - δ) ≠ 0 :=
+  ne_of_gt (po2_denominator_pos hδ0 hδ1)
