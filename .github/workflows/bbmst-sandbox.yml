@@ -8,10 +8,12 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    container:
-      image: leanprover/lean4:v4.28.0
     steps:
       - uses: actions/checkout@v4
+      - name: Install Lean 4.28.0
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Resolve Lake dependencies
         run: lake update
       - name: Fetch Mathlib cache
