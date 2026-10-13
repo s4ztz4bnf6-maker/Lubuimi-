@@ -114,3 +114,27 @@ theorem po1_aligned_prefix_lengths {α β : Type}
     (h_align : ss.length = δs.length) (k : Nat) :
     (ss.take k).length = (δs.take k).length := by
   simp [List.length_take, h_align]
+
+
+/-! ## PO-1b: elementwise prefix preservation
+
+This lemma isolates the exact index-preservation fact needed before relating
+`sieveProd` to the mathematical stage recurrence. It is a list-level fact
+only; it does not establish the BBMST semantic bridge.
+-/
+
+/-- For every index strictly inside the prefix, `take` preserves the
+original optional element at that index. -/
+theorem po1_take_get?_eq {α : Type} (xs : List α) (k i : Nat)
+    (hi : i < k) :
+    (xs.take k).get? i = xs.get? i := by
+  induction xs generalizing k i with
+  | nil => simp
+  | cons a xs ih =>
+      cases k with
+      | zero => omega
+      | succ k =>
+          cases i with
+          | zero => simp
+          | succ i =>
+              simpa using (ih (k := k) (i := i) (by omega))
