@@ -1,0 +1,19 @@
+name: Lean 4.28 BBMST sandbox
+
+on:
+  push:
+    branches: [bbmst-geometry-sandbox]
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+      - name: Compile finite example
+        run: lake env lean BBMSTFiniteExample.lean
+      - name: Compile coordinate geometry model
+        run: lake env lean BBMSTGeometryTest.lean
