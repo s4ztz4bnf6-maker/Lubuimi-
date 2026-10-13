@@ -21,7 +21,7 @@ jobs:
       - name: Fetch the audited upstream source
         run: |
           curl --fail --location --retry 3 --max-time 60 \
-            https://raw.githubusercontent.com/axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture/main/ErdosSelfridge_v17_fixed.lean \
+            https://raw.githubusercontent.com/axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture/fe530b2cedd3a71c2cdb47cc36ed0c3cb047b086/ErdosSelfridge_v17_fixed.lean \
             --output ErdosSelfridge_v17_fixed.lean
       - name: Install dependencies and restore Mathlib cache
         uses: leanprover/lean-action@v1
