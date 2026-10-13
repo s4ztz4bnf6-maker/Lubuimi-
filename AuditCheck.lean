@@ -20,7 +20,10 @@ theorem degenerate_sieveTerm (ss : List ℚ) (k : Nat)
     cases xs <;> rfl
   have hM1 : 0 ≤ (1 : ℚ) / ss.getD k 1 :=
     div_nonneg (by norm_num) hsk.le
-  simp [sieveTerm, M1bound, M2bound, ck, hprod, hM1]
+  have hden : 0 ≤ ss[k]?.getD 1 := by
+    change 0 ≤ ss.getD k 1
+    exact hsk.le
+  simp [sieveTerm, M1bound, M2bound, ck, hprod, hM1, hden]
 
 /-- The whole sieve sum vanishes for any list whose in-range block sizes
 are positive. -/
