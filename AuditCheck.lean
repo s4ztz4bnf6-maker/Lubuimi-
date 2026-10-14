@@ -216,11 +216,13 @@ def validSieveParams_half : ValidSieveParams [1] where
   length_eq := by simp
   delta_pos := by
     intro i hi
+    simp at hi
     have : i = 0 := by omega
     subst i
     norm_num
   delta_lt_one := by
     intro i hi
+    simp at hi
     have : i = 0 := by omega
     subst i
     norm_num
