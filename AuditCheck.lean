@@ -154,6 +154,11 @@ example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 4 := by
     M1bound, M2bound, ck, sieveProd, updateFactor]
 
 
+/-- Long delta list: sieveSum only visits block-size indices, so the extra delta is unused. -/
+example : sieveSum 1 2 [1] [1 / 2, 1 / 3] = 1 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
+
 /-! ## Length-mismatch audit
 
 These examples record the list recursion behavior independently of the
