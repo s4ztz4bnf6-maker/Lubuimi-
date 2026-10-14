@@ -121,3 +121,34 @@ example : sieveSum 1 1 [1] [0] = 0 := by
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
 #print axioms sf_sieve_lt_one
+
+
+/-! ## Parameter-list length audit
+
+These are structural regression tests only. The upstream source file and the
+existing degeneration tests are intentionally unchanged.
+-/
+
+/-- With one delta for two block sizes, sieveProd stops after the first pair. -/
+example : sieveProd [1, 1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- With excess deltas, sieveProd stops when the block-size list ends. -/
+example : sieveProd [1] [1 / 2, 1 / 3] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- A length-matched product consumes both pairs. -/
+example : sieveProd [1, 1] [1 / 2, 1 / 2] 1 = 9 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- A short delta list silently supplies δ = 0 at the second sieve stage;
+the second sieveTerm then collapses to zero. -/
+example : sieveSum 1 2 [1, 1] [1 / 2] = 1 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
+
+/-- Matching the two block sizes with two positive deltas avoids that
+particular missing-parameter collapse. -/
+example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 2 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
