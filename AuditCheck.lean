@@ -96,6 +96,19 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, List.take,
     sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
+/-- Nonempty contrast: with a genuine delta in (0,1), the same toy block-size
+list does not collapse to zero. This is a concrete contrast, not a general
+claim that every nonempty parameter choice satisfies or violates the bound. -/
+example : sieveSum 1 2 [1] [1 / 2] = 1 := by
+  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+
+/-- A nonempty delta list is still insufficient: delta = 0 makes the
+outer denominator 4 * delta * (1 - delta) zero, and Lean's rational
+division-by-zero convention makes this sieve term vanish. The axiom needs
+range constraints, not merely nonemptiness. -/
+example : sieveSum 1 1 [1] [0] = 0 := by
+  norm_num [sieveSum, sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+
 #print axioms degenerate_sieveTerm
 #print axioms degenerate_sieveSum
 #print axioms extractPrimes_valid
@@ -108,3 +121,108 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
 #print axioms sf_sieve_lt_one
+
+
+/-! ## Parameter-list length audit
+
+These are structural regression tests only. The upstream source file and the
+existing degeneration tests are intentionally unchanged.
+-/
+
+/-- With one delta for two block sizes, sieveProd stops after the first pair. -/
+example : sieveProd [1, 1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- With excess deltas, sieveProd stops when the block-size list ends. -/
+example : sieveProd [1] [1 / 2, 1 / 3] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- A length-matched product consumes both pairs. -/
+example : sieveProd [1, 1] [1 / 2, 1 / 2] 1 = 9 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- A short delta list silently supplies δ = 0 at the second sieve stage;
+the second sieveTerm then collapses to zero. -/
+example : sieveSum 1 2 [1, 1] [1 / 2] = 1 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
+
+/-- Matching the two block sizes with two positive deltas avoids that
+particular missing-parameter collapse. -/
+example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 4 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
+
+
+/-- Long delta list: sieveSum only visits block-size indices, so the extra delta is unused. -/
+example : sieveSum 1 2 [1] [1 / 2, 1 / 3] = 1 := by
+  norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
+    M1bound, M2bound, ck, sieveProd, updateFactor]
+
+/-! ## Length-mismatch audit
+
+These examples record the list recursion behavior independently of the
+axiomatic criterion. They do not modify the original formalization.
+-/
+
+/-- Equal-length lists: one update is applied. -/
+example : sieveProd [1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- Short delta list: the product recursion stops when the delta list ends. -/
+example : sieveProd [1, 1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- Long delta list: excess deltas are not used after block sizes end. -/
+example : sieveProd [1] [1 / 2, 1 / 3] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+
+/-! ## Experimental type-safe parameter interface (proposal only)
+
+This wrapper does not replace the upstream axioms. It demonstrates that
+length and range invariants can be carried explicitly by a value. The
+mathematical theorem and existence result still need to be proved before this
+interface can be used as a repair.
+-/
+
+structure ValidSieveParams (ss : List ℚ) where
+  δs : List ℚ
+  length_eq : δs.length = ss.length
+  delta_pos : ∀ i, i < ss.length → 0 < δs[i]!
+  delta_lt_one : ∀ i, i < ss.length → δs[i]! < 1
+
+/-- A valid parameter package for a nonempty stage list cannot have no deltas. -/
+theorem validSieveParams_not_empty_for_nonempty
+    {ss : List ℚ} (hss : ss.length > 0)
+    (p : ValidSieveParams ss) : p.δs ≠ [] := by
+  intro hnil
+  have hlen := p.length_eq
+  rw [hnil] at hlen
+  simp at hlen
+  omega
+
+/-- The singleton zero parameter is rejected by the strict positivity field. -/
+theorem validSieveParams_rejects_zero :
+    ¬ ∃ p : ValidSieveParams [1], p.δs = [0] := by
+  rintro ⟨p, hp⟩
+  have hpos := p.delta_pos 0 (by simp)
+  rw [hp] at hpos
+  norm_num at hpos
+
+/-- The proposed interface is constructive: a valid singleton example exists. -/
+def validSieveParams_half : ValidSieveParams [1] where
+  δs := [1 / 2]
+  length_eq := by simp
+  delta_pos := by
+    intro i hi
+    simp at hi
+    have : i = 0 := by omega
+    subst i
+    norm_num
+  delta_lt_one := by
+    intro i hi
+    simp at hi
+    have : i = 0 := by omega
+    subst i
+    norm_num
