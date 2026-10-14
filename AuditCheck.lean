@@ -152,3 +152,22 @@ particular missing-parameter collapse. -/
 example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 4 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
     M1bound, M2bound, ck, sieveProd, updateFactor]
+
+
+/-! ## Length-mismatch audit
+
+These examples record the list recursion behavior independently of the
+axiomatic criterion. They do not modify the original formalization.
+-/
+
+/-- Equal-length lists: one update is applied. -/
+example : sieveProd [1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- Short delta list: the product recursion stops when the delta list ends. -/
+example : sieveProd [1, 1] [1 / 2] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
+
+/-- Long delta list: excess deltas are not used after block sizes end. -/
+example : sieveProd [1] [1 / 2, 1 / 3] 1 = 3 := by
+  norm_num [sieveProd, updateFactor]
