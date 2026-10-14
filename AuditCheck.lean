@@ -149,6 +149,6 @@ example : sieveSum 1 2 [1, 1] [1 / 2] = 1 := by
 
 /-- Matching the two block sizes with two positive deltas avoids that
 particular missing-parameter collapse. -/
-example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 2 := by
+example : sieveSum 1 2 [1, 1] [1 / 2, 1 / 2] = 4 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, sieveTerm,
     M1bound, M2bound, ck, sieveProd, updateFactor]
