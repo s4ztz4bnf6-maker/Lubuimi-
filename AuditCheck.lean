@@ -226,3 +226,53 @@ def validSieveParams_half : ValidSieveParams [1] where
     have : i = 0 := by omega
     subst i
     norm_num
+
+
+/-! ## Degenerate witness audit for the SF existence interface
+
+This section checks the shape of the second axiom separately. The general
+witness uses an empty delta list; each mapped odd prime contributes a positive
+block size, so the already-proved degenerate sum lemma applies.
+-/
+
+/-- Odd primes produce positive entries in the list used by the SF sieve. -/
+theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
+    (h_primes : ∀ p ∈ primes, Nat.Prime p ∧ p % 2 = 1) :
+    ∀ i, i < (primes.map (fun p => (p : ℚ) - 1)).length →
+      0 < (primes.map (fun p => (p : ℚ) - 1)).getD i 1 := by
+  intro i hi
+  induction primes generalizing i with
+  | nil =>
+      simp at hi
+  | cons p ps ih =>
+      cases i with
+      | zero =>
+          have hp := h_primes p (by simp)
+          have hp3 : 3 ≤ p := by
+            have hp2 := hp.1.two_le
+            omega
+          simp only [List.length_map] at hi
+          simp [List.getD]
+          exact sub_pos.mpr (by exact_mod_cast (show (1 : Nat) < p by omega))
+      | succ i =>
+          have hi' : i < ps.length := by
+            simp only [List.length_map] at hi
+            omega
+          simpa [List.getD] using ih (fun p hp => h_primes p (by simp [hp])) hi'
+
+/-- The current SF existence-axiom conclusion admits the degenerate witness
+δs = [], ca1 = ca3 = 1 for every valid list of odd primes. -/
+theorem degenerate_sf_sieve_witness_audit (primes : List Nat)
+    (h_primes : ∀ p ∈ primes, Nat.Prime p ∧ p % 2 = 1) :
+    ∃ (δs : List ℚ) (ca1 ca3 : ℚ),
+      sieveSum ca1 ca3 (primes.map (fun p => (p : ℚ) - 1)) δs < 1
+      ∧ 1 ≤ ca1
+      ∧ ca1 ≤ ca3
+      ∧ 0 ≤ ca3 - 2 * ca1 + 1
+      ∧ ∀ i, i < δs.length → 0 ≤ δs.getD i 0 ∧ δs.getD i 0 < 1 := by
+  refine ⟨[], 1, 1, ?_, by norm_num, by norm_num, by norm_num, ?_⟩
+  · rw [degenerate_sieveSum]
+    · norm_num
+    · exact sf_prime_block_sizes_pos_audit primes h_primes
+  · intro i hi
+    simp at hi
