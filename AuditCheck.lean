@@ -254,13 +254,27 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
           change 0 < (p : ℚ) - 1
           exact sub_pos.mpr (by exact_mod_cast hp1)
       | succ i =>
+          have hcons_len :
+              (do
+                let a ← p :: ps
+                pure (a : ℚ)).length = (p :: ps).length := by
+            simp
           have hi_cons : i < ps.length := by
-            -- Reduce the mapped-list length structurally; avoid a
-            -- definitional-equality change across the Nat-to-ℚ coercion.
-            simp only [List.length_map, List.length_cons] at hi
+            -- First normalize the exact monadic coercion shape, then
+            -- derive the tail bound from the cons-list length.
+            rw [hcons_len] at hi
+            simp only [List.length_cons] at hi
             omega
+          have htail_len :
+              (do
+                let a ← ps
+                pure (a : ℚ)).length = ps.length := by
+            simp
           have hi_mapped : i < (ps.map (fun q => (q : ℚ) - 1)).length := by
-            simpa only [List.length_map] using hi_cons
+            -- The elaborated mapped-list input is a monadic coercion of ps.
+            -- Use its length equality explicitly rather than asking simp to
+            -- bridge the two shapes implicitly.
+            simpa only [List.length_map, htail_len] using hi_cons
           have htail : ∀ q ∈ ps, Nat.Prime q ∧ q % 2 = 1 := by
             intro q hq
             exact h_primes q (List.mem_cons_of_mem p hq)
