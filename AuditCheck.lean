@@ -256,10 +256,10 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
       | succ i =>
           have hi' : i < ps.length := by
             simp only [List.length_map] at hi
-            simp only [List.length_cons] at hi
             omega
           have hi_mapped : i < (ps.map (fun q => (q : ℚ) - 1)).length := by
-            simpa only [List.length_map] using hi'
+            rw [List.length_map]
+            exact hi'
           have htail : ∀ q ∈ ps, Nat.Prime q ∧ q % 2 = 1 := by
             intro q hq
             exact h_primes q (List.mem_cons_of_mem p hq)
