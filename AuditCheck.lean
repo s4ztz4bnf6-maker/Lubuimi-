@@ -326,8 +326,12 @@ theorem guardedSieveParams_not_empty
     have h := p.length_eq
     rw [hnil] at h
     simp at h
-    exact h
-  exact p.stages_nonempty (List.length_eq_zero.mp hlen)
+    omega
+  have hss : ss = [] := by
+    cases ss with
+    | nil => rfl
+    | cons a as => simp at hlen
+  exact p.stages_nonempty hss
 
 /-- The proposed contract rejects the empty list for a nonempty stage list. -/
 example : ¬ ∃ p : GuardedSieveParams [1], p.δs = [] := by
