@@ -25,3 +25,15 @@ theorem mapped_monadic_tail_index (p : Nat) (ps : List Nat) (i : Nat)
   rw [mapped_monadic_length] at hi
   simp only [List.length_cons] at hi
   omega
+
+
+/-! ## Tail-only length diagnostic for the exact do-notation shape -/
+
+def coercedTail (ps : List Nat) : List ℚ := do
+  let a ← ps
+  pure (a : ℚ)
+
+/-- The tail-only monadic coercion preserves list length. -/
+theorem coercedTail_length (ps : List Nat) :
+    (coercedTail ps).length = ps.length := by
+  simp [coercedTail]
