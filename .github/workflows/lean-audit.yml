@@ -32,6 +32,8 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
+      - name: Compile isolated interface tests
+        run: lake env lean AuditInterfaceTests.lean
       - name: Compile isolated monadic list diagnostic
         run: lake env lean MonadTest.lean
       - name: Run focused degenerate-witness tests
