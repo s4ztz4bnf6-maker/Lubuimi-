@@ -254,8 +254,8 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
           change 0 < (p : ℚ) - 1
           exact sub_pos.mpr (by exact_mod_cast hp1)
       | succ i =>
-          have hi' : i < ps.length := by
-            simp only [List.length_map, List.length_cons] at hi
+          have hi' : i < (ps.map (fun q => (q : ℚ) - 1)).length := by
+            simp only [List.map_cons, List.length_cons] at hi
             omega
           have htail : ∀ q ∈ ps, Nat.Prime q ∧ q % 2 = 1 := by
             intro q hq
