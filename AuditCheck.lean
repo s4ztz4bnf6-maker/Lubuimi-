@@ -297,3 +297,71 @@ theorem degenerate_sf_sieve_witness_audit (primes : List Nat)
     · exact sf_prime_block_sizes_pos_audit primes h_primes
   · intro i hi
     simp at hi
+
+
+/-! ## Guarded-interface proposal (diagnostic only)
+
+This section specifies the parameter contract that a future version of the
+upstream axioms should require. It deliberately does NOT claim that the
+existing SF existence axiom supplies such parameters: that axiom currently
+permits the degenerate witness, so the existence theorem must be strengthened
+and mathematically justified at the source before the main theorem can use
+this contract.
+-/
+
+/-- Proposed sieve parameters: the stage list is nonempty, the delta list is
+exactly aligned with it, and every used delta lies strictly between 0 and 1. -/
+structure GuardedSieveParams (ss : List ℚ) where
+  stages_nonempty : ss ≠ []
+  δs : List ℚ
+  length_eq : δs.length = ss.length
+  delta_pos : ∀ i, i < ss.length → 0 < δs[i]!
+  delta_lt_one : ∀ i, i < ss.length → δs[i]! < 1
+
+/-- Under the proposed contract, an empty delta list cannot be a valid witness. -/
+theorem guardedSieveParams_not_empty
+    {ss : List ℚ} (p : GuardedSieveParams ss) : p.δs ≠ [] := by
+  intro hnil
+  have hlen : ss.length = 0 := by
+    have h := p.length_eq
+    rw [hnil] at h
+    simp at h
+    exact h
+  exact p.stages_nonempty (List.length_eq_zero.mp hlen)
+
+/-- The proposed contract rejects the empty list for a nonempty stage list. -/
+example : ¬ ∃ p : GuardedSieveParams [1], p.δs = [] := by
+  rintro ⟨p, hp⟩
+  exact guardedSieveParams_not_empty p hp
+
+/-- A zero delta is incompatible with the proposed strict positivity guard. -/
+theorem guardedSieveParams_rejects_zero :
+    ¬ ∃ p : GuardedSieveParams [1], p.δs = [0] := by
+  rintro ⟨p, hp⟩
+  have hpos := p.delta_pos 0 (by simp)
+  rw [hp] at hpos
+  norm_num at hpos
+
+/-- Proposed guarded wrapper for the criterion. This wrapper is safe against
+degenerate parameters when its stage list is nonempty, but it is NOT a repair
+of the upstream axiom: callers can still invoke sieve_criterion directly.
+The actual fix must strengthen the source declaration itself. -/
+theorem guarded_sieve_criterion_proposal {K : Nat}
+    (cs : CoveringSystem K) (h_odd : CS_allOdd cs)
+    (p : GuardedSieveParams (nonsfBlockSizes cs))
+    (ca1 ca3 : ℚ) (hca1 : 1 ≤ ca1)
+    (h_sum_lt :
+      sieveSum ca1 ca3 (nonsfBlockSizes cs) p.δs < 1) : False :=
+  sieve_criterion cs h_odd p.δs ca1 ca3 hca1 h_sum_lt
+
+/-- The desired SF witness contract. The current sf_sieve_lt_one axiom does
+not establish this stronger proposition; replacing that axiom requires a
+separate mathematical justification, not merely a wrapper around it. -/
+structure GuardedSFWitness (primes : List Nat) where
+  params : GuardedSieveParams (primes.map (fun p => (p : ℚ) - 1))
+  ca1 ca3 : ℚ
+  sum_lt_one :
+    sieveSum ca1 ca3 (primes.map (fun p => (p : ℚ) - 1)) params.δs < 1
+  ca1_ge_one : 1 ≤ ca1
+  ca1_le_ca3 : ca1 ≤ ca3
+  base_nonneg : 0 ≤ ca3 - 2 * ca1 + 1
