@@ -255,7 +255,7 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
           exact sub_pos.mpr (by exact_mod_cast hp1)
       | succ i =>
           have hi' : i < ps.length := by
-            simp only [List.length_map] at hi
+            simp only [List.length_map, List.length_cons] at hi
             omega
           have hi_mapped : i < (ps.map (fun q => (q : ℚ) - 1)).length := by
             rw [List.length_map]
