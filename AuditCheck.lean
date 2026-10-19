@@ -363,7 +363,8 @@ not establish this stronger proposition; replacing that axiom requires a
 separate mathematical justification, not merely a wrapper around it. -/
 structure GuardedSFWitness (primes : List Nat) where
   params : GuardedSieveParams (primes.map (fun p => (p : ℚ) - 1))
-  ca1 ca3 : ℚ
+  ca1 : ℚ
+  ca3 : ℚ
   sum_lt_one :
     sieveSum ca1 ca3 (primes.map (fun p => (p : ℚ) - 1)) params.δs < 1
   ca1_ge_one : 1 ≤ ca1
