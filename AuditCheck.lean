@@ -260,8 +260,9 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
                 pure (a : ℚ)).length = (p :: ps).length := by
             simp
           have hi_cons : i < ps.length := by
-            -- First normalize the exact monadic coercion shape, then
-            -- derive the tail bound from the cons-list length.
+            -- Normalize the outer map length before rewriting the
+            -- monadic coercion length, then derive the tail bound.
+            simp only [List.length_map] at hi
             rw [hcons_len] at hi
             simp only [List.length_cons] at hi
             omega
