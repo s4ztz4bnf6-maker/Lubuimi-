@@ -255,9 +255,8 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
           exact sub_pos.mpr (by exact_mod_cast hp1)
       | succ i =>
           have hi_cons : i < ps.length := by
-            -- Diagnostic only: record the fully elaborated goal before attempting
-            -- to normalize the mapped-list length. This is emitted in CI logs.
-            set_option pp.all true in trace_state
+            -- Diagnostic only: record the elaborated goal in CI logs.
+            trace_state
             change i + 1 < (p :: ps).length at hi
             simp only [List.length_cons] at hi
             omega
