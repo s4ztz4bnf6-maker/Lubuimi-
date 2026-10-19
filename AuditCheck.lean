@@ -248,17 +248,16 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
       cases i with
       | zero =>
           have hp := h_primes p (by simp)
-          have hp3 : 3 ≤ p := by
+          have hp1 : 1 < p := by
             have hp2 := hp.1.two_le
             omega
-          simp only [List.length_map] at hi
-          simp [List.getD]
-          exact sub_pos.mpr (by exact_mod_cast (show (1 : Nat) < p by omega))
+          change 0 < (p : ℚ) - 1
+          exact sub_pos.mpr (by exact_mod_cast hp1)
       | succ i =>
           have hi' : i < ps.length := by
             simp only [List.length_map] at hi
             omega
-          simpa [List.getD] using ih (fun p hp => h_primes p (by simp [hp])) hi'
+          simpa using ih i (fun q hq => h_primes q (by simp [hq])) hi'
 
 /-- The current SF existence-axiom conclusion admits the degenerate witness
 δs = [], ca1 = ca3 = 1 for every valid list of odd primes. -/
