@@ -261,12 +261,12 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
             rw [hlen] at hi
             omega
           have hi_mapped :
-              i < (((ps.map (fun q : Nat => (q : ℚ))).map (fun q : ℚ => q - 1)).length) := by
+              i < (ps.map (fun q : Nat => (q : ℚ) - 1)).length := by
             simpa using hi_cons
           have htail : ∀ q ∈ ps, Nat.Prime q ∧ q % 2 = 1 := by
             intro q hq
             exact h_primes q (List.mem_cons_of_mem p hq)
-          simpa using ih htail i hi_mapped
+          exact ih htail i hi_mapped
 
 /-- The current SF existence-axiom conclusion admits the degenerate witness
 δs = [], ca1 = ca3 = 1 for every valid list of odd primes. -/
