@@ -260,8 +260,11 @@ theorem sf_prime_block_sizes_pos_audit (primes : List Nat)
             change i + 1 < ((p :: ps).map (fun q => (q : ℚ) - 1)).length at hi
             rw [hlen] at hi
             omega
-          have hi_mapped : i < (ps.map (fun q => (q : ℚ) - 1)).length := by
-            simpa only [List.length_map] using hi_cons
+          have hlen_tail : (ps.map (fun q : Nat => (q : ℚ) - 1)).length = ps.length := by
+            simp
+          have hi_mapped : i < (ps.map (fun q : Nat => (q : ℚ) - 1)).length := by
+            rw [hlen_tail]
+            exact hi_cons
           have htail : ∀ q ∈ ps, Nat.Prime q ∧ q % 2 = 1 := by
             intro q hq
             exact h_primes q (List.mem_cons_of_mem p hq)
