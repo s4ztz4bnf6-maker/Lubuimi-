@@ -22,9 +22,13 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
 example : sieveTerm 1 1 [1] [0] 0 = 0 := by
   norm_num [sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
--- Case B2: δ = 1 makes both the update-factor denominator and the
--- outer M2 denominator zero. Lean's rational division is totalized.
+-- Case B2: at k = 0, δ = 1 makes the outer M2 denominator zero.
 example : sieveTerm 1 1 [1] [1] 0 = 0 := by
+  norm_num [sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
+
+-- At k = 1, the previous δ = 1 is also consumed by M1bound/M2bound's
+-- prefix products, so updateFactor encounters (1 - δ) * s = 0 there.
+example : sieveTerm 1 1 [1, 1] [1, 1] 1 = 0 := by
   norm_num [sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
 -- Case C: a zero block size causes the M1 and M2 normalizations by sk
