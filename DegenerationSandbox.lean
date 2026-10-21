@@ -6,7 +6,7 @@ import Mathlib
 
 Isolated regression tests against the pinned upstream definitions.
 These examples document behavior on invalid parameters; they do not claim
-that the underlying conjecture is false.  No production definitions are
+that the underlying conjecture is false. No production definitions are
 modified here.
 -/
 
@@ -53,5 +53,3 @@ Interpretation:
   where the actual sieve_criterion accepts the empty list and derives False
   from its stated premises for any cs satisfying CS_allOdd cs.
 -/
-
-#print axioms
