@@ -1,4 +1,4 @@
-import Mathlib.Data.Rat.Basic
+import Mathlib.Algebra.Field.Rat
 import Mathlib.Tactic
 
 namespace MeasureTransition
