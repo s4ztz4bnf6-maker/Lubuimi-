@@ -147,3 +147,30 @@ lemma retained_mass_zero
 #print axioms measure_normalization_identity
 
 end MeasureTransition
+
+
+namespace MeasureTransition
+
+/-- Transfer the published improved second-moment estimate to the general
+second-moment scale. The geometric estimate remains an explicit hypothesis;
+this theorem only performs the valid comparison once the actual configuration
+has established it. Keeping this bridge separate prevents the interface from
+silently treating the geometric premise as proved. -/
+theorem improved_moment_implies_general
+    {N : ℕ} (d : ImprovedSecondMomentData N)
+    (hclaim : improvedSecondMomentClaim d)
+    (hc1 : ∀ i, 1 ≤ d.c1 i) :
+    ∀ i, d.noCodimOneAt i →
+      d.moment2 i ≤ d.c3 i / (d.blockSize i)^2 := by
+  intro i hgeom
+  calc
+    d.moment2 i ≤
+        (d.c3 i - 2 * d.c1 i + 1) / (d.blockSize i)^2 :=
+      hclaim i hgeom
+    _ ≤ d.c3 i / (d.blockSize i)^2 :=
+      improved_rhs_le_general_rhs (d.c1 i) (d.c3 i)
+        (d.blockSize i) (hc1 i) (d.blockSize_pos i)
+
+#print axioms MeasureTransition.improved_moment_implies_general
+
+end MeasureTransition
