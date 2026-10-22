@@ -65,6 +65,38 @@ structure ProductDistribution {n : ℕ} (space : CoordinateSpace n) where
   h_nonneg : ∀ x, 0 ≤ weight x
   h_sum_one : ∑ x : CoordinatePoint space, weight x = 1
 
+
+/-- Coordinate-wise weights for a genuine finite product measure. Unlike
+`ProductDistribution` above, this object does not permit an arbitrary
+normalized joint weight: its joint weight is explicitly defined as a product
+of coordinate weights. Normalization of the resulting joint measure is a
+separate theorem and is not inferred from pointwise factorization alone. -/
+structure CoordinateWeightSystem {n : ℕ} (space : CoordinateSpace n) where
+  weight : ∀ i : Fin n, CoordinateValue space i → ℚ
+  nonneg : ∀ i x, 0 ≤ weight i x
+  coordinate_sum_one : ∀ i, ∑ x : CoordinateValue space i, weight i x = 1
+
+/-- The joint point weight induced by independent coordinate weights. -/
+def factorizedPointWeight {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space) (x : CoordinatePoint space) : ℚ :=
+  ∏ i : Fin n, w.weight i (x i)
+
+/-- The joint weight is exactly the product of its coordinate weights.
+This is the independence structure that an arbitrary normalized measure lacks. -/
+theorem factorizedPointWeight_eq_prod {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space) (x : CoordinatePoint space) :
+    factorizedPointWeight w x = ∏ i : Fin n, w.weight i (x i) := rfl
+
+/-- Products of nonnegative coordinate weights are nonnegative. -/
+theorem factorizedPointWeight_nonneg {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space) (x : CoordinatePoint space) :
+    0 ≤ factorizedPointWeight w x := by
+  unfold factorizedPointWeight
+  exact Finset.prod_nonneg (fun i hi => w.nonneg i (x i))
+
+#print axioms factorizedPointWeight_eq_prod
+#print axioms factorizedPointWeight_nonneg
+
 namespace ProductDistribution
 
 theorem total_mass {n : ℕ} {space : CoordinateSpace n}
