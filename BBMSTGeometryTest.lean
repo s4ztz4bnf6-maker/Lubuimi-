@@ -197,3 +197,43 @@ theorem intersects_of_disjoint_fixed_sets
   exact (Finset.disjoint_left.mp hdis hi₁ hi₂).elim
 
 #print axioms intersects_of_disjoint_fixed_sets
+
+/-- Finite mass of an event under an arbitrary normalized nonnegative
+distribution on the coordinate product. The event is filtered inside the
+finite product space, so this definition does not assume coordinate
+independence or a product factorization. -/
+noncomputable def eventMass {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E : CoordinatePoint space → Prop) : ℚ := by
+  classical
+  exact ∑ x in Finset.univ.filter E, μ.weight x
+
+/-- Event mass is nonnegative. This elementary fact is a prerequisite for
+union-bound and compatible-intersection estimates in the moment argument. -/
+theorem eventMass_nonneg {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E : CoordinatePoint space → Prop) :
+    0 ≤ eventMass μ E := by
+  classical
+  unfold eventMass
+  exact Finset.sum_nonneg fun x hx => μ.h_nonneg x
+
+/-- Monotonicity of finite event mass under event inclusion. This holds for
+any nonnegative distribution; no independence hypothesis is used. -/
+theorem eventMass_mono {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop)
+    (hEF : ∀ x, E x → F x) :
+    eventMass μ E ≤ eventMass μ F := by
+  classical
+  unfold eventMass
+  apply Finset.sum_le_sum_of_subset_of_nonneg
+  · intro x hx
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+    exact hEF x hx
+  · intro x hx hnot
+    exact μ.h_nonneg x
+
+#print axioms eventMass_nonneg
+#print axioms eventMass_mono
+
