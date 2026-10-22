@@ -68,6 +68,36 @@ theorem weight_nonneg {n : ℕ} {space : CoordinateSpace n}
 
 end ProductDistribution
 
+
+/-- If two coordinate cylinders contain the same point, their prescribed
+values agree on every coordinate fixed by both cylinders. This is the basic
+compatibility condition for a nonempty intersection in this finite model. -/
+theorem agree_on_overlap_of_common_point
+    {n : ℕ} {space : CoordinateSpace n}
+    (H₁ H₂ : CoordinateHypersurface space)
+    (x : CoordinatePoint space)
+    (h₁ : H₁.Contains x) (h₂ : H₂.Contains x)
+    (i : Fin n) (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed) :
+    H₁.value i hi₁ = H₂.value i hi₂ := by
+  calc
+    H₁.value i hi₁ = x i := (h₁ i hi₁).symm
+    _ = H₂.value i hi₂ := h₂ i hi₂
+
+/-- A disagreement on a shared fixed coordinate rules out an intersection.
+This is a concrete finite-coordinate incidence lemma, not the BBMST
+codimension-one theorem. -/
+theorem disjoint_of_disagreeing_overlap
+    {n : ℕ} {space : CoordinateSpace n}
+    (H₁ H₂ : CoordinateHypersurface space)
+    (i : Fin n) (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed)
+    (hdis : H₁.value i hi₁ ≠ H₂.value i hi₂) :
+    ¬ ∃ x : CoordinatePoint space, H₁.Contains x ∧ H₂.Contains x := by
+  rintro ⟨x, hx₁, hx₂⟩
+  exact hdis (agree_on_overlap_of_common_point H₁ H₂ x hx₁ hx₂ i hi₁ hi₂)
+
+#print axioms agree_on_overlap_of_common_point
+#print axioms disjoint_of_disagreeing_overlap
+
 #print axioms CoordinateHypersurface.contains_iff
 #print axioms ProductDistribution.total_mass
 #print axioms ProductDistribution.weight_nonneg
