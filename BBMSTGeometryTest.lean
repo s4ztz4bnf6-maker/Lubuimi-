@@ -237,3 +237,12 @@ theorem eventMass_mono {n : ℕ} {space : CoordinateSpace n}
 #print axioms eventMass_nonneg
 #print axioms eventMass_mono
 
+/-- The empty event has zero mass. -/
+theorem eventMass_empty {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space) :
+    eventMass μ (fun _ => False) = 0 := by
+  classical
+  unfold eventMass
+  simp
+
+
