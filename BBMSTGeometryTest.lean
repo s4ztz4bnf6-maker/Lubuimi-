@@ -294,6 +294,34 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
 
 #print axioms eventMass_union_of_disjoint
 
+ /-- Finite union bound: the mass of a union is at most the sum of the
+masses. Split the union into E and the disjoint remainder F \\ E; this
+uses only nonnegativity and finite additivity, not independence. -/
+theorem eventMass_union_le_add {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => E x ∨ F x) ≤ eventMass μ E + eventMass μ F := by
+  have hrewrite :
+      eventMass μ (fun x => E x ∨ F x) =
+        eventMass μ (fun x => E x ∨ (F x ∧ ¬ E x)) := by
+    congr 1
+    funext x
+    simp
+  rw [hrewrite]
+  have hdis :
+      ∀ x, ¬ (E x ∧ (fun y => F y ∧ ¬ E y) x) := by
+    intro x hx
+    exact hx.2.2 hx.1
+  rw [eventMass_union_of_disjoint μ E (fun x => F x ∧ ¬ E x) hdis]
+  have hsub :
+      eventMass μ (fun x => F x ∧ ¬ E x) ≤ eventMass μ F :=
+    eventMass_mono μ (fun x => F x ∧ ¬ E x) F (by
+      intro x hx
+      exact hx.1)
+  linarith
+
+#print axioms eventMass_union_le_add
+
 /-- Complement mass is exactly one minus event mass. Together with
 nonnegativity, monotonicity, and disjoint additivity, this gives the basic
 finite probability algebra used by the sieve argument. -/
