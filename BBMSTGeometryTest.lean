@@ -647,3 +647,25 @@ theorem eventMass_le_const_mul_of_pointwise
       exact hdom x
     _ = C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
       rw [Finset.mul_sum]
+
+
+/-- If an event has no witnesses, its mass is zero. This bridges a finite
+incidence contradiction to the weighted probability layer without any
+independence assumption. -/
+theorem eventMass_zero_of_forall_not
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E : CoordinatePoint space → Prop)
+    (hE : ∀ x, ¬ E x) :
+    eventMass μ E = 0 := by
+  classical
+  unfold eventMass
+  have hempty : Finset.univ.filter E = ∅ := by
+    ext x
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.not_mem_empty]
+    exact hE x
+  rw [hempty]
+  simp
+
+#print axioms eventMass_zero_of_forall_not
