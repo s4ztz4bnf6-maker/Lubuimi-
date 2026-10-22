@@ -338,8 +338,7 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       Finset.mem_union]
-  rw [hunion]
-  exact Finset.sum_union hdisj
+  simpa only [hunion] using (Finset.sum_union hdisj)
 
 #print axioms eventMass_union_of_disjoint
 
