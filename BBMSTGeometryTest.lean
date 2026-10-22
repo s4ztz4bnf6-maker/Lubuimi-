@@ -269,4 +269,26 @@ theorem eventMass_empty {n : ℕ} {space : CoordinateSpace n}
   unfold eventMass
   simp
 
+/-- Finite event mass is additive on disjoint events. This is the measure
+identity needed to turn compatible-intersection information into exact
+second-moment expansions; it uses only finite summation, not independence. -/
+theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop)
+    (hdis : ∀ x, ¬ (E x ∧ F x)) :
+    eventMass μ (fun x => E x ∨ F x) = eventMass μ E + eventMass μ F := by
+  classical
+  unfold eventMass
+  have hfilter :
+      Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x) =
+        (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
+    ext x
+    simp
+  have hdisj : Disjoint (Finset.univ.filter E) (Finset.univ.filter F) := by
+    rw [Finset.disjoint_left]
+    intro x hxE hxF
+    apply hdis x
+    constructor <;> simpa using hxE <;> simpa using hxF
+  rw [hfilter, Finset.sum_union hdisj]
 
+#print axioms eventMass_union_of_disjoint
