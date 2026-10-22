@@ -102,6 +102,30 @@ structure ImprovedSecondMomentBound (N : ℕ) where
       moment2 i ≤
         (c3 i - 2 * c1 i + 1) / (blockSize i)^2
 
+/-- At the endpoint alpha = 0, the removed-mass share is exactly zero.
+This explicit endpoint lemma keeps the max branch and denominator guard visible. -/
+lemma removed_mass_zero
+    (delta : ℚ)
+    (hδ0 : 0 ≤ delta)
+    (hδ1 : delta ≤ (1 : ℚ) / 2) :
+    max 0 ((0 - delta) / (1 - delta)) = 0 := by
+  have hden : 0 < 1 - delta := by linarith
+  have hfrac : (0 - delta) / (1 - delta) ≤ 0 :=
+    div_nonpos_of_nonpos_of_nonneg (by linarith) (le_of_lt hden)
+  exact max_eq_left hfrac
+
+/-- At the endpoint alpha = 1, the retained-mass share is exactly zero. -/
+lemma retained_mass_zero
+    (delta : ℚ)
+    (hδ0 : 0 ≤ delta)
+    (hδ1 : delta ≤ (1 : ℚ) / 2) :
+    min 1 ((1 - 1 : ℚ) / (1 - delta)) = 0 := by
+  have hden : 1 - delta ≠ 0 := ne_of_gt (by linarith)
+  simp [hden]
+
+#print axioms removed_mass_zero
+#print axioms retained_mass_zero
+
 #print axioms measure_normalization_identity
 
 end MeasureTransition
