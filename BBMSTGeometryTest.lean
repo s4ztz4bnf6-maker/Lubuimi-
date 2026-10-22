@@ -133,7 +133,7 @@ theorem intersects_iff_agree_on_overlap
     let x : CoordinatePoint space := fun i =>
       if hi₁ : i ∈ H₁.fixed then H₁.value i hi₁
       else if hi₂ : i ∈ H₂.fixed then H₂.value i hi₂
-      else Classical.choice (space.h_nonempty i)
+      else ⟨Classical.choose (space.h_nonempty i), Classical.choose_spec (space.h_nonempty i)⟩
     refine ⟨x, ?_, ?_⟩
     · intro i hi₁
       simp [x, hi₁]
