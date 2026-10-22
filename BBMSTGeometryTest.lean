@@ -338,8 +338,8 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       Finset.mem_union]
-    tauto
-  rw [hfilter, Finset.sum_union hdisj]
+  rw [hfilter]
+  rw [Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
 
