@@ -322,6 +322,30 @@ theorem eventMass_union_le_add {n : ℕ} {space : CoordinateSpace n}
 
 #print axioms eventMass_union_le_add
 
+/-- Intersections cannot have more mass than either constituent event.
+These bounds are the elementary outer estimates used before the sharper
+compatible-hyperplane moment estimates in the published BBMST argument. -/
+theorem eventMass_inter_le_left {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => E x ∧ F x) ≤ eventMass μ E :=
+  eventMass_mono μ (fun x => E x ∧ F x) E (by
+    intro x hx
+    exact hx.1)
+
+/-- Symmetric right-hand version of the intersection mass bound. -/
+theorem eventMass_inter_le_right {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => E x ∧ F x) ≤ eventMass μ F :=
+  eventMass_mono μ (fun x => E x ∧ F x) F (by
+    intro x hx
+    exact hx.2)
+
+#print axioms eventMass_inter_le_left
+#print axioms eventMass_inter_le_right
+
+
 /-- Complement mass is exactly one minus event mass. Together with
 nonnegativity, monotonicity, and disjoint additivity, this gives the basic
 finite probability algebra used by the sieve argument. -/
