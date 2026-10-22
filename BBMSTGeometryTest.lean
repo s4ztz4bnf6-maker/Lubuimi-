@@ -110,7 +110,9 @@ theorem factorizedPointWeight_total_mass {n : ℕ}
           unfold factorizedPointWeight
           rw [← Fintype.prod_sum]
     _ = 1 := by
-      simp [w.coordinate_sum_one]
+      apply Finset.prod_eq_one
+      intro i hi
+      exact w.coordinate_sum_one i
 
 #print axioms factorizedPointWeight_total_mass
 
@@ -336,8 +338,8 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     have hE : E x := (Finset.mem_filter.mp hxE).2
     have hF : F x := (Finset.mem_filter.mp hxF).2
     exact hdis x ⟨hE, hF⟩
-  simp only [Finset.sum_filter]
   rw [hfilter, Finset.sum_union hdisj]
+  simp only [Finset.sum_filter]
 
 #print axioms eventMass_union_of_disjoint
 
