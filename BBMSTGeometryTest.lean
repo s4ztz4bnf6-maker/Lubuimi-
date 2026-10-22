@@ -664,7 +664,7 @@ theorem eventMass_zero_of_forall_not
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       Finset.not_mem_empty]
-    exact hE x
+    exact iff_false_intro (hE x)
   rw [hempty]
   simp
 
