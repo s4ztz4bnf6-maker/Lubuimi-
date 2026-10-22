@@ -37,3 +37,48 @@ A robust Lean implementation should proceed by:
 This provides an alternative to immediately formalizing the full geometric second-moment estimate: first prove the exact local mass of each cylinder, then bound pairwise intersections through the overlap-compatibility theorem already in BBMSTGeometryTest.lean. For compatible cylinders, the intersection is another cylinder whose fixed set is the union of the fixed-coordinate sets, with consistent prescriptions on the overlap. For incompatible cylinders, its mass is zero. The second moment can then be organized by overlap patterns rather than by opaque global predicates.
 
 This route does not itself establish the published noCodimOneAt condition. That condition must still be derived from the actual arithmetic stage family; the finite-coordinate model only supplies the combinatorial and measure-theoretic engine once the concrete family is encoded.
+
+## 2026-10-23 research extension: cylinder-mass and compatibility expansion
+
+### Literature lesson and boundary
+
+The published distortion method for covering systems emphasizes stagewise control of the measure of uncovered points; the BBMST moment route additionally needs precise incidence information. These are not interchangeable: a generic union bound is too weak to recover the improved second-moment numerator. The Lean development must derive the needed geometry from the actual arithmetic stage family, rather than placing the desired conclusion in a structure field.
+
+### Concrete finite-product lemma sequence
+
+Let X be the finite product of nonempty coordinate domains, and let each coordinate have a normalized rational weight w_i. For a cylinder H fixing a finite coordinate set I, its event is the set of points x satisfying x_i = h_i for all i in I. The target lemma is
+\[
+\mu(H)=\prod_{i\in I} w_i(h_i).
+\]
+Proof strategy: expand the finite sum over the cylinder; factor the finite product over fixed and free coordinates; sum each free coordinate using its normalization certificate. This should be proved for the factorized distribution, not for an arbitrary normalized joint distribution.
+
+For cylinders H and K, compatibility is agreement on I intersect J. If incompatible, the intersection is empty. If compatible, the intersection is a cylinder fixing I union J, so its mass is the product over the union. The overlap coordinates are counted once, which is exactly why the intersection mass is not generally the product of the two cylinder masses.
+
+### Second-moment expansion
+
+For a finite family of indicator events E_i, define Z(x) = sum_i 1_{E_i}(x). Then
+\[
+\mathbb E[Z^2]=\sum_i\mu(E_i)+2\sum_{i<j}\mu(E_i\cap E_j).
+\]
+This identity is elementary and can be formalized before any geometric estimate. The research-critical task is then to classify pairs by fixed-coordinate overlap and agreement, and to bound the compatible-pair contribution using the actual stage incidence restrictions. A generic bound such as mu(E_i intersect E_j) <= min(mu(E_i), mu(E_j)) will not yield the published improved estimate on its own.
+
+### Codimension-one obligation
+
+In the coordinate sandbox, codimension one means exactly one fixed coordinate. The property that a stage contains no such member must be proved from the arithmetic construction of the newly exposed family N_k. It cannot be inferred merely from a type named NoCodimensionOneAt. If the arithmetic definition admits a singleton-fixed-coordinate member, the proposed improved estimate needs either a revised hypothesis or a counterexample analysis.
+
+### Alternative route if the geometric condition fails
+
+First construct small finite coordinate spaces and explicit stage families, enumerate compatible pairs, and compare the exact second moment with the proposed bound. A counterexample here would diagnose whether the issue is:
+1. a false general inequality,
+2. an insufficient codimension hypothesis,
+3. or a missing arithmetic restriction in the intended BBMST family.
+
+Only after this diagnostic should the theorem be strengthened or the published incidence argument reconstructed in full.
+
+### Acceptance criteria
+
+1. Prove cylinder mass from normalized coordinate weights.
+2. Prove exact intersection mass from compatibility, and zero mass for disagreement.
+3. Prove the indicator second-moment identity.
+4. Derive the no-codimension-one property from the actual stage definition.
+5. Obtain the improved moment estimate from these lemmas, with no assumed field encoding the target inequality.
