@@ -662,9 +662,7 @@ theorem eventMass_zero_of_forall_not
   unfold eventMass
   have hempty : Finset.univ.filter E = ∅ := by
     ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-      Finset.not_mem_empty]
-    exact iff_false_intro (hE x)
+    simp [hE x]
   rw [hempty]
   simp
 
