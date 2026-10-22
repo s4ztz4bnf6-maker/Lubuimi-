@@ -326,20 +326,12 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     (hdis : ∀ x, ¬ (E x ∧ F x)) :
     eventMass μ (fun x => E x ∨ F x) = eventMass μ E + eventMass μ F := by
   classical
-  unfold eventMass
-  have hfilter :
-      Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x) =
-        (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
-    ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
-  have hdisj : Disjoint (Finset.univ.filter E) (Finset.univ.filter F) := by
-    rw [Finset.disjoint_left]
-    intro x hxE hxF
-    have hE : E x := (Finset.mem_filter.mp hxE).2
-    have hF : F x := (Finset.mem_filter.mp hxF).2
-    exact hdis x ⟨hE, hF⟩
-  rw [hfilter, Finset.sum_union hdisj]
-  simp only [Finset.sum_filter]
+  simp only [eventMass, Finset.sum_filter]
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hE : E x <;> by_cases hF : F x <;>
+    simp [hE, hF, hdis x]
 
 #print axioms eventMass_union_of_disjoint
 
