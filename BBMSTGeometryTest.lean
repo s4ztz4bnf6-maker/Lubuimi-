@@ -206,7 +206,7 @@ noncomputable def eventMass {n : ℕ} {space : CoordinateSpace n}
     (μ : ProductDistribution space)
     (E : CoordinatePoint space → Prop) : ℚ := by
   classical
-  exact ∑ x in Finset.univ.filter E, μ.weight x
+  exact ∑ x ∈ Finset.univ.filter E, μ.weight x
 
 /-- Event mass is nonnegative. This elementary fact is a prerequisite for
 union-bound and compatible-intersection estimates in the moment argument. -/
@@ -246,9 +246,6 @@ theorem eventMass_univ {n : ℕ} {space : CoordinateSpace n}
   unfold eventMass
   simpa using μ.h_sum_one
 
-
-
-/-- The empty event has zero mass. -/
 
 
 /-- Every event has mass at most one. This follows from monotonicity and
@@ -294,7 +291,7 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
 
 #print axioms eventMass_union_of_disjoint
 
- /-- Finite union bound: the mass of a union is at most the sum of the
+/-- Finite union bound: the mass of a union is at most the sum of the
 masses. Split the union into E and the disjoint remainder F \\ E; this
 uses only nonnegativity and finite additivity, not independence. -/
 theorem eventMass_union_le_add {n : ℕ} {space : CoordinateSpace n}
