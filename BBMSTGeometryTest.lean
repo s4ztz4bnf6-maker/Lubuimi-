@@ -368,6 +368,40 @@ theorem eventMass_union_le_add {n : ℕ} {space : CoordinateSpace n}
 
 #print axioms eventMass_union_le_add
 
+
+/-- Finite-union bound for an arbitrary family of events. This is the
+inductive interface needed to turn stagewise distortion estimates into a
+global bound on the mass removed by a finite sieve. Overlaps are allowed:
+the proof uses the two-event union bound rather than assuming disjointness. -/
+theorem eventMass_finset_union_le_sum
+    {ι : Type*} [DecidableEq ι]
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (s : Finset ι)
+    (E : ι → CoordinatePoint space → Prop) :
+    eventMass μ (fun x => ∃ i ∈ s, E i x) ≤
+      ∑ i ∈ s, eventMass μ (E i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simp [eventMass]
+  | @insert i s hi ih =>
+      have hunion :
+          (fun x => ∃ j ∈ insert i s, E j x) =
+            (fun x => E i x ∨ ∃ j ∈ s, E j x) := by
+        funext x
+        simp [hi]
+      rw [hunion]
+      calc
+        eventMass μ (fun x => E i x ∨ ∃ j ∈ s, E j x)
+            ≤ eventMass μ (E i) +
+                eventMass μ (fun x => ∃ j ∈ s, E j x) :=
+              eventMass_union_le_add μ (E i) _
+        _ ≤ eventMass μ (E i) + ∑ j ∈ s, eventMass μ (E j) := by
+              linarith
+        _ = ∑ j ∈ insert i s, eventMass μ (E j) := by
+              simp [hi, Finset.sum_insert]
+
 /-- Intersections cannot have more mass than either constituent event.
 These bounds are the elementary outer estimates used before the sharper
 compatible-hyperplane moment estimates in the published BBMST argument. -/
