@@ -97,6 +97,23 @@ theorem factorizedPointWeight_nonneg {n : ℕ} {space : CoordinateSpace n}
 #print axioms factorizedPointWeight_eq_prod
 #print axioms factorizedPointWeight_nonneg
 
+/-- The total mass of the factorized point weights is the product of the
+coordinate normalizers. This is the finite product-measure normalization
+identity; it does not follow from pointwise factorization alone unless the
+coordinate weights are themselves normalized. -/
+theorem factorizedPointWeight_total_mass {n : ℕ}
+    {space : CoordinateSpace n} (w : CoordinateWeightSystem space) :
+    (∑ x : CoordinatePoint space, factorizedPointWeight w x) = 1 := by
+  calc
+    (∑ x : CoordinatePoint space, factorizedPointWeight w x) =
+        ∏ i : Fin n, ∑ y : CoordinateValue space i, w.weight i y := by
+          unfold factorizedPointWeight
+          rw [← Fintype.prod_sum]
+    _ = 1 := by
+      simp [w.coordinate_sum_one]
+
+#print axioms factorizedPointWeight_total_mass
+
 namespace ProductDistribution
 
 theorem total_mass {n : ℕ} {space : CoordinateSpace n}
