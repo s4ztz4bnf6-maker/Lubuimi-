@@ -112,7 +112,7 @@ theorem factorizedPointWeight_total_mass {n : ℕ}
     _ = 1 := by
       apply Finset.prod_eq_one
       intro i hi
-      exact w.coordinate_sum_one i
+      simpa using w.coordinate_sum_one i
 
 #print axioms factorizedPointWeight_total_mass
 
