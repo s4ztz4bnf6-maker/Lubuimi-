@@ -48,4 +48,16 @@ theorem valid_instance_stage_guards
 
 #print axioms valid_instance_stage_guards
 
+
+/-- Quantitative denominator guard: for 0 < δ ≤ 1/2, the second-moment
+denominator is at least 2δ, not merely positive. -/
+theorem valid_second_moment_denominator_lower_bound
+    {N : ℕ} (p : ValidSieveParameters N) (i : Fin N) :
+    2 * p.delta i ≤ 4 * p.delta i * (1 - p.delta i) := by
+  have hδ := p.delta_pos i
+  have hu := p.delta_le_half i
+  nlinarith
+
+#print axioms valid_second_moment_denominator_lower_bound
+
 end MeasureTransition
