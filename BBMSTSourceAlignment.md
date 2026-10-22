@@ -73,3 +73,12 @@ The proof's sieve state is not just a single random variable. Section 2 defines 
 - Every final axiom audit must be inspected for self-reference and unproved project axioms, not merely for sorryAx.
 
 This is a proof-obligation map, not a claim that the missing steps have been implemented or kernel-checked.
+
+
+## Audit correction: the CRT Gram matrix is exact but not the BBMST obstruction
+
+For a finite family of residue classes in G = Z/LZ, the incidence Gram matrix M_ij = |C_i ∩ C_j| / L exactly records pairwise overlaps. With indicators 1_i and F = Σ_i 1_i, it gives E[F] = Σ_i 1/m_i and E[F²] = Σ_{i,j} M_ij. This is a valid exact finite calculation, but it does not by itself imply that F has a zero, nor does a generic Fourier/spectral slogan yield the required obstruction.
+
+There is also a quantifier conflict in the proposed shortcut: if the starting assumption is that the progressions cover all integers, then F(x) ≥ 1 for every x in Z/LZ by definition, so concluding an uncovered x_0 contradicts the assumption rather than proving the square-free Erdős–Selfridge theorem. The actual theorem of Balister–Bollobás–Morris–Sahasrabudhe–Tiba says that a finite covering system with distinct square-free moduli greater than one must contain an even modulus. It does not say that every such covering has an uncovered residue.
+
+The Lean proof obligation is consequently the source theorem's actual chain: establish the CRT correspondence between arithmetic progressions and the relevant finite-product hyperplanes, prove the geometric non-parallel-cover obstruction with the source's measure and parameter arguments, and translate it back. The Gram matrix may be an audit tool or an auxiliary lemma, but cannot replace the incidence/measure argument without a new, explicit theorem connecting its hypotheses to the desired conclusion. In particular, do not introduce an unproved FourierObstruction, spectral bound, or generic axiom to bridge this gap.
