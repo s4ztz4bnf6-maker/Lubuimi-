@@ -375,3 +375,42 @@ theorem eventMass_complement {n : ℕ} {space : CoordinateSpace n}
   linarith
 
 #print axioms eventMass_complement
+
+
+/-- Bonferroni's first intersection lower bound. It follows from the union
+bound applied to the two complements. This is a useful sanity bound for the
+intersection terms in a second-moment estimate; it is not the sharper
+coordinate-compatibility estimate of BBMST Theorem 3.2. -/
+theorem eventMass_inter_lower_bound {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ E + eventMass μ F - 1 ≤
+      eventMass μ (fun x => E x ∧ F x) := by
+  have hunion :
+      eventMass μ (fun x => ¬ E x ∨ ¬ F x) ≤
+        eventMass μ (fun x => ¬ E x) +
+          eventMass μ (fun x => ¬ F x) :=
+    eventMass_union_le_add μ (fun x => ¬ E x) (fun x => ¬ F x)
+  have hcompE := eventMass_complement μ E
+  have hcompF := eventMass_complement μ F
+  have hcompI := eventMass_complement μ (fun x => E x ∧ F x)
+  have hnotI :
+      eventMass μ (fun x => ¬ (E x ∧ F x)) =
+        eventMass μ (fun x => ¬ E x ∨ ¬ F x) := by
+    congr 1
+    funext x
+    exact propext (not_and_or)
+  rw [hnotI] at hcompI
+  linarith
+
+/-- The elementary upper intersection estimate can be stated as a minimum,
+which is convenient when collecting pairwise terms in a finite second moment. -/
+theorem eventMass_inter_le_min {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => E x ∧ F x) ≤ min (eventMass μ E) (eventMass μ F) := by
+  exact le_min (eventMass_inter_le_left μ E F)
+    (eventMass_inter_le_right μ E F)
+
+#print axioms eventMass_inter_lower_bound
+#print axioms eventMass_inter_le_min
