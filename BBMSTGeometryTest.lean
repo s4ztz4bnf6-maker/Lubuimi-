@@ -589,3 +589,17 @@ theorem eventMass_uncovered_pos_of_sum_lt_one
   linarith
 
 #print axioms eventMass_uncovered_pos_of_sum_lt_one
+
+
+/-- Positive event mass implies that the event has a witness in the finite sample space. -/
+theorem exists_point_of_eventMass_pos
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space) (E : CoordinatePoint space → Prop)
+    (hpos : 0 < eventMass μ E) : ∃ x, E x := by
+  classical
+  by_contra hnone
+  have hfalse : ∀ x : CoordinatePoint space, ¬ E x := by
+    simpa only [not_exists] using hnone
+  simp [eventMass, hfalse] at hpos
+
+#print axioms exists_point_of_eventMass_pos
