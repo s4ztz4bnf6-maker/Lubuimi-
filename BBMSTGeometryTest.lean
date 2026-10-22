@@ -337,7 +337,7 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
       μ.weight x) =
       (∑ x ∈ Finset.univ.filter E, μ.weight x) +
         ∑ x ∈ Finset.univ.filter F, μ.weight x
-  rw [Finset.filter_or]
+  simp only [Finset.filter_or]
   exact Finset.sum_union hdisj
 
 #print axioms eventMass_union_of_disjoint
