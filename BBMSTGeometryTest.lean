@@ -101,3 +101,35 @@ theorem disjoint_of_disagreeing_overlap
 #print axioms CoordinateHypersurface.contains_iff
 #print axioms ProductDistribution.total_mass
 #print axioms ProductDistribution.weight_nonneg
+
+
+/-- Two cylinders intersect exactly when all prescriptions on their shared
+fixed coordinates agree. The reverse direction uses nonemptiness of each
+coordinate domain to fill all unconstrained coordinates. This is an exact
+intersection criterion for this finite-coordinate model, not yet a theorem
+about BBMST hyperplanes. -/
+theorem intersects_iff_agree_on_overlap
+    {n : ℕ} {space : CoordinateSpace n}
+    (H₁ H₂ : CoordinateHypersurface space) :
+    (∃ x : CoordinatePoint space, H₁.Contains x ∧ H₂.Contains x) ↔
+      ∀ i (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed),
+        H₁.value i hi₁ = H₂.value i hi₂ := by
+  constructor
+  · rintro ⟨x, hx₁, hx₂⟩ i hi₁ hi₂
+    exact agree_on_overlap_of_common_point H₁ H₂ x hx₁ hx₂ i hi₁ hi₂
+  · intro hcompat
+    classical
+    let x : CoordinatePoint space := fun i =>
+      if hi₁ : i ∈ H₁.fixed then H₁.value i hi₁
+      else if hi₂ : i ∈ H₂.fixed then H₂.value i hi₂
+      else Classical.choice (space.h_nonempty i)
+    refine ⟨x, ?_, ?_⟩
+    · intro i hi₁
+      simp [x, hi₁]
+    · intro i hi₂
+      by_cases hi₁ : i ∈ H₁.fixed
+      · have heq := hcompat i hi₁ hi₂
+        simp [x, hi₁, heq]
+      · simp [x, hi₁, hi₂]
+
+#print axioms intersects_iff_agree_on_overlap
