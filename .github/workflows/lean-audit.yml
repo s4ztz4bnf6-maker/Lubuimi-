@@ -44,3 +44,8 @@ jobs:
         run: |
           lake env lean -o .lake/build/lib/lean/ParameterIntegrityTests.olean ParameterIntegrityTests.lean 2>&1 | tee /tmp/parameter-integrity-tests.log
           ! grep -q 'sorryAx' /tmp/parameter-integrity-tests.log
+
+      - name: Compile finite coordinate geometry incidence tests
+        run: |
+          lake env lean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
+          ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
