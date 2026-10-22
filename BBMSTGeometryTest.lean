@@ -337,6 +337,10 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
         (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
     ext x
     simp
+  change
+    (∑ x ∈ Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x), μ.weight x) =
+      (∑ x ∈ Finset.univ.filter E, μ.weight x) +
+        (∑ x ∈ Finset.univ.filter F, μ.weight x)
   rw [hfilter]
   exact Finset.sum_union hdisj
 
