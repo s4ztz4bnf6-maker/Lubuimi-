@@ -179,3 +179,21 @@ theorem noCodimensionOneAt_iff
 
 #print axioms hasCodimensionOne_iff_card_eq_one
 #print axioms noCodimensionOneAt_iff
+
+
+/-- If two coordinate cylinders prescribe disjoint sets of coordinates,
+they are automatically compatible and hence intersect. This is a useful
+special case for the compatible-intersection expansion in the BBMST moment
+argument: there are no overlap constraints to check. -/
+theorem intersects_of_disjoint_fixed_sets
+    {n : ℕ} {space : CoordinateSpace n}
+    (H₁ H₂ : CoordinateHypersurface space)
+    (hdis : Disjoint H₁.fixed H₂.fixed) :
+    ∃ x : CoordinatePoint space, H₁.Contains x ∧ H₂.Contains x := by
+  apply (intersects_iff_agree_on_overlap H₁ H₂).2
+  intro i hi₁ hi₂
+  have hmem : i ∈ H₁.fixed ∩ H₂.fixed :=
+    Finset.mem_inter.mpr ⟨hi₁, hi₂⟩
+  exact (Finset.disjoint_left.mp hdis hi₁ hi₂).elim
+
+#print axioms intersects_of_disjoint_fixed_sets
