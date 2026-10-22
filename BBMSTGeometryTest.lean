@@ -257,7 +257,7 @@ noncomputable def eventMass {n : ℕ} {space : CoordinateSpace n}
     (μ : ProductDistribution space)
     (E : CoordinatePoint space → Prop) : ℚ := by
   classical
-  exact ∑ x in (Finset.univ.filter E), μ.weight x
+  exact ∑ x ∈ (Finset.univ.filter E), μ.weight x
 
 /-- Event mass is nonnegative. This elementary fact is a prerequisite for
 union-bound and compatible-intersection estimates in the moment argument. -/
@@ -333,9 +333,9 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hxE hxF
     exact hdis x ⟨hxE, hxF⟩
   change
-    (∑ x in (Finset.univ.filter (fun x => E x ∨ F x)), μ.weight x) =
-      (∑ x in (Finset.univ.filter E), μ.weight x) +
-        (∑ x in (Finset.univ.filter F), μ.weight x)
+    (∑ x ∈ (Finset.univ.filter (fun x => E x ∨ F x)), μ.weight x) =
+      (∑ x ∈ (Finset.univ.filter E), μ.weight x) +
+        (∑ x ∈ (Finset.univ.filter F), μ.weight x)
   have hfilter :
       (Finset.univ : Finset (CoordinatePoint space)).filter
           (fun x => E x ∨ F x) =
