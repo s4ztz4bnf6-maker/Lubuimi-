@@ -237,6 +237,17 @@ theorem eventMass_mono {n : ℕ} {space : CoordinateSpace n}
 #print axioms eventMass_nonneg
 #print axioms eventMass_mono
 
+/-- The whole finite sample space has mass one, by the distribution's
+normalization certificate. -/
+theorem eventMass_univ {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space) :
+    eventMass μ (fun _ => True) = 1 := by
+  classical
+  unfold eventMass
+  simpa using μ.h_sum_one
+
+
+
 /-- The empty event has zero mass. -/
 theorem eventMass_empty {n : ℕ} {space : CoordinateSpace n}
     (μ : ProductDistribution space) :
