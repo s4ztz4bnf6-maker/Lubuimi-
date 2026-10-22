@@ -55,6 +55,5 @@ theorem weighted_event_inclusion_exclusion
 
 #print axioms weighted_indicator_union_intersection
 #print axioms weighted_event_inclusion_exclusion
-#print axioms event_card_union_add_intersection
 
 end BBMSTIncidenceEnergy
