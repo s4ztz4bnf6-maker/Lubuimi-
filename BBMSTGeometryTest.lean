@@ -620,3 +620,29 @@ theorem exists_point_avoiding_events
     (fun x => ∀ i ∈ s, ¬ E i x) hpos
 
 #print axioms exists_point_avoiding_events
+
+
+/-- Distortion-transfer principle for finite event mass. If a new normalized
+weight is pointwise bounded by a constant multiple of an old weight, then
+every event inherits the same multiplicative bound. This isolates one
+quantitative obligation in the BBMST distortion method; it does not assume
+independence and does not itself construct a useful distortion. -/
+theorem eventMass_le_const_mul_of_pointwise
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ ν : ProductDistribution space) (E : CoordinatePoint space → Prop)
+    (C : ℚ) (hC : 0 ≤ C)
+    (hdom : ∀ x, μ.weight x ≤ C * ν.weight x) :
+    eventMass μ E ≤ C * eventMass ν E := by
+  classical
+  unfold eventMass
+  calc
+    (∑ x ∈ Finset.univ.filter E, μ.weight x) ≤
+        ∑ x ∈ Finset.univ.filter E, C * ν.weight x := by
+      apply Finset.sum_le_sum
+      intro x hx
+      apply Finset.sum_le_sum
+      intro hx'
+      exact hdom x
+    _ = C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
+      simp_rw [Finset.mul_sum]
+      simp [Finset.mul_sum, mul_comm]
