@@ -338,7 +338,12 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       Finset.mem_union]
-  rw [hunion, Finset.sum_union hdisj]
+  calc
+    (∑ x ∈ Finset.univ.filter (fun x => E x ∨ F x), μ.weight x) =
+        ∑ x ∈ (Finset.univ.filter E) ∪ (Finset.univ.filter F), μ.weight x := by
+          rw [hunion]
+    _ = (∑ x ∈ Finset.univ.filter E, μ.weight x) +
+        (∑ x ∈ Finset.univ.filter F, μ.weight x) := Finset.sum_union hdisj
 
 #print axioms eventMass_union_of_disjoint
 
