@@ -42,10 +42,12 @@ jobs:
 
       - name: Compile parameter integrity regression tests
         run: |
+          set -o pipefail
           lake env lean -o .lake/build/lib/lean/ParameterIntegrityTests.olean ParameterIntegrityTests.lean 2>&1 | tee /tmp/parameter-integrity-tests.log
           ! grep -q 'sorryAx' /tmp/parameter-integrity-tests.log
 
       - name: Compile finite coordinate geometry incidence tests
         run: |
+          set -o pipefail
           lake env lean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
           ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
