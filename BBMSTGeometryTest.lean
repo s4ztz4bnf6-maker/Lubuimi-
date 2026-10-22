@@ -647,4 +647,3 @@ theorem eventMass_le_const_mul_of_pointwise
       exact hdom x
     _ = C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
       rw [Finset.mul_sum]
-      simp only [mul_comm]
