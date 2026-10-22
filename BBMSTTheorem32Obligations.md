@@ -40,3 +40,15 @@ The source's supplementary page provides executable C code for the finite linear
 - Original paper: https://arxiv.org/abs/1901.11465
 - Published version: https://doi.org/10.2140/ant.2021.15.609
 - Supplemental code and outputs: https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html
+
+
+## Source-level moment proof pattern to formalize
+
+The published proof immediately preceding the improved second-moment estimate proceeds through two finite counting lemmas:
+
+- Lemma 3.3 bounds the measure of a Q_k-measurable hyperplane A by P_k(A) ≤ c(I)ν(J), splitting its fixed-coordinate set as F(A)=I∪J, with I⊆[a] and J⊆[a+1,k]. The induction step uses the exact fibre extension rule for P_k, including the factor 1/(1−δ_k) when coordinate k is fixed.
+- Lemma 3.4 expands E_{k−1}[α_k(x)^t] and applies the union bound to t-tuples F_1,…,F_t in N_k, reducing the problem to the union of their fixed-coordinate sets and the c,ν bounds from Lemma 3.3.
+
+This suggests the correct Lean architecture: first formalize the finite product probability and fibre extension; then an indicator-function/union-bound lemma; then the general moment estimate; finally isolate the codimension-one exclusion as the additional hypothesis used only for the improved estimate. Do not encode the improved estimate as a field of ImprovedSecondMomentBound, because that would assume the target conclusion instead of deriving it.
+
+Source text and theorem numbering: https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s
