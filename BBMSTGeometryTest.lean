@@ -543,3 +543,30 @@ def CoordinateWeightSystem.toProductDistribution {n : ℕ}
   h_sum_one := factorizedPointWeight_total_mass w
 
 #print axioms CoordinateWeightSystem.toProductDistribution
+
+
+/-- Quantitative uncovered-mass certificate for a finite family of forbidden
+events. If the sum of their masses is below one, the complement has positive
+mass. This is the exact finite union-to-survival bridge; the BBMST-specific
+work still lies in proving useful stagewise bounds for those event masses
+under the distorted measures. -/
+theorem eventMass_uncovered_ge_one_sub_sum
+    {ι : Type*} [DecidableEq ι]
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (s : Finset ι)
+    (E : ι → CoordinatePoint space → Prop) :
+    1 - (∑ i ∈ s, eventMass μ (E i)) ≤
+      eventMass μ (fun x => ∀ i ∈ s, ¬ E i x) := by
+  have hUnion := eventMass_finset_union_le_sum μ s E
+  have hComplement := eventMass_complement μ (fun x => ∃ i ∈ s, E i x)
+  have hSame :
+      (fun x => ¬ (∃ i ∈ s, E i x)) =
+        (fun x => ∀ i ∈ s, ¬ E i x) := by
+    funext x
+    simp
+  rw [hSame] at hComplement
+  rw [hComplement]
+  linarith
+
+#print axioms eventMass_uncovered_ge_one_sub_sum
