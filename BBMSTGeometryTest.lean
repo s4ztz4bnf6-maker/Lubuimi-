@@ -292,3 +292,33 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
   rw [hfilter, Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
+
+/-- Complement mass is exactly one minus event mass. Together with
+nonnegativity, monotonicity, and disjoint additivity, this gives the basic
+finite probability algebra used by the sieve argument. -/
+theorem eventMass_complement {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => ¬ E x) = 1 - eventMass μ E := by
+  have hdis :
+      ∀ x, ¬ (E x ∧ (fun y => ¬ E y) x) := by
+    intro x hx
+    exact hx.2 hx.1
+  have hunion :
+      eventMass μ (fun x => E x ∨ (¬ E x)) =
+        eventMass μ E + eventMass μ (fun x => ¬ E x) :=
+    eventMass_union_of_disjoint μ E (fun x => ¬ E x) hdis
+  have hall :
+      eventMass μ (fun _ => True) =
+        eventMass μ E + eventMass μ (fun x => ¬ E x) := by
+    calc
+      eventMass μ (fun _ => True) =
+          eventMass μ (fun x => E x ∨ ¬ E x) := by
+            congr 1
+            funext x
+            exact propext (or_not (E x))
+      _ = eventMass μ E + eventMass μ (fun x => ¬ E x) := hunion
+  rw [eventMass_univ] at hall
+  linarith
+
+#print axioms eventMass_complement
