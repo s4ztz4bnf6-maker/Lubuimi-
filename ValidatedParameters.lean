@@ -33,4 +33,19 @@ theorem valid_parameter_stage_count_pos
 #print axioms valid_second_moment_denominator_pos
 #print axioms valid_parameter_stage_count_pos
 
+/-- A complete indexed sieve instance: block sizes and delta parameters share
+the same Fin N index, eliminating independent list lengths and partial lookups. -/
+structure ValidSieveInstance (N : ℕ) extends ValidSieveParameters N where
+  blockSize : Fin N → ℚ
+  blockSize_pos : ∀ i, 0 < blockSize i
+
+/-- Every stage in a validated instance has both a positive block size and
+a positive second-moment denominator. -/
+theorem valid_instance_stage_guards
+    {N : ℕ} (p : ValidSieveInstance N) (i : Fin N) :
+    0 < p.blockSize i ∧ 0 < 4 * p.delta i * (1 - p.delta i) := by
+  exact ⟨p.blockSize_pos i, valid_second_moment_denominator_pos p.toValidSieveParameters i⟩
+
+#print axioms valid_instance_stage_guards
+
 end MeasureTransition
