@@ -600,7 +600,11 @@ theorem exists_point_of_eventMass_pos
   by_contra hnone
   have hfalse : ∀ x : CoordinatePoint space, ¬ E x := by
     simpa only [not_exists] using hnone
-  simp [eventMass, hfalse] at hpos
+  have heq : E = (fun _ : CoordinatePoint space => False) := by
+    funext x
+    exact propext (iff_false_intro (hfalse x))
+  rw [heq, eventMass_empty] at hpos
+  exact (lt_irrefl 0 hpos)
 
 #print axioms exists_point_of_eventMass_pos
 
