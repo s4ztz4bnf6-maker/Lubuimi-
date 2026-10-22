@@ -332,14 +332,18 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     intro x hxE hxF
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hxE hxF
     exact hdis x ⟨hxE, hxF⟩
+  change
+    (∑ x ∈ (Finset.univ.filter (fun x => E x ∨ F x)), μ.weight x) =
+      (∑ x ∈ (Finset.univ.filter E), μ.weight x) +
+        (∑ x ∈ (Finset.univ.filter F), μ.weight x)
   have hfilter :
-      Finset.univ.filter (fun x => E x ∨ F x) =
+      (Finset.univ : Finset (CoordinatePoint space)).filter
+          (fun x => E x ∨ F x) =
         (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       Finset.mem_union]
-  rw [hfilter]
-  rw [Finset.sum_union hdisj]
+  rw [hfilter, Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
 
