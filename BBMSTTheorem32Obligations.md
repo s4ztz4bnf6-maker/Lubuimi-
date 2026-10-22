@@ -52,3 +52,16 @@ The published proof immediately preceding the improved second-moment estimate pr
 This suggests the correct Lean architecture: first formalize the finite product probability and fibre extension; then an indicator-function/union-bound lemma; then the general moment estimate; finally isolate the codimension-one exclusion as the additional hypothesis used only for the improved estimate. Do not encode the improved estimate as a field of ImprovedSecondMomentBound, because that would assume the target conclusion instead of deriving it.
 
 Source text and theorem numbering: https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s
+
+
+## Independent certificate strategy found in the literature audit (2026-10-22)
+
+The open Erdős research repository now documents an independent exact-arithmetic reconstruction of the published BBMST proof chain. Its finite evidence checker verifies 9,283 primal certificates for the reduced configuration tree and checks their rational weights over all 480 points; it explicitly states that this is not a Lean verification. This is useful as a second oracle for finite parameter/certificate data, but it does not replace the formal proof of the measure lemmas.
+
+Adaptation plan:
+1. Keep the Lean development responsible for the generic fibre and moment inequalities.
+2. Represent each finite parameter certificate as exact naturals/rationals, never floating-point values.
+3. Independently check each certificate by recomputing all finite sums and strict inequalities inside Lean.
+4. Compare the resulting exact certificate against the published-source reconstruction, while keeping the general theorem and the finite numerical instance as separate obligations.
+
+This route avoids trying to formalize an optimizer. An optimizer may discover a certificate; only the exact rational checker and the proven general inequalities certify it. Reference: https://erdosproblems.ai/wiki/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli
