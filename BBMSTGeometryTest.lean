@@ -146,3 +146,36 @@ theorem intersects_iff_agree_on_overlap
 #print axioms intersects_iff_agree_on_overlap
 
 #print axioms CoordinateHypersurface.isNontrivial_iff_fixed_nonempty
+
+
+/-- In the finite-product model, codimension is the number of fixed
+coordinates. Thus codimension one is the concrete condition that exactly one
+coordinate is fixed, matching the terminology in BBMST Theorem 3.2. -/
+def HasCodimensionOne
+    {n : ℕ} {space : CoordinateSpace n}
+    (H : CoordinateHypersurface space) : Prop :=
+  H.fixed.card = 1
+
+/-- A stage family has no codimension-one hyperplanes if every member fixes
+a number of coordinates other than one. stage H represents membership in
+the actual newly exposed family N_k; the source application must prove this
+property from its arithmetic configuration. -/
+def NoCodimensionOneAt
+    {n : ℕ} {space : CoordinateSpace n}
+    (stage : CoordinateHypersurface space → Prop) : Prop :=
+  ∀ H, stage H → H.fixed.card ≠ 1
+
+theorem hasCodimensionOne_iff_card_eq_one
+    {n : ℕ} {space : CoordinateSpace n}
+    (H : CoordinateHypersurface space) :
+    HasCodimensionOne H ↔ H.fixed.card = 1 := Iff.rfl
+
+theorem noCodimensionOneAt_iff
+    {n : ℕ} {space : CoordinateSpace n}
+    (stage : CoordinateHypersurface space → Prop) :
+    NoCodimensionOneAt stage ↔
+      ∀ H, stage H → ¬ HasCodimensionOne H := by
+  rfl
+
+#print axioms hasCodimensionOne_iff_card_eq_one
+#print axioms noCodimensionOneAt_iff
