@@ -287,8 +287,9 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
   have hdisj : Disjoint (Finset.univ.filter E) (Finset.univ.filter F) := by
     rw [Finset.disjoint_left]
     intro x hxE hxF
-    apply hdis x
-    constructor <;> simpa using hxE <;> simpa using hxF
+    have hE : E x := (Finset.mem_filter.mp hxE).2
+    have hF : F x := (Finset.mem_filter.mp hxF).2
+    exact hdis x ⟨hE, hF⟩
   rw [hfilter, Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
