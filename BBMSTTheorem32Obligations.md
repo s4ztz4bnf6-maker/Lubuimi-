@@ -65,3 +65,19 @@ Adaptation plan:
 4. Compare the resulting exact certificate against the published-source reconstruction, while keeping the general theorem and the finite numerical instance as separate obligations.
 
 This route avoids trying to formalize an optimizer. An optimizer may discover a certificate; only the exact rational checker and the proven general inequalities certify it. Reference: https://erdosproblems.ai/wiki/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli
+
+
+## Source-level refinement from the published paper (checked 2026-10-22)
+
+The current formalization must not treat “no codimension-one hyperplane” as a universal property of arbitrary coordinate-cylinder families. The published proof obtains its sharper estimate by counting unions of fixed-coordinate sets and using the absence of newly exposed singleton fixed sets at the relevant stage. The general bound remains the fallback when that condition cannot be established.
+
+The adjacent published structural Lemma 3.4 is also a useful model: it starts with a minimal cover of a finite product, constructs coordinate-deletion maps and smaller minimal covers, and then forces one of two alternatives. In the second alternative, the selected hyperplanes have fixed-coordinate size at least two and a weighted sum of 2^{-|F(H)|/4} is large. This is a stronger proof pattern than simply postulating the needed codimension condition: derive a structural alternative from minimality, then use it to establish the relevant moment/interface estimate.
+
+Lean adaptation:
+- Add a finite MinimalCover predicate with explicit coverage and irredundancy.
+- Prove coordinate projection/deletion preserves the required cover property for the selected subfamily.
+- Formalize the two alternatives as a disjunction, keeping rational weights exact.
+- Use the theorem only at the source stage where its minimal-cover hypotheses are present; do not assume it for arbitrary stages.
+- Retain the generic moment bound as a fallback when the improved branch's hypotheses fail.
+
+Source: published BBMST paper, especially the structural Lemma 3.4 and the proof chain leading to Theorem 3.2. Publisher record: https://ems.press/content/serial-article-files/42559
