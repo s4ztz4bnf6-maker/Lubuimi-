@@ -49,3 +49,9 @@ jobs:
         run: |
           lake env lean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
           ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
+
+      - name: Compile and audit finite incidence-energy identity
+        run: |
+          set -o pipefail
+          lake env lean BBMSTIncidenceEnergy.lean 2>&1 | tee /tmp/bbmst-incidence-energy.log
+          ! grep -q 'sorryAx' /tmp/bbmst-incidence-energy.log
