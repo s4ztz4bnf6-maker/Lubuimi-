@@ -52,19 +52,6 @@ theorem weighted_event_inclusion_exclusion
         + (∑ x : α, weightedIndicator w (fun y => E y ∧ F y) x) := by
           rw [Finset.sum_add_distrib]
 
-/-- The unweighted version states the same identity for event cardinalities
-when the sample space is finite. -/
-theorem event_card_union_add_intersection
-    {α : Type*} [Fintype α] (E F : α → Prop) [DecidablePred E]
-    [DecidablePred F] :
-    (Finset.univ.filter E).card + (Finset.univ.filter F).card =
-      (Finset.univ.filter (fun x => E x ∨ F x)).card
-        + (Finset.univ.filter (fun x => E x ∧ F x)).card := by
-  classical
-  simpa [Finset.card_filter] using
-    weighted_event_inclusion_exclusion
-      (α := α) (w := fun _ => (1 : ℚ)) E F
-
 #print axioms weighted_indicator_union_intersection
 #print axioms weighted_event_inclusion_exclusion
 #print axioms event_card_union_add_intersection
