@@ -35,12 +35,23 @@ def Contains {n : ℕ} {space : CoordinateSpace n}
     (H : CoordinateHypersurface space) (x : CoordinatePoint space) : Prop :=
   ∀ i (hi : i ∈ H.fixed), x i = H.value i hi
 
-/-- Preliminary combinatorial convention: cylinders are non-parallel when
-their sets of fixed coordinates differ. This is not asserted to be the full
-geometric definition used in BBMST. -/
+/-- A nontrivial coordinate hyperplane fixes at least one coordinate. -/
+def IsNontrivial {n : ℕ} {space : CoordinateSpace n}
+    (H : CoordinateHypersurface space) : Prop :=
+  H.fixed.Nonempty
+
+/-- In the finite-product coordinate model used by BBMST, parallel coordinate
+hyperplanes have the same set of fixed coordinate indices. Thus distinct
+fixed-coordinate sets encode non-parallel hyperplanes. This definition alone
+does not prove the separate second-moment estimate. -/
 def NotParallel {n : ℕ} {space : CoordinateSpace n}
     (H₁ H₂ : CoordinateHypersurface space) : Prop :=
   H₁.fixed ≠ H₂.fixed
+
+theorem isNontrivial_iff_fixed_nonempty
+    {n : ℕ} {space : CoordinateSpace n}
+    (H : CoordinateHypersurface space) :
+    H.IsNontrivial ↔ H.fixed.Nonempty := Iff.rfl
 
 theorem contains_iff {n : ℕ} {space : CoordinateSpace n}
     (H : CoordinateHypersurface space) (x : CoordinatePoint space) :
@@ -133,3 +144,5 @@ theorem intersects_iff_agree_on_overlap
       · simp [x, hi₁, hi₂]
 
 #print axioms intersects_iff_agree_on_overlap
+
+#print axioms CoordinateHypersurface.isNontrivial_iff_fixed_nonempty
