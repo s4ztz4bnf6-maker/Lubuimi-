@@ -319,7 +319,6 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     have hE : E x := (Finset.mem_filter.mp hxE).2
     have hF : F x := (Finset.mem_filter.mp hxF).2
     exact hdis x ⟨hE, hF⟩
-  change (∑ x ∈ Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x), μ.weight x) = _
   rw [hfilter, Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
