@@ -371,7 +371,7 @@ theorem eventMass_complement {n : ℕ} {space : CoordinateSpace n}
           eventMass μ (fun x => E x ∨ ¬ E x) := by
             congr 1
             funext x
-            exact propext (Classical.em (E x))
+            by_cases hE : E x <;> simp [hE]
       _ = eventMass μ E + eventMass μ (fun x => ¬ E x) := hunion
   rw [eventMass_univ] at hall
   linarith
