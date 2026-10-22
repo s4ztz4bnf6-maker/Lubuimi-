@@ -640,9 +640,7 @@ theorem eventMass_le_const_mul_of_pointwise
         ∑ x ∈ Finset.univ.filter E, C * ν.weight x := by
       apply Finset.sum_le_sum
       intro x hx
-      apply Finset.sum_le_sum
-      intro hx'
       exact hdom x
     _ = C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
-      simp_rw [Finset.mul_sum]
-      simp [Finset.mul_sum, mul_comm]
+      rw [Finset.mul_sum]
+      simp only [mul_comm]
