@@ -8,7 +8,7 @@ Theorem 3.2 gives the general bound
 \[
 M_k^{(2)}\le \frac{c_{k-1}(3)}{|S_k|^2}.
 \]
-Under the additional hypotheses \(|S_k|\ge3\) and that none of the newly exposed hyperplanes in \(\mathcal N_k\) has codimension one, it gives the improved bound
+In the published version, the improved bound applies under \(|S_k|\ge2\) and the condition that none of the newly exposed hyperplanes in \(\mathcal N_k\) has codimension one. The earlier preprint version stated the stronger \(|S_k|\ge3\) condition; the published theorem is the source of record. It gives the improved bound
 \[
 M_k^{(2)}\le
 \frac{c_{k-1}(3)-2c_{k-1}(1)+1}{|S_k|^2}.
