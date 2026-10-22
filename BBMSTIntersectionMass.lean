@@ -31,4 +31,24 @@ theorem eventMass_cylinder_inter_zero_of_disagreeing_overlap
   rw [eventMass_empty] at hle
   exact le_antisymm hle (eventMass_nonneg μ _)
 
+
+/-- The mass of an intersection is bounded by either marginal, without any
+independence hypothesis. This is the basic safe estimate for the second-moment
+stage when exact factorization has not yet been established. -/
+theorem eventMass_intersection_le_marginals
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E F : CoordinatePoint space → Prop) :
+    eventMass μ (fun x => E x ∧ F x) ≤ eventMass μ E ∧
+      eventMass μ (fun x => E x ∧ F x) ≤ eventMass μ F := by
+  constructor
+  · apply eventMass_mono μ (fun x => E x ∧ F x) E
+    intro x hx
+    exact hx.1
+  · apply eventMass_mono μ (fun x => E x ∧ F x) F
+    intro x hx
+    exact hx.2
+
+#print axioms eventMass_intersection_le_marginals
+
 #print axioms eventMass_cylinder_inter_zero_of_disagreeing_overlap
