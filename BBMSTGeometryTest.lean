@@ -414,3 +414,38 @@ theorem eventMass_inter_le_min {n : ℕ} {space : CoordinateSpace n}
 
 #print axioms eventMass_inter_lower_bound
 #print axioms eventMass_inter_le_min
+
+
+/-- A genuinely factorized probability distribution. Unlike
+`ProductDistribution`, this structure explicitly requires each point weight
+to factor as a product of coordinate weights. The inherited normalization
+still states that the total mass is one; no independence claim is inferred
+from the shape of the sample space alone. -/
+structure FactorizedProductDistribution {n : ℕ}
+    (space : CoordinateSpace n) extends ProductDistribution space where
+  coordinateWeight : ∀ i : Fin n, CoordinateValue space i → ℚ
+  coordinateWeight_nonneg : ∀ i x, 0 ≤ coordinateWeight i x
+  factorizes : ∀ x : CoordinatePoint space,
+    weight x = ∏ i : Fin n, coordinateWeight i (x i)
+
+namespace FactorizedProductDistribution
+
+/-- The factorization law is part of the model's explicit data, not an
+unstated probabilistic assumption. -/
+theorem weight_eq_prod {n : ℕ} {space : CoordinateSpace n}
+    (μ : FactorizedProductDistribution space) (x : CoordinatePoint space) :
+    μ.toProductDistribution.weight x =
+      ∏ i : Fin n, μ.coordinateWeight i (x i) :=
+  μ.factorizes x
+
+/-- Coordinate factors are nonnegative by construction. -/
+theorem coordinate_weight_nonneg {n : ℕ} {space : CoordinateSpace n}
+    (μ : FactorizedProductDistribution space) (i : Fin n)
+    (x : CoordinateValue space i) :
+    0 ≤ μ.coordinateWeight i x :=
+  μ.coordinateWeight_nonneg i x
+
+end FactorizedProductDistribution
+
+#print axioms FactorizedProductDistribution.weight_eq_prod
+#print axioms FactorizedProductDistribution.coordinate_weight_nonneg
