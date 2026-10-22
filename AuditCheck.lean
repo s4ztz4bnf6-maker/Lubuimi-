@@ -1,4 +1,5 @@
 import ErdosSelfridge_v17_fixed
+import MeasureTransition
 import Mathlib
 
 /-!
@@ -287,3 +288,13 @@ theorem degenerate_sf_sieve_witness_audit (primes : List Nat)
     · exact sf_prime_block_sizes_pos_audit primes h_primes
   · intro i hi
     simp at hi
+
+
+/-! ## Measure-transition kernel axiom audit
+
+Importing this module makes Lake compile MeasureTransition as a dependency of
+AuditCheck. The following command emits the theorem's axiom dependencies in
+the CI build log. This is an audit report, not a proof of the BBMST moment
+bounds or of the global Erdős–Selfridge theorem.
+-/
+#print axioms MeasureTransition.measure_normalization_identity
