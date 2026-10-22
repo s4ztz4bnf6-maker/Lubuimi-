@@ -5,9 +5,10 @@ open scoped BigOperators
 namespace BBMSTIncidenceEnergy
 
 /-- Weighted indicator of an event on a finite sample space. -/
-def weightedIndicator {α : Type*} (w : α → ℚ)
-    (E : α → Prop) (x : α) : ℚ :=
-  if E x then w x else 0
+noncomputable def weightedIndicator {α : Type*} (w : α → ℚ)
+    (E : α → Prop) (x : α) : ℚ := by
+  classical
+  exact if E x then w x else 0
 
 /-- Pointwise Boolean incidence identity:
 1_E + 1_F = 1_(E ∪ F) + 1_(E ∩ F), with the same weight attached.
