@@ -280,13 +280,18 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
       Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x) =
         (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
     ext x
-    simp
+    simp [or_and_right, and_or_left, hdis x]
   have hdisj : Disjoint (Finset.univ.filter E) (Finset.univ.filter F) := by
     rw [Finset.disjoint_left]
     intro x hxE hxF
     have hE : E x := (Finset.mem_filter.mp hxE).2
     have hF : F x := (Finset.mem_filter.mp hxF).2
     exact hdis x ⟨hE, hF⟩
+  change
+    (∑ x ∈ Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x),
+      μ.weight x) =
+      (∑ x ∈ Finset.univ.filter E, μ.weight x) +
+        (∑ x ∈ Finset.univ.filter F, μ.weight x)
   rw [hfilter, Finset.sum_union hdisj]
 
 #print axioms eventMass_union_of_disjoint
@@ -303,7 +308,7 @@ theorem eventMass_union_le_add {n : ℕ} {space : CoordinateSpace n}
         eventMass μ (fun x => E x ∨ (F x ∧ ¬ E x)) := by
     congr 1
     funext x
-    simp
+    by_cases hE : E x <;> simp [hE]
   rw [hrewrite]
   have hdis :
       ∀ x, ¬ (E x ∧ (fun y => F y ∧ ¬ E y) x) := by
@@ -366,7 +371,7 @@ theorem eventMass_complement {n : ℕ} {space : CoordinateSpace n}
           eventMass μ (fun x => E x ∨ ¬ E x) := by
             congr 1
             funext x
-            exact propext (or_not (E x))
+            exact propext (Classical.em (E x))
       _ = eventMass μ E + eventMass μ (fun x => ¬ E x) := hunion
   rw [eventMass_univ] at hall
   linarith
