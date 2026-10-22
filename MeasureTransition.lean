@@ -105,6 +105,21 @@ def improvedSecondMomentClaim {N : ℕ}
   ∀ i, d.noCodimOneAt i →
     d.moment2 i ≤ (d.c3 i - 2 * d.c1 i + 1) / (d.blockSize i)^2
 
+
+/-- Conditional comparison of the published sharp numerator with the general
+one. The hypothesis c₁ ≥ 1 is explicit: the sharper expression is not
+automatically smaller for arbitrary rational input data. -/
+lemma improved_rhs_le_general_rhs
+    (c1 c3 blockSize : ℚ)
+    (hc1 : 1 ≤ c1)
+    (hblock : 0 < blockSize) :
+    (c3 - 2 * c1 + 1) / (blockSize)^2 ≤
+      c3 / (blockSize)^2 := by
+  apply div_le_div_of_nonneg_right
+  · nlinarith
+  · positivity
+
+
 /-- At the endpoint alpha = 0, the removed-mass share is exactly zero.
 This explicit endpoint lemma keeps the max branch and denominator guard visible. -/
 lemma removed_mass_zero
