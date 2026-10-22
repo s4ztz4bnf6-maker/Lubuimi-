@@ -90,17 +90,35 @@ structure GeneralSecondMomentBound (N : ℕ) where
 Improved second-moment bound. The geometric predicate must be established
 from the actual hyperplane configuration, not merely assumed without proof.
 -/
-structure ImprovedSecondMomentBound (N : ℕ) where
+structure ImprovedSecondMomentData (N : ℕ) where
   blockSize : Fin N → ℚ
   c1 : Fin N → ℚ
   c3 : Fin N → ℚ
   moment2 : Fin N → ℚ
   blockSize_pos : ∀ i, 0 < blockSize i
   noCodimOneAt : Fin N → Prop
-  improved_bound :
-    ∀ i, noCodimOneAt i →
-      moment2 i ≤
-        (c3 i - 2 * c1 i + 1) / (blockSize i)^2
+
+/-- The improved estimate is a proposition to prove from counting lemmas,
+not a proof field assumed by the data interface. -/
+def improvedSecondMomentClaim {N : ℕ}
+    (d : ImprovedSecondMomentData N) : Prop :=
+  ∀ i, d.noCodimOneAt i →
+    d.moment2 i ≤ (d.c3 i - 2 * d.c1 i + 1) / (d.blockSize i)^2
+
+
+/-- Conditional comparison of the published sharp numerator with the general
+one. The hypothesis c₁ ≥ 1 is explicit: the sharper expression is not
+automatically smaller for arbitrary rational input data. -/
+lemma improved_rhs_le_general_rhs
+    (c1 c3 blockSize : ℚ)
+    (hc1 : 1 ≤ c1)
+    (hblock : 0 < blockSize) :
+    (c3 - 2 * c1 + 1) / (blockSize)^2 ≤
+      c3 / (blockSize)^2 := by
+  apply div_le_div_of_nonneg_right
+  · nlinarith
+  · positivity
+
 
 /-- At the endpoint alpha = 0, the removed-mass share is exactly zero.
 This explicit endpoint lemma keeps the max branch and denominator guard visible. -/
