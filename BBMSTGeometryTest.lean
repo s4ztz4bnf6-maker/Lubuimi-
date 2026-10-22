@@ -249,6 +249,19 @@ theorem eventMass_univ {n : ℕ} {space : CoordinateSpace n}
 
 
 /-- The empty event has zero mass. -/
+
+
+/-- Every event has mass at most one. This follows from monotonicity and
+normalization, without assuming independence or a product factorization. -/
+theorem eventMass_le_one {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (E : CoordinatePoint space → Prop) :
+    eventMass μ E ≤ 1 := by
+  calc
+    eventMass μ E ≤ eventMass μ (fun _ => True) :=
+      eventMass_mono μ E (fun _ => True) (by intro x hx; trivial)
+    _ = 1 := eventMass_univ μ
+
 theorem eventMass_empty {n : ℕ} {space : CoordinateSpace n}
     (μ : ProductDistribution space) :
     eventMass μ (fun _ => False) = 0 := by
