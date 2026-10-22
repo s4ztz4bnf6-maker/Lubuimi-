@@ -36,3 +36,6 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/MeasureTransition.olean MeasureTransition.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+
+      - name: Compile validated finite parameter interface
+        run: lake env lean -o .lake/build/lib/lean/ValidatedParameters.olean ValidatedParameters.lean
