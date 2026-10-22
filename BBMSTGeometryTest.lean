@@ -603,3 +603,20 @@ theorem exists_point_of_eventMass_pos
   simp [eventMass, hfalse] at hpos
 
 #print axioms exists_point_of_eventMass_pos
+
+
+/-- A strict finite union-mass bound yields a point outside every forbidden
+event. This is the existential form needed by a covering-system argument. -/
+theorem exists_point_avoiding_events
+    {ι : Type*} [DecidableEq ι]
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (s : Finset ι)
+    (E : ι → CoordinatePoint space → Prop)
+    (hsum : (∑ i ∈ s, eventMass μ (E i)) < 1) :
+    ∃ x : CoordinatePoint space, ∀ i ∈ s, ¬ E i x := by
+  have hpos := eventMass_uncovered_pos_of_sum_lt_one μ s E hsum
+  exact exists_point_of_eventMass_pos μ
+    (fun x => ∀ i ∈ s, ¬ E i x) hpos
+
+#print axioms exists_point_avoiding_events
