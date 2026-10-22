@@ -685,3 +685,34 @@ theorem eventMass_intersection_zero_of_disagreeing_overlap
     ⟨x, hx.1, hx.2⟩
 
 #print axioms eventMass_intersection_zero_of_disagreeing_overlap
+
+
+/-- Two-sided event-mass transfer under a pointwise relative distortion
+bound. This packages the quantitative obligation behind a distortion
+argument: if every point weight changes by at most an epsilon fraction of
+the reference weight, every event mass changes by the same relative factor.
+No independence hypothesis is used here; the estimate is purely pointwise. -/
+theorem eventMass_between_of_pointwise_distortion
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ ν : ProductDistribution space)
+    (E : CoordinatePoint space → Prop)
+    (ε : ℚ) (hε : 0 ≤ ε)
+    (hlower : ∀ x, (1 - ε) * ν.weight x ≤ μ.weight x)
+    (hupper : ∀ x, μ.weight x ≤ (1 + ε) * ν.weight x) :
+    (1 - ε) * eventMass ν E ≤ eventMass μ E ∧
+      eventMass μ E ≤ (1 + ε) * eventMass ν E := by
+  constructor
+  · classical
+    unfold eventMass
+    calc
+      (1 - ε) * (∑ x ∈ Finset.univ.filter E, ν.weight x) =
+          ∑ x ∈ Finset.univ.filter E, (1 - ε) * ν.weight x := by
+            rw [Finset.mul_sum]
+      _ ≤ ∑ x ∈ Finset.univ.filter E, μ.weight x := by
+            apply Finset.sum_le_sum
+            intro x hx
+            exact hlower x
+  · exact eventMass_le_const_mul_of_pointwise μ ν E (1 + ε)
+      (by linarith) hupper
+
+#print axioms eventMass_between_of_pointwise_distortion
