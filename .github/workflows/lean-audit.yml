@@ -49,5 +49,11 @@ jobs:
       - name: Compile finite coordinate geometry incidence tests
         run: |
           set -o pipefail
-          lake env lean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryTest.olean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
           ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
+
+      - name: Compile exact intersection-mass transfer
+        run: |
+          set -o pipefail
+          lake env lean BBMSTIntersectionMass.lean 2>&1 | tee /tmp/bbmst-intersection-mass.log
+          ! grep -q 'sorryAx' /tmp/bbmst-intersection-mass.log
