@@ -334,6 +334,10 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hxE hxF
     exact hdis x ⟨hxE, hxF⟩
   rw [Finset.sum_union hdisj]
+  · rfl
+  · intro x hxE hxF
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hxE hxF
+    exact (hdis x ⟨hxE, hxF⟩).elim
 
 #print axioms eventMass_union_of_disjoint
 
