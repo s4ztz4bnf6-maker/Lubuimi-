@@ -570,3 +570,22 @@ theorem eventMass_uncovered_ge_one_sub_sum
   linarith
 
 #print axioms eventMass_uncovered_ge_one_sub_sum
+
+
+/-- Strict positivity form of the finite survival certificate. This is the
+usable noncoverage interface: once a source-faithful argument proves that the
+sum of forbidden-event masses is strictly below one, a point outside their
+union exists because the surviving event has positive mass. This lemma does
+not supply that BBMST-specific strict bound. -/
+theorem eventMass_uncovered_pos_of_sum_lt_one
+    {ι : Type*} [DecidableEq ι]
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (s : Finset ι)
+    (E : ι → CoordinatePoint space → Prop)
+    (hsum : (∑ i ∈ s, eventMass μ (E i)) < 1) :
+    0 < eventMass μ (fun x => ∀ i ∈ s, ¬ E i x) := by
+  have h := eventMass_uncovered_ge_one_sub_sum μ s E
+  linarith
+
+#print axioms eventMass_uncovered_pos_of_sum_lt_one
