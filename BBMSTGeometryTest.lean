@@ -669,3 +669,21 @@ theorem eventMass_zero_of_forall_not
   simp
 
 #print axioms eventMass_zero_of_forall_not
+
+
+/-- A disagreement on a shared fixed coordinate makes the intersection
+event have zero mass under every normalized nonnegative distribution. This
+connects exact coordinate incompatibility to the measure layer. -/
+theorem eventMass_intersection_zero_of_disagreeing_overlap
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ : ProductDistribution space)
+    (H₁ H₂ : CoordinateHypersurface space)
+    (i : Fin n) (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed)
+    (hdis : H₁.value i hi₁ ≠ H₂.value i hi₂) :
+    eventMass μ (fun x => H₁.Contains x ∧ H₂.Contains x) = 0 := by
+  apply eventMass_zero_of_forall_not μ
+  intro x hx
+  exact (disjoint_of_disagreeing_overlap H₁ H₂ i hi₁ hi₂ hdis)
+    ⟨x, hx.1, hx.2⟩
+
+#print axioms eventMass_intersection_zero_of_disagreeing_overlap
