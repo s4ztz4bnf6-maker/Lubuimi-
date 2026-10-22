@@ -496,3 +496,17 @@ end FactorizedProductDistribution
 
 #print axioms FactorizedProductDistribution.weight_eq_prod
 #print axioms FactorizedProductDistribution.coordinate_weight_nonneg
+
+
+/-- Turn normalized coordinate weights into an actual joint probability
+distribution. The pointwise product law, nonnegativity, and total mass one
+are all discharged from the coordinate hypotheses; callers need not assume
+normalization of an arbitrary joint distribution. -/
+def CoordinateWeightSystem.toProductDistribution {n : ℕ}
+    {space : CoordinateSpace n} (w : CoordinateWeightSystem space) :
+    ProductDistribution space where
+  weight := factorizedPointWeight w
+  h_nonneg := factorizedPointWeight_nonneg w
+  h_sum_one := factorizedPointWeight_total_mass w
+
+#print axioms CoordinateWeightSystem.toProductDistribution
