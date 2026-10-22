@@ -280,7 +280,7 @@ theorem eventMass_union_of_disjoint {n : ℕ} {space : CoordinateSpace n}
       Finset.univ.filter (fun x : CoordinatePoint space => E x ∨ F x) =
         (Finset.univ.filter E) ∪ (Finset.univ.filter F) := by
     ext x
-    simp [or_and_right, and_or_left, hdis x]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
   have hdisj : Disjoint (Finset.univ.filter E) (Finset.univ.filter F) := by
     rw [Finset.disjoint_left]
     intro x hxE hxF
