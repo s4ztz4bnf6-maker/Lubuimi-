@@ -81,3 +81,16 @@ Lean adaptation:
 - Retain the generic moment bound as a fallback when the improved branch's hypotheses fail.
 
 Source: published BBMST paper, especially the structural Lemma 3.4 and the proof chain leading to Theorem 3.2. Publisher record: https://ems.press/content/serial-article-files/42559
+
+
+## Version-control checklist for the formal source (2026-10-22)
+
+Before importing any statement into Lean, pin it to the peer-reviewed 2021 version, not the 2019 preprint. The literature comparison identifies several proof-relevant differences:
+- Theorem 3.2's improved second-moment estimate uses coordinate size at least 2 in the published paper, rather than at least 3 in preprint v1.
+- Theorem 3.1 uses a union-bound inequality in the published proof; a preprint line displayed equality.
+- Lemma 5.3 has the direction \(\widehat{\mu}_k\leq\mu_k\) in the published proof; preprint v1 had the sign reversed.
+- Proposition 4.1 states a limit in the published version, not only a limit inferior.
+
+These are not cosmetic changes: the first affects the admissible coordinate domain, the next two affect proof direction, and the last affects the strength of the asymptotic conclusion. Keep a source-version tag beside each formalized theorem and add regression examples at the boundary coordinate size 2.
+
+Next concrete Lean task: finish the finite fibre-extension lemma with explicit zero-mass handling, then prove the general moment bound without the codimension-one hypothesis. Only after that proof compiles should the improved bound be stated with its extra hypothesis. This ordering prevents the sharp theorem from masking a missing generic inequality.
