@@ -413,4 +413,37 @@ theorem finiteEventMass_compl_add_one
 
 #print axioms finiteEventMass_compl_add_one
 
+
+/--
+Expected event count written as a sum of the individual finite event masses.
+This is the first-moment interface between indicator algebra and the finite
+measure layer; probability normalization is still a separate hypothesis.
+-/
+theorem finiteEventMass_sum_event_count
+    {Ω I : Type*} [Fintype Ω] [Fintype I]
+    (μ : Ω → ℚ) (E : I → Ω → Prop) :
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0))
+      = ∑ i : I, finiteEventMass μ (E i) := by
+  rw [finite_weighted_event_count_first_moment]
+  simp [finiteEventMass]
+
+#print axioms finiteEventMass_sum_event_count
+
+/--
+Second moment of the event count as the sum of the finite masses of all
+ordered pairwise intersections. This is the precise interface needed before
+the BBMST geometric intersection estimates can be applied to the measure.
+No independence or normalization is built into the identity.
+-/
+theorem finiteEventMass_pair_intersection_sum
+    {Ω I : Type*} [Fintype Ω] [Fintype I]
+    (μ : Ω → ℚ) (E : I → Ω → Prop) :
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0) ^ 2)
+      = ∑ i : I, ∑ j : I,
+          finiteEventMass μ (fun x => E i x ∧ E j x) := by
+  rw [finite_weighted_event_pair_intersection_sum]
+  simp [finiteEventMass]
+
+#print axioms finiteEventMass_pair_intersection_sum
+
 end BBMSTAudit
