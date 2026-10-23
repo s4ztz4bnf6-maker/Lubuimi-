@@ -314,3 +314,24 @@ theorem finiteEventMass_nonneg
 #print axioms finiteEventMass_nonneg
 
 end BBMSTAudit
+
+
+/-- A nonnegative event mass cannot exceed the total mass of the space.
+This deterministic domination lemma is the finite-measure bridge needed
+before imposing the probability normalization `∑ x, μ x = 1`.
+-/
+theorem finiteEventMass_le_totalMass
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop)
+    (hμ : ∀ x, 0 ≤ μ x) :
+    finiteEventMass μ E ≤ ∑ x : Ω, μ x := by
+  classical
+  unfold finiteEventMass
+  apply Finset.sum_le_sum
+  intro x hx
+  by_cases hE : E x
+  · simp [hE]
+  · simp [hE]
+    exact hμ x
+
+#print axioms finiteEventMass_le_totalMass
