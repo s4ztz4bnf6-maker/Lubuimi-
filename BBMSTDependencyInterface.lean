@@ -46,7 +46,7 @@ theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     exact ⟨Ne.symm hne, i, hiH, hiK⟩
 
 /-- The finite neighborhood of an event in the coordinate-overlap graph. -/
-def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
+noncomputable def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
   Finset.univ.filter (fun K => Depends S H K)
 
 theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
@@ -63,8 +63,9 @@ theorem neighbor_symm {m n : ℕ} (S : FiniteSystem m n)
 /-- No event is its own neighbor: the graph relation excludes equal indices. -/
 theorem self_not_neighbor {m n : ℕ} (S : FiniteSystem m n)
     (H : Fin m) : H ∉ neighbors S H := by
-  rw [mem_neighbors_iff]
-  exact fun h => h.1 rfl
+  intro h
+  have hdep : Depends S H H := (mem_neighbors_iff S H H).mp h
+  exact hdep.1 rfl
 
 
 /-- Every graph neighbor carries a concrete shared-coordinate witness.
@@ -112,7 +113,7 @@ graph-side quantity for a local-lemma argument. It is deliberately kept
 separate from the coordinatewise budget: a neighbor may overlap H in more
 than one coordinate, so a coordinate budget cannot be converted into this
 sum without an additional source-specific counting argument. -/
-def weightedNeighborLoad {m n : ℕ}
+noncomputable def weightedNeighborLoad {m n : ℕ}
     (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m) : ℚ :=
   ∑ K ∈ neighbors S H, B.tilt K * S.weight K
 
@@ -166,14 +167,14 @@ theorem weightedNeighborLoad_le_support_coordinate_load
               · simp [hmem]
                 exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
               · simp [hmem])
-            hiH
+            (a := i) hiH
           simpa [hiK] using hsum
     _ ≤ ∑ K : Fin m,
           ∑ i ∈ S.fixed H,
             (if i ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · exact Finset.subset_univ _
-      · intro K hKnot
+      · intro K hKmem hKnot
         apply Finset.sum_nonneg
         intro i hi
         by_cases hmem : i ∈ S.fixed K
