@@ -230,3 +230,36 @@ theorem finite_weighted_event_count_second_moment
   rw [finite_event_count_second_moment_expansion (P := fun i => E i x)]
 
 #print axioms finite_weighted_event_count_second_moment
+
+/--
+Reordered weighted second-moment identity.
+
+The event-count second moment can also be summed first over ordered event
+pairs and then over the sample space. This is the form needed for a genuine
+second-moment argument: each inner sum is the mass of an event intersection.
+The weights remain arbitrary rationals; positivity and normalization are
+separate hypotheses for probabilistic conclusions.
+-/
+theorem finite_weighted_event_pair_intersection_sum
+    {Ω I : Type*} [Fintype Ω] [Fintype I]
+    (μ : Ω → ℚ) (E : I → Ω → Prop) :
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0) ^ 2)
+      =
+    ∑ i : I, ∑ j : I, ∑ x : Ω,
+      μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
+  classical
+  calc
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0) ^ 2)
+        = ∑ x : Ω, μ x *
+            (∑ i : I, ∑ j : I,
+              if E i x ∧ E j x then (1 : ℚ) else 0) := by
+              exact finite_weighted_event_count_second_moment μ E
+    _ = ∑ x : Ω, ∑ i : I, ∑ j : I,
+          μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
+            simp_rw [Finset.mul_sum]
+    _ = ∑ i : I, ∑ j : I, ∑ x : Ω,
+          μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
+            classical
+            simp_rw [Finset.sum_comm]
+
+#print axioms finite_weighted_event_pair_intersection_sum
