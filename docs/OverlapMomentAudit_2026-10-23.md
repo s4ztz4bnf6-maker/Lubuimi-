@@ -37,3 +37,36 @@ The existing `Depends(H,K)` interface should be connected to the actual support-
 - Explicitly handle empty supports, empty sections, and zero-probability coordinates.
 - Keep paper hypotheses separate from consequences.
 - Run Lean compilation and `#print axioms` on the final theorem; neither is asserted by this roadmap.
+## 5. Current formalization boundary (checked 2026-10-23)
+
+The current Lean lemmas `finite_weighted_fiber_expansion`,
+`finite_square_sum_expansion`, and `disjoint_block_sum_factorization` are
+finite algebraic identities over `ℚ`. They do **not** yet model a probability
+measure, event indicators, coordinate restrictions, or the source paper's
+normalization. In particular, the independent finite types in the weighted
+identity do not themselves prove that the corresponding residual sections
+are independent under the intended product measure.
+
+The next implementation must therefore introduce a concrete finite product
+space and restriction maps before proving a probabilistic statement. The
+probability bridge should expose these objects explicitly:
+
+- the ambient finite index type and coordinate alphabets;
+- the product measure and its normalization;
+- the support of each event and the shared support;
+- the section obtained by fixing a shared-coordinate assignment;
+- the residual product measure on each section;
+- a sum identity that remains valid for zero-mass fibers without dividing by
+  their masses.
+
+## 6. Acceptance criteria for the next theorem
+
+A theorem counts as the overlap-to-moment bridge only if its assumptions and
+conclusion mention the actual event/support/measure objects (or definitions
+proved equal to the source definitions). A theorem over arbitrary functions
+alone is a useful algebraic kernel, but it must not be presented as a proof
+of independence, a BBMST moment estimate, or the sieve criterion.
+
+For each new theorem, record `#print axioms`, compile the exact importing
+module, and inspect the CI result for the commit that contains it. A queued
+or in-progress workflow is not a successful verification.
