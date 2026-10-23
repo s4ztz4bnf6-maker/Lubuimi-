@@ -36,3 +36,5 @@ jobs:
         run: lake env lean AuditCheck.lean
       - name: Compile disjoint-block factorization lemma
         run: lake env lean BBMSTDisjointFactorization.lean
+      - name: Compile finite weighted overlap-conditioning identity
+        run: lake env lean BBMSTOverlapConditioning.lean
