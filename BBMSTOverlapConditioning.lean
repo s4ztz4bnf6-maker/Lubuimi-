@@ -46,4 +46,18 @@ theorem finite_square_sum_expansion
 #print axioms BBMSTAudit.finite_weighted_fiber_expansion
 #print axioms BBMSTAudit.finite_square_sum_expansion
 
+/--
+Weighted finite second-moment expansion. The weight can represent an
+unnormalized finite mass; normalization and identification with the paper's
+probability measure remain separate obligations.
+-/
+theorem finite_weighted_square_sum_expansion
+    {α : Type*} [Fintype α] (w f : α → ℚ) :
+    (∑ a : α, w a * f a) ^ 2
+      = ∑ a : α, ∑ b : α, (w a * f a) * (w b * f b) := by
+  simpa using
+    (finite_square_sum_expansion (f := fun a : α => w a * f a))
+
+#print axioms BBMSTAudit.finite_weighted_square_sum_expansion
+
 end BBMSTAudit
