@@ -110,8 +110,6 @@ theorem weightedNeighborLoad_nonneg {m n : ℕ}
   unfold weightedNeighborLoad
   apply Finset.sum_nonneg
   intro K hK
-  apply Finset.sum_nonneg
-  intro h hmem
   exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
 
 #print axioms weightedNeighborLoad_nonneg
