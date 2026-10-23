@@ -918,3 +918,33 @@ theorem eventMass_le_good_bad_transfer
   linarith
 
 #print axioms eventMass_le_good_bad_transfer
+
+
+/-!
+## Bridging the product model to the event-mass API
+
+The coordinate weights define a genuine normalized distribution on the
+finite dependent product. Keeping this constructor explicit prevents later
+cylinder identities from silently switching between a weight function and
+an arbitrary joint distribution.
+-/
+
+namespace CoordinateWeightSystem
+
+/-- The normalized product distribution induced by independent coordinate
+weights. Its normalization is proved by the finite product-sum identity. -/
+def toProductDistribution {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space) : ProductDistribution space where
+  weight := factorizedPointWeight w
+  h_nonneg := factorizedPointWeight_nonneg w
+  h_sum_one := factorizedPointWeight_total_mass w
+
+@[simp] theorem toProductDistribution_weight
+    {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space) (x : CoordinatePoint space) :
+    (w.toProductDistribution).weight x = factorizedPointWeight w x := rfl
+
+#print axioms toProductDistribution
+#print axioms toProductDistribution_weight
+
+end CoordinateWeightSystem
