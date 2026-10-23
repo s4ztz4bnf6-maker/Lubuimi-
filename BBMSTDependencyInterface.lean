@@ -112,6 +112,37 @@ theorem weightedNeighborLoad_nonneg {m n : ℕ}
   intro K hK
   exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
 
+
+/-- Tilted mass incident to one coordinate. -/
+def coordinateTiltedLoad {m n : ℕ}
+    (S : FiniteSystem m n) (B : TiltedBudget S) (i : Fin n) : ℚ :=
+  ∑ K : Fin m, if i ∈ S.fixed K then B.tilt K * S.weight K else 0
+
+/-- If a separate combinatorial counting argument shows that the
+neighbor load is dominated by the sum of coordinate loads on H's support,
+then the coordinatewise BBMST budget gives an explicit support-size bound.
+The domination premise is intentionally explicit: it is the bridge that
+must be proved for the concrete source construction, not silently assumed. -/
+theorem weightedNeighborLoad_le_support_budget
+    {m n : ℕ} (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m)
+    (hcover : weightedNeighborLoad S B H ≤
+      ∑ i ∈ S.fixed H, coordinateTiltedLoad S B i) :
+    weightedNeighborLoad S B H ≤
+      (S.fixed H).card * (B.eta / 2) := by
+  apply le_trans hcover
+  calc
+    (∑ i ∈ S.fixed H, coordinateTiltedLoad S B i) ≤
+        ∑ i ∈ S.fixed H, (B.eta / 2) := by
+      apply Finset.sum_le_sum
+      intro i hi
+      have hbudget := B.coordinate_budget i
+      unfold coordinateTiltedLoad
+      exact le_of_lt hbudget
+    _ = (S.fixed H).card * (B.eta / 2) := by
+      simp [Finset.sum_const, nsmul_eq_mul]
+
+#print axioms weightedNeighborLoad_le_support_budget
+
 #print axioms weightedNeighborLoad_nonneg
 
 /-- The local budget gives a strict coordinatewise bound. This lemma only
