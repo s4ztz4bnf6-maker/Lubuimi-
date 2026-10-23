@@ -201,7 +201,6 @@ theorem finite_event_count_second_moment_expansion
   intro a ha
   apply Finset.sum_congr rfl
   intro b hb
-  exact finite_event_indicator_product P P a |>.trans (by
-    simp)
+  by_cases hpa : P a <;> by_cases hpb : P b <;> simp [hpa, hpb]
 
 #print axioms finite_event_count_second_moment_expansion
