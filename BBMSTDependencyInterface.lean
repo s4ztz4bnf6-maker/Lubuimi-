@@ -31,7 +31,11 @@ theorem depends_iff_common_coordinate {m n : ℕ}
     (S : FiniteSystem m n) (H K : Fin m) :
     Depends S H K ↔ H ≠ K ∧
       ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K := by
-  simp [Depends, Finset.Nonempty, Finset.mem_inter]
+  constructor
+  · rintro ⟨hne, ⟨i, hi⟩⟩
+    exact ⟨hne, i, hi.1, hi.2⟩
+  · rintro ⟨hne, i, hiH, hiK⟩
+    exact ⟨hne, ⟨i, ⟨hiH, hiK⟩⟩⟩
 
 theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : Depends S H K ↔ Depends S K H := by
