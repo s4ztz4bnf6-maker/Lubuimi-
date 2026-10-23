@@ -23,7 +23,7 @@ structure FiniteSystem (m n : ℕ) where
 
 /-- Distinct events are dependent when their coordinate supports overlap. -/
 def Depends {m n : ℕ} (S : FiniteSystem m n) (H K : Fin m) : Prop :=
-  H ≠ K ∧ (S.fixed H ∩ S.fixed K).Nonempty
+  H ≠ K ∧ ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K
 
 /-- The dependency edge has an explicit coordinate witness: two distinct
 events are adjacent exactly when some coordinate is fixed by both. -/
@@ -32,27 +32,27 @@ theorem depends_iff_common_coordinate {m n : ℕ}
     Depends S H K ↔ H ≠ K ∧
       ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K := by
   constructor
-  · rintro ⟨hne, ⟨i, hi⟩⟩
-    exact ⟨hne, i, hi.1, hi.2⟩
   · rintro ⟨hne, i, hiH, hiK⟩
-    exact ⟨hne, ⟨i, ⟨hiH, hiK⟩⟩⟩
+    exact ⟨hne, i, hiH, hiK⟩
+  · rintro ⟨hne, i, hiH, hiK⟩
+    exact ⟨hne, i, hiH, hiK⟩
 
 theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : Depends S H K ↔ Depends S K H := by
   constructor
-  · rintro ⟨hne, ⟨i, hi⟩⟩
-    refine ⟨Ne.symm hne, ⟨i, ?_⟩⟩
-    exact ⟨hi.2, hi.1⟩
-  · rintro ⟨hne, ⟨i, hi⟩⟩
-    refine ⟨Ne.symm hne, ⟨i, ?_⟩⟩
-    exact ⟨hi.2, hi.1⟩
+  · rintro ⟨hne, i, hiH, hiK⟩
+    exact ⟨Ne.symm hne, i, hiK, hiH⟩
+  · rintro ⟨hne, i, hiK, hiH⟩
+    exact ⟨Ne.symm hne, i, hiH, hiK⟩
 
  /-- The finite neighborhood of an event in the coordinate-overlap graph. -/
-def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
-  Finset.univ.filter (fun K => Depends S H K)
+noncomputable def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) := by
+  classical
+  exact Finset.univ.filter (fun K => Depends S H K)
 
 theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : K ∈ neighbors S H ↔ Depends S H K := by
+  classical
   simp [neighbors]
 
 /-- Adjacency is symmetric, so the coordinate-overlap relation really
@@ -76,9 +76,8 @@ theorem neighbor_has_shared_coordinate {m n : ℕ}
     (S : FiniteSystem m n) (H K : Fin m)
     (hK : K ∈ neighbors S H) :
     ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K := by
-  have hdep : Depends S H K := mem_neighbors_iff S H K |>.mp hK
-  rcases (depends_iff_common_coordinate S H K).mp hdep with
-    ⟨_, i, hiH, hiK⟩
+  have hdep : Depends S H K := (mem_neighbors_iff S H K).mp hK
+  rcases hdep with ⟨_, i, hiH, hiK⟩
   exact ⟨i, hiH, hiK⟩
 
 #print axioms neighbor_has_shared_coordinate
@@ -179,7 +178,10 @@ theorem neighbor_term_le_support_tilted_load
             if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0)
           (by
             intro K' hK'
-            split <;> positivity)
+            by_cases hmem : i ∈ S.fixed K'
+            · simp [hmem]
+              exact mul_nonneg (B.tilt_nonneg K') (S.weight_nonneg K')
+            · simp [hmem])
           (Finset.mem_univ K)
         simpa [hiK] using hsum
       _ = ∑ K' : Fin m,
@@ -189,7 +191,10 @@ theorem neighbor_term_le_support_tilted_load
     unfold coordinateTiltedLoad
     apply Finset.sum_nonneg
     intro K' hK'
-    split <;> positivity
+    by_cases hmem : j ∈ S.fixed K'
+    · simp [hmem]
+      exact mul_nonneg (B.tilt_nonneg K') (S.weight_nonneg K')
+    · simp [hmem]
   calc
     B.tilt K * S.weight K ≤ coordinateTiltedLoad S B i := hterm
     _ ≤ ∑ j ∈ S.fixed H, coordinateTiltedLoad S B j := by
