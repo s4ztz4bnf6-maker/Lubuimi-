@@ -204,3 +204,35 @@ theorem finite_event_count_second_moment_expansion
   by_cases hpa : P a <;> by_cases hpb : P b <;> simp [hpa, hpb]
 
 #print axioms finite_event_count_second_moment_expansion
+
+
+/--
+Weighted finite second-moment identity for an event count.
+
+For an arbitrary rational mass function μ on a finite sample space Ω,
+the weighted sum of the squared number of occurring events equals the
+weighted sum of all pairwise-intersection indicators, pointwise over Ω.
+No normalization or independence is assumed. To obtain a probability
+statement, one must separately establish nonnegativity and total mass one
+for μ and identify the events with the BBMST hyperplane family.
+-/
+theorem finite_weighted_event_count_second_moment
+    {Ω I : Type*} [Fintype Ω] [Fintype I]
+    (μ : Ω → ℚ) (E : I → Ω → Prop) :
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0) ^ 2)
+      =
+    ∑ x : Ω, μ x *
+      (∑ i : I, ∑ j : I,
+        if E i x ∧ E j x then (1 : ℚ) else 0) := by
+  classical
+  apply Finset.sum_congr rfl
+  intro x hx
+  rw [BBMSTAudit.finite_square_sum_expansion]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i hi
+  apply Finset.sum_congr rfl
+  intro j hj
+  exact BBMSTAudit.finite_event_indicator_product (E i x) (E j x) True
+
+#print axioms finite_weighted_event_count_second_moment
