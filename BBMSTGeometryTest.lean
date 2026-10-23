@@ -859,3 +859,66 @@ theorem cylinderCoordinateSums_product_eq {n : ℕ}
 
 #print axioms cylinderCoordinateSum_eq
 #print axioms cylinderCoordinateSums_product_eq
+
+
+/-!
+## Good/bad-state transfer lemma
+
+This lemma formalizes the proposed alternative to a uniform pointwise
+distortion bound. On good states we compare weights pointwise; the total
+mass of bad states is paid as an additive error. It is a generic finite
+inequality, not yet a source-specific BBMST estimate.
+-/
+
+/-- Additive-error transfer when pointwise domination is available only on
+a good subset. The bad-state mass is charged once, independently of the
+event being tested. -/
+theorem eventMass_le_good_bad_transfer
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ ν : ProductDistribution space)
+    (E G : CoordinatePoint space → Prop)
+    (C η : ℚ) (hC : 0 ≤ C) (hη : 0 ≤ η)
+    (hgood : ∀ x, G x → μ.weight x ≤ C * ν.weight x)
+    (hbad : eventMass μ (fun x => ¬ G x) ≤ η) :
+    eventMass μ E ≤ C * eventMass ν E + η := by
+  classical
+  have hsplit :
+      eventMass μ E =
+        eventMass μ (fun x => E x ∧ G x) +
+          eventMass μ (fun x => E x ∧ ¬ G x) := by
+    unfold eventMass
+    simp only [Finset.sum_filter]
+    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases he : E x <;> by_cases hg : G x <;> simp [he, hg]
+  have hgoodmass :
+      eventMass μ (fun x => E x ∧ G x) ≤
+        C * eventMass ν E := by
+    unfold eventMass
+    calc
+      (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), μ.weight x) ≤
+          ∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), C * ν.weight x := by
+            apply Finset.sum_le_sum
+            intro x hx
+            exact hgood x (Finset.mem_filter.mp hx |>.2.2)
+      _ ≤ C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
+            rw [Finset.mul_sum]
+            apply Finset.sum_le_sum_of_subset_of_nonneg
+            · intro x hx
+              exact Finset.mem_filter.mpr
+                ⟨Finset.mem_univ _, (Finset.mem_filter.mp hx).2.1⟩
+            · intro x hx hnot
+              exact mul_nonneg hC (ν.h_nonneg x)
+      _ = C * eventMass ν E := rfl
+  have hbadmass :
+      eventMass μ (fun x => E x ∧ ¬ G x) ≤ η := by
+    apply le_trans
+      (eventMass_mono μ (fun x => E x ∧ ¬ G x) (fun x => ¬ G x) ?_)
+      hbad
+    intro x hx
+    exact hx.2
+  rw [hsplit]
+  linarith
+
+#print axioms eventMass_le_good_bad_transfer
