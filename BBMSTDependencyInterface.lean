@@ -35,6 +35,27 @@ theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     refine ⟨Ne.symm hne, ⟨i, ?_⟩⟩
     exact ⟨hi.2, hi.1⟩
 
+ /-- The finite neighborhood of an event in the coordinate-overlap graph. -/
+def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
+  Finset.univ.filter (fun K => Depends S H K)
+
+theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
+    (H K : Fin m) : K ∈ neighbors S H ↔ Depends S H K := by
+  simp [neighbors]
+
+/-- Adjacency is symmetric, so the coordinate-overlap relation really
+defines an undirected finite graph on the event indices. -/
+theorem neighbor_symm {m n : ℕ} (S : FiniteSystem m n)
+    (H K : Fin m) (hK : K ∈ neighbors S H) : H ∈ neighbors S K := by
+  apply mem_neighbors_iff.mpr
+  exact (depends_symmetric S H K).mp (mem_neighbors_iff.mp hK)
+
+/-- No event is its own neighbor: the graph relation excludes equal indices. -/
+theorem self_not_neighbor {m n : ℕ} (S : FiniteSystem m n)
+    (H : Fin m) : H ∉ neighbors S H := by
+  rw [mem_neighbors_iff]
+  exact fun h => h.1 rfl
+
 /-- The un-tilted load on coordinate i: total event weight among events
 that constrain i. This is a diagnostic quantity, not the BBMST weighted
 local-lemma budget by itself. -/
