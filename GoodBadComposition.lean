@@ -27,8 +27,9 @@ theorem eventMass_compose_additive_error
     eventMass μ E ≤ (C * D) * eventMass ρ E + C * θ + η := by
   calc
     eventMass μ E ≤ C * eventMass ν E + η := hfirst
-    _ ≤ C * (D * eventMass ρ E + θ) + η :=
-      add_le_add_right (mul_le_mul_of_nonneg_left hsecond hC) η
+    _ ≤ C * (D * eventMass ρ E + θ) + η := by
+      have hmul := mul_le_mul_of_nonneg_left hsecond hC
+      nlinarith
     _ = (C * D) * eventMass ρ E + C * θ + η := by ring
 
 #print axioms eventMass_compose_additive_error
