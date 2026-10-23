@@ -185,18 +185,13 @@ theorem weightedNeighborLoad_le_support_coordinate_load
 
 #print axioms weightedNeighborLoad_le_support_coordinate_load
 
-/-- If a separate combinatorial counting argument shows that the
-neighbor load is dominated by the sum of coordinate loads on H's support,
-then the coordinatewise BBMST budget gives an explicit support-size bound.
-The domination premise is intentionally explicit: it is the bridge that
-must be proved for the concrete source construction, not silently assumed. -/
+/-- The generic incidence bound and the coordinatewise budget imply
+a support-size bound for the total weighted neighborhood load. -/
 theorem weightedNeighborLoad_le_support_budget
-    {m n : ℕ} (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m)
-    (hcover : weightedNeighborLoad S B H ≤
-      ∑ i ∈ S.fixed H, coordinateTiltedLoad S B i) :
+    {m n : ℕ} (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m) :
     weightedNeighborLoad S B H ≤
       (S.fixed H).card * (B.eta / 2) := by
-  apply le_trans hcover
+  apply le_trans (weightedNeighborLoad_le_support_coordinate_load S B H)
   calc
     (∑ i ∈ S.fixed H, coordinateTiltedLoad S B i) ≤
         ∑ i ∈ S.fixed H, (B.eta / 2) := by
@@ -208,6 +203,7 @@ theorem weightedNeighborLoad_le_support_budget
     _ = (S.fixed H).card * (B.eta / 2) := by
       simp [Finset.sum_const, nsmul_eq_mul]
 
+#print axioms weightedNeighborLoad_le_support_budget
 
 /-- A single neighbor's tilted weight is covered by the support-coordinate
 load of H. The shared-coordinate witness selects one summand; all other
