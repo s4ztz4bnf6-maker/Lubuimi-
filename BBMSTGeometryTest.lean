@@ -783,3 +783,27 @@ theorem eventMass_between_composed_pointwise_bounds
       _ = (D * F) * ν.weight x := by ring
 
 #print axioms eventMass_between_composed_pointwise_bounds
+
+/-- Exact pointwise splitting of a product weight into prescribed and free
+coordinates on a cylinder. The cylinder-mass identity follows by summing
+the free-coordinate factors using coordinate normalization. -/
+theorem factorizedPointWeight_split_on_cylinder
+    {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space)
+    (H : CoordinateHypersurface space)
+    (x : CoordinatePoint space)
+    (hx : H.Contains x) :
+    factorizedPointWeight w x =
+      (∏ i : Fin n, if hi : i ∈ H.fixed then
+        w.weight i (H.value i hi) else 1) *
+      (∏ i : Fin n, if hi : i ∈ H.fixed then
+        1 else w.weight i (x i)) := by
+  unfold factorizedPointWeight
+  rw [← Finset.prod_mul_distrib]
+  apply Finset.prod_congr rfl
+  intro i hi
+  by_cases hfix : i ∈ H.fixed
+  · simp [hfix, hx i hfix]
+  · simp [hfix]
+
+#print axioms factorizedPointWeight_split_on_cylinder
