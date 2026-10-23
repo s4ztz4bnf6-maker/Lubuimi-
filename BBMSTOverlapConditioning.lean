@@ -338,4 +338,25 @@ theorem finiteEventMass_le_totalMass
 
 #print axioms finiteEventMass_le_totalMass
 
+
+/--
+Complement partition identity for finite event masses. Every point belongs
+to exactly one of an event and its complement, so their masses add to the
+total mass. This is an algebraic identity for arbitrary rational weights;
+nonnegativity and normalization are separate assumptions.
+-/
+theorem finiteEventMass_compl_add_totalMass
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop) :
+    finiteEventMass μ E + finiteEventMass μ (fun x => ¬ E x)
+      = ∑ x : Ω, μ x := by
+  classical
+  unfold finiteEventMass
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hE : E x <;> simp [hE]
+
+#print axioms finiteEventMass_compl_add_totalMass
+
 end BBMSTAudit
