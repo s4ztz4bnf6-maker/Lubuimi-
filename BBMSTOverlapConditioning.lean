@@ -1,0 +1,24 @@
+import Mathlib
+
+namespace BBMSTAudit
+
+/--
+Finite weighted conditioning identity.
+
+For each shared-coordinate assignment c, the residual coordinate blocks
+are represented by independent finite index types α and β. The identity
+expands the conditional product into a sum over the two residual blocks.
+It is algebraic only: a probability-space application must separately prove
+that its fiber weights and conditional masses match the BBMST definitions.
+-/
+theorem finite_weighted_fiber_expansion
+    {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
+    (w : γ → ℚ) (f : γ → α → ℚ) (g : γ → β → ℚ) :
+    (∑ c : γ, w c * ((∑ a : α, f c a) * (∑ b : β, g c b)))
+      = ∑ c : γ, ∑ a : α, ∑ b : β, w c * (f c a * g c b) := by
+  classical
+  simp [Finset.mul_sum, Finset.sum_mul, mul_assoc, mul_left_comm, mul_comm]
+
+#print axioms BBMSTAudit.finite_weighted_fiber_expansion
+
+end BBMSTAudit
