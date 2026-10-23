@@ -173,10 +173,15 @@ theorem neighbor_term_le_support_tilted_load
       B.tilt K * S.weight K ≤
           ∑ K' : Fin m,
             (if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0) := by
-        apply Finset.single_le_sum
-        · intro K' hK'
-          split <;> positivity
-        · exact Finset.mem_univ K
+        have hsum := Finset.single_le_sum
+          (s := Finset.univ)
+          (f := fun K' : Fin m =>
+            if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0)
+          (by
+            intro K' hK'
+            split <;> positivity)
+          (Finset.mem_univ K)
+        simpa [hiK] using hsum
       _ = ∑ K' : Fin m,
             (if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0) := rfl
   have hload_nonneg : ∀ j : Fin n, 0 ≤ coordinateTiltedLoad S B j := by
