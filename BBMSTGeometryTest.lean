@@ -905,7 +905,7 @@ theorem eventMass_le_good_bad_transfer
     rw [Finset.mul_sum]
     apply Finset.sum_le_sum
     intro x hx
-    exact hgood x (Finset.mem_filter.mp hx).2
+    exact hgood x (Finset.mem_filter.mp hx).2.2
   have hgoodmass :
       eventMass μ (fun x => E x ∧ G x) ≤ C * eventMass ν E :=
     le_trans hgood_inter
