@@ -900,6 +900,8 @@ theorem eventMass_le_good_bad_transfer
   have hgood_inter :
       eventMass μ (fun x => E x ∧ G x) ≤
         C * eventMass ν (fun x => E x ∧ G x) := by
+    letI : DecidablePred (fun x : CoordinatePoint space => E x ∧ G x) :=
+      Classical.decPred _
     unfold eventMass
     rw [Finset.mul_sum]
     apply Finset.sum_le_sum
