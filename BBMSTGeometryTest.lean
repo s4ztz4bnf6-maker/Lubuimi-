@@ -899,10 +899,14 @@ theorem eventMass_le_good_bad_transfer
       eventMass μ (fun x => E x ∧ G x) ≤
           C * eventMass ν (fun x => E x ∧ G x) := by
         unfold eventMass
-        rw [Finset.mul_sum]
-        apply Finset.sum_le_sum
-        intro hx
-        exact hgood x (Finset.mem_filter.mp hx).2.2
+        calc
+          (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), μ.weight x) ≤
+              ∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), C * ν.weight x := by
+            apply Finset.sum_le_sum
+            intro x hx
+            exact hgood x (Finset.mem_filter.mp hx).2.2
+          _ = C * (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), ν.weight x) := by
+            rw [Finset.mul_sum]
       _ ≤ C * eventMass ν E :=
         mul_le_mul_of_nonneg_left
           (eventMass_mono ν (fun x => E x ∧ G x) E
