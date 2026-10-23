@@ -292,9 +292,10 @@ theorem finite_weighted_event_count_first_moment
 namespace BBMSTAudit
 
 /-- Finite event mass for arbitrary rational weights. Probability semantics require separate normalization. -/
-def finiteEventMass {Ω : Type*} [Fintype Ω]
-    (μ : Ω → ℚ) (E : Ω → Prop) : ℚ :=
-  ∑ x : Ω, μ x * (if E x then (1 : ℚ) else 0)
+noncomputable def finiteEventMass {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop) : ℚ := by
+  classical
+  exact ∑ x : Ω, μ x * (if E x then (1 : ℚ) else 0)
 
 /-- Nonnegative point weights induce nonnegative finite event masses. -/
 theorem finiteEventMass_nonneg
