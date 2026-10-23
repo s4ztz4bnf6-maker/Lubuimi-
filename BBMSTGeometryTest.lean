@@ -839,7 +839,8 @@ theorem cylinderCoordinateSum_eq {n : ℕ} {space : CoordinateSpace n}
       simp [hne]
     · intro hnot
       exact (hnot (Finset.mem_univ _)).elim
-  · simp [hfix, w.coordinate_sum_one i]
+  · simp only [dif_neg hfix]
+    exact w.coordinate_sum_one i
 
 /-- After separating coordinates, the product of all one-coordinate sums
 is exactly the product over the fixed coordinates. This theorem isolates the
