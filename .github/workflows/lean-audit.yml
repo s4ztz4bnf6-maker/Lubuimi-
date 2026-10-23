@@ -82,8 +82,8 @@ jobs:
           lake env lean BBMSTDependencyInterface.lean 2>&1 | tee /tmp/bbmst-dependency-interface.log
           ! grep -q 'sorryAx' /tmp/bbmst-dependency-interface.log
 
-      - name: Compile source-faithful BBMST local-lemma budget
+      - name: Compile exact BBMST Theorem 3.1 criterion interface
         run: |
           set -o pipefail
-          lake env lean BBMSTSourceLocalLemma.lean 2>&1 | tee /tmp/bbmst-source-local-lemma.log
-          ! grep -q 'sorryAx' /tmp/bbmst-source-local-lemma.log
+          lake env lean BBMSTTheorem31Criterion.lean 2>&1 | tee /tmp/bbmst-theorem31-criterion.log
+          ! grep -q 'sorryAx' /tmp/bbmst-theorem31-criterion.log
