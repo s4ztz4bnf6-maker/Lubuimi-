@@ -19,10 +19,12 @@ theorem finite_weighted_fiber_expansion
   classical
   calc
     (∑ c : γ, w c * ((∑ a : α, f c a) * (∑ b : β, g c b)))
-        = ∑ c : γ, ∑ a : α, w c * (f c a * (∑ b : β, g c b)) := by
-          simp_rw [Finset.sum_mul]
-    _ = ∑ c : γ, ∑ a : α, ∑ b : β, w c * (f c a * g c b) := by
+        = ∑ c : γ, (w c * (∑ a : α, f c a)) * (∑ b : β, g c b) := by
+          simp_rw [mul_assoc]
+    _ = ∑ c : γ, (∑ a : α, w c * f c a) * (∑ b : β, g c b) := by
           simp_rw [Finset.mul_sum]
+    _ = ∑ c : γ, ∑ a : α, ∑ b : β, w c * (f c a * g c b) := by
+          simp_rw [Finset.sum_mul, mul_assoc]
 
 #print axioms BBMSTAudit.finite_weighted_fiber_expansion
 
