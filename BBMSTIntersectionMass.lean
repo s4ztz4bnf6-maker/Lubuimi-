@@ -1,4 +1,5 @@
 import BBMSTGeometryTest
+import FiniteProductSumAudit
 
 /-!
 # Exact zero-mass transfer for incompatible coordinate cylinders
