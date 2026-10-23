@@ -233,6 +233,6 @@ theorem finite_weighted_event_count_second_moment
   intro i hi
   apply Finset.sum_congr rfl
   intro j hj
-  exact BBMSTAudit.finite_event_indicator_product (E i x) (E j x) True
+  by_cases hi : E i x <;> by_cases hj : E j x <;> simp [hi, hj]
 
 #print axioms finite_weighted_event_count_second_moment
