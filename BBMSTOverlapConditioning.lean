@@ -30,6 +30,20 @@ theorem finite_weighted_fiber_expansion
     _ = ∑ c : γ, ∑ a : α, ∑ b : β, w c * (f c a * g c b) := by
           simp_rw [mul_assoc]
 
+/--
+Finite second-moment expansion. It expresses the square of a finite
+aggregate as a sum over ordered pairs. This is the algebraic shape needed
+before a BBMST second-moment estimate can be specialized to actual
+hyperplane indicators and the paper's probability measure.
+-/
+theorem finite_square_sum_expansion
+    {α : Type*} [Fintype α] (f : α → ℚ) :
+    (∑ a : α, f a) ^ 2 = ∑ a : α, ∑ b : α, f a * f b := by
+  classical
+  rw [pow_two, Finset.sum_mul]
+  simp_rw [Finset.mul_sum]
+
 #print axioms BBMSTAudit.finite_weighted_fiber_expansion
+#print axioms BBMSTAudit.finite_square_sum_expansion
 
 end BBMSTAudit
