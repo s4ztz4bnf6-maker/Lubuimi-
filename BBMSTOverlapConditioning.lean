@@ -380,4 +380,21 @@ theorem finiteEventMass_mem_unit_interval
 
 #print axioms finiteEventMass_mem_unit_interval
 
+
+
+/--
+Normalized complement law: under a nonnegative normalized finite mass,
+an event and its complement have masses summing to one. This is the
+probability-partition interface needed before source-specific conditioning.
+-/
+theorem finiteEventMass_compl_add_one
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop)
+    (hnorm : (∑ x : Ω, μ x) = 1) :
+    finiteEventMass μ E + finiteEventMass μ (fun x => ¬ E x) = 1 := by
+  rw [finiteEventMass_compl_add_totalMass]
+  exact hnorm
+
+#print axioms finiteEventMass_compl_add_one
+
 end BBMSTAudit
