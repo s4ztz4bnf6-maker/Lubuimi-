@@ -723,17 +723,17 @@ distortion estimates without assuming independence. The quantitative work
 remains to construct useful bounds C and D in the BBMST model. -/
 theorem eventMass_le_composed_pointwise_distortion
     {n : ℕ} {space : CoordinateSpace n}
-    (μ λ ν : ProductDistribution space)
+    (μ middle ν : ProductDistribution space)
     (E : CoordinatePoint space → Prop)
     (C D : ℚ) (hC : 0 ≤ C) (hD : 0 ≤ D)
-    (hμλ : ∀ x, μ.weight x ≤ C * λ.weight x)
-    (hλν : ∀ x, λ.weight x ≤ D * ν.weight x) :
+    (hμλ : ∀ x, μ.weight x ≤ C * middle.weight x)
+    (hλν : ∀ x, middle.weight x ≤ D * ν.weight x) :
     eventMass μ E ≤ (C * D) * eventMass ν E := by
   apply eventMass_le_const_mul_of_pointwise μ ν E (C * D)
     (mul_nonneg hC hD)
   intro x
   calc
-    μ.weight x ≤ C * λ.weight x := hμλ x
+    μ.weight x ≤ C * middle.weight x := hμλ x
     _ ≤ C * (D * ν.weight x) :=
       mul_le_mul_of_nonneg_left (hλν x) hC
     _ = (C * D) * ν.weight x := by ring
@@ -747,15 +747,15 @@ without any independence assumption. The remaining BBMST problem is to
 derive sharp stage constants from the source geometry. -/
 theorem eventMass_between_composed_pointwise_bounds
     {n : ℕ} {space : CoordinateSpace n}
-    (μ λ ν : ProductDistribution space)
+    (μ middle ν : ProductDistribution space)
     (Evt : CoordinatePoint space → Prop)
     (C D E F : ℚ)
     (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hE : 0 ≤ E) (hF : 0 ≤ F)
-    (hμλ_lower : ∀ x, C * λ.weight x ≤ μ.weight x)
-    (hμλ_upper : ∀ x, μ.weight x ≤ D * λ.weight x)
-    (hλν_lower : ∀ x, E * ν.weight x ≤ λ.weight x)
-    (hλν_upper : ∀ x, λ.weight x ≤ F * ν.weight x) :
+    (hμλ_lower : ∀ x, C * middle.weight x ≤ μ.weight x)
+    (hμλ_upper : ∀ x, μ.weight x ≤ D * middle.weight x)
+    (hλν_lower : ∀ x, E * ν.weight x ≤ middle.weight x)
+    (hλν_upper : ∀ x, middle.weight x ≤ F * ν.weight x) :
     (C * E) * eventMass ν Evt ≤ eventMass μ Evt ∧
       eventMass μ Evt ≤ (D * F) * eventMass ν Evt := by
   constructor
@@ -770,14 +770,14 @@ theorem eventMass_between_composed_pointwise_bounds
             intro x hx
             calc
               (C * E) * ν.weight x = C * (E * ν.weight x) := by ring
-              _ ≤ C * λ.weight x :=
+              _ ≤ C * middle.weight x :=
                 mul_le_mul_of_nonneg_left (hλν_lower x) hC
               _ ≤ μ.weight x := hμλ_lower x
   · apply eventMass_le_const_mul_of_pointwise μ ν Evt (D * F)
       (mul_nonneg hD hF)
     intro x
     calc
-      μ.weight x ≤ D * λ.weight x := hμλ_upper x
+      μ.weight x ≤ D * middle.weight x := hμλ_upper x
       _ ≤ D * (F * ν.weight x) :=
         mul_le_mul_of_nonneg_left (hλν_upper x) hD
       _ = (D * F) * ν.weight x := by ring
