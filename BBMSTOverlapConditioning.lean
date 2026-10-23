@@ -227,12 +227,6 @@ theorem finite_weighted_event_count_second_moment
   classical
   apply Finset.sum_congr rfl
   intro x hx
-  rw [BBMSTAudit.finite_square_sum_expansion]
-  congr 1
-  apply Finset.sum_congr rfl
-  intro i hi
-  apply Finset.sum_congr rfl
-  intro j hj
-  by_cases hi : E i x <;> by_cases hj : E j x <;> simp [hi, hj]
+  rw [finite_event_count_second_moment_expansion (P := fun i => E i x)]
 
 #print axioms finite_weighted_event_count_second_moment
