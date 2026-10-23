@@ -263,3 +263,27 @@ theorem finite_weighted_event_pair_intersection_sum
             simp_rw [Finset.sum_comm]
 
 #print axioms finite_weighted_event_pair_intersection_sum
+
+/--
+First-moment counterpart to the weighted second-moment identity.
+It reorders the expected event count into a sum of individual event masses.
+No positivity or normalization is assumed for μ; those conditions are
+required only when interpreting the identity probabilistically.
+-/
+theorem finite_weighted_event_count_first_moment
+    {Ω I : Type*} [Fintype Ω] [Fintype I]
+    (μ : Ω → ℚ) (E : I → Ω → Prop) :
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0))
+      =
+    ∑ i : I, ∑ x : Ω, μ x * (if E i x then (1 : ℚ) else 0) := by
+  classical
+  calc
+    (∑ x : Ω, μ x * (∑ i : I, if E i x then (1 : ℚ) else 0))
+        = ∑ x : Ω, ∑ i : I,
+            μ x * (if E i x then (1 : ℚ) else 0) := by
+              simp_rw [Finset.mul_sum]
+    _ = ∑ i : I, ∑ x : Ω,
+          μ x * (if E i x then (1 : ℚ) else 0) := by
+            simp_rw [Finset.sum_comm]
+
+#print axioms finite_weighted_event_count_first_moment
