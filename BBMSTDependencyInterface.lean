@@ -132,6 +132,59 @@ def coordinateTiltedLoad {m n : ℕ}
     (S : FiniteSystem m n) (B : TiltedBudget S) (i : Fin n) : ℚ :=
   ∑ K : Fin m, if i ∈ S.fixed K then B.tilt K * S.weight K else 0
 
+
+/-- Double-counting bridge: every neighbor contributes its tilted weight
+at least once to the sum over shared coordinates in H's support. Multiple
+shared coordinates only increase the right-hand side, since all weights are
+nonnegative. This proves the generic incidence bound without assuming a
+source-specific multiplicity estimate. -/
+theorem weightedNeighborLoad_le_support_coordinate_load
+    {m n : ℕ} (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m) :
+    weightedNeighborLoad S B H ≤
+      ∑ i ∈ S.fixed H, coordinateTiltedLoad S B i := by
+  classical
+  unfold weightedNeighborLoad
+  calc
+    (∑ K ∈ neighbors S H, B.tilt K * S.weight K) ≤
+        ∑ K ∈ neighbors S H,
+          ∑ i ∈ S.fixed H,
+            (if i ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
+      apply Finset.sum_le_sum
+      intro K hK
+      obtain ⟨i, hiH, hiK⟩ := neighbor_has_shared_coordinate S H K hK
+      calc
+        B.tilt K * S.weight K =
+            (if i ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
+              simp [hiK]
+        _ ≤ ∑ i' ∈ S.fixed H,
+              (if i' ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
+          apply Finset.single_le_sum
+          · intro i' hi'
+            by_cases hmem : i' ∈ S.fixed K
+            · simp [hmem]
+              exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
+            · simp [hmem]
+          · exact hiH
+    _ ≤ ∑ K : Fin m,
+          ∑ i ∈ S.fixed H,
+            (if i ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
+      apply Finset.sum_le_sum_of_subset_of_nonneg
+      · exact Finset.subset_univ _
+      · intro K hK
+        apply Finset.sum_nonneg
+        intro i hi
+        by_cases hmem : i ∈ S.fixed K
+        · simp [hmem]
+          exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
+        · simp [hmem]
+    _ = ∑ i ∈ S.fixed H, coordinateTiltedLoad S B i := by
+      rw [Finset.sum_comm]
+      apply Finset.sum_congr rfl
+      intro i hi
+      rfl
+
+#print axioms weightedNeighborLoad_le_support_coordinate_load
+
 /-- If a separate combinatorial counting argument shows that the
 neighbor load is dominated by the sum of coordinate loads on H's support,
 then the coordinatewise BBMST budget gives an explicit support-size bound.
