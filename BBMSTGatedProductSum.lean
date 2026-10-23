@@ -22,7 +22,7 @@ theorem finite_product_sum_gated
     (∑ x : (∀ i, X i), ∏ i, if P i (x i) then w i (x i) else 0) =
       ∏ i, ∑ y : X i, if P i y then w i y else 0 := by
   classical
-  exact Fintype.prod_sum (fun i y => if P i y then w i y else 0)
+  rw [← Fintype.prod_sum]
 
 /-- If all coordinate predicates are true, the gated identity reduces to
 the ordinary finite-product sum factorization. -/
