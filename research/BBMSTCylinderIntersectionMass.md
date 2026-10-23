@@ -14,11 +14,19 @@ Let w_i be normalized coordinate weights and let a cylinder H fix coordinates F 
 
 Derive this from the existing coordinate-weight system and finite sum/product identities. Do not assume it for arbitrary ProductDistribution; factorization is essential.
 
+## A further exact bridge: second moment
+
+For a finite family of cylinders H_j, define the indicator count Z(x)=sum_j 1_{H_j}(x). Then the exact identity is
+
+E[Z^2] = sum_j mu(H_j) + sum_{j != l} mu(H_j intersect H_l).
+
+This is just expansion of the square and is not yet the BBMST estimate. Its value is that every off-diagonal term remains visible. Compatible cylinders may overlap; independence must not be inferred merely from the coordinate-cylinder syntax. The next theorem after the mass formula should prove this identity in Lean, then specialize the intersection terms using the compatibility criterion.
+
 ## Why this is relevant to BBMST
 
 Balister-Bollobas-Morris-Sahasrabudhe-Tiba's distortion method preserves earlier-coordinate marginals, bounds point-mass distortion, and combines first- and second-moment loss bounds. The difficult source-specific content is control of compatible hyperplane intersections and the resulting weighted least-common-multiple sums.
 
-The cylinder identity is a necessary bridge, not the final estimate. Next, introduce a finite family of forbidden cylinders and derive the second-moment identity with diagonal and compatible off-diagonal terms separated. Do not replace off-diagonal terms by products unless independence is proved.
+The cylinder identity is a necessary bridge, not the final estimate. After the second-moment identity, reconstruct the actual stagewise bounds and constants from the paper. Do not replace off-diagonal terms by products unless a justified independence/factorization result supplies it.
 
 ## Proof plan
 
