@@ -892,21 +892,24 @@ theorem eventMass_le_good_bad_transfer
     apply Finset.sum_congr rfl
     intro x hx
     by_cases he : E x <;> by_cases hg : G x <;> simp [he, hg]
-  have hgoodmass :
+  have hgood_inter :
       eventMass μ (fun x => E x ∧ G x) ≤
-        C * eventMass ν E := by
+        C * eventMass ν (fun x => E x ∧ G x) := by
+    unfold eventMass
     calc
-      eventMass μ (fun x => E x ∧ G x) ≤
-          C * eventMass ν (fun x => E x ∧ G x) := by
-        unfold eventMass
-        rw [Finset.mul_sum]
+      (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), μ.weight x) ≤
+          ∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), C * ν.weight x := by
         apply Finset.sum_le_sum
-        intro hx
+        intro x hx
         exact hgood x (Finset.mem_filter.mp hx).2.2
-      _ ≤ C * eventMass ν E :=
-        mul_le_mul_of_nonneg_left
-          (eventMass_mono ν (fun x => E x ∧ G x) E
-            (by intro x hx; exact hx.1)) hC
+      _ = C * (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), ν.weight x) := by
+        rw [Finset.mul_sum]
+  have hgoodmass :
+      eventMass μ (fun x => E x ∧ G x) ≤ C * eventMass ν E :=
+    le_trans hgood_inter
+      (mul_le_mul_of_nonneg_left
+        (eventMass_mono ν (fun x => E x ∧ G x) E
+          (by intro x hx; exact hx.1)) hC)
   have hbadmass :
       eventMass μ (fun x => E x ∧ ¬ G x) ≤ η := by
     apply le_trans
