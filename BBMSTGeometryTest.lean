@@ -739,3 +739,47 @@ theorem eventMass_le_composed_pointwise_distortion
     _ = (C * D) * ν.weight x := by ring
 
 #print axioms eventMass_le_composed_pointwise_distortion
+
+/-- Two-sided distortion bounds compose with multiplicative constants.
+This makes the quantitative dependency explicit: if each stage controls
+point weights above and below, the corresponding event-mass bounds compose
+without any independence assumption. The remaining BBMST problem is to
+derive sharp stage constants from the source geometry. -/
+theorem eventMass_between_composed_pointwise_bounds
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ λ ν : ProductDistribution space)
+    (Evt : CoordinatePoint space → Prop)
+    (C D E F : ℚ)
+    (hC : 0 ≤ C) (hD : 0 ≤ D)
+    (hE : 0 ≤ E) (hF : 0 ≤ F)
+    (hμλ_lower : ∀ x, C * λ.weight x ≤ μ.weight x)
+    (hμλ_upper : ∀ x, μ.weight x ≤ D * λ.weight x)
+    (hλν_lower : ∀ x, E * ν.weight x ≤ λ.weight x)
+    (hλν_upper : ∀ x, λ.weight x ≤ F * ν.weight x) :
+    (C * E) * eventMass ν Evt ≤ eventMass μ Evt ∧
+      eventMass μ Evt ≤ (D * F) * eventMass ν Evt := by
+  constructor
+  · classical
+    unfold eventMass
+    calc
+      (C * E) * (∑ x ∈ Finset.univ.filter Evt, ν.weight x) =
+          ∑ x ∈ Finset.univ.filter Evt, (C * E) * ν.weight x := by
+            rw [Finset.mul_sum]
+      _ ≤ ∑ x ∈ Finset.univ.filter Evt, μ.weight x := by
+            apply Finset.sum_le_sum
+            intro x hx
+            calc
+              (C * E) * ν.weight x = C * (E * ν.weight x) := by ring
+              _ ≤ C * λ.weight x :=
+                mul_le_mul_of_nonneg_left (hλν_lower x) hC
+              _ ≤ μ.weight x := hμλ_lower x
+  · apply eventMass_le_const_mul_of_pointwise μ ν Evt (D * F)
+      (mul_nonneg hD hF)
+    intro x
+    calc
+      μ.weight x ≤ D * λ.weight x := hμλ_upper x
+      _ ≤ D * (F * ν.weight x) :=
+        mul_le_mul_of_nonneg_left (hλν_upper x) hD
+      _ = (D * F) * ν.weight x := by ring
+
+#print axioms eventMass_between_composed_pointwise_bounds
