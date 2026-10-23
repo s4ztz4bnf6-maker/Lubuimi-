@@ -63,3 +63,9 @@ jobs:
           set -o pipefail
           lake env lean BBMSTIntersectionMass.lean 2>&1 | tee /tmp/bbmst-intersection-mass.log
           ! grep -q 'sorryAx' /tmp/bbmst-intersection-mass.log
+
+      - name: Compile weighted additive-error composition
+        run: |
+          set -o pipefail
+          lake env lean -o .lake/build/lib/lean/GoodBadComposition.olean GoodBadComposition.lean 2>&1 | tee /tmp/good-bad-composition.log
+          ! grep -q 'sorryAx' /tmp/good-bad-composition.log
