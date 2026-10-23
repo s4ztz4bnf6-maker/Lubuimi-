@@ -32,3 +32,29 @@ theorem eventMass_compose_additive_error
     _ = (C * D) * eventMass ρ E + C * θ + η := by ring
 
 #print axioms eventMass_compose_additive_error
+
+
+/-- A stage budget represents the affine estimate
+    mass_in <= factor * mass_out + error. -/
+structure TransferBudget where
+  factor : ℚ
+  error : ℚ
+deriving DecidableEq, Repr
+
+/-- Sequential composition: first apply the inner transfer, then the outer
+transfer. The earlier stage's factor scales the later additive error. -/
+def TransferBudget.compose (outer inner : TransferBudget) : TransferBudget :=
+  { factor := outer.factor * inner.factor
+    error := outer.factor * inner.error + outer.error }
+
+/-- Stage-budget composition is associative. This allows a long proof chain
+to be grouped into blocks without changing its exact accumulated error. -/
+theorem TransferBudget.compose_assoc
+    (A B C : TransferBudget) :
+    (A.compose B).compose C = A.compose (B.compose C) := by
+  cases A
+  cases B
+  cases C
+  simp [TransferBudget.compose, mul_assoc, mul_add, add_assoc]
+
+#print axioms TransferBudget.compose_assoc
