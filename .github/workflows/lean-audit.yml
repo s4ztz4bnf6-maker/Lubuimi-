@@ -52,6 +52,12 @@ jobs:
           lake env lean -o .lake/build/lib/lean/BBMSTGeometryTest.olean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
           ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
 
+      - name: Compile generic finite product-sum identity
+        run: |
+          set -o pipefail
+          lake env lean -o .lake/build/lib/lean/FiniteProductSumAudit.olean FiniteProductSumAudit.lean 2>&1 | tee /tmp/finite-product-sum.log
+          ! grep -q 'sorryAx' /tmp/finite-product-sum.log
+
       - name: Compile exact intersection-mass transfer
         run: |
           set -o pipefail
