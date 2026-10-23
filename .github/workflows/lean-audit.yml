@@ -76,9 +76,14 @@ jobs:
           lake env lean -o .lake/build/lib/lean/GoodBadComposition.olean GoodBadComposition.lean 2>&1 | tee /tmp/good-bad-composition.log
           ! grep -q 'sorryAx' /tmp/good-bad-composition.log
 
-
       - name: Compile BBMST finite dependency interface
         run: |
           set -o pipefail
           lake env lean BBMSTDependencyInterface.lean 2>&1 | tee /tmp/bbmst-dependency-interface.log
           ! grep -q 'sorryAx' /tmp/bbmst-dependency-interface.log
+
+      - name: Compile source-faithful BBMST local-lemma budget
+        run: |
+          set -o pipefail
+          lake env lean BBMSTSourceLocalLemma.lean 2>&1 | tee /tmp/bbmst-source-local-lemma.log
+          ! grep -q 'sorryAx' /tmp/bbmst-source-local-lemma.log
