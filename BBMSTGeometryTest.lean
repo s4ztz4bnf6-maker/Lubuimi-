@@ -783,3 +783,18 @@ theorem eventMass_between_composed_pointwise_bounds
       _ = (D * F) * ν.weight x := by ring
 
 #print axioms eventMass_between_composed_pointwise_bounds
+
+
+/-- Any common point of two coordinate cylinders forces their prescribed
+values to agree on every shared fixed coordinate. This is the necessary
+compatibility half of the exact intersection criterion. -/
+theorem agreement_on_overlap_of_common_point
+    {n : ℕ} {space : CoordinateSpace n}
+    (H₁ H₂ : CoordinateHypersurface space)
+    (x : CoordinatePoint space)
+    (h₁ : H₁.Contains x) (h₂ : H₂.Contains x)
+    (i : Fin n) (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed) :
+    H₁.value i hi₁ = H₂.value i hi₂ := by
+  exact (h₁ i hi₁).trans (h₂ i hi₂).symm
+
+#print axioms agreement_on_overlap_of_common_point
