@@ -45,10 +45,9 @@ theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
   · rintro ⟨hne, i, hiK, hiH⟩
     exact ⟨Ne.symm hne, i, hiH, hiK⟩
 
- /-- The finite neighborhood of an event in the coordinate-overlap graph. -/
-noncomputable def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) := by
-  classical
-  exact Finset.univ.filter (fun K => Depends S H K)
+/-- The finite neighborhood of an event in the coordinate-overlap graph. -/
+def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
+  Finset.univ.filter (fun K => Depends S H K)
 
 theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : K ∈ neighbors S H ↔ Depends S H K := by
@@ -59,8 +58,7 @@ theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
 defines an undirected finite graph on the event indices. -/
 theorem neighbor_symm {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) (hK : K ∈ neighbors S H) : H ∈ neighbors S K := by
-  apply mem_neighbors_iff.mpr
-  exact (depends_symmetric S H K).mp (mem_neighbors_iff.mp hK)
+  exact (mem_neighbors_iff S K H).2 ((depends_symmetric S H K).1 ((mem_neighbors_iff S H K).mp hK))
 
 /-- No event is its own neighbor: the graph relation excludes equal indices. -/
 theorem self_not_neighbor {m n : ℕ} (S : FiniteSystem m n)
@@ -158,19 +156,24 @@ theorem weightedNeighborLoad_le_support_coordinate_load
               simp [hiK]
         _ ≤ ∑ i' ∈ S.fixed H,
               (if i' ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
-          apply Finset.single_le_sum
-          · intro i' hi'
-            by_cases hmem : i' ∈ S.fixed K
-            · simp [hmem]
-              exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
-            · simp [hmem]
-          · exact hiH
+          have hsum := Finset.single_le_sum
+            (s := S.fixed H)
+            (f := fun i' : Fin n =>
+              if i' ∈ S.fixed K then B.tilt K * S.weight K else 0)
+            (by
+              intro i' hi'
+              by_cases hmem : i' ∈ S.fixed K
+              · simp [hmem]
+                exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
+              · simp [hmem])
+            hiH
+          simpa [hiK] using hsum
     _ ≤ ∑ K : Fin m,
           ∑ i ∈ S.fixed H,
             (if i ∈ S.fixed K then B.tilt K * S.weight K else 0) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · exact Finset.subset_univ _
-      · intro K hK
+      · intro K hKnot
         apply Finset.sum_nonneg
         intro i hi
         by_cases hmem : i ∈ S.fixed K
@@ -199,7 +202,7 @@ theorem weightedNeighborLoad_le_support_budget
       intro i hi
       have hbudget := B.coordinate_budget i
       unfold coordinateTiltedLoad
-      exact le_of_lt hbudget
+      simpa [coordinateTiltedLoad] using le_of_lt hbudget
     _ = (S.fixed H).card * (B.eta / 2) := by
       simp [Finset.sum_const, nsmul_eq_mul]
 
