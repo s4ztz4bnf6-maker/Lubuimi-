@@ -716,3 +716,26 @@ theorem eventMass_between_of_pointwise_distortion
       (by linarith) hupper
 
 #print axioms eventMass_between_of_pointwise_distortion
+
+/-- Composing two pointwise domination bounds composes their constants.
+This is the elementary multiplicative step needed to assemble local
+distortion estimates without assuming independence. The quantitative work
+remains to construct useful bounds C and D in the BBMST model. -/
+theorem eventMass_le_composed_pointwise_distortion
+    {n : ℕ} {space : CoordinateSpace n}
+    (μ λ ν : ProductDistribution space)
+    (E : CoordinatePoint space → Prop)
+    (C D : ℚ) (hC : 0 ≤ C) (hD : 0 ≤ D)
+    (hμλ : ∀ x, μ.weight x ≤ C * λ.weight x)
+    (hλν : ∀ x, λ.weight x ≤ D * ν.weight x) :
+    eventMass μ E ≤ (C * D) * eventMass ν E := by
+  apply eventMass_le_const_mul_of_pointwise μ ν E (C * D)
+    (mul_nonneg hC hD)
+  intro x
+  calc
+    μ.weight x ≤ C * λ.weight x := hμλ x
+    _ ≤ C * (D * ν.weight x) :=
+      mul_le_mul_of_nonneg_left (hλν x) hC
+    _ = (C * D) * ν.weight x := by ring
+
+#print axioms eventMass_le_composed_pointwise_distortion
