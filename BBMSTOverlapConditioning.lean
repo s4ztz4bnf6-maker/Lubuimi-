@@ -94,4 +94,18 @@ theorem finite_pairwise_square_difference_nonneg
 
 #print axioms BBMSTAudit.finite_pairwise_square_difference_nonneg
 
+/--
+Finite rational Cauchy-Schwarz inequality derived from the pairwise
+squared-difference identity. This is a deterministic finite-sum lemma;
+it does not itself identify a BBMST probability measure or event family.
+-/
+theorem finite_sum_sq_le_card_mul_sum_sq
+    {α : Type*} [Fintype α] (f : α → ℚ) :
+    (∑ a : α, f a) ^ 2 ≤ (Fintype.card α : ℚ) * ∑ a : α, f a ^ 2 := by
+  have h := finite_pairwise_square_difference (f := f)
+  have hn := finite_pairwise_square_difference_nonneg (f := f)
+  linarith
+
+#print axioms BBMSTAudit.finite_sum_sq_le_card_mul_sum_sq
+
 end BBMSTAudit
