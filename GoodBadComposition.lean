@@ -92,3 +92,28 @@ theorem TransferBudget.composeAll_nonneg
       constructor <;> nlinarith [hrest.1, hrest.2]
 
 #print axioms TransferBudget.composeAll_nonneg
+
+/-- The additive-error polynomial, written as a weighted sum along the
+remaining stages. Each later error is multiplied by all preceding outer
+factors. This is the closed recursive form of the transfer-chain error. -/
+def TransferBudget.weightedError : List TransferBudget → ℚ
+  | [] => 0
+  | b :: bs => b.error + b.factor * TransferBudget.weightedError bs
+
+/-- The error field of composeAll equals the weighted sum of stage errors.
+In particular, the second stage's error is scaled by the first stage's
+factor, the third by the product of the first two, and so on. -/
+theorem TransferBudget.composeAll_error_eq_weightedError
+    (bs : List TransferBudget) :
+    (TransferBudget.composeAll bs).error =
+      TransferBudget.weightedError bs := by
+  induction bs with
+  | nil =>
+      simp [TransferBudget.composeAll, TransferBudget.weightedError]
+  | cons b bs ih =>
+      simp [TransferBudget.composeAll, TransferBudget.compose,
+        TransferBudget.weightedError, ih]
+      ring
+
+#print axioms TransferBudget.composeAll_error_eq_weightedError
+
