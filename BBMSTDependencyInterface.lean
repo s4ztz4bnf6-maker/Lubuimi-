@@ -30,10 +30,10 @@ theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
   constructor
   · rintro ⟨hne, ⟨i, hi⟩⟩
     refine ⟨Ne.symm hne, ⟨i, ?_⟩⟩
-    simpa [Finset.mem_inter] using hi.symm
+    exact ⟨hi.2, hi.1⟩
   · rintro ⟨hne, ⟨i, hi⟩⟩
     refine ⟨Ne.symm hne, ⟨i, ?_⟩⟩
-    simpa [Finset.mem_inter] using hi.symm
+    exact ⟨hi.2, hi.1⟩
 
 /-- The un-tilted load on coordinate i: total event weight among events
 that constrain i. This is a diagnostic quantity, not the BBMST weighted
