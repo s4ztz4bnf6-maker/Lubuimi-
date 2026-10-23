@@ -446,4 +446,25 @@ theorem finiteEventMass_pair_intersection_sum
 
 #print axioms finiteEventMass_pair_intersection_sum
 
+
+/--
+Exact two-event inclusion-exclusion identity for arbitrary rational point
+weights. It isolates overlap mass explicitly, so no independence assumption
+can silently replace the intersection term.
+-/
+theorem finiteEventMass_union_intersection_identity
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E F : Ω → Prop) :
+    finiteEventMass μ (fun x => E x ∨ F x)
+      + finiteEventMass μ (fun x => E x ∧ F x)
+      = finiteEventMass μ E + finiteEventMass μ F := by
+  classical
+  unfold finiteEventMass
+  rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hE : E x <;> by_cases hF : F x <;> simp [hE, hF]
+
+#print axioms finiteEventMass_union_intersection_identity
+
 end BBMSTAudit
