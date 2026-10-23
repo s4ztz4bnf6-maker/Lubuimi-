@@ -897,12 +897,12 @@ theorem eventMass_le_good_bad_transfer
         C * eventMass ν E := by
     calc
       eventMass μ (fun x => E x ∧ G x) ≤
-          C * eventMass ν (fun x => E x ∧ G x) :=
-        eventMass_le_const_mul_of_pointwise μ ν
-          (fun x => E x ∧ G x) C hC
-          (by
-            intro x hx
-            exact hgood x hx.2)
+          C * eventMass ν (fun x => E x ∧ G x) := by
+        unfold eventMass
+        rw [Finset.mul_sum]
+        apply Finset.sum_le_sum
+        intro x hx
+        exact hgood x (Finset.mem_filter.mp hx).2.2
       _ ≤ C * eventMass ν E :=
         mul_le_mul_of_nonneg_left
           (eventMass_mono ν (fun x => E x ∧ G x) E
