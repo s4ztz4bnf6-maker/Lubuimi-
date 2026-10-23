@@ -807,3 +807,54 @@ theorem factorizedPointWeight_split_on_cylinder
   · simp [hfix]
 
 #print axioms factorizedPointWeight_split_on_cylinder
+
+
+/-- One-coordinate contribution to the cylinder sum. A fixed coordinate
+collapses to the weight of its prescribed value; a free coordinate collapses
+to one by normalization. -/
+def cylinderCoordinateSum {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space)
+    (H : CoordinateHypersurface space) (i : Fin n) : ℚ :=
+  if hi : i ∈ H.fixed then
+    ∑ y : CoordinateValue space i,
+      w.weight i y * (if y = H.value i hi then 1 else 0)
+  else
+    ∑ y : CoordinateValue space i, w.weight i y
+
+/-- Exact evaluation of a coordinate sum: prescribed coordinates contribute
+their prescribed weight, while free coordinates contribute one. This is the
+coordinatewise algebraic core of the cylinder-mass formula. -/
+theorem cylinderCoordinateSum_eq {n : ℕ} {space : CoordinateSpace n}
+    (w : CoordinateWeightSystem space)
+    (H : CoordinateHypersurface space) (i : Fin n) :
+    cylinderCoordinateSum w H i =
+      if hi : i ∈ H.fixed then w.weight i (H.value i hi) else 1 := by
+  classical
+  unfold cylinderCoordinateSum
+  by_cases hfix : i ∈ H.fixed
+  · simp only [dif_pos hfix]
+    rw [Finset.sum_eq_single (H.value i hfix)]
+    · simp
+    · intro y hy hne
+      simp [hne]
+    · intro hnot
+      exact (hnot (Finset.mem_univ _)).elim
+  · simp [hfix, w.coordinate_sum_one i]
+
+/-- After separating coordinates, the product of all one-coordinate sums
+is exactly the product over the fixed coordinates. This theorem isolates the
+free-coordinate cancellation step. The remaining bridge to eventMass is
+to prove that summing the original point weights over H.Contains equals
+this separated coordinate sum; no such bridge is asserted here. -/
+theorem cylinderCoordinateSums_product_eq {n : ℕ}
+    {space : CoordinateSpace n} (w : CoordinateWeightSystem space)
+    (H : CoordinateHypersurface space) :
+    (∏ i : Fin n, cylinderCoordinateSum w H i) =
+      ∏ i : Fin n, if hi : i ∈ H.fixed then
+        w.weight i (H.value i hi) else 1 := by
+  apply Finset.prod_congr rfl
+  intro i hi
+  exact cylinderCoordinateSum_eq w H i
+
+#print axioms cylinderCoordinateSum_eq
+#print axioms cylinderCoordinateSums_product_eq
