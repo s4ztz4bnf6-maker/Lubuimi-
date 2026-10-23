@@ -25,6 +25,14 @@ structure FiniteSystem (m n : ℕ) where
 def Depends {m n : ℕ} (S : FiniteSystem m n) (H K : Fin m) : Prop :=
   H ≠ K ∧ (S.fixed H ∩ S.fixed K).Nonempty
 
+/-- The dependency edge has an explicit coordinate witness: two distinct
+events are adjacent exactly when some coordinate is fixed by both. -/
+theorem depends_iff_common_coordinate {m n : ℕ}
+    (S : FiniteSystem m n) (H K : Fin m) :
+    Depends S H K ↔ H ≠ K ∧
+      ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K := by
+  simp [Depends, Finset.Nonempty, Finset.mem_inter]
+
 theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : Depends S H K ↔ Depends S K H := by
   constructor
