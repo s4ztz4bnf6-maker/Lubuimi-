@@ -467,4 +467,24 @@ theorem finiteEventMass_union_intersection_identity
 
 #print axioms finiteEventMass_union_intersection_identity
 
+/--
+The two-event union bound follows from exact inclusion-exclusion and
+nonnegative point weights. Keeping the intersection term explicit in the
+previous identity makes clear precisely where nonnegativity enters; no
+independence hypothesis is needed.
+-/
+theorem finiteEventMass_union_le_sum
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E F : Ω → Prop)
+    (hμ : ∀ x, 0 ≤ μ x) :
+    finiteEventMass μ (fun x => E x ∨ F x)
+      ≤ finiteEventMass μ E + finiteEventMass μ F := by
+  have hinter : 0 ≤ finiteEventMass μ (fun x => E x ∧ F x) :=
+    finiteEventMass_nonneg μ (fun x => E x ∧ F x) hμ
+  have hexact := finiteEventMass_union_intersection_identity μ E F
+  omega
+
+#print axioms finiteEventMass_union_le_sum
+
+
 end BBMSTAudit
