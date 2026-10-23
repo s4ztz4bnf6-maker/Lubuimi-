@@ -266,10 +266,14 @@ theorem finite_weighted_event_pair_intersection_sum
     _ = ∑ x : Ω, ∑ i : I, ∑ j : I,
           μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
             simp_rw [Finset.mul_sum]
+    _ = ∑ i : I, ∑ x : Ω, ∑ j : I,
+          μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
+            rw [Finset.sum_comm]
     _ = ∑ i : I, ∑ j : I, ∑ x : Ω,
           μ x * (if E i x ∧ E j x then (1 : ℚ) else 0) := by
-            classical
-            simp_rw [Finset.sum_comm]
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [Finset.sum_comm]
 
 #print axioms finite_weighted_event_pair_intersection_sum
 
@@ -293,7 +297,7 @@ theorem finite_weighted_event_count_first_moment
               simp_rw [Finset.mul_sum]
     _ = ∑ i : I, ∑ x : Ω,
           μ x * (if E i x then (1 : ℚ) else 0) := by
-            simp_rw [Finset.sum_comm]
+            rw [Finset.sum_comm]
 
 #print axioms finite_weighted_event_count_first_moment
 
