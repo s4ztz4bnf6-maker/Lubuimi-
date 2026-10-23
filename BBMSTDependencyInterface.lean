@@ -156,6 +156,45 @@ theorem weightedNeighborLoad_le_support_budget
     _ = (S.fixed H).card * (B.eta / 2) := by
       simp [Finset.sum_const, nsmul_eq_mul]
 
+
+/-- A single neighbor's tilted weight is covered by the support-coordinate
+load of H. The shared-coordinate witness selects one summand; all other
+coordinate and event contributions are nonnegative. This is the local
+incidence inequality behind a future finite double-counting proof. -/
+theorem neighbor_term_le_support_tilted_load
+    {m n : ℕ} (S : FiniteSystem m n) (B : TiltedBudget S)
+    (H K : Fin m) (hK : K ∈ neighbors S H) :
+    B.tilt K * S.weight K ≤
+      ∑ i ∈ S.fixed H, coordinateTiltedLoad S B i := by
+  obtain ⟨i, hiH, hiK⟩ := neighbor_has_shared_coordinate S H K hK
+  have hterm : B.tilt K * S.weight K ≤ coordinateTiltedLoad S B i := by
+    unfold coordinateTiltedLoad
+    calc
+      B.tilt K * S.weight K ≤
+          ∑ K' : Fin m,
+            (if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0) := by
+        apply Finset.single_le_sum
+        · intro K' hK'
+          split <;> positivity
+        · exact Finset.mem_univ K
+      _ = ∑ K' : Fin m,
+            (if i ∈ S.fixed K' then B.tilt K' * S.weight K' else 0) := rfl
+  have hload_nonneg : ∀ j : Fin n, 0 ≤ coordinateTiltedLoad S B j := by
+    intro j
+    unfold coordinateTiltedLoad
+    apply Finset.sum_nonneg
+    intro K' hK'
+    split <;> positivity
+  calc
+    B.tilt K * S.weight K ≤ coordinateTiltedLoad S B i := hterm
+    _ ≤ ∑ j ∈ S.fixed H, coordinateTiltedLoad S B j := by
+      apply Finset.single_le_sum
+      · intro j hj
+        exact hload_nonneg j
+      · exact hiH
+
+#print axioms neighbor_term_le_support_tilted_load
+
 #print axioms weightedNeighborLoad_le_support_budget
 
 #print axioms weightedNeighborLoad_nonneg
