@@ -108,4 +108,24 @@ theorem finite_sum_sq_le_card_mul_sum_sq
 
 #print axioms BBMSTAudit.finite_sum_sq_le_card_mul_sum_sq
 
+/--
+For a nonempty finite type, the finite Cauchy-Schwarz inequality above
+can be normalized by cardinality to bound the square of the arithmetic
+mean by the arithmetic mean of squares. The nonempty hypothesis makes the
+normalizing denominator positive.
+-/
+theorem finite_mean_sq_le_mean_square
+    {α : Type*} [Fintype α] [Nonempty α] (f : α → ℚ) :
+    ((∑ a : α, f a) / (Fintype.card α : ℚ)) ^ 2
+      ≤ (∑ a : α, f a ^ 2) / (Fintype.card α : ℚ) := by
+  have hcard : (0 : ℚ) < (Fintype.card α : ℚ) := by
+    exact_mod_cast (Fintype.card_pos_iff.mpr ‹Nonempty α›)
+  have hcs := finite_sum_sq_le_card_mul_sum_sq (f := f)
+  have hdiv := div_le_div_of_nonneg_right hcs (le_of_lt hcard)
+  have hcard0 : (Fintype.card α : ℚ) ≠ 0 := ne_of_gt hcard
+  field_simp
+  nlinarith
+
+#print axioms BBMSTAudit.finite_mean_sq_le_mean_square
+
 end BBMSTAudit
