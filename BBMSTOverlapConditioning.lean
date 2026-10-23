@@ -486,5 +486,28 @@ theorem finiteEventMass_union_le_sum
 
 #print axioms finiteEventMass_union_le_sum
 
+/--
+Finite-family union bound. It iterates the exact two-event estimate, so
+overlap is handled at every stage and no independence hypothesis is introduced.
+This is the reusable finite-union interface for later BBMST uncovered-set bounds.
+-/
+theorem finiteEventMass_iUnion_le_sum
+    {Ω I : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : I → Ω → Prop)
+    (hμ : ∀ x, 0 ≤ μ x) (s : Finset I) :
+    finiteEventMass μ (fun x => ∃ i ∈ s, E i x)
+      ≤ ∑ i ∈ s, finiteEventMass μ (E i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simp [finiteEventMass]
+  | @insert i s hi ih =>
+      have h := finiteEventMass_union_le_sum μ
+        (fun x => ∃ j ∈ s, E j x) (E i) hμ
+      simpa [hi, Finset.sum_insert, or_comm, add_comm, add_left_comm, add_assoc] using h
+
+#print axioms finiteEventMass_iUnion_le_sum
+
+
 
 end BBMSTAudit
