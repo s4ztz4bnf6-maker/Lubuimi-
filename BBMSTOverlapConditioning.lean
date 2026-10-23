@@ -503,8 +503,17 @@ theorem finiteEventMass_iUnion_le_sum
       simp [finiteEventMass]
   | @insert i s hi ih =>
       have h := finiteEventMass_union_le_sum μ
-        (fun x => ∃ j ∈ s, E j x) (E i) hμ
-      simpa [hi, Finset.sum_insert, or_comm, add_comm, add_left_comm, add_assoc] using h
+        (E i) (fun x => ∃ j ∈ s, E j x) hμ
+      have h' :
+          finiteEventMass μ (fun x => E i x ∨ (∃ j ∈ s, E j x))
+            ≤ finiteEventMass μ (E i) + ∑ j ∈ s, finiteEventMass μ (E j) := by
+        calc
+          finiteEventMass μ (fun x => E i x ∨ (∃ j ∈ s, E j x))
+              ≤ finiteEventMass μ (E i) +
+                  finiteEventMass μ (fun x => ∃ j ∈ s, E j x) := h
+          _ ≤ finiteEventMass μ (E i) + ∑ j ∈ s, finiteEventMass μ (E j) :=
+            add_le_add_left ih _
+      simpa [hi, Finset.sum_insert] using h'
 
 #print axioms finiteEventMass_iUnion_le_sum
 
