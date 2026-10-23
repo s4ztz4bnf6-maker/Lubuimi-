@@ -38,3 +38,5 @@ jobs:
         run: lake env lean BBMSTDisjointFactorization.lean
       - name: Compile finite weighted overlap-conditioning identity
         run: lake env lean BBMSTOverlapConditioning.lean
+      - name: Compile effective block-size monotonicity
+        run: lake env lean BBMSTBlockSize.lean
