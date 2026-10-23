@@ -795,6 +795,6 @@ theorem agreement_on_overlap_of_common_point
     (h₁ : H₁.Contains x) (h₂ : H₂.Contains x)
     (i : Fin n) (hi₁ : i ∈ H₁.fixed) (hi₂ : i ∈ H₂.fixed) :
     H₁.value i hi₁ = H₂.value i hi₂ := by
-  exact (h₁ i hi₁).trans (h₂ i hi₂).symm
+  exact (h₁ i hi₁).symm.trans (h₂ i hi₂)
 
 #print axioms agreement_on_overlap_of_common_point
