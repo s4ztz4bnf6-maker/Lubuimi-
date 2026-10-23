@@ -383,9 +383,11 @@ theorem finiteEventMass_mem_unit_interval
 
 
 /--
-Normalized complement law: under a nonnegative normalized finite mass,
-an event and its complement have masses summing to one. This is the
-probability-partition interface needed before source-specific conditioning.
+Normalized complement law: for any rational point weights whose total sum
+is one, an event and its complement have masses summing to one. Nonnegativity
+is not needed for this algebraic identity; it is required separately for
+probability bounds. This is the partition interface needed before
+source-specific conditioning.
 -/
 theorem finiteEventMass_compl_add_one
     {Ω : Type*} [Fintype Ω]
