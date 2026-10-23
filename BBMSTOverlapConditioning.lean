@@ -183,3 +183,25 @@ theorem finite_event_indicator_product
 
 
 end BBMSTAudit
+
+
+/--
+Second-moment expansion for a finite family of events, expressed directly
+as a sum of pairwise intersections. This is the exact indicator-level bridge
+needed before applying source-specific BBMST intersection estimates; no
+independence assumption is made.
+-/
+theorem finite_event_count_second_moment_expansion
+    {α : Type*} [Fintype α] (P : α → Prop) :
+    (∑ a : α, if P a then (1 : ℚ) else 0) ^ 2
+      = ∑ a : α, ∑ b : α, if P a ∧ P b then (1 : ℚ) else 0 := by
+  classical
+  rw [finite_square_sum_expansion]
+  apply Finset.sum_congr rfl
+  intro a ha
+  apply Finset.sum_congr rfl
+  intro b hb
+  exact finite_event_indicator_product P P a |>.trans (by
+    simp)
+
+#print axioms finite_event_count_second_moment_expansion
