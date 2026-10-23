@@ -128,4 +128,30 @@ theorem finite_mean_sq_le_mean_square
 
 #print axioms BBMSTAudit.finite_mean_sq_le_mean_square
 
+/--
+The square of a rational event indicator is the same indicator. This
+connects finite counting identities to event indicators, without yet
+claiming that counting measure is the BBMST probability measure.
+-/
+theorem finite_event_indicator_square
+    {α : Type*} [Fintype α] (P : α → Prop) :
+    (∑ a : α, (if P a then (1 : ℚ) else 0) ^ 2)
+      = ∑ a : α, if P a then (1 : ℚ) else 0 := by
+  simp
+
+/--
+The product of two rational event indicators is the indicator of their
+intersection. This is the pointwise algebraic bridge needed before
+summing pairwise intersections under a specified finite measure.
+-/
+theorem finite_event_indicator_product
+    {α : Type*} (P Q : α → Prop) (a : α) :
+    (if P a then (1 : ℚ) else 0) * (if Q a then (1 : ℚ) else 0)
+      = if P a ∧ Q a then (1 : ℚ) else 0 := by
+  by_cases hp : P a <;> by_cases hq : Q a <;> simp [hp, hq]
+
+#print axioms BBMSTAudit.finite_event_indicator_square
+#print axioms BBMSTAudit.finite_event_indicator_product
+
+
 end BBMSTAudit
