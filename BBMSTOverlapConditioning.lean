@@ -359,4 +359,25 @@ theorem finiteEventMass_compl_add_totalMass
 
 #print axioms finiteEventMass_compl_add_totalMass
 
+
+/--
+Under a normalized nonnegative finite mass, every event has probability in
+[0,1]. This packages positivity, domination by total mass, and normalization
+without assuming independence or any BBMST-specific geometry.
+-/
+theorem finiteEventMass_mem_unit_interval
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop)
+    (hμ : ∀ x, 0 ≤ μ x)
+    (hnorm : (∑ x : Ω, μ x) = 1) :
+    0 ≤ finiteEventMass μ E ∧ finiteEventMass μ E ≤ 1 := by
+  constructor
+  · exact finiteEventMass_nonneg μ E hμ
+  · calc
+      finiteEventMass μ E ≤ ∑ x : Ω, μ x :=
+        finiteEventMass_le_totalMass μ E hμ
+      _ = 1 := hnorm
+
+#print axioms finiteEventMass_mem_unit_interval
+
 end BBMSTAudit
