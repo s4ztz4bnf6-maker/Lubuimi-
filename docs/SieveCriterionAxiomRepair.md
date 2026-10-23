@@ -8,13 +8,17 @@ The pinned source defines `sieve_criterion` with premises `1 ≤ ca1` and `sieve
 
 This is a defect in the imported axiom interface. It is not a kernel inconsistency and does not construct an odd covering system.
 
-## Minimal interface condition to investigate
+## Both axiom interfaces need alignment
 
-The immediate missing invariant is length alignment. The proof that obtains parameters from `sf_sieve_lt_one` uses one parameter per extracted prime, so the non-squarefree criterion should at minimum reject a parameter vector that is too short:
+The defect is not confined to `sieve_criterion`. The upstream `sf_sieve_lt_one` axiom also quantifies its parameter constraints only over indices `i < δs.length`; it does not require `δs` to be as long as `primes`. Thus the empty parameter list makes those local constraints vacuously true, and the theorem's main proof can pass the same empty list into the non-squarefree criterion.
+
+The immediate repair target is to carry a length invariant through both interfaces. For example, investigate a premise such as
 
 ```lean
-(hδ_length : (nonsfBlockSizes cs).length ≤ δs.length)
+(primes.length ≤ δs.length)
 ```
+
+in `sf_sieve_lt_one`, and the corresponding block-size/parameter alignment condition in `sieve_criterion`. Since `sfBlockSizes` and `nonsfBlockSizes` are maps of the same extracted-prime list, prove their length correspondence from the definitions and transport the bound. Whether `≤` or exact equality is the right invariant depends on the indexing used by `sieveSum` and must be verified from its definition.
 
 A more robust interface should expose the actual sieve hypotheses explicitly, including parameter bounds and the coefficient constraints used by the monotonicity proof. Those bounds are not a substitute for length alignment: a universally quantified bound over an empty list is vacuously true.
 
