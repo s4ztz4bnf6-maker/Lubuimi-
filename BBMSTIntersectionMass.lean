@@ -1,5 +1,4 @@
 import BBMSTGeometryTest
-import FiniteProductSumAudit
 
 /-!
 # Exact zero-mass transfer for incompatible coordinate cylinders
@@ -51,5 +50,4 @@ theorem eventMass_intersection_le_marginals
     exact hx.2
 
 #print axioms eventMass_intersection_le_marginals
-
 #print axioms eventMass_cylinder_inter_zero_of_disagreeing_overlap
