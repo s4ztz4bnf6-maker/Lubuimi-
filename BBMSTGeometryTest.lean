@@ -97,23 +97,28 @@ theorem factorizedPointWeight_nonneg {n : ℕ} {space : CoordinateSpace n}
 #print axioms factorizedPointWeight_eq_prod
 #print axioms factorizedPointWeight_nonneg
 
-/-- The total mass of the factorized point weights is the product of the
-coordinate normalizers. This is the finite product-measure normalization
-identity; it does not follow from pointwise factorization alone unless the
-coordinate weights are themselves normalized. -/
+/-- Exact total-mass identity for a finite product of coordinate
+weights. The right side records every coordinate normalizer explicitly;
+this remains true even before probability normalization is imposed. -/
+theorem factorizedPointWeight_total_mass_eq_prod {n : ℕ}
+    {space : CoordinateSpace n} (w : CoordinateWeightSystem space) :
+    (∑ x : CoordinatePoint space, factorizedPointWeight w x) =
+      ∏ i : Fin n, ∑ y : CoordinateValue space i, w.weight i y := by
+  unfold factorizedPointWeight
+  rw [← Fintype.prod_sum]
+
+/-- The total mass of the factorized point weights is one when every
+coordinate weight is normalized. The general product-of-normalizers identity
+is proved separately above, so the normalization assumption is explicit. -/
 theorem factorizedPointWeight_total_mass {n : ℕ}
     {space : CoordinateSpace n} (w : CoordinateWeightSystem space) :
     (∑ x : CoordinatePoint space, factorizedPointWeight w x) = 1 := by
-  calc
-    (∑ x : CoordinatePoint space, factorizedPointWeight w x) =
-        ∏ i : Fin n, ∑ y : CoordinateValue space i, w.weight i y := by
-          unfold factorizedPointWeight
-          rw [← Fintype.prod_sum]
-    _ = 1 := by
-      apply Finset.prod_eq_one
-      intro i hi
-      simpa using w.coordinate_sum_one i
+  rw [factorizedPointWeight_total_mass_eq_prod]
+  apply Finset.prod_eq_one
+  intro i hi
+  simpa using w.coordinate_sum_one i
 
+#print axioms factorizedPointWeight_total_mass_eq_prod
 #print axioms factorizedPointWeight_total_mass
 
 namespace ProductDistribution
