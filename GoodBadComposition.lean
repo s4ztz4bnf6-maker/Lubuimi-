@@ -59,3 +59,36 @@ theorem TransferBudget.compose_assoc
   simp [TransferBudget.compose, mul_assoc, mul_add, add_assoc]
 
 #print axioms TransferBudget.compose_assoc
+
+
+/-- Compose a finite chain of transfer budgets. The list is ordered from
+outermost transfer to innermost transfer. -/
+def TransferBudget.composeAll : List TransferBudget → TransferBudget
+  | [] => { factor := 1, error := 0 }
+  | b :: bs => b.compose (TransferBudget.composeAll bs)
+
+/-- If every stage has a nonnegative distortion factor and nonnegative
+additive error, the composed chain retains both nonnegativity properties. -/
+theorem TransferBudget.composeAll_nonneg
+    (bs : List TransferBudget)
+    (hfactor : ∀ b ∈ bs, 0 ≤ b.factor)
+    (herror : ∀ b ∈ bs, 0 ≤ b.error) :
+    0 ≤ (TransferBudget.composeAll bs).factor ∧
+    0 ≤ (TransferBudget.composeAll bs).error := by
+  induction bs with
+  | nil =>
+      simp [TransferBudget.composeAll]
+  | cons b bs ih =>
+      have hbFactor : 0 ≤ b.factor := hfactor b (by simp)
+      have hbError : 0 ≤ b.error := herror b (by simp)
+      have hrestFactor : ∀ c ∈ bs, 0 ≤ c.factor := by
+        intro c hc
+        exact hfactor c (by simp [hc])
+      have hrestError : ∀ c ∈ bs, 0 ≤ c.error := by
+        intro c hc
+        exact herror c (by simp [hc])
+      have hrest := ih hrestFactor hrestError
+      simp [TransferBudget.composeAll, TransferBudget.compose]
+      constructor <;> nlinarith [hrest.1, hrest.2]
+
+#print axioms TransferBudget.composeAll_nonneg
