@@ -482,7 +482,7 @@ theorem finiteEventMass_union_le_sum
   have hinter : 0 ≤ finiteEventMass μ (fun x => E x ∧ F x) :=
     finiteEventMass_nonneg μ (fun x => E x ∧ F x) hμ
   have hexact := finiteEventMass_union_intersection_identity μ E F
-  omega
+  linarith
 
 #print axioms finiteEventMass_union_le_sum
 
