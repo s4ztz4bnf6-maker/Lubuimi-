@@ -196,7 +196,7 @@ theorem finite_event_count_second_moment_expansion
     (∑ a : α, if P a then (1 : ℚ) else 0) ^ 2
       = ∑ a : α, ∑ b : α, if P a ∧ P b then (1 : ℚ) else 0 := by
   classical
-  rw [finite_square_sum_expansion]
+  rw [BBMSTAudit.finite_square_sum_expansion]
   apply Finset.sum_congr rfl
   intro a ha
   apply Finset.sum_congr rfl
