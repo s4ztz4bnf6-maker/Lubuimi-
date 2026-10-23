@@ -46,8 +46,9 @@ theorem depends_symmetric {m n : ℕ} (S : FiniteSystem m n)
     exact ⟨Ne.symm hne, i, hiH, hiK⟩
 
 /-- The finite neighborhood of an event in the coordinate-overlap graph. -/
-noncomputable def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) :=
-  Finset.univ.filter (fun K => Depends S H K)
+noncomputable def neighbors {m n : ℕ} (S : FiniteSystem m n) (H : Fin m) : Finset (Fin m) := by
+  classical
+  exact Finset.univ.filter (fun K => Depends S H K)
 
 theorem mem_neighbors_iff {m n : ℕ} (S : FiniteSystem m n)
     (H K : Fin m) : K ∈ neighbors S H ↔ Depends S H K := by
