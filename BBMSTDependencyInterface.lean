@@ -95,6 +95,27 @@ structure TiltedBudget {m n : ℕ} (S : FiniteSystem m n) where
   coordinate_budget : ∀ i : Fin n,
     (∑ H : Fin m, if i ∈ S.fixed H then tilt H * S.weight H else 0) < eta / 2
 
+/-- Weighted neighborhood load for an event H. This is the natural
+graph-side quantity for a local-lemma argument. It is deliberately kept
+separate from the coordinatewise budget: a neighbor may overlap H in more
+than one coordinate, so a coordinate budget cannot be converted into this
+sum without an additional source-specific counting argument. -/
+def weightedNeighborLoad {m n : ℕ}
+    (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m) : ℚ :=
+  ∑ K ∈ neighbors S H, B.tilt K * S.weight K
+
+theorem weightedNeighborLoad_nonneg {m n : ℕ}
+    (S : FiniteSystem m n) (B : TiltedBudget S) (H : Fin m) :
+    0 ≤ weightedNeighborLoad S B H := by
+  unfold weightedNeighborLoad
+  apply Finset.sum_nonneg
+  intro K hK
+  apply Finset.sum_nonneg
+  intro h hmem
+  exact mul_nonneg (B.tilt_nonneg K) (S.weight_nonneg K)
+
+#print axioms weightedNeighborLoad_nonneg
+
 /-- The local budget gives a strict coordinatewise bound. This lemma only
 packages the supplied certificate; it does not prove that the certificate
 holds for a particular arithmetic covering system. -/
