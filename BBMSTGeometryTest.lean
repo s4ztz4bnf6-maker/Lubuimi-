@@ -900,15 +900,12 @@ theorem eventMass_le_good_bad_transfer
   have hgood_inter :
       eventMass μ (fun x => E x ∧ G x) ≤
         C * eventMass ν (fun x => E x ∧ G x) := by
+    classical
     unfold eventMass
-    calc
-      (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), μ.weight x) ≤
-          ∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), C * ν.weight x := by
-        apply Finset.sum_le_sum
-        intro x hx
-        exact hgood x (Finset.mem_filter.mp hx).2.2
-      _ = C * (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), ν.weight x) := by
-        rw [Finset.mul_sum]
+    rw [Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro x hx
+    exact hgood x (Finset.mem_filter.mp hx).2
   have hgoodmass :
       eventMass μ (fun x => E x ∧ G x) ≤ C * eventMass ν E :=
     le_trans hgood_inter
