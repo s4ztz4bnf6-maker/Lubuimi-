@@ -187,6 +187,10 @@ theorem finite_event_indicator_product
 
 end BBMSTAudit
 
+-- The indicator-valued theorem statements below are outside BBMSTAudit,
+-- so classical decidability must also be available in this scope.
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
 
 /--
 Second-moment expansion for a finite family of events, expressed directly
