@@ -1,5 +1,8 @@
 import Mathlib
 
+-- Event indicators in theorem statements need classical decidability before proof elaboration.
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
 namespace BBMSTAudit
 
 /--
