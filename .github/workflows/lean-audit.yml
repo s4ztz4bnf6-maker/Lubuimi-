@@ -58,6 +58,12 @@ jobs:
           lake env lean -o .lake/build/lib/lean/FiniteProductSumAudit.olean FiniteProductSumAudit.lean 2>&1 | tee /tmp/finite-product-sum.log
           ! grep -q 'sorryAx' /tmp/finite-product-sum.log
 
+      - name: Compile gated finite product factorization
+        run: |
+          set -o pipefail
+          lake env lean BBMSTGatedProductSum.lean 2>&1 | tee /tmp/bbmst-gated-product-sum.log
+          ! grep -q 'sorryAx' /tmp/bbmst-gated-product-sum.log
+
       - name: Compile normalized finite product mass audit
         run: |
           set -o pipefail
