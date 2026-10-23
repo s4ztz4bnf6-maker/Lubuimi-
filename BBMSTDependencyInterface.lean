@@ -68,6 +68,21 @@ theorem self_not_neighbor {m n : ℕ} (S : FiniteSystem m n)
   rw [mem_neighbors_iff]
   exact fun h => h.1 rfl
 
+
+/-- Every graph neighbor carries a concrete shared-coordinate witness.
+This is the pointwise incidence fact needed before a double-counting
+argument can compare neighbor load with support-coordinate load. -/
+theorem neighbor_has_shared_coordinate {m n : ℕ}
+    (S : FiniteSystem m n) (H K : Fin m)
+    (hK : K ∈ neighbors S H) :
+    ∃ i : Fin n, i ∈ S.fixed H ∧ i ∈ S.fixed K := by
+  have hdep : Depends S H K := mem_neighbors_iff S H K |>.mp hK
+  rcases (depends_iff_common_coordinate S H K).mp hdep with
+    ⟨_, i, hiH, hiK⟩
+  exact ⟨i, hiH, hiK⟩
+
+#print axioms neighbor_has_shared_coordinate
+
 /-- The un-tilted load on coordinate i: total event weight among events
 that constrain i. This is a diagnostic quantity, not the BBMST weighted
 local-lemma budget by itself. -/
