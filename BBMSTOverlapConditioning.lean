@@ -60,4 +60,26 @@ theorem finite_weighted_square_sum_expansion
 
 #print axioms BBMSTAudit.finite_weighted_square_sum_expansion
 
+/--
+Pairwise difference expansion for finite rational data. It expresses
+the total squared deviation from the arithmetic mean without division,
+so the identity itself remains valid even when later weights have zero
+mass. This is an algebraic identity, not yet a probability variance bound.
+-/
+theorem finite_pairwise_square_difference
+    {α : Type*} [Fintype α] (f : α → ℚ) :
+    (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) - (∑ a : α, f a) ^ 2
+      = (∑ a : α, ∑ b : α, (f a - f b) ^ 2) / 2 := by
+  classical
+  have hsum :
+      (∑ a : α, ∑ b : α, (f a - f b) ^ 2)
+        = 2 * ((Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) - (∑ a : α, f a) ^ 2) := by
+    simp_rw [sub_sq]
+    simp [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_mul,
+      Finset.mul_sum, Fintype.card, mul_comm, mul_left_comm, mul_assoc]
+  rw [hsum]
+  ring
+
+#print axioms BBMSTAudit.finite_pairwise_square_difference
+
 end BBMSTAudit
