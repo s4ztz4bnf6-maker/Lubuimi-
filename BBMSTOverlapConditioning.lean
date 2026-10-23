@@ -287,3 +287,30 @@ theorem finite_weighted_event_count_first_moment
             simp_rw [Finset.sum_comm]
 
 #print axioms finite_weighted_event_count_first_moment
+
+
+namespace BBMSTAudit
+
+/-- Finite event mass for arbitrary rational weights. Probability semantics require separate normalization. -/
+def finiteEventMass {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop) : ℚ :=
+  ∑ x : Ω, μ x * (if E x then (1 : ℚ) else 0)
+
+/-- Nonnegative point weights induce nonnegative finite event masses. -/
+theorem finiteEventMass_nonneg
+    {Ω : Type*} [Fintype Ω]
+    (μ : Ω → ℚ) (E : Ω → Prop)
+    (hμ : ∀ x, 0 ≤ μ x) :
+    0 ≤ finiteEventMass μ E := by
+  classical
+  unfold finiteEventMass
+  apply Finset.sum_nonneg
+  intro x hx
+  by_cases hE : E x
+  · simp [hE]
+    exact hμ x
+  · simp [hE]
+
+#print axioms finiteEventMass_nonneg
+
+end BBMSTAudit
