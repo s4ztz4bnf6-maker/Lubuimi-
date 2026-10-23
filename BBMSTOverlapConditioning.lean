@@ -71,16 +71,41 @@ theorem finite_pairwise_square_difference
     (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) - (∑ a : α, f a) ^ 2
       = (∑ a : α, ∑ b : α, (f a - f b) ^ 2) / 2 := by
   classical
-  have hcard : (Fintype.card α : ℚ) = ∑ a : α, (1 : ℚ) := by
-    simp
-  have hsum :
+  have hinner (a : α) :
+      (∑ b : α, (f a - f b) ^ 2) =
+        (Fintype.card α : ℚ) * f a ^ 2
+          - 2 * f a * (∑ b : α, f b) + ∑ b : α, f b ^ 2 := by
+    calc
+      (∑ b : α, (f a - f b) ^ 2)
+          = ∑ b : α, (f a ^ 2 - 2 * f a * f b + f b ^ 2) := by
+              apply Finset.sum_congr rfl
+              intro b hb
+              ring
+      _ = (Fintype.card α : ℚ) * f a ^ 2
+            - 2 * f a * (∑ b : α, f b) + ∑ b : α, f b ^ 2 := by
+              simp [Finset.sum_add_distrib, Finset.sum_sub_distrib,
+                Finset.sum_mul, Finset.mul_sum,
+                mul_comm, mul_left_comm, mul_assoc]
+  have hdouble :
+      (∑ a : α, ∑ b : α, (f a - f b) ^ 2) =
+        (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2)
+          - 2 * (∑ a : α, f a) * (∑ a : α, f a)
+          + (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) := by
+    calc
       (∑ a : α, ∑ b : α, (f a - f b) ^ 2)
-        = 2 * ((Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) - (∑ a : α, f a) ^ 2) := by
-    simp_rw [sub_sq]
-    rw [hcard]
-    simp [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_mul,
-      Finset.mul_sum, mul_comm, mul_left_comm, mul_assoc]
-  rw [hsum]
+          = ∑ a : α,
+              ((Fintype.card α : ℚ) * f a ^ 2
+                - 2 * f a * (∑ b : α, f b) + ∑ b : α, f b ^ 2) := by
+              apply Finset.sum_congr rfl
+              intro a ha
+              exact hinner a
+      _ = (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2)
+            - 2 * (∑ a : α, f a) * (∑ a : α, f a)
+            + (Fintype.card α : ℚ) * (∑ a : α, f a ^ 2) := by
+              simp [Finset.sum_add_distrib, Finset.sum_sub_distrib,
+                Finset.sum_mul, Finset.mul_sum,
+                mul_comm, mul_left_comm, mul_assoc]
+  rw [hdouble]
   ring
 
 #print axioms BBMSTAudit.finite_pairwise_square_difference
