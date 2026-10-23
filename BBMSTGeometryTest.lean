@@ -895,22 +895,18 @@ theorem eventMass_le_good_bad_transfer
   have hgoodmass :
       eventMass μ (fun x => E x ∧ G x) ≤
         C * eventMass ν E := by
-    unfold eventMass
     calc
-      (∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), μ.weight x) ≤
-          ∑ x ∈ Finset.univ.filter (fun x => E x ∧ G x), C * ν.weight x := by
-            apply Finset.sum_le_sum
+      eventMass μ (fun x => E x ∧ G x) ≤
+          C * eventMass ν (fun x => E x ∧ G x) :=
+        eventMass_le_const_mul_of_pointwise μ ν
+          (fun x => E x ∧ G x) C hC
+          (by
             intro x hx
-            exact hgood x (Finset.mem_filter.mp hx |>.2.2)
-      _ ≤ C * (∑ x ∈ Finset.univ.filter E, ν.weight x) := by
-            rw [Finset.mul_sum]
-            apply Finset.sum_le_sum_of_subset_of_nonneg
-            · intro x hx
-              exact Finset.mem_filter.mpr
-                ⟨Finset.mem_univ _, (Finset.mem_filter.mp hx).2.1⟩
-            · intro x hx hnot
-              exact mul_nonneg hC (ν.h_nonneg x)
-      _ = C * eventMass ν E := rfl
+            exact hgood x hx.2)
+      _ ≤ C * eventMass ν E :=
+        mul_le_mul_of_nonneg_left
+          (eventMass_mono ν (fun x => E x ∧ G x) E
+            (by intro x hx; exact hx.1)) hC
   have hbadmass :
       eventMass μ (fun x => E x ∧ ¬ G x) ≤ η := by
     apply le_trans
