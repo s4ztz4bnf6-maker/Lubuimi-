@@ -117,3 +117,24 @@ theorem TransferBudget.composeAll_error_eq_weightedError
 
 #print axioms TransferBudget.composeAll_error_eq_weightedError
 
+/-- Multiplicative distortion accumulated along the same finite chain. -/
+def TransferBudget.weightedFactor : List TransferBudget → ℚ
+  | [] => 1
+  | b :: bs => b.factor * TransferBudget.weightedFactor bs
+
+/-- The factor field of composeAll is exactly the product of all stage
+factors, with the empty chain acting as the identity. -/
+theorem TransferBudget.composeAll_factor_eq_weightedFactor
+    (bs : List TransferBudget) :
+    (TransferBudget.composeAll bs).factor =
+      TransferBudget.weightedFactor bs := by
+  induction bs with
+  | nil =>
+      simp [TransferBudget.composeAll, TransferBudget.weightedFactor]
+  | cons b bs ih =>
+      simp [TransferBudget.composeAll, TransferBudget.compose,
+        TransferBudget.weightedFactor, ih]
+
+#print axioms TransferBudget.composeAll_factor_eq_weightedFactor
+
+
