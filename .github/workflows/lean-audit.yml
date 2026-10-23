@@ -58,6 +58,12 @@ jobs:
           lake env lean -o .lake/build/lib/lean/FiniteProductSumAudit.olean FiniteProductSumAudit.lean 2>&1 | tee /tmp/finite-product-sum.log
           ! grep -q 'sorryAx' /tmp/finite-product-sum.log
 
+      - name: Compile normalized finite product mass audit
+        run: |
+          set -o pipefail
+          lake env lean FiniteProductNormalizationAudit.lean 2>&1 | tee /tmp/finite-product-normalization.log
+          ! grep -q 'sorryAx' /tmp/finite-product-normalization.log
+
       - name: Compile exact intersection-mass transfer
         run: |
           set -o pipefail
