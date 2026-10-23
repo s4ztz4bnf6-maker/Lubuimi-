@@ -901,7 +901,7 @@ theorem eventMass_le_good_bad_transfer
         unfold eventMass
         rw [Finset.mul_sum]
         apply Finset.sum_le_sum
-        intro x hx
+        intro hx
         exact hgood x (Finset.mem_filter.mp hx).2.2
       _ ≤ C * eventMass ν E :=
         mul_le_mul_of_nonneg_left
