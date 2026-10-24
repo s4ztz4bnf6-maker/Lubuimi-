@@ -215,3 +215,37 @@ theorem product_box_fixed_coordinate_cardinality_union
 #print axioms product_box_fixed_coordinate_cardinality_union
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Exact overlap-weight identity for a finite product box.
+
+The product of coordinate cardinalities on the union of two fixed-coordinate
+sets, multiplied by the product on their intersection, equals the product
+of the two individual support weights. This is the multiplicative analogue
+of the support-cardinality identity above. It isolates the overlap factor
+that appears when comparing the mass of a merged constraint system with
+the two individual constraint systems; it does not assume event independence
+and does not yet assert a probability formula.
+-/
+theorem product_box_overlap_weight_identity
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S) :
+    Finset.prod (H.fixedCoords ∪ K.fixedCoords)
+        (fun i => (Fintype.card (S i) : ℚ)) *
+      Finset.prod (H.fixedCoords ∩ K.fixedCoords)
+        (fun i => (Fintype.card (S i) : ℚ)) =
+      Finset.prod H.fixedCoords
+        (fun i => (Fintype.card (S i) : ℚ)) *
+      Finset.prod K.fixedCoords
+        (fun i => (Fintype.card (S i) : ℚ)) := by
+  simpa using
+    (Finset.prod_union_inter H.fixedCoords K.fixedCoords
+      (fun i : ι => (Fintype.card (S i) : ℚ)))
+
+#print axioms product_box_overlap_weight_identity
+
+end BBMSTAudit
