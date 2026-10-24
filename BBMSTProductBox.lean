@@ -459,3 +459,29 @@ theorem product_box_intersection_cardinality_compatible_or_zero
 #print axioms product_box_intersection_cardinality_compatible_or_zero
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Finite second-moment expansion for indicator sums, before introducing any
+probability measure. The identity is purely algebraic: the square of the
+number of satisfied predicates counts ordered pairs satisfying both
+predicates. This is the exact combinatorial core of the second-moment step.
+-/
+theorem indicator_sum_sq_eq_ordered_pair_sum
+    {α : Type u} [DecidableEq α]
+    (s : Finset α) (P : α → Prop) [DecidablePred P] :
+    (∑ x ∈ s, if P x then (1 : ℚ) else 0) ^ 2 =
+      ∑ x ∈ s, ∑ y ∈ s, if P x ∧ P y then (1 : ℚ) else 0 := by
+  rw [pow_two, Finset.sum_mul_sum]
+  apply Finset.sum_congr rfl
+  intro x hx
+  apply Finset.sum_congr rfl
+  intro y hy
+  by_cases hpx : P x <;> by_cases hpy : P y <;>
+    simp [hpx, hpy]
+
+#print axioms indicator_sum_sq_eq_ordered_pair_sum
+
+end BBMSTAudit
