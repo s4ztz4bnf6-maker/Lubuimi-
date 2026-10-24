@@ -195,4 +195,27 @@ theorem fiber_update_covered_mass_weighted_gap
 
 #print axioms fiber_update_covered_mass_weighted_gap
 
+
+/--
+Aggregate quantitative loss: on the active branch, the covered-mass-weighted
+gap is at least δ. The exact value is δ/(1-δ), so the bound is uniform in α.
+This remains a scalar inequality; geometric independence and the global sieve
+criterion are not established by it.
+-/
+theorem fiber_update_covered_mass_weighted_gap_ge_threshold
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    δ ≤ α * (1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ))) := by
+  rw [fiber_update_covered_mass_weighted_gap
+    α δ hα0 hδ0 hδhalf hactive]
+  have hden : 0 < 1 - δ := by linarith
+  rw [le_div_iff₀ hden]
+  nlinarith [sq_nonneg δ]
+
+#print axioms fiber_update_covered_mass_weighted_gap_ge_threshold
+
 end BBMSTAudit
