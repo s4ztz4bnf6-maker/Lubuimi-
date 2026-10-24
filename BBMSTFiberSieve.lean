@@ -556,3 +556,27 @@ theorem affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
             (T.prod U) (b, c) x₀ hxprod
 
 #print axioms affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+
+
+/--
+An inconsistent pair of affine constraints has no solutions, so its
+intersection contributes exactly zero to the second moment. This complements
+the consistent stacked-rank formula and prevents a hidden consistency
+assumption from entering pairwise overlap sums.
+-/
+theorem affine_pair_intersection_card_zero_of_inconsistent
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂)
+    (hbad : ¬ ∃ x : V, T x = b ∧ U x = c) :
+    Fintype.card {x : V // T x = b ∧ U x = c} = 0 := by
+  classical
+  letI : IsEmpty {x : V // T x = b ∧ U x = c} :=
+    ⟨fun x => hbad ⟨x.1, x.2⟩⟩
+  simp
+
+#print axioms affine_pair_intersection_card_zero_of_inconsistent
