@@ -137,6 +137,8 @@ theorem product_box_events_disjoint_iff_conflict
 end BBMSTAudit
 
 
+namespace BBMSTAudit
+
 /-- Merge two compatible product-box hyperplanes by taking the union of
 their fixed-coordinate sets. On shared fixed coordinates the two values
 agree, so choosing H's value there and K's value elsewhere is canonical
@@ -189,3 +191,6 @@ theorem product_box_intersection_eq_merge_event
       · simpa [ProductBoxHyperplane.merge, hiH] using h
 
 #print axioms product_box_intersection_eq_merge_event
+
+
+end BBMSTAudit
