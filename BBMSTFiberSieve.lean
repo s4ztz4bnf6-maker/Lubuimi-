@@ -763,9 +763,6 @@ theorem affine_pair_intersection_cardinality_factorization_of_rank_add
       Fintype.card {x : V // T x = b} *
         Fintype.card {x : V // U x = c} := by
   classical
-  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
-  letI : Fintype {x : V // U x = c} := Fintype.ofFinite _
-  letI : Fintype {x : V // T x = b ∧ U x = c} := Fintype.ofFinite _
   have hPairCard :=
     affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
       T U b c xPair hPair
@@ -865,9 +862,6 @@ theorem affine_pair_intersection_cardinality_rank_defect
         Fintype.card {x : V // U x = c} *
           Fintype.card K ^ d := by
   classical
-  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
-  letI : Fintype {x : V // U x = c} := Fintype.ofFinite _
-  letI : Fintype {x : V // T x = b ∧ U x = c} := Fintype.ofFinite _
   have hPairCard :=
     affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
       T U b c xPair hPair
