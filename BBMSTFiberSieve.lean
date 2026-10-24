@@ -159,8 +159,9 @@ theorem fiber_update_multiplier_gap_pos_iff
     have hδeq : δ = 0 := by linarith
     rw [fiber_update_multiplier_gap α δ hα0 hδ0 hδhalf hactive] at hgap
     simp [hδeq] at hgap
-  · exact fiber_update_multiplier_gap_pos α δ hα0
-      (by assumption) hδhalf hactive
+  · intro hδpos
+    exact fiber_update_multiplier_gap_pos α δ hα0
+      hδpos hδhalf hactive
 
 #print axioms fiber_update_multiplier_gap_pos_iff
 
