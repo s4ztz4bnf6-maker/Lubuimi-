@@ -69,6 +69,42 @@ theorem product_box_parallel_iff_fixed_coords_eq
     (H K : ProductBoxHyperplane ι S) :
     H.Parallel K ↔ H.fixedCoords = K.fixedCoords := Iff.rfl
 
+/-- Exact overlap classification: two product-box hyperplanes intersect if
+and only if their singleton assignments never conflict on a coordinate fixed
+by both. The construction uses H's assigned values as defaults on free
+coordinates, so no separate nonemptiness hypothesis on the coordinate types
+is needed. -/
+theorem product_box_events_intersect_iff_no_conflict
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    (H K : ProductBoxHyperplane ι S) :
+    (H.event ∩ K.event).Nonempty ↔
+      ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+        H.fixedValue i ≠ K.fixedValue i := by
+  constructor
+  · rintro ⟨x, hx⟩ hconflict
+    obtain ⟨i, hiH, hiK, hne⟩ := hconflict
+    have hagree :=
+      product_box_overlap_agreement H K x hx.1 hx.2 hiH hiK
+    exact hne hagree
+  · intro hno
+    classical
+    let x : ∀ i, S i := fun i =>
+      if hiH : i ∈ H.fixedCoords then H.fixedValue i
+      else if hiK : i ∈ K.fixedCoords then K.fixedValue i
+      else H.fixedValue i
+    refine ⟨x, ?_⟩
+    constructor
+    · intro i hiH
+      simp [x, hiH]
+    · intro i hiK
+      dsimp [x]
+      by_cases hiH : i ∈ H.fixedCoords
+      · have hEq : H.fixedValue i = K.fixedValue i := by
+          by_contra hne
+          exact hno ⟨i, hiH, hiK, hne⟩
+        simp [hiH, hEq]
+      · simp [hiH, hiK]
+
 #print axioms product_box_overlap_agreement
 #print axioms product_box_disjoint_of_conflict
 #print axioms product_box_parallel_iff_fixed_coords_eq
