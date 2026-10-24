@@ -247,3 +247,50 @@ theorem product_box_overlap_weight_identity
 #print axioms product_box_overlap_weight_identity
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+A product-box event is canonically parametrized by the coordinates it does
+not fix. This equivalence is the counting bridge from the geometric event
+definition to an exact finite-cardinality formula; it uses the actual fixed
+coordinate support rather than an abstract independence assumption.
+-/
+def productBoxEventEquivFree
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    {x : (∀ i, S i) // x ∈ H.event} ≃
+      (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val) where
+  toFun x i := x.val i.val
+  invFun y :=
+    ⟨fun i => if hi : i ∈ H.fixedCoords then H.fixedValue i
+      else y ⟨i, hi⟩, by
+        intro i hi
+        simp [hi]⟩
+  left_inv x := by
+    apply Subtype.ext
+    funext i
+    by_cases hi : i ∈ H.fixedCoords
+    · simp [hi, x.property i hi]
+    · simp [hi]
+  right_inv y := by
+    funext i
+    simp [i.property]
+
+/-- The event cardinality equals the number of assignments to free
+coordinates. The next step is to expand this dependent Pi cardinality as the
+product of the coordinate cardinalities. -/
+theorem product_box_event_card_eq_free_assignments
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
+      Fintype.card (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val) :=
+  Fintype.card_congr (productBoxEventEquivFree H)
+
+#print axioms productBoxEventEquivFree
+#print axioms product_box_event_card_eq_free_assignments
+
+end BBMSTAudit
