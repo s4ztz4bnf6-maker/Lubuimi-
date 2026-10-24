@@ -336,9 +336,13 @@ theorem affine_intersection_empty_of_inconsistent_linear_relation
     (hrel : ∑ i ∈ s, c i • L i = 0)
     (hbad : ∑ i ∈ s, c i * b i ≠ 0) :
     {x : V | ∀ i ∈ s, L i x = b i} = ∅ := by
-  apply Set.eq_empty_iff_forall_not_mem.mpr
-  intro x hx
-  apply hbad
-  exact affine_intersection_respects_linear_relation L b c s x hx hrel
+  ext x
+  simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false]
+  constructor
+  · intro hx
+    apply hbad
+    exact affine_intersection_respects_linear_relation L b c s x hx hrel
+  · intro hx
+    exact False.elim hx
 
 #print axioms affine_intersection_empty_of_inconsistent_linear_relation
