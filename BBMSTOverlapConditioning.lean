@@ -486,6 +486,8 @@ theorem finiteEventMass_union_le_sum
 
 #print axioms finiteEventMass_union_le_sum
 
+set_option maxHeartbeats 1000000
+
 /--
 Finite-family union bound. It iterates the exact two-event estimate, so
 overlap is handled at every stage and no independence hypothesis is introduced.
