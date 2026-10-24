@@ -613,11 +613,11 @@ theorem affine_pair_intersection_card_exact
       else 0 := by
   classical
   by_cases h : ∃ x : V, T x = b ∧ U x = c
-  · rcases h with ⟨x₀, hx₀⟩
-    rw [if_pos ⟨x₀, hx₀⟩]
+  · rw [dif_pos h]
+    rcases h with ⟨x₀, hx₀⟩
     exact affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
       T U b c x₀ hx₀
-  · rw [if_neg h]
+  · rw [dif_neg h]
     exact affine_pair_intersection_card_zero_of_inconsistent
       T U b c h
 
