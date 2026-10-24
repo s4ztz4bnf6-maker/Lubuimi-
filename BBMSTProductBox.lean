@@ -567,3 +567,60 @@ theorem product_box_uniform_mass_eq_free_product_ratio
 #print axioms product_box_uniform_mass_eq_free_product_ratio
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Uniform mass of the intersection of two product-box events, defined by exact
+finite counting in the ambient product. This definition keeps the compatible
+and incompatible cases in the same probability interface.
+-/
+noncomputable def productBoxIntersectionUniformMass
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S) : ℚ :=
+  (Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} : ℚ) /
+    (Fintype.card (∀ i, S i) : ℚ)
+
+/--
+Exact normalized intersection mass for compatible constraints. The numerator
+is the product of the coordinate cardinalities left free by the union of the
+two supports. This explicitly accounts for overlap and does not assume
+independence of the events.
+-/
+theorem product_box_compatible_intersection_uniform_mass
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S)
+    (hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    productBoxIntersectionUniformMass H K =
+      (∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
+        (Fintype.card (S i.val) : ℚ)) /
+      (∏ i : ι, (Fintype.card (S i) : ℚ)) := by
+  unfold productBoxIntersectionUniformMass
+  rw [product_box_compatible_intersection_cardinality H K hno]
+  rw [Fintype.card_pi]
+  simp only [Nat.cast_prod]
+
+/--
+An incompatible pair has zero intersection mass. This is the exact
+zero-probability branch needed before summing pairwise terms in a second
+moment estimate.
+-/
+theorem product_box_incompatible_intersection_uniform_mass
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S)
+    (hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    productBoxIntersectionUniformMass H K = 0 := by
+  unfold productBoxIntersectionUniformMass
+  rw [product_box_incompatible_intersection_card_zero H K hconflict]
+  simp
+
+#print axioms product_box_compatible_intersection_uniform_mass
+#print axioms product_box_incompatible_intersection_uniform_mass
+
+end BBMSTAudit
