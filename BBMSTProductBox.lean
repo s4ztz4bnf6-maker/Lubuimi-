@@ -635,6 +635,8 @@ cardinalities divided by the ambient product cardinality. This is the
 source-faithful pair kernel for the second-moment sum: it explicitly keeps
 overlapping supports and incompatible assignments separate.
 -/
+open Classical
+
 theorem product_box_intersection_uniform_mass_compatible_or_zero
     {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
     [∀ i, Fintype (S i)]
