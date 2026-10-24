@@ -294,6 +294,9 @@ theorem product_box_event_card_eq_free_assignments
     Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
       Fintype.card (∀ i : {i : ι // i ∉ H.fixedCoords}, S i) := by
   classical
+  letI : Fintype {x : (∀ i, S i) // x ∈ H.event} :=
+    Fintype.ofEquiv (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val)
+      (productBoxEventEquivFree H).symm
   exact Fintype.card_congr (productBoxEventEquivFree H)
 
 #print axioms product_box_event_card_eq_free_assignments
