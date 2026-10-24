@@ -387,3 +387,51 @@ theorem affineFiber_card_eq_kernel_card
   Nat.card_congr (affineFiberEquivKernel T b x0 hx0)
 
 #print axioms affineFiber_card_eq_kernel_card
+
+
+/--
+The homogeneous fiber is the carrier of the linear-map kernel, expressed as
+an explicit equivalence so that finite-dimensional cardinality theorems apply.
+-/
+def homogeneousFiberEquivKernelSubmodule
+    {K V W : Type*} [Field K]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) :
+    {v : V // T v = 0} ≃ ↥(LinearMap.ker T) where
+  toFun v := ⟨v.1, LinearMap.mem_ker.mpr v.2⟩
+  invFun v := ⟨v.1, LinearMap.mem_ker.mp v.2⟩
+  left_inv v := by
+    apply Subtype.ext
+    rfl
+  right_inv v := by
+    apply Subtype.ext
+    rfl
+
+/--
+Exact finite-field count for a consistent affine fiber: its cardinality is
+q raised to the dimension of the kernel. This is the finite-dimensional
+linear-algebra bridge needed before converting affine intersections into
+probabilities. It is not by itself the BBMST global sieve theorem.
+-/
+theorem affineFiber_card_eq_field_card_pow_finrank_ker
+    {K V W : Type*} [Field K] [Fintype K] [Fintype V] [Fintype W]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) (b : W) (x0 : V)
+    (hx0 : T x0 = b) :
+    Fintype.card {x : V // T x = b} =
+      Fintype.card K ^ Module.finrank K (LinearMap.ker T) := by
+  have hfiber :
+      Fintype.card {x : V // T x = b} =
+        Fintype.card {v : V // T v = 0} :=
+    Fintype.card_congr (affineFiberEquivKernel T b x0 hx0)
+  have hker :
+      Fintype.card {v : V // T v = 0} =
+        Fintype.card (↥(LinearMap.ker T)) :=
+    Fintype.card_congr (homogeneousFiberEquivKernelSubmodule T)
+  rw [hfiber, hker]
+  exact Module.card_eq_pow_finrank
+
+#print axioms homogeneousFiberEquivKernelSubmodule
+#print axioms affineFiber_card_eq_field_card_pow_finrank_ker
