@@ -452,7 +452,7 @@ theorem affineFiber_card_eq_field_card_pow_finrank_sub_range
     [AddCommGroup V] [Module K V]
     [AddCommGroup W] [Module K W]
     (T : V →ₗ[K] W) (b : W) (x0 : V)
-    (hx0 : T x0 = b) [Fintype {x : V // T x = b}] :
+    (hx0 : T x0 = b) :
     Fintype.card {x : V // T x = b} =
       Fintype.card K ^
         (Module.finrank K V - Module.finrank K (LinearMap.range T)) := by
