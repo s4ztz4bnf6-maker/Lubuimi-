@@ -421,3 +421,40 @@ theorem product_box_incompatible_intersection_card_zero
 #print axioms product_box_incompatible_intersection_card_zero
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Exact two-case intersection cardinality formula for finite product boxes.
+Compatible prescriptions contribute the product over free coordinates;
+a conflicting shared prescription contributes zero. This combines the
+merge/counting argument and the incompatible edge case without introducing
+an abstract overlap or parallelism hypothesis.
+-/
+theorem product_box_intersection_cardinality_compatible_or_zero
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S) :
+    (if hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+        H.fixedValue i ≠ K.fixedValue i
+     then
+       Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} =
+         ∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
+           Fintype.card (S i.val)
+     else
+       Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} = 0) := by
+  classical
+  by_cases hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i
+  · simp only [if_pos hno]
+    exact product_box_compatible_intersection_cardinality H K hno
+  · have hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+        H.fixedValue i ≠ K.fixedValue i :=
+      Classical.not_not.mp hno
+    simp only [if_neg hno]
+    exact product_box_incompatible_intersection_card_zero H K hconflict
+
+#print axioms product_box_intersection_cardinality_compatible_or_zero
+
+end BBMSTAudit
