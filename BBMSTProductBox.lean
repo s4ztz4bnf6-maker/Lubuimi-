@@ -332,3 +332,58 @@ theorem product_box_event_card_eq_product_free_coordinate_cardinalities
 #print axioms product_box_event_card_eq_product_free_coordinate_cardinalities
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Every intersection event is finite because it is a subtype of the finite
+ambient dependent product. This instance is independent of whether the two
+constraints are compatible; in the incompatible case the subtype is empty.
+-/ 
+noncomputable instance productBoxIntersectionFintype
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S) :
+    Fintype {x : (∀ i, S i) // x ∈ H.event ∩ K.event} := by
+  classical
+  letI : Finite {x : (∀ i, S i) // x ∈ H.event ∩ K.event} :=
+    Finite.of_injective
+      (fun x : {x : (∀ i, S i) // x ∈ H.event ∩ K.event} => x.val)
+      (fun x y hxy => Subtype.ext hxy)
+  exact Fintype.ofFinite _
+
+/--
+Exact cardinality of a compatible pairwise intersection: merge the two
+coordinate constraints, then count the free coordinates. This is the finite
+counting identity needed before normalizing to probabilities or estimating
+second moments. Compatibility is explicit; no independence assumption is
+used.
+-/ 
+theorem product_box_compatible_intersection_cardinality
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S)
+    (hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} =
+      ∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
+        Fintype.card (S i.val) := by
+  rw [Fintype.card_congr
+    ( { toFun := fun x =>
+          ⟨x.val, by
+            rw [← product_box_intersection_eq_merge_event H K hno]
+            exact x.property⟩
+        invFun := fun x =>
+          ⟨x.val, by
+            rw [product_box_intersection_eq_merge_event H K hno]
+            exact x.property⟩
+        left_inv := by intro x; apply Subtype.ext; rfl
+        right_inv := by intro x; apply Subtype.ext; rfl } )]
+  simpa [ProductBoxHyperplane.merge] using
+    (product_box_event_card_eq_product_free_coordinate_cardinalities
+      (H.merge K))
+
+#print axioms product_box_compatible_intersection_cardinality
+
+end BBMSTAudit
