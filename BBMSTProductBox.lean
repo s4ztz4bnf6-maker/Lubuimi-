@@ -280,10 +280,10 @@ def productBoxEventEquivFree
     simp [i.property]
 
 /-- The event cardinality equals the number of assignments to free
-coordinates. The next step is to expand this dependent Pi cardinality as the
-product of the coordinate cardinalities. -/
+coordinates. The finite index type assumption is needed to count both
+dependent function spaces. -/
 theorem product_box_event_card_eq_free_assignments
-    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
     [∀ i, Fintype (S i)]
     (H : ProductBoxHyperplane ι S) :
     Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
