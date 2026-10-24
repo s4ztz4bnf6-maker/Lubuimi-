@@ -385,3 +385,39 @@ theorem product_box_compatible_intersection_cardinality
 #print axioms product_box_compatible_intersection_cardinality
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+An explicit conflicting singleton assignment forces the finite pairwise
+intersection to have cardinality zero. This closes the incompatible edge case
+at the counting level, not only at the set-disjointness level.
+-/
+theorem product_box_incompatible_intersection_card_zero
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S)
+    (hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} = 0 := by
+  classical
+  let hdisj := product_box_disjoint_of_conflict H K hconflict
+  let e : {x : (∀ i, S i) // x ∈ H.event ∩ K.event} ≃ Empty :=
+    { toFun := fun x =>
+        False.elim ((Set.disjoint_left.mp hdisj) x.property.1 x.property.2)
+      invFun := fun x => nomatch x
+      left_inv := by
+        intro x
+        exact False.elim ((Set.disjoint_left.mp hdisj) x.property.1 x.property.2)
+      right_inv := by
+        intro x
+        cases x }
+  calc
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event}
+        = Fintype.card Empty := Fintype.card_congr e
+    _ = 0 := by simp
+
+#print axioms product_box_incompatible_intersection_card_zero
+
+end BBMSTAudit
