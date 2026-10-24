@@ -162,6 +162,8 @@ theorem fiber_update_multiplier_gap_ge_threshold
     mul_pos hαpos (sub_pos.mpr hδlt)
   have hdenle : α * (1 - δ) ≤ 1 := by
     have hfactor : 0 ≤ 1 - δ := le_of_lt (sub_pos.mpr hδlt)
+    have hprod : 0 ≤ (1 - α) * (1 - δ) :=
+      mul_nonneg (sub_nonneg.mpr hα1) hfactor
     nlinarith
   rw [le_div_iff₀ hdenpos]
   nlinarith [mul_nonneg hδ0 (sub_nonneg.mpr hdenle)]
