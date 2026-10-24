@@ -46,3 +46,29 @@ For a genuine hyperplane family, the first quantitative task is to count ordered
 6. Instantiate the generic lemmas with the paper's actual BBMST hyperplane family and prove a quantitative bound for the resulting M_d.
 
 Open obligations `sieve_criterion` and `sf_sieve_lt_one` remain open until the published global sieve inequality is derived and proved. This document records a proof plan, not a theorem or CI result.
+
+
+## Source-fidelity correction after re-reading the published BBMST paper
+
+The published geometric model is **not** a vector space over a finite field with affine-linear hyperplanes. It is a product box `Q = S₁ × ··· × Sₙ` of arbitrary finite sets, and a hyperplane is a product set in which each coordinate is either the whole `Sᵢ` or a singleton. Its combinatorial support is `F(A)`, the set of fixed coordinates; two hyperplanes are parallel exactly when their fixed-coordinate sets agree. The Chinese-remainder correspondence is used for square-free odd moduli.
+
+Therefore the dual-space/rank-defect identity above is a valid auxiliary theorem for a different, linear-algebraic model, but it is **not itself a faithful formalization of the BBMST hyperplane model**. It must not be treated as the missing bridge to Theorem 3.1 or Theorem 3.2. The source-faithful core should instead formalize the finite product space, `F(A)`, the families `F_k`, `N_k`, the uncovered sets `R_k`, the removed sets `B_k`, the conditional fibre fractions `α_k`, and the reweighted measures `P_k`.
+
+The paper's actual proof interfaces are:
+
+- Lemma 2.1: `P_k(S) = P_{k-1}(S)` for `Q_{k-1}`-measurable `S`; `P_k(S) ≤ P_{k-1}(S)/(1-δ_k)` for arbitrary `S`; and `P_k(S) ≤ P_{k-1}(S)` when `S ⊆ B_k`.
+- Theorem 3.1: non-covering follows if `Σ_k min(M_k^(1), M_k^(2)/(4δ_k(1-δ_k))) < 1`.
+- Theorem 3.2: moment bounds use the source-defined generating function `c_k(x)` and its values at `1` and `3`; the refined second-moment bound (13) has the explicit hypothesis that no hyperplane in `N_k` has codimension one.
+
+This also sharpens the implementation warning: a scalar normalization lemma for one fibre is necessary but does not prove the measure-preservation statement for all `Q_{k-1}`-measurable sets, nor the global moment bounds. In particular, codimension-one removal and the precise conditional hypothesis of equation (13) must be represented rather than replaced by free predicates or assumptions.
+
+## Revised implementation order
+
+1. Define finite product spaces and coordinatewise hyperplanes without importing finite-field linearity.
+2. Define `fixedCoords`, parallelism, `F_k`, `N_k`, `R_k`, and `B_k` exactly as in the paper.
+3. Define the stagewise probability measure update with the paper's `max`/`min` branches, handling the `α = 0`, `α = 1`, and `δ = 0` edges explicitly.
+4. Prove the three parts of Lemma 2.1 for actual finite-set sums.
+5. Define `α_k`, `M_k^(1)`, `M_k^(2)`, and `c_k`; prove Theorem 3.1 and Theorem 3.2 with the exact hypotheses.
+6. Only then specialize to the prime-coordinate box and formalize the arithmetic progression/CRT correspondence and the finite exceptional-prime computations.
+
+The rank-defect note above remains useful as a separate investigation of affine linear constraints, but the source-faithful route to the Erdős–Selfridge theorem must proceed through the product-space sieve. No global sieve theorem is claimed by this correction.
