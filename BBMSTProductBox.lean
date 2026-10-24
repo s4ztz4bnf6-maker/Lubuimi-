@@ -516,7 +516,14 @@ theorem finite_second_moment_ordered_pair_identity
                 (fun i => E i ω)
     _ = ∑ i ∈ indices, ∑ j ∈ indices,
           ∑ ω ∈ samples, if E i ω ∧ E j ω then (1 : ℚ) else 0 := by
-            rw [Finset.sum_comm, Finset.sum_comm]
+            rw [Finset.sum_comm (s := samples) (t := indices)
+              (f := fun ω i =>
+                ∑ j ∈ indices, if E i ω ∧ E j ω then (1 : ℚ) else 0)]
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [Finset.sum_comm (s := samples) (t := indices)
+              (f := fun ω j =>
+                if E i ω ∧ E j ω then (1 : ℚ) else 0)]
 
 #print axioms finite_second_moment_ordered_pair_identity
 
