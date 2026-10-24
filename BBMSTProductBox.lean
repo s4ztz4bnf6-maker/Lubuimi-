@@ -280,6 +280,22 @@ def productBoxEventEquivFree
     simp [i.property]
 
 #print axioms productBoxEventEquivFree
+
+/--
+Exact cardinality bridge for a finite index set: the event has as many
+points as assignments to the coordinates not fixed by the hyperplane.
+The finite index hypothesis is essential for the ambient dependent function
+space to be finite.
+-/
+theorem product_box_event_card_eq_free_assignments
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
+      Fintype.card (∀ i : {i : ι // i ∉ H.fixedCoords}, S i) := by
+  classical
+  exact Fintype.card_congr (productBoxEventEquivFree H)
+
 #print axioms product_box_event_card_eq_free_assignments
 
 end BBMSTAudit
