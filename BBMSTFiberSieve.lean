@@ -914,4 +914,5 @@ theorem affine_pair_intersection_cardinality_rank_defect
           Fintype.card {x : V // U x = c} *
           Fintype.card K ^ d := by
           rw [← hTCard, ← hUCard]
+          simpa only [mul_assoc]
 #print axioms affine_pair_intersection_cardinality_rank_defect
