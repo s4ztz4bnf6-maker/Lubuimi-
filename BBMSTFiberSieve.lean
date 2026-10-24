@@ -727,3 +727,100 @@ theorem affine_pair_intersection_uniform_mass_exact_unified
   · simp [h]
 
 #print axioms affine_pair_intersection_uniform_mass_exact_unified
+
+
+/-!
+## Rank criterion for exact pairwise independence
+
+For consistent affine events, the stacked system counts their intersection
+with the rank of the combined map. If that rank is the sum of the two
+individual ranks, the exact finite-field counts satisfy the cardinality
+identity corresponding to probabilistic independence. This is a conditional
+linear-algebra result: the BBMST application still has to establish the rank
+condition or control the excess overlap when it fails.
+-/
+
+/-- Exact cardinality factorization when the stacked rank is additive. -/
+theorem affine_pair_intersection_cardinality_factorization_of_rank_add
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂)
+    (xT xU xPair : V)
+    (hT : T xT = b) (hU : U xU = c)
+    (hPair : T xPair = b ∧ U xPair = c)
+    (hrank :
+      Module.finrank K (LinearMap.range (T.prod U)) =
+        Module.finrank K (LinearMap.range T) +
+          Module.finrank K (LinearMap.range U)) :
+    Fintype.card {x : V // T x = b ∧ U x = c} * Fintype.card V =
+      Fintype.card {x : V // T x = b} *
+        Fintype.card {x : V // U x = c} := by
+  classical
+  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
+  letI : Fintype {x : V // U x = c} := Fintype.ofFinite _
+  letI : Fintype {x : V // T x = b ∧ U x = c} := Fintype.ofFinite _
+  have hPairCard :=
+    affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+      T U b c xPair hPair
+  have hTCard :=
+    affineFiber_card_eq_field_card_pow_finrank_sub_range T b xT hT
+  have hUCard :=
+    affineFiber_card_eq_field_card_pow_finrank_sub_range U c xU hU
+  have hVCard :
+      Fintype.card V = Fintype.card K ^ Module.finrank K V :=
+    Module.card_eq_pow_finrank
+  have hTdim := T.finrank_range_add_finrank_ker
+  have hUdim := U.finrank_range_add_finrank_ker
+  have hPairdim := (T.prod U).finrank_range_add_finrank_ker
+  have hTle :
+      Module.finrank K (LinearMap.range T) ≤ Module.finrank K V := by
+    omega
+  have hUle :
+      Module.finrank K (LinearMap.range U) ≤ Module.finrank K V := by
+    omega
+  have hPairle :
+      Module.finrank K (LinearMap.range (T.prod U)) ≤ Module.finrank K V := by
+    omega
+  have hexp :
+      (Module.finrank K V -
+          Module.finrank K (LinearMap.range (T.prod U))) +
+          Module.finrank K V =
+        (Module.finrank K V -
+          Module.finrank K (LinearMap.range T)) +
+        (Module.finrank K V -
+          Module.finrank K (LinearMap.range U)) := by
+    omega
+  calc
+    Fintype.card {x : V // T x = b ∧ U x = c} * Fintype.card V
+        = Fintype.card K ^
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range (T.prod U))) *
+            Fintype.card K ^ Module.finrank K V := by
+              rw [hPairCard, hVCard]
+    _ = Fintype.card K ^
+          ((Module.finrank K V -
+              Module.finrank K (LinearMap.range (T.prod U))) +
+            Module.finrank K V) := by
+          rw [← Nat.pow_add]
+    _ = Fintype.card K ^
+          ((Module.finrank K V -
+              Module.finrank K (LinearMap.range T)) +
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range U))) := by
+          rw [hexp]
+    _ = Fintype.card K ^
+          (Module.finrank K V -
+              Module.finrank K (LinearMap.range T)) *
+          Fintype.card K ^
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range U)) := by
+          rw [Nat.pow_add]
+    _ = Fintype.card {x : V // T x = b} *
+          Fintype.card {x : V // U x = c} := by
+          rw [← hTCard, ← hUCard]
+
+#print axioms affine_pair_intersection_cardinality_factorization_of_rank_add
