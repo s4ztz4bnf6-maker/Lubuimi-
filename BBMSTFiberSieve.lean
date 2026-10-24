@@ -654,3 +654,38 @@ theorem affine_fiber_uniform_mass_exact
   rfl
 
 #print axioms affine_fiber_uniform_mass_exact
+
+
+
+/--
+Normalized uniform mass of a consistent pair of affine constraints. The
+intersection probability is the exact stacked-rank fiber count divided by
+the ambient cardinality. In particular, the rank belongs to the product map
+(T.prod U), so this theorem does not silently impose independence or add the
+individual ranks.
+-/
+theorem affine_pair_intersection_uniform_mass_exact
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂) (x₀ : V)
+    (hx₀ : T x₀ = b ∧ U x₀ = c)
+    [Fintype {x : V // T x = b ∧ U x = c}] :
+    (Fintype.card {x : V // T x = b ∧ U x = c} : ℚ) /
+        (Fintype.card V : ℚ) =
+      (Fintype.card K : ℚ) ^
+          (Module.finrank K V -
+            Module.finrank K (LinearMap.range (T.prod U))) /
+        (Fintype.card K : ℚ) ^ Module.finrank K V := by
+  rw [affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+    T U b c x₀ hx₀]
+  have hV : Fintype.card V = Fintype.card K ^ Module.finrank K V := by
+    exact Module.card_eq_pow_finrank
+  rw [hV]
+  push_cast
+  rfl
+
+#print axioms affine_pair_intersection_uniform_mass_exact
