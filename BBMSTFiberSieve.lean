@@ -288,3 +288,36 @@ theorem affine_events_disjoint_of_scaled_forms
 #print axioms affine_events_disjoint_of_scaled_forms
 
 end BBMSTAudit
+
+
+/-!
+## Linear-dependence consistency obstruction
+
+For a family of affine equations, every linear dependence among the
+coefficient forms imposes the same dependence among their offsets whenever
+the affine system has a common point. This is a concrete necessary
+consistency condition for intersections of many affine events. It does not
+yet count solutions or establish the global BBMST sieve inequality.
+-/
+
+/-- A common point of affine level sets must respect every finite linear
+relation among their defining linear forms. -/
+theorem affine_intersection_respects_linear_relation
+    {ι K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+    (L : ι → V →ₗ[K] K) (b c : ι → K)
+    (s : Finset ι) (x : V)
+    (hx : ∀ i ∈ s, L i x = b i)
+    (hrel : ∑ i ∈ s, c i • L i = 0) :
+    ∑ i ∈ s, c i * b i = 0 := by
+  calc
+    ∑ i ∈ s, c i * b i = ∑ i ∈ s, c i * L i x := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [hx i hi]
+    _ = (∑ i ∈ s, c i • L i) x := by
+      simp [smul_eq_mul]
+    _ = 0 := by
+      rw [hrel]
+      simp
+
+#print axioms affine_intersection_respects_linear_relation
