@@ -585,3 +585,39 @@ theorem affine_pair_intersection_card_zero_of_inconsistent
   simp
 
 #print axioms affine_pair_intersection_card_zero_of_inconsistent
+
+
+/--
+Unified exact count for a pairwise affine intersection, covering both cases
+without silently assuming consistency. A consistent intersection has the
+stacked-rank cardinality; an inconsistent one has cardinality zero. This
+packages the two branches into a single reusable interface for second-moment
+sums, while leaving the BBMST-specific probability estimates as a separate
+obligation.
+-/
+theorem affine_pair_intersection_card_exact
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂)
+    [Fintype {x : V // T x = b ∧ U x = c}] :
+    Fintype.card {x : V // T x = b ∧ U x = c} =
+      if h : ∃ x : V, T x = b ∧ U x = c then
+        Fintype.card K ^
+          (Module.finrank K V -
+            Module.finrank K (LinearMap.range (T.prod U)))
+      else 0 := by
+  classical
+  by_cases h : ∃ x : V, T x = b ∧ U x = c
+  · rcases h with ⟨x₀, hx₀⟩
+    rw [if_pos ⟨x₀, hx₀⟩]
+    exact affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+      T U b c x₀ hx₀
+  · rw [if_neg h]
+    exact affine_pair_intersection_card_zero_of_inconsistent
+      T U b c h
+
+#print axioms affine_pair_intersection_card_exact
