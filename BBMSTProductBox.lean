@@ -528,3 +528,42 @@ theorem finite_second_moment_ordered_pair_identity
 #print axioms finite_second_moment_ordered_pair_identity
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Uniform mass of a product-box event, represented as its exact cardinality
+divided by the cardinality of the ambient finite product. Each coordinate
+type is inhabited because a hyperplane carries a value at every coordinate;
+the ratio therefore has the intended finite-uniform-space interpretation.
+-/
+noncomputable def productBoxUniformMass
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) : ℚ :=
+  (Fintype.card {x : (∀ i, S i) // x ∈ H.event} : ℚ) /
+    (Fintype.card (∀ i, S i) : ℚ)
+
+/--
+Exact normalized mass formula for a product-box event: the numerator is the
+product of the cardinalities of the free coordinate types, while the
+denominator is the cardinality of the whole product. This is a finite
+counting statement, not yet the BBMST global sieve estimate.
+-/
+theorem product_box_uniform_mass_eq_free_product_ratio
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    productBoxUniformMass H =
+      (∏ i : {i : ι // i ∉ H.fixedCoords},
+        (Fintype.card (S i.val) : ℚ)) /
+      (∏ i : ι, (Fintype.card (S i) : ℚ)) := by
+  unfold productBoxUniformMass
+  rw [product_box_event_card_eq_product_free_coordinate_cardinalities]
+  rw [Fintype.card_pi]
+  simp only [Nat.cast_prod]
+
+#print axioms product_box_uniform_mass_eq_free_product_ratio
+
+end BBMSTAudit
