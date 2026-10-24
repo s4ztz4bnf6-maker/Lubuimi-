@@ -110,8 +110,6 @@ theorem product_box_events_intersect_iff_no_conflict
 #print axioms product_box_parallel_iff_fixed_coords_eq
 #print axioms product_box_events_intersect_iff_no_conflict
 
-end BBMSTAudit
-
 
 /-- Disjointness is exactly the existence of a conflicting singleton
 assignment on a shared fixed coordinate. This is the dual form of the
@@ -134,3 +132,6 @@ theorem product_box_events_disjoint_iff_conflict
   · exact product_box_disjoint_of_conflict H K
 
 #print axioms product_box_events_disjoint_iff_conflict
+
+
+end BBMSTAudit
