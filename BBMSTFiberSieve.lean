@@ -622,3 +622,35 @@ theorem affine_pair_intersection_card_exact
       T U b c h
 
 #print axioms affine_pair_intersection_card_exact
+
+
+/--
+Cardinality-normalized uniform mass of a consistent affine fiber.
+
+For a uniformly sampled point of a finite vector space, this expresses the
+probability of the affine constraint T x = b as the exact ratio
+q^(dim V - rank T) / q^(dim V).  The statement deliberately keeps the ratio
+in this form: simplifying it to q^(-rank T) requires a separate nonzero-field-
+cardinality and rank-nullity normalization step.  This is the bridge from
+the exact affine-fiber count to probability terms in the BBMST overlap sum.
+-/
+theorem affine_fiber_uniform_mass_exact
+    {K V W : Type*} [Field K] [Fintype K] [Fintype V] [Fintype W]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) (b : W) (x₀ : V)
+    (hx₀ : T x₀ = b)
+    [Fintype {x : V // T x = b}] :
+    (Fintype.card {x : V // T x = b} : ℚ) /
+        (Fintype.card V : ℚ) =
+      (Fintype.card K : ℚ) ^
+          (Module.finrank K V - Module.finrank K (LinearMap.range T)) /
+        (Fintype.card K : ℚ) ^ Module.finrank K V := by
+  rw [affineFiber_card_eq_field_card_pow_finrank_sub_range T b x₀ hx₀]
+  have hV : Fintype.card V = Fintype.card K ^ Module.finrank K V := by
+    exact Module.card_eq_pow_finrank
+  rw [hV]
+  push_cast
+  rfl
+
+#print axioms affine_fiber_uniform_mass_exact
