@@ -724,10 +724,6 @@ theorem affine_pair_intersection_uniform_mass_exact_unified
   rw [hcount, hV]
   by_cases h : ∃ x : V, T x = b ∧ U x = c
   · simp [h]
-    push_cast
-    rfl
   · simp [h]
-    push_cast
-    rfl
 
 #print axioms affine_pair_intersection_uniform_mass_exact_unified
