@@ -194,4 +194,26 @@ theorem fiber_update_covered_mass_weighted_gap
 
 #print axioms fiber_update_covered_mass_weighted_gap
 
+
+/--
+Aggregate form of the threshold gap: after weighting by the covered mass,
+the gap is at least δ. This follows from δ/(1-δ) ≥ δ for 0 ≤ δ < 1.
+It is still a scalar estimate; geometric overlap bounds are needed to
+turn it into a global sieve conclusion.
+-/
+theorem fiber_update_covered_mass_weighted_gap_ge_threshold
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    δ ≤ α * (1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ))) := by
+  rw [fiber_update_covered_mass_weighted_gap α δ hα0 hδ0 hδhalf hactive]
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  rw [le_div_iff₀ (sub_pos.mpr hδlt)]
+  nlinarith [sq_nonneg δ]
+
+#print axioms fiber_update_covered_mass_weighted_gap_ge_threshold
+
 end BBMSTAudit
