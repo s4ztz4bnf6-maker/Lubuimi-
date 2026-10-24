@@ -419,12 +419,12 @@ theorem affineFiber_card_eq_field_card_pow_finrank_ker
     [AddCommGroup V] [Module K V]
     [AddCommGroup W] [Module K W]
     (T : V →ₗ[K] W) (b : W) (x0 : V)
-    (hx0 : T x0 = b) :
+    (hx0 : T x0 = b)
+    [Fintype {x : V // T x = b}]
+    [Fintype {v : V // T v = 0}] :
     Fintype.card {x : V // T x = b} =
       Fintype.card K ^ Module.finrank K (LinearMap.ker T) := by
   classical
-  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
-  letI : Fintype {v : V // T v = 0} := Fintype.ofFinite _
   have hfiber :
       Fintype.card {x : V // T x = b} =
         Fintype.card {v : V // T v = 0} :=
@@ -452,12 +452,13 @@ theorem affineFiber_card_eq_field_card_pow_finrank_sub_range
     [AddCommGroup V] [Module K V]
     [AddCommGroup W] [Module K W]
     (T : V →ₗ[K] W) (b : W) (x0 : V)
-    (hx0 : T x0 = b) :
+    (hx0 : T x0 = b)
+    [Fintype {x : V // T x = b}] :
     Fintype.card {x : V // T x = b} =
       Fintype.card K ^
         (Module.finrank K V - Module.finrank K (LinearMap.range T)) := by
   classical
-  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
+  letI : Fintype {v : V // T v = 0} := Fintype.ofFinite _
   rw [affineFiber_card_eq_field_card_pow_finrank_ker T b x0 hx0]
   have hdim := T.finrank_range_add_finrank_ker
   have hker :
