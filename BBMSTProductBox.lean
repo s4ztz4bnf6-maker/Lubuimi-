@@ -301,4 +301,22 @@ theorem product_box_event_card_eq_free_assignments
 
 #print axioms product_box_event_card_eq_free_assignments
 
+
+/--
+Exact product formula for the event cardinality. Together with the event/free
+assignment equivalence, this exposes the coordinate-by-coordinate factors
+that later probability calculations must normalize. No independence or
+global sieve estimate is assumed.
+-/
+theorem product_box_event_card_eq_product_free_coordinate_cardinalities
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
+      ∏ i : {i : ι // i ∉ H.fixedCoords}, Fintype.card (S i.val) := by
+  rw [product_box_event_card_eq_free_assignments]
+  exact Fintype.card_pi
+
+#print axioms product_box_event_card_eq_product_free_coordinate_cardinalities
+
 end BBMSTAudit
