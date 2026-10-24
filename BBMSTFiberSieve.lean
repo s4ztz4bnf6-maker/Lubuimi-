@@ -170,4 +170,29 @@ theorem fiber_update_multiplier_gap_ge_threshold
 
 #print axioms fiber_update_multiplier_gap_ge_threshold
 
+
+/--
+The covered-fraction-weighted gap is independent of α:
+α times the per-point multiplier gap equals δ/(1-δ).
+This converts a pointwise gap into an aggregate fiber-level quantity,
+and makes explicit that the α-dependence cancels after weighting by the
+covered mass. This is still a scalar identity, not a geometric sieve bound.
+-/
+theorem fiber_update_covered_mass_weighted_gap
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    α * (1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ))) =
+      δ / (1 - δ) := by
+  rw [fiber_update_multiplier_gap α δ hα0 hδ0 hδhalf hactive]
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
+  ring
+
+#print axioms fiber_update_covered_mass_weighted_gap
+
 end BBMSTAudit
