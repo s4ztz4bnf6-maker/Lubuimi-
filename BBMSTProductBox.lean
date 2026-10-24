@@ -135,3 +135,57 @@ theorem product_box_events_disjoint_iff_conflict
 
 
 end BBMSTAudit
+
+
+/-- Merge two compatible product-box hyperplanes by taking the union of
+their fixed-coordinate sets. On shared fixed coordinates the two values
+agree, so choosing H's value there and K's value elsewhere is canonical
+up to irrelevant values outside the fixed-coordinate support. -/
+def ProductBoxHyperplane.merge
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    (H K : ProductBoxHyperplane ι S) : ProductBoxHyperplane ι S where
+  fixedCoords := H.fixedCoords ∪ K.fixedCoords
+  fixedValue := fun i =>
+    if i ∈ H.fixedCoords then H.fixedValue i else K.fixedValue i
+
+/-- If two hyperplanes have no conflicting shared assignment, their
+intersection is exactly the event of the merged constraint system. This is
+the structural bridge from the set-theoretic overlap classification to
+finite product-cardinality and probability calculations. -/
+theorem product_box_intersection_eq_merge_event
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    (H K : ProductBoxHyperplane ι S)
+    (hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    H.event ∩ K.event = (H.merge K).event := by
+  ext x
+  constructor
+  · intro hx
+    intro i hi
+    rcases Finset.mem_union.mp hi with hiH | hiK
+    · simp [ProductBoxHyperplane.merge, hiH, hx.1 i hiH]
+    · by_cases hiH : i ∈ H.fixedCoords
+      · have hEq : H.fixedValue i = K.fixedValue i := by
+          by_contra hne
+          exact hno ⟨i, hiH, hiK, hne⟩
+        simp [ProductBoxHyperplane.merge, hiH, hx.1 i hiH, hEq]
+      · simp [ProductBoxHyperplane.merge, hiH, hx.2 i hiK]
+  · intro hx
+    constructor
+    · intro i hiH
+      have hi : i ∈ H.fixedCoords ∪ K.fixedCoords :=
+        Finset.mem_union.mpr (Or.inl hiH)
+      have h := hx i hi
+      simpa [ProductBoxHyperplane.merge, hiH] using h
+    · intro i hiK
+      have hi : i ∈ H.fixedCoords ∪ K.fixedCoords :=
+        Finset.mem_union.mpr (Or.inr hiK)
+      have h := hx i hi
+      by_cases hiH : i ∈ H.fixedCoords
+      · have hEq : H.fixedValue i = K.fixedValue i := by
+          by_contra hne
+          exact hno ⟨i, hiH, hiK, hne⟩
+        simpa [ProductBoxHyperplane.merge, hiH, hEq] using h
+      · simpa [ProductBoxHyperplane.merge, hiH] using h
+
+#print axioms product_box_intersection_eq_merge_event
