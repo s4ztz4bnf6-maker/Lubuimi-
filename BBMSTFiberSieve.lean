@@ -137,6 +137,30 @@ theorem fiber_update_multiplier_gap_pos
   exact div_pos hδ0
     (mul_pos hαpos (sub_pos.mpr hδlt))
 
+/--
+Exact edge-case characterization: under the active-branch hypotheses and
+δ ≥ 0, the multiplier gap is strictly positive if and only if δ is positive.
+In particular δ = 0 gives no strict contraction from this update alone.
+-/
+theorem fiber_update_multiplier_gap_pos_iff
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    (0 < 1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ))) ↔ 0 < δ := by
+  constructor
+  · intro hgap
+    by_contra hnot
+    have hδeq : δ = 0 := by linarith
+    rw [fiber_update_multiplier_gap α δ hα0 hδ0 hδhalf hactive] at hgap
+    simp [hδeq] at hgap
+  · exact fiber_update_multiplier_gap_pos α δ hα0
+      (by assumption) hδhalf hactive
+
+#print axioms fiber_update_multiplier_gap_pos_iff
+
 #print axioms fiber_update_multiplier_gap
 #print axioms fiber_update_multiplier_gap_pos
 
