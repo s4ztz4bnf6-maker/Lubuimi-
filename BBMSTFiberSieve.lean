@@ -79,4 +79,29 @@ theorem fiber_update_uncovered_multiplier_pos
 #print axioms fiber_update_covered_multiplier_nonnegative
 #print axioms fiber_update_uncovered_multiplier_pos
 
+
+/--
+On the active branch, the covered-fiber multiplier is at most the
+uncovered-fiber multiplier. This comparison is distinct from normalization:
+it says that the reweighting never assigns more weight per covered point
+than per uncovered point.
+-/
+theorem fiber_update_covered_multiplier_le_uncovered_multiplier
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    (α - δ) / (α * (1 - δ)) ≤ 1 / (1 - δ) := by
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  have hden : 0 ≤ α * (1 - δ) :=
+    mul_nonneg (le_of_lt hαpos) (le_of_lt (sub_pos.mpr hδlt))
+  calc
+    (α - δ) / (α * (1 - δ))
+        ≤ α / (α * (1 - δ)) :=
+          div_le_div_of_nonneg_right (sub_le_self α hδ0) hden
+    _ = 1 / (1 - δ) := by
+      field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
+
 end BBMSTAudit
