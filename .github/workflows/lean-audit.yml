@@ -42,3 +42,5 @@ jobs:
         run: lake env lean BBMSTBlockSize.lean
       - name: Compile scalar BBMST fiber-mass normalization
         run: lake env lean BBMSTFiberSieve.lean
+      - name: Compile source-faithful product-box hyperplane geometry
+        run: lake env lean BBMSTProductBox.lean
