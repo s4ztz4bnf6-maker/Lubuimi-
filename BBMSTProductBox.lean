@@ -485,3 +485,39 @@ theorem indicator_sum_sq_eq_ordered_pair_sum
 #print axioms indicator_sum_sq_eq_ordered_pair_sum
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Finite second-moment identity for a family of events on a finite sample space.
+The left side sums the squared event count over samples; the right side sums
+pairwise intersection counts. This is the exact finite counting interface
+needed before inserting the BBMST-specific product-box probabilities.
+-/
+theorem finite_second_moment_ordered_pair_identity
+    {Ω : Type u} {I : Type v} [DecidableEq Ω] [DecidableEq I]
+    (samples : Finset Ω) (indices : Finset I)
+    (E : I → Ω → Prop) [∀ i ω, Decidable (E i ω)] :
+    (∑ ω ∈ samples,
+      (∑ i ∈ indices, if E i ω then (1 : ℚ) else 0) ^ 2) =
+      ∑ i ∈ indices, ∑ j ∈ indices,
+        ∑ ω ∈ samples, if E i ω ∧ E j ω then (1 : ℚ) else 0 := by
+  classical
+  calc
+    (∑ ω ∈ samples,
+      (∑ i ∈ indices, if E i ω then (1 : ℚ) else 0) ^ 2)
+        = ∑ ω ∈ samples,
+          ∑ i ∈ indices, ∑ j ∈ indices,
+            if E i ω ∧ E j ω then (1 : ℚ) else 0 := by
+              apply Finset.sum_congr rfl
+              intro ω hω
+              exact indicator_sum_sq_eq_ordered_pair_sum indices
+                (fun i => E i ω)
+    _ = ∑ i ∈ indices, ∑ j ∈ indices,
+          ∑ ω ∈ samples, if E i ω ∧ E j ω then (1 : ℚ) else 0 := by
+            rw [Finset.sum_comm, Finset.sum_comm]
+
+#print axioms finite_second_moment_ordered_pair_identity
+
+end BBMSTAudit
