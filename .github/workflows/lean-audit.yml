@@ -8,13 +8,13 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lean and generate lake manifest
+      - name: Install patched Lean 4.35.0 and generate lake manifest
         run: |
           curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
-          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.elan/bin:$PATH"
           lake update
@@ -44,3 +44,7 @@ jobs:
         run: lake env lean BBMSTFiberSieve.lean
       - name: Compile source-faithful product-box hyperplane geometry
         run: lake env lean BBMSTProductBox.lean
+      - name: Install sandbox dependency for independent recheck
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap
+      - name: Export and independently recheck project declarations
+        run: lake check
