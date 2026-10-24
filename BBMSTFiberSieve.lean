@@ -217,7 +217,6 @@ theorem fiber_update_covered_mass_weighted_gap
   have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
   have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
   field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
-  ring
 
 #print axioms fiber_update_covered_mass_weighted_gap
 
