@@ -321,3 +321,24 @@ theorem affine_intersection_respects_linear_relation
       simp
 
 #print axioms affine_intersection_respects_linear_relation
+
+
+/--
+If a finite family of affine equations has a linear dependence among its
+coefficient forms but the offsets violate the same dependence, its common
+solution set is empty. This packages the consistency obstruction as a direct
+intersection-exclusion theorem.
+-/
+theorem affine_intersection_empty_of_inconsistent_linear_relation
+    {ι K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+    (L : ι → V →ₗ[K] K) (b c : ι → K)
+    (s : Finset ι)
+    (hrel : ∑ i ∈ s, c i • L i = 0)
+    (hbad : ∑ i ∈ s, c i * b i ≠ 0) :
+    {x : V | ∀ i ∈ s, L i x = b i} = ∅ := by
+  apply Set.eq_empty_iff_forall_not_mem.mpr
+  intro x hx
+  apply hbad
+  exact affine_intersection_respects_linear_relation L b c s x hx hrel
+
+#print axioms affine_intersection_empty_of_inconsistent_linear_relation
