@@ -464,3 +464,31 @@ theorem affineFiber_card_eq_field_card_pow_finrank_sub_range
   rw [hker]
 
 #print axioms affineFiber_card_eq_field_card_pow_finrank_sub_range
+
+
+namespace BBMSTAudit
+
+/--
+The multiplier gap, weighted by the covered fraction, is independent of that
+fraction: on the active branch α > δ, the aggregate covered-fiber weight
+deficit is exactly δ/(1-δ). This isolates the part of the scalar update that
+could feed a later global contraction estimate; it does not itself bound
+intersections of distinct affine events.
+-/
+theorem fiber_update_weighted_multiplier_gap
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    α * (1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ))) = δ / (1 - δ) := by
+  rw [fiber_update_multiplier_gap α δ hα0 hδ0 hδhalf hactive]
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
+  <;> ring
+
+#print axioms fiber_update_weighted_multiplier_gap
+
+end BBMSTAudit
