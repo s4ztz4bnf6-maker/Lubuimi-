@@ -243,4 +243,48 @@ theorem fiber_update_covered_mass_weighted_gap_ge_threshold
 
 #print axioms fiber_update_covered_mass_weighted_gap_ge_threshold
 
+
+
+/-!
+## Concrete affine-event geometry
+
+The next bridge beyond scalar fiber weights is to encode coverage events as
+actual solution sets of linear equations. The lemmas below do not assume an
+abstract predicate for parallelism: the relation between the linear forms is
+stated pointwise, and disjointness follows from the equations themselves.
+This is a first geometric component, not yet the full finite-field counting
+or global BBMST overlap estimate.
+-/
+
+/-- If two linear forms are pointwise scalar multiples, an intersection of
+their affine level sets forces the same scalar relation between the offsets. -/
+theorem affine_overlap_forces_offset_relation
+    {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+    (L₁ L₂ : V →ₗ[K] K) (c b₁ b₂ : K)
+    (hscaled : ∀ x, L₂ x = c * L₁ x)
+    (x : V) (hx₁ : L₁ x = b₁) (hx₂ : L₂ x = b₂) :
+    b₂ = c * b₁ := by
+  calc
+    b₂ = L₂ x := hx₂.symm
+    _ = c * L₁ x := hscaled x
+    _ = c * b₁ := by rw [hx₁]
+
+/-- Parallel affine level sets with incompatible offsets are disjoint.
+This is a genuine geometric statement about the event sets, derived directly
+from their defining equations rather than from a free parallelism predicate. -/
+theorem affine_events_disjoint_of_scaled_forms
+    {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+    (L₁ L₂ : V →ₗ[K] K) (c b₁ b₂ : K)
+    (hscaled : ∀ x, L₂ x = c * L₁ x)
+    (hoffset : b₂ ≠ c * b₁) :
+    Disjoint {x : V | L₁ x = b₁} {x : V | L₂ x = b₂} := by
+  apply Set.disjoint_left.mpr
+  intro x hx₁ hx₂
+  apply hoffset
+  exact affine_overlap_forces_offset_relation L₁ L₂ c b₁ b₂
+    hscaled x hx₁ hx₂
+
+#print axioms affine_overlap_forces_offset_relation
+#print axioms affine_events_disjoint_of_scaled_forms
+
 end BBMSTAudit
