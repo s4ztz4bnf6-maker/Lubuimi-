@@ -51,3 +51,26 @@ Then the main theorem must be recompiled with the repaired interfaces. The monot
 - Kernel compilation: does not repair a malformed imported theorem statement.
 - Imported BBMST axioms: **require correction / source-level review**.
 - Full Erdős–Selfridge conjecture: **not established by this external formalization as presently stated**.
+
+
+## New cross-check frontier found on 2026-10-24
+
+A separate Lean development by Mian–Siddique, *Kernel-Checked Exclusions for the Erdős–Selfridge Odd Covering Problem: Any Odd Covering of Z Has lcm Exceeding 10000* (arXiv:2607.25628, July 2026), proves the exact bounded exclusion
+\[
+\operatorname{lcm}(n_i)>10^4
+\]
+for any hypothetical odd distinct-modulus covering. Its stated evidence profile is the standard three Lean axioms, with no `sorry` or `native_decide`. The paper is explicit that this is a formalized known partial result, not progress to the full open conjecture. See https://arxiv.org/abs/2607.25628 and the official target statement https://github.com/google-deepmind/formal-conjectures/blob/main/FormalConjectures/ErdosProblems/7.lean.
+
+### How this changes our plan
+
+1. **Keep the routes logically separate.** The LCM exclusion is a certified finite-search frontier. The BBMST route is an analytic square-free-moduli obstruction. Neither alone excludes arbitrary odd moduli.
+2. **Use the LCM route as a model for robust finite certificates.** Its per-LCM Chinese-remainder capacity inequalities and explicit non-deficiency enumeration are a useful design pattern for small finite checks. They do not repair the external sieve axioms.
+3. **Keep the pairwise-moment route source-faithful.** For the affine-hyperplane second moment, prove consistent intersections using the rank of the stacked map, inconsistent intersections as zero, and then the Cauchy–Schwarz lower bound. Only after those finite lemmas are independently checked should they be connected to BBMST's exact hypotheses and constants.
+4. **Do not overstate the combined result.** A hybrid theorem could say: any hypothetical odd covering has lcm above 10000, while the square-free subclass is impossible. It still leaves the non-square-free odd case with large lcm open.
+
+### Next falsification tests
+
+- Test the BBMST sieve interface against boundary values and malformed parameter vectors before proving monotonicity.
+- Test every external axiom at degenerate inputs, including empty lists, missing indices, zero denominators, and vacuous finite types.
+- Test finite covering certificates against the period-12 covering, a required positive control.
+- Preserve the distinction between (a) Lean kernel acceptance of a proposition, (b) the proposition faithfully matching the cited paper, and (c) the proposition resolving the original conjecture.
