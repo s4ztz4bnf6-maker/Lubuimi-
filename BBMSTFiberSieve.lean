@@ -29,7 +29,7 @@ theorem fiber_update_preserves_mass
   · have hden : 1 - α ≠ 0 := by
       have hαδ : α ≤ (1 / 2 : ℚ) := le_trans h hδhalf
       linarith
-    simp only [if_pos h]
+    simp only [if_pos h, mul_zero, zero_add]
     field_simp
   · have hα : α ≠ 0 := by
       have hδpos : δ < α := lt_of_not_ge h
