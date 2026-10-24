@@ -603,6 +603,7 @@ theorem affine_pair_intersection_card_exact
     [AddCommGroup W₂] [Module K W₂]
     (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
     (b : W₁) (c : W₂)
+    [Decidable (∃ x : V, T x = b ∧ U x = c)]
     [Fintype {x : V // T x = b ∧ U x = c}] :
     Fintype.card {x : V // T x = b ∧ U x = c} =
       if h : ∃ x : V, T x = b ∧ U x = c then
