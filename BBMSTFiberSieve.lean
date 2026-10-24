@@ -435,3 +435,30 @@ theorem affineFiber_card_eq_field_card_pow_finrank_ker
 
 #print axioms homogeneousFiberEquivKernelSubmodule
 #print axioms affineFiber_card_eq_field_card_pow_finrank_ker
+
+
+/--
+Rank-nullity form of the affine-fiber count: over a finite field, a
+consistent system T x = b has exactly q^(dim V - rank T) solutions.
+This is the exact finite-field cardinality needed to turn affine-event
+intersections into probabilities. It still does not establish the global
+BBMST overlap or sieve estimate.
+-/
+theorem affineFiber_card_eq_field_card_pow_finrank_sub_range
+    {K V W : Type*} [Field K] [Fintype K] [Fintype V] [Fintype W]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) (b : W) (x0 : V)
+    (hx0 : T x0 = b) :
+    Fintype.card {x : V // T x = b} =
+      Fintype.card K ^
+        (Module.finrank K V - Module.finrank K (LinearMap.range T)) := by
+  rw [affineFiber_card_eq_field_card_pow_finrank_ker T b x0 hx0]
+  have hdim := T.finrank_range_add_finrank_ker
+  have hker :
+      Module.finrank K (LinearMap.ker T) =
+        Module.finrank K V - Module.finrank K (LinearMap.range T) := by
+    omega
+  rw [hker]
+
+#print axioms affineFiber_card_eq_field_card_pow_finrank_sub_range
