@@ -102,8 +102,8 @@ theorem product_box_events_intersect_iff_no_conflict
       · have hEq : H.fixedValue i = K.fixedValue i := by
           by_contra hne
           exact hno ⟨i, hiH, hiK, hne⟩
-        simp [hiH, hEq]
-      · simp [hiH, hiK]
+        simp [x, hiH, hiK, hEq]
+      · simp [x, hiH, hiK]
 
 #print axioms product_box_overlap_agreement
 #print axioms product_box_disjoint_of_conflict
