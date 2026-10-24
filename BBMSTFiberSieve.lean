@@ -31,6 +31,7 @@ theorem fiber_update_preserves_mass
       linarith
     simp only [if_pos h, mul_zero, zero_add]
     field_simp
+    ring
   · have hα : α ≠ 0 := by
       have hδpos : δ < α := lt_of_not_ge h
       linarith
