@@ -111,3 +111,26 @@ theorem product_box_events_intersect_iff_no_conflict
 #print axioms product_box_events_intersect_iff_no_conflict
 
 end BBMSTAudit
+
+
+/-- Disjointness is exactly the existence of a conflicting singleton
+assignment on a shared fixed coordinate. This is the dual form of the
+intersection criterion and gives the later sieve argument a direct
+disjointness test without an independent parallelism axiom. -/
+theorem product_box_events_disjoint_iff_conflict
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    (H K : ProductBoxHyperplane ι S) :
+    Disjoint H.event K.event ↔
+      ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+        H.fixedValue i ≠ K.fixedValue i := by
+  constructor
+  · intro hdisj
+    by_contra hno
+    have hinter :
+        (H.event ∩ K.event).Nonempty :=
+      (product_box_events_intersect_iff_no_conflict H K).2 hno
+    rcases hinter with ⟨x, hx⟩
+    exact (Set.disjoint_left.mp hdisj) x hx.1 hx.2
+  · exact product_box_disjoint_of_conflict H K
+
+#print axioms product_box_events_disjoint_iff_conflict
