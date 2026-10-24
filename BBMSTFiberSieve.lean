@@ -496,3 +496,60 @@ theorem fiber_update_weighted_multiplier_gap
 #print axioms fiber_update_weighted_multiplier_gap
 
 end BBMSTAudit
+
+
+/--
+Exact cardinality of a consistent pairwise affine intersection. The two
+constraints are stacked into the product linear map; therefore the relevant
+rank is the rank of the combined system, not the sum of the separate ranks.
+This is the finite-field counting bridge needed for pair terms in a second
+moment. It does not assume independence of the two affine events.
+-/
+theorem affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂) (x₀ : V)
+    (hx₀ : T x₀ = b ∧ U x₀ = c)
+    [Fintype {x : V // T x = b ∧ U x = c}] :
+    Fintype.card {x : V // T x = b ∧ U x = c} =
+      Fintype.card K ^
+        (Module.finrank K V -
+          Module.finrank K (LinearMap.range (T.prod U))) := by
+  classical
+  letI : Fintype {x : V // (T.prod U) x = (b, c)} := Fintype.ofFinite _
+  let pairEquiv :
+      {x : V // T x = b ∧ U x = c} ≃
+        {x : V // (T.prod U) x = (b, c)} :=
+    { toFun := fun x =>
+        ⟨x.1, by
+          change (T x.1, U x.1) = (b, c)
+          exact Prod.mk.inj_iff.mpr x.2⟩
+      invFun := fun x =>
+        ⟨x.1, by
+          have h := x.2
+          change (T x.1, U x.1) = (b, c) at h
+          exact ⟨by simpa using congrArg Prod.fst h,
+            by simpa using congrArg Prod.snd h⟩⟩
+      left_inv := by
+        intro x
+        apply Subtype.ext
+        rfl
+      right_inv := by
+        intro x
+        apply Subtype.ext
+        rfl }
+  calc
+    Fintype.card {x : V // T x = b ∧ U x = c}
+        = Fintype.card {x : V // (T.prod U) x = (b, c)} :=
+          Fintype.card_congr pairEquiv
+    _ = Fintype.card K ^
+          (Module.finrank K V -
+            Module.finrank K (LinearMap.range (T.prod U))) := by
+          exact affineFiber_card_eq_field_card_pow_finrank_sub_range
+            (T.prod U) (b, c) x₀ hx₀
+
+#print axioms affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
