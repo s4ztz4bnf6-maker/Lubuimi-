@@ -514,7 +514,7 @@ theorem finiteEventMass_iUnion_le_sum
               ≤ finiteEventMass μ (E i) +
                   finiteEventMass μ (fun x => ∃ j ∈ s, E j x) := h
           _ ≤ finiteEventMass μ (E i) + ∑ j ∈ s, finiteEventMass μ (E j) :=
-            add_le_add_left ih _
+            add_le_add (le_of_eq rfl) ih
       simpa [hi, Finset.sum_insert] using h'
 
 #print axioms finiteEventMass_iUnion_le_sum
