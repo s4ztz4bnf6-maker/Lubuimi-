@@ -6,7 +6,7 @@ The current baseline branch `audit/overlap-moment-roadmap-2026-10-23` pins Lean 
 
 Primary sources:
 - Lean FRO postmortem for #14576: https://leodemoura.github.io/blog/2026-8-1-postmortem-for-kernel-soundness-bug-14576/
-- Lean FRO kernel bug-hunt postmortem (additional kernel/runtime issues and the planned `lake check` workflow): https://leodemoura.github.io/blog/2026-8-24-postmortem-for-the-kernel-bug-hunt/
+- Lean FRO kernel bug-hunt postmortem (additional kernel/runtime issues and the planned `lake check` workflow): https://leodemoura.github.io/blog/2026-8-24-postmortem-for-the-kernel-soundness-bug-hunt/
 - Official Lean release list: https://github.com/leanprover/lean4/releases
 - Lean Kernel Arena reproducer for the affected checker: https://arena.lean-lang.org/round/2026-09/checker/official-v4.28.0/
 
@@ -33,4 +33,4 @@ This is deliberately an experiment branch, not an untested replacement of the ba
 
 ## Status
 
-At the time this note was committed, the legacy baseline CI was still compiling its latest product-box cardinality lemma, and the Lean 4.35.0 migration experiment had just been pushed. No green result for the migration is claimed here.
+At the time of this update, the legacy baseline CI had passed the upstream source, degenerate-witness tests, and disjoint-block factorization stages, but was still compiling the weighted overlap-conditioning module. The Lean 4.35.0 migration experiment had been pushed; no green result for that migration is claimed here.
