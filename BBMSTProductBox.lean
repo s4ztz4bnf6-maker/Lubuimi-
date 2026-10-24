@@ -128,7 +128,7 @@ theorem product_box_events_disjoint_iff_conflict
         (H.event ∩ K.event).Nonempty :=
       (product_box_events_intersect_iff_no_conflict H K).2 hno
     rcases hinter with ⟨x, hx⟩
-    exact (Set.disjoint_left.mp hdisj) x hx.1 hx.2
+    exact (Set.disjoint_left.mp hdisj) hx.1 hx.2
   · exact product_box_disjoint_of_conflict H K
 
 #print axioms product_box_events_disjoint_iff_conflict
