@@ -194,3 +194,24 @@ theorem product_box_intersection_eq_merge_event
 
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+The number of coordinates constrained by the merged hyperplane is the sum
+of the two support sizes minus the number of shared constrained coordinates.
+This is the exact combinatorial identity behind the overlap correction in
+the product-box intersection probability; it does not assume independence.
+-/
+theorem product_box_fixed_coordinate_cardinality_union
+    {ι : Type u} [DecidableEq ι] {S : ι → Type v}
+    (H K : ProductBoxHyperplane ι S) :
+    (H.fixedCoords ∪ K.fixedCoords).card +
+      (H.fixedCoords ∩ K.fixedCoords).card =
+        H.fixedCoords.card + K.fixedCoords.card := by
+  simpa using Finset.card_union_add_card_inter H.fixedCoords K.fixedCoords
+
+#print axioms product_box_fixed_coordinate_cardinality_union
+
+end BBMSTAudit
