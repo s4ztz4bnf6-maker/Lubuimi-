@@ -282,6 +282,21 @@ def productBoxEventEquivFree
 #print axioms productBoxEventEquivFree
 
 /--
+A global finite-instance bridge for the event subtype. It must be declared
+before any theorem statement uses `Fintype.card` on that subtype: a
+proof-local instance is too late for elaborating the theorem's type.
+-/ 
+noncomputable instance productBoxEventFintype
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H : ProductBoxHyperplane ι S) :
+    Fintype {x : (∀ i, S i) // x ∈ H.event} := by
+  classical
+  exact Fintype.ofEquiv
+    (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val)
+    (productBoxEventEquivFree H).symm
+
+/--
 Exact cardinality bridge for a finite index set: the event has as many
 points as assignments to the coordinates not fixed by the hyperplane.
 The finite index hypothesis is essential for the ambient dependent function
@@ -294,9 +309,6 @@ theorem product_box_event_card_eq_free_assignments
     Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
       Fintype.card (∀ i : {i : ι // i ∉ H.fixedCoords}, S i) := by
   classical
-  letI : Fintype {x : (∀ i, S i) // x ∈ H.event} :=
-    Fintype.ofEquiv (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val)
-      (productBoxEventEquivFree H).symm
   exact Fintype.card_congr (productBoxEventEquivFree H)
 
 #print axioms product_box_event_card_eq_free_assignments
