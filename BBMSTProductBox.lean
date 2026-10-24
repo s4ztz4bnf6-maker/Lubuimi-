@@ -437,28 +437,24 @@ theorem product_box_intersection_cardinality_compatible_or_zero
     [∀ i, Fintype (S i)]
     (H K : ProductBoxHyperplane ι S) :
     (¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
-        H.fixedValue i ≠ K.fixedValue i ∧
+        H.fixedValue i ≠ K.fixedValue i) ∧
       Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} =
         ∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
-          Fintype.card (S i.val)) ∨
+          Fintype.card (S i.val) ∨
     (∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
-        H.fixedValue i ≠ K.fixedValue i ∧
-      Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} = 0) := by
+        H.fixedValue i ≠ K.fixedValue i) ∧
+      Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} = 0 := by
   classical
   by_cases hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
       H.fixedValue i ≠ K.fixedValue i
   · left
-    constructor
-    · exact hno
-    · exact product_box_compatible_intersection_cardinality H K hno
+    exact ⟨hno, product_box_compatible_intersection_cardinality H K hno⟩
   · right
     have hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
         H.fixedValue i ≠ K.fixedValue i :=
       Classical.not_not.mp hno
-    rcases hconflict with ⟨i, hiH, hiK, hne⟩
-    refine ⟨i, hiH, hiK, hne, ?_⟩
-    exact product_box_incompatible_intersection_card_zero H K
-      ⟨i, hiH, hiK, hne⟩
+    exact ⟨hconflict,
+      product_box_incompatible_intersection_card_zero H K hconflict⟩
 
 #print axioms product_box_intersection_cardinality_compatible_or_zero
 
