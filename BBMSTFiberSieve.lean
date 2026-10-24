@@ -752,6 +752,9 @@ theorem affine_pair_intersection_cardinality_factorization_of_rank_add
     (xT xU xPair : V)
     (hT : T xT = b) (hU : U xU = c)
     (hPair : T xPair = b ∧ U xPair = c)
+    [Fintype {x : V // T x = b ∧ U x = c}]
+    [Fintype {x : V // T x = b}]
+    [Fintype {x : V // U x = c}]
     (hrank :
       Module.finrank K (LinearMap.range (T.prod U)) =
         Module.finrank K (LinearMap.range T) +
@@ -849,6 +852,9 @@ theorem affine_pair_intersection_cardinality_rank_defect
     (xT xU xPair : V)
     (hT : T xT = b) (hU : U xU = c)
     (hPair : T xPair = b ∧ U xPair = c)
+    [Fintype {x : V // T x = b ∧ U x = c}]
+    [Fintype {x : V // T x = b}]
+    [Fintype {x : V // U x = c}]
     (d : ℕ)
     (hdefect :
       Module.finrank K (LinearMap.range (T.prod U)) + d =
