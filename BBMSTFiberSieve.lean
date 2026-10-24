@@ -531,7 +531,7 @@ theorem affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
     { toFun := fun x =>
         ⟨x.1, by
           change (T x.1, U x.1) = (b, c)
-          exact Prod.mk.inj_iff.mpr x.2⟩
+          exact Prod.ext x.2.1 x.2.2⟩
       invFun := fun x =>
         ⟨x.1, by
           have h := x.2
@@ -555,7 +555,7 @@ theorem affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
             Module.finrank K (LinearMap.range (T.prod U))) := by
           have hxprod : (T.prod U) x₀ = (b, c) := by
             change (T x₀, U x₀) = (b, c)
-            exact Prod.mk.inj_iff.mpr hx₀
+            exact Prod.ext hx₀.1 hx₀.2
           exact affineFiber_card_eq_field_card_pow_finrank_sub_range
             (T.prod U) (b, c) x₀ hxprod
 
@@ -581,6 +581,7 @@ theorem affine_pair_intersection_card_zero_of_inconsistent
   classical
   letI : IsEmpty {x : V // T x = b ∧ U x = c} :=
     ⟨fun x => hbad ⟨x.1, x.2⟩⟩
+  letI : Fintype {x : V // T x = b ∧ U x = c} := Fintype.ofFinite _
   simp
 
 #print axioms affine_pair_intersection_card_zero_of_inconsistent
