@@ -140,4 +140,32 @@ theorem fiber_update_multiplier_gap_pos
 #print axioms fiber_update_multiplier_gap
 #print axioms fiber_update_multiplier_gap_pos
 
+/--
+Quantitative strengthening: if the covered fraction is at most one, then
+the active-branch multiplier gap is at least δ. Indeed α(1-δ) ≤ 1, so
+δ/(α(1-δ)) ≥ δ. This bound makes the loss uniform in α once the threshold
+δ is fixed.
+-/
+theorem fiber_update_multiplier_gap_ge_threshold
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hα1 : α ≤ 1)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    δ ≤ 1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ)) := by
+  rw [fiber_update_multiplier_gap α δ hα0 hδ0 hδhalf hactive]
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  have hdenpos : 0 < α * (1 - δ) :=
+    mul_pos hαpos (sub_pos.mpr hδlt)
+  have hdenle : α * (1 - δ) ≤ 1 := by
+    have hfactor : 0 ≤ 1 - δ := le_of_lt (sub_pos.mpr hδlt)
+    nlinarith
+  rw [le_div_iff₀ hdenpos]
+  nlinarith [mul_nonneg hδ0 (sub_nonneg.mpr hdenle)]
+
+#print axioms fiber_update_multiplier_gap_ge_threshold
+
 end BBMSTAudit
