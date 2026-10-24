@@ -576,7 +576,8 @@ theorem affine_pair_intersection_card_zero_of_inconsistent
     [AddCommGroup W₂] [Module K W₂]
     (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
     (b : W₁) (c : W₂)
-    (hbad : ¬ ∃ x : V, T x = b ∧ U x = c) :
+    (hbad : ¬ ∃ x : V, T x = b ∧ U x = c)
+    [Fintype {x : V // T x = b ∧ U x = c}] :
     Fintype.card {x : V // T x = b ∧ U x = c} = 0 := by
   classical
   letI : IsEmpty {x : V // T x = b ∧ U x = c} :=
