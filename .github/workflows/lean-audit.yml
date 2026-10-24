@@ -40,3 +40,5 @@ jobs:
         run: lake env lean BBMSTOverlapConditioning.lean
       - name: Compile effective block-size monotonicity
         run: lake env lean BBMSTBlockSize.lean
+      - name: Compile scalar BBMST fiber-mass normalization
+        run: lake env lean BBMSTFiberSieve.lean
