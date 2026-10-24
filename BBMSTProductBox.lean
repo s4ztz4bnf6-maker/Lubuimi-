@@ -279,17 +279,6 @@ def productBoxEventEquivFree
     funext i
     simp [i.property]
 
-/-- The event cardinality equals the number of assignments to free
-coordinates. The finite index type assumption is needed to count both
-dependent function spaces. -/
-theorem product_box_event_card_eq_free_assignments
-    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
-    [∀ i, Fintype (S i)]
-    (H : ProductBoxHyperplane ι S) :
-    Fintype.card {x : (∀ i, S i) // x ∈ H.event} =
-      Fintype.card (∀ i : {i : ι // i ∉ H.fixedCoords}, S i.val) :=
-  Fintype.card_congr (productBoxEventEquivFree H)
-
 #print axioms productBoxEventEquivFree
 #print axioms product_box_event_card_eq_free_assignments
 
