@@ -437,6 +437,10 @@ theorem affineFiber_card_eq_field_card_pow_finrank_ker
   exact Module.card_eq_pow_finrank
 
 #print axioms homogeneousFiberEquivKernelSubmodule
+-- Direct dependency audit: isolate whether the finite-module cardinality theorem
+-- itself imports any nonstandard axiom in the pinned Mathlib version.
+#print axioms Module.card_eq_pow_finrank
+
 #print axioms affineFiber_card_eq_field_card_pow_finrank_ker
 
 
