@@ -549,7 +549,10 @@ theorem affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
     _ = Fintype.card K ^
           (Module.finrank K V -
             Module.finrank K (LinearMap.range (T.prod U))) := by
+          have hxprod : (T.prod U) x₀ = (b, c) := by
+            change (T x₀, U x₀) = (b, c)
+            exact Prod.mk.inj_iff.mpr hx₀
           exact affineFiber_card_eq_field_card_pow_finrank_sub_range
-            (T.prod U) (b, c) x₀ hx₀
+            (T.prod U) (b, c) x₀ hxprod
 
 #print axioms affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
