@@ -374,3 +374,16 @@ def affineFiberEquivKernel
     simp
 
 #print axioms affineFiberEquivKernel
+
+
+theorem affineFiber_card_eq_kernel_card
+    {K V W : Type*} [Field K]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) (b : W) (x0 : V)
+    (hx0 : T x0 = b) :
+    Nat.card {x : V // T x = b} =
+      Nat.card {v : V // T v = 0} :=
+  Nat.card_congr (affineFiberEquivKernel T b x0 hx0)
+
+#print axioms affineFiber_card_eq_kernel_card
