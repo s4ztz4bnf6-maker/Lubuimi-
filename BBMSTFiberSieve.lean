@@ -346,3 +346,31 @@ theorem affine_intersection_empty_of_inconsistent_linear_relation
     exact False.elim hx
 
 #print axioms affine_intersection_empty_of_inconsistent_linear_relation
+
+
+/--
+A nonempty affine fiber of a linear map is equivalent to its kernel.
+The equivalence is translation by a chosen solution; hence every nonempty
+fiber has exactly the same cardinality as the kernel whenever these types
+are finite. This isolates the affine-to-linear reduction needed before
+applying rank-nullity to finite-field solution counts.
+-/
+def affineFiberEquivKernel
+    {K V W : Type*} [Field K]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W] [Module K W]
+    (T : V →ₗ[K] W) (b : W) (x0 : V)
+    (hx0 : T x0 = b) :
+    {x : V // T x = b} ≃ {v : V // T v = 0} where
+  toFun x := ⟨x.1 - x0, by
+    rw [map_sub, x.2, hx0, sub_self]⟩
+  invFun v := ⟨v.1 + x0, by
+    rw [map_add, v.2, hx0, zero_add]⟩
+  left_inv x := by
+    apply Subtype.ext
+    simp
+  right_inv v := by
+    apply Subtype.ext
+    simp
+
+#print axioms affineFiberEquivKernel
