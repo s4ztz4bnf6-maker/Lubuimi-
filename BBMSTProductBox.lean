@@ -369,17 +369,15 @@ theorem product_box_compatible_intersection_cardinality
     Fintype.card {x : (∀ i, S i) // x ∈ H.event ∩ K.event} =
       ∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
         Fintype.card (S i.val) := by
-  rw [Fintype.card_congr
-    ( { toFun := fun x =>
-          ⟨x.val, by
-            rw [← product_box_intersection_eq_merge_event H K hno]
-            exact x.property⟩
-        invFun := fun x =>
-          ⟨x.val, by
-            rw [product_box_intersection_eq_merge_event H K hno]
-            exact x.property⟩
-        left_inv := by intro x; apply Subtype.ext; rfl
-        right_inv := by intro x; apply Subtype.ext; rfl } )]
+  let hEq := product_box_intersection_eq_merge_event H K hno
+  let e :
+      {x : (∀ i, S i) // x ∈ H.event ∩ K.event} ≃
+        {x : (∀ i, S i) // x ∈ (H.merge K).event} :=
+    { toFun := fun x => ⟨x.val, hEq ▸ x.property⟩
+      invFun := fun x => ⟨x.val, hEq.symm ▸ x.property⟩
+      left_inv := by intro x; apply Subtype.ext; rfl
+      right_inv := by intro x; apply Subtype.ext; rfl }
+  rw [Fintype.card_congr e]
   simpa [ProductBoxHyperplane.merge] using
     (product_box_event_card_eq_product_free_coordinate_cardinalities
       (H.merge K))
