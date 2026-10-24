@@ -242,9 +242,7 @@ theorem product_box_overlap_weight_identity
         (fun i => (Fintype.card (S i) : ℚ)) *
       Finset.prod K.fixedCoords
         (fun i => (Fintype.card (S i) : ℚ)) := by
-  simpa using
-    (Finset.prod_union_inter H.fixedCoords K.fixedCoords
-      (fun i : ι => (Fintype.card (S i) : ℚ)))
+  exact Finset.prod_union_inter
 
 #print axioms product_box_overlap_weight_identity
 
