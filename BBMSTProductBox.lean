@@ -624,3 +624,37 @@ theorem product_box_incompatible_intersection_uniform_mass
 #print axioms product_box_incompatible_intersection_uniform_mass
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Unified exact intersection-mass formula. A conflicting fixed coordinate
+forces zero mass; otherwise the mass is the product of the free coordinate
+cardinalities divided by the ambient product cardinality. This is the
+source-faithful pair kernel for the second-moment sum: it explicitly keeps
+overlapping supports and incompatible assignments separate.
+-/
+theorem product_box_intersection_uniform_mass_compatible_or_zero
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S) :
+    productBoxIntersectionUniformMass H K =
+      if hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+        H.fixedValue i ≠ K.fixedValue i
+      then 0
+      else
+        (∏ i : {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords},
+          (Fintype.card (S i.val) : ℚ)) /
+        (∏ i : ι, (Fintype.card (S i) : ℚ)) := by
+  classical
+  by_cases hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i
+  · rw [if_pos hconflict]
+    exact product_box_incompatible_intersection_uniform_mass H K hconflict
+  · rw [if_neg hconflict]
+    exact product_box_compatible_intersection_uniform_mass H K hconflict
+
+#print axioms product_box_intersection_uniform_mass_compatible_or_zero
+
+end BBMSTAudit
