@@ -42,4 +42,41 @@ theorem fiber_update_preserves_mass
 
 #print axioms fiber_update_preserves_mass
 
+
+
+/--
+On the active branch α > δ, the covered-fiber multiplier is nonnegative.
+This is a genuine side condition for interpreting the scalar update as a
+nonnegative weight update; mass normalization alone does not establish it.
+-/
+theorem fiber_update_covered_multiplier_nonnegative
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    0 ≤ (α - δ) / (α * (1 - δ)) := by
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  apply div_nonneg
+  · exact sub_nonneg.mpr (le_of_lt hactive)
+  · exact mul_nonneg (le_of_lt hαpos) (le_of_lt (sub_pos.mpr hδlt))
+
+/--
+On the active branch α > δ, the uncovered-fiber multiplier is strictly
+positive. Together with the preceding lemma this verifies the sign conditions
+for the two multipliers used by the update, independently of normalization.
+-/
+theorem fiber_update_uncovered_multiplier_pos
+    (δ : ℚ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    0 < 1 / (1 - δ) := by
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  apply div_pos
+  · norm_num
+  · exact sub_pos.mpr hδlt
+
+#print axioms fiber_update_covered_multiplier_nonnegative
+#print axioms fiber_update_uncovered_multiplier_pos
+
 end BBMSTAudit
