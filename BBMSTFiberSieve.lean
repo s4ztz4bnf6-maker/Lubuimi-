@@ -699,7 +699,7 @@ stacked map; the inconsistent branch contributes zero. This is the uniform
 finite-space interface needed by overlap sums, without an independence
 assumption and without requiring a witness in the theorem's interface.
 -/
-theorem affine_pair_intersection_uniform_mass_exact
+theorem affine_pair_intersection_uniform_mass_exact_unified
     {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
     [Fintype W₁] [Fintype W₂]
     [AddCommGroup V] [Module K V]
@@ -730,4 +730,4 @@ theorem affine_pair_intersection_uniform_mass_exact
     push_cast
     rfl
 
-#print axioms affine_pair_intersection_uniform_mass_exact
+#print axioms affine_pair_intersection_uniform_mass_exact_unified
