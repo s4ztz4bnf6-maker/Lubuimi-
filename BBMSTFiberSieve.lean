@@ -824,3 +824,94 @@ theorem affine_pair_intersection_cardinality_factorization_of_rank_add
           rw [← hTCard, ← hUCard]
 
 #print axioms affine_pair_intersection_cardinality_factorization_of_rank_add
+
+
+/-!
+## Exact overlap amplification from rank defect
+
+The additive-rank theorem is the zero-defect case of a sharper identity.
+If the stacked rank falls short of the sum of the individual ranks by d,
+then the pair-intersection count is amplified by exactly |K|^d relative to
+the product of the individual fiber counts. This gives a precise algebraic
+quantity to track in a second-moment argument; it does not by itself bound
+how frequently a given defect occurs.
+-/
+
+/-- Exact pair-count identity with an explicit nonnegative rank defect. -/
+theorem affine_pair_intersection_cardinality_rank_defect
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂)
+    (xT xU xPair : V)
+    (hT : T xT = b) (hU : U xU = c)
+    (hPair : T xPair = b ∧ U xPair = c)
+    (d : ℕ)
+    (hdefect :
+      Module.finrank K (LinearMap.range (T.prod U)) + d =
+        Module.finrank K (LinearMap.range T) +
+          Module.finrank K (LinearMap.range U)) :
+    Fintype.card {x : V // T x = b ∧ U x = c} * Fintype.card V =
+      Fintype.card {x : V // T x = b} *
+        Fintype.card {x : V // U x = c} *
+          Fintype.card K ^ d := by
+  classical
+  letI : Fintype {x : V // T x = b} := Fintype.ofFinite _
+  letI : Fintype {x : V // U x = c} := Fintype.ofFinite _
+  letI : Fintype {x : V // T x = b ∧ U x = c} := Fintype.ofFinite _
+  have hPairCard :=
+    affine_pair_intersection_card_eq_field_card_pow_sub_stacked_rank
+      T U b c xPair hPair
+  have hTCard :=
+    affineFiber_card_eq_field_card_pow_finrank_sub_range T b xT hT
+  have hUCard :=
+    affineFiber_card_eq_field_card_pow_finrank_sub_range U c xU hU
+  have hVCard :
+      Fintype.card V = Fintype.card K ^ Module.finrank K V :=
+    Module.card_eq_pow_finrank
+  have hTdim := T.finrank_range_add_finrank_ker
+  have hUdim := U.finrank_range_add_finrank_ker
+  have hPairdim := (T.prod U).finrank_range_add_finrank_ker
+  have hexp :
+      (Module.finrank K V -
+          Module.finrank K (LinearMap.range (T.prod U))) +
+          Module.finrank K V =
+        (Module.finrank K V -
+            Module.finrank K (LinearMap.range T)) +
+          (Module.finrank K V -
+            Module.finrank K (LinearMap.range U)) + d := by
+    omega
+  calc
+    Fintype.card {x : V // T x = b ∧ U x = c} * Fintype.card V
+        = Fintype.card K ^
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range (T.prod U))) *
+            Fintype.card K ^ Module.finrank K V := by
+              rw [hPairCard, hVCard]
+    _ = Fintype.card K ^
+          ((Module.finrank K V -
+              Module.finrank K (LinearMap.range (T.prod U))) +
+            Module.finrank K V) := by
+          rw [← Nat.pow_add]
+    _ = Fintype.card K ^
+          ((Module.finrank K V -
+              Module.finrank K (LinearMap.range T)) +
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range U)) + d) := by
+          rw [hexp]
+    _ = Fintype.card K ^
+          (Module.finrank K V -
+              Module.finrank K (LinearMap.range T)) *
+        (Fintype.card K ^
+          (Module.finrank K V -
+              Module.finrank K (LinearMap.range U)) *
+          Fintype.card K ^ d) := by
+          rw [Nat.pow_add, Nat.pow_add]
+    _ = Fintype.card {x : V // T x = b} *
+          Fintype.card {x : V // U x = c} *
+          Fintype.card K ^ d := by
+          rw [← hTCard, ← hUCard]
+#print axioms affine_pair_intersection_cardinality_rank_defect
