@@ -689,3 +689,45 @@ theorem affine_pair_intersection_uniform_mass_exact
   rfl
 
 #print axioms affine_pair_intersection_uniform_mass_exact
+
+
+
+/--
+Exact normalized mass of a pairwise affine intersection, including
+inconsistent systems. The consistent branch is governed by the rank of the
+stacked map; the inconsistent branch contributes zero. This is the uniform
+finite-space interface needed by overlap sums, without an independence
+assumption and without requiring a witness in the theorem's interface.
+-/
+theorem affine_pair_intersection_uniform_mass_exact
+    {K V W₁ W₂ : Type*} [Field K] [Fintype K] [Fintype V]
+    [Fintype W₁] [Fintype W₂]
+    [AddCommGroup V] [Module K V]
+    [AddCommGroup W₁] [Module K W₁]
+    [AddCommGroup W₂] [Module K W₂]
+    (T : V →ₗ[K] W₁) (U : V →ₗ[K] W₂)
+    (b : W₁) (c : W₂)
+    [Decidable (∃ x : V, T x = b ∧ U x = c)]
+    [Fintype {x : V // T x = b ∧ U x = c}] :
+    (Fintype.card {x : V // T x = b ∧ U x = c} : ℚ) /
+        (Fintype.card V : ℚ) =
+      if h : ∃ x : V, T x = b ∧ U x = c then
+        (Fintype.card K : ℚ) ^
+            (Module.finrank K V -
+              Module.finrank K (LinearMap.range (T.prod U))) /
+          (Fintype.card K : ℚ) ^ Module.finrank K V
+      else 0 := by
+  classical
+  have hV : Fintype.card V = Fintype.card K ^ Module.finrank K V := by
+    exact Module.card_eq_pow_finrank
+  have hcount := affine_pair_intersection_card_exact T U b c
+  rw [hcount, hV]
+  by_cases h : ∃ x : V, T x = b ∧ U x = c
+  · simp [h]
+    push_cast
+    rfl
+  · simp [h]
+    push_cast
+    rfl
+
+#print axioms affine_pair_intersection_uniform_mass_exact
