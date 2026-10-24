@@ -910,9 +910,10 @@ theorem affine_pair_intersection_cardinality_rank_defect
               Module.finrank K (LinearMap.range U)) *
           Fintype.card K ^ d) := by
           rw [Nat.pow_add, Nat.pow_add]
+          exact mul_assoc _ _ _
     _ = Fintype.card {x : V // T x = b} *
           Fintype.card {x : V // U x = c} *
           Fintype.card K ^ d := by
           rw [← hTCard, ← hUCard]
-          exact mul_assoc _ _ _
+          exact (mul_assoc _ _ _).symm
 #print axioms affine_pair_intersection_cardinality_rank_defect
