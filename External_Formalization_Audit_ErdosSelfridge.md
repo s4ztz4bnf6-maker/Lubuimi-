@@ -74,3 +74,22 @@ for any hypothetical odd distinct-modulus covering. Its stated evidence profile 
 - Test every external axiom at degenerate inputs, including empty lists, missing indices, zero denominators, and vacuous finite types.
 - Test finite covering certificates against the period-12 covering, a required positive control.
 - Preserve the distinction between (a) Lean kernel acceptance of a proposition, (b) the proposition faithfully matching the cited paper, and (c) the proposition resolving the original conjecture.
+
+
+## CI-driven correction log — 2026-10-24
+
+The overlap-moment audit now includes an explicit theorem for the inconsistent affine-intersection case. The first CI run after removing a local Fintype.ofFinite construction failed at the theorem statement itself: Lean had to synthesize the finite subtype instance for {x : V // T x = b ∧ U x = c} while elaborating the result type, before the proof's classical tactic could act. The local IsEmpty proof was therefore not the issue; the cardinality typeclass was required too early.
+
+Repair committed as 441629733876162ef7b34f8a79c27101db58b533: make the finite subtype instance an explicit implicit argument to the theorem. This is mathematically neutral and keeps the intended statement: if the stacked affine system is inconsistent, its finite solution set has cardinality zero. CI runs 40119079795 and 40119075932 were still in progress at the time this note was written, so this repair is not yet CI-confirmed.
+
+The previous failing run did compile the surrounding overlap-conditioning and affine-fiber modules, but the workflow exited nonzero at this one theorem. The log also shows the existing degeneracy demonstration depends on the intentionally declared external axioms sieve_criterion and sf_sieve_lt_one; this is the point of the audit, not an acceptable axiom-free proof of Erdős–Selfridge.
+
+### Next proof obligation after CI
+
+Once the empty-intersection count compiles, the next substantive milestone is to combine:
+- the consistent case, counted by the rank of the stacked map T.prod U;
+- the inconsistent case, counted as zero;
+- exact event indicators and pairwise intersection sums;
+- a Cauchy–Schwarz lower bound for the probability of a nonempty union.
+
+The remaining source-fidelity gap is still the decisive one: connect this finite-field second-moment calculation to the exact BBMST hypotheses and constants, including the admissible δ_k interval, aligned parameter lengths, and nontrivial/nonparallel hyperplane conditions. Do not treat compilation of the local lemmas as proof of that bridge.
