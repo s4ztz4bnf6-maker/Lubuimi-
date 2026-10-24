@@ -72,3 +72,12 @@ This also sharpens the implementation warning: a scalar normalization lemma for 
 6. Only then specialize to the prime-coordinate box and formalize the arithmetic progression/CRT correspondence and the finite exceptional-prime computations.
 
 The rank-defect note above remains useful as a separate investigation of affine linear constraints, but the source-faithful route to the Erdős–Selfridge theorem must proceed through the product-space sieve. No global sieve theorem is claimed by this correction.
+
+
+## Independent source trail discovered (not a Lean proof)
+
+The current Erdős Problems library has a detailed reconstruction of the published BBMST square-free proof and its full dependency chain: https://erdosproblems.ai/wiki/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli . It records the precise roles of Lemma 2.1, Theorems 3.1 and 3.2, Lemmas 3.3–3.4, Lemmas 5.3–5.4, and Corollary 5.2, plus exact finite certificates and the extension beyond square-free moduli at primes above 73. Its evidence checker uses exact integer/rational arithmetic, but this is **not a Lean kernel proof** and does not discharge our Lean axioms.
+
+The related upstream formalization by axxen95 (`ErdosSelfridge_v17_fixed.lean`, Mathlib v4.28.0) has two explicit axioms: `sieve_criterion` and `sf_sieve_lt_one`. Its monotonicity chain is formalized, but the source-level criterion and square-free parameter-existence/computation remain imported. That makes the axiom boundary precise: the remaining work is not the already-proved monotonicity lemma; it is to replace those two assumptions with source-faithful proofs, including the actual moment bounds and exact finite parameter certificate. The imported assumptions must be checked against the published theorem's hypotheses, not merely trusted because they are described as BBMST results.
+
+This independent reconstruction gives us a sharper attack plan than the affine-rank detour: reproduce the published product-space sieve in Lean, use the source's exact rational certificates for finite numerical stages, and only then prove the prime-power monotonicity extension. The rank-defect identity remains an auxiliary result, not the central route.
