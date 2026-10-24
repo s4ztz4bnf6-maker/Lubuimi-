@@ -581,8 +581,6 @@ theorem affine_pair_intersection_card_zero_of_inconsistent
   classical
   letI : IsEmpty {x : V // T x = b ∧ U x = c} :=
     ⟨fun x => hbad ⟨x.1, x.2⟩⟩
-  letI : Fintype {x : V // T x = b ∧ U x = c} :=
-    Fintype.ofFinite {x : V // T x = b ∧ U x = c}
   simp
 
 #print axioms affine_pair_intersection_card_zero_of_inconsistent
