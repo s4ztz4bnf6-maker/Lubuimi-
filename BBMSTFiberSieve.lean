@@ -42,8 +42,6 @@ theorem fiber_update_preserves_mass
 
 #print axioms fiber_update_preserves_mass
 
-
-
 /--
 On the active branch α > δ, the covered-fiber multiplier is nonnegative.
 This is a genuine side condition for interpreting the scalar update as a
@@ -79,7 +77,6 @@ theorem fiber_update_uncovered_multiplier_pos
 #print axioms fiber_update_covered_multiplier_nonnegative
 #print axioms fiber_update_uncovered_multiplier_pos
 
-
 /--
 On the active branch, the covered-fiber multiplier is at most the
 uncovered-fiber multiplier. This comparison is distinct from normalization:
@@ -103,5 +100,44 @@ theorem fiber_update_covered_multiplier_le_uncovered_multiplier
           div_le_div_of_nonneg_right (sub_le_self α hδ0) hden
     _ = 1 / (1 - δ) := by
       field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
+
+/--
+Exact quantitative gap between the uncovered and covered multipliers.
+The loss per covered point is δ/(α(1-δ)); hence the comparison above is
+strict exactly when δ > 0. This is stronger than merely knowing the ordering
+of the two weights and can be used in a later quantitative contraction
+argument. It remains a scalar identity, not the global BBMST sieve estimate.
+-/
+theorem fiber_update_multiplier_gap
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ)) =
+      δ / (α * (1 - δ)) := by
+  have hαpos : 0 < α := lt_of_le_of_lt hδ0 hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  field_simp [ne_of_gt hαpos, ne_of_gt (sub_pos.mpr hδlt)]
+  ring
+
+/-- The gap is strictly positive when the threshold is positive. -/
+theorem fiber_update_multiplier_gap_pos
+    (α δ : ℚ)
+    (hα0 : 0 ≤ α)
+    (hδ0 : 0 < δ)
+    (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (hactive : δ < α) :
+    0 < 1 / (1 - δ) -
+        (α - δ) / (α * (1 - δ)) := by
+  rw [fiber_update_multiplier_gap α δ hα0 (le_of_lt hδ0) hδhalf hactive]
+  have hαpos : 0 < α := lt_of_le_of_lt (le_of_lt hδ0) hactive
+  have hδlt : δ < 1 := lt_of_le_of_lt hδhalf (by norm_num)
+  exact div_pos hδ0
+    (mul_pos hαpos (sub_pos.mpr hδlt))
+
+#print axioms fiber_update_multiplier_gap
+#print axioms fiber_update_multiplier_gap_pos
 
 end BBMSTAudit
