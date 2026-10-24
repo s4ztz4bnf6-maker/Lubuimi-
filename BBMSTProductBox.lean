@@ -108,5 +108,6 @@ theorem product_box_events_intersect_iff_no_conflict
 #print axioms product_box_overlap_agreement
 #print axioms product_box_disjoint_of_conflict
 #print axioms product_box_parallel_iff_fixed_coords_eq
+#print axioms product_box_events_intersect_iff_no_conflict
 
 end BBMSTAudit
