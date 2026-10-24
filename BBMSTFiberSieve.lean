@@ -137,6 +137,9 @@ theorem fiber_update_multiplier_gap_pos
   exact div_pos hδ0
     (mul_pos hαpos (sub_pos.mpr hδlt))
 
+#print axioms fiber_update_multiplier_gap
+#print axioms fiber_update_multiplier_gap_pos
+
 /--
 Exact edge-case characterization: under the active-branch hypotheses and
 δ ≥ 0, the multiplier gap is strictly positive if and only if δ is positive.
@@ -161,8 +164,6 @@ theorem fiber_update_multiplier_gap_pos_iff
 
 #print axioms fiber_update_multiplier_gap_pos_iff
 
-#print axioms fiber_update_multiplier_gap
-#print axioms fiber_update_multiplier_gap_pos
 
 /--
 Quantitative strengthening: if the covered fraction is at most one, then
