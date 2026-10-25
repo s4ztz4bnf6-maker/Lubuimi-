@@ -29,9 +29,9 @@ theorem max_min_sum_identity
       apply Finset.sum_congr rfl
       intro i hi
       by_cases h : f i ≤ g i
-      · simp [max_eq_right h, min_eq_left h]
+      · simp [max_eq_right h, min_eq_left h] <;> ring
       · have h' : g i ≤ f i := le_of_not_ge h
-        simp [max_eq_left h', min_eq_right h']
+        simp [max_eq_left h', min_eq_right h'] <;> ring
     _ = (∑ i : Fin n, f i) + (∑ i : Fin n, g i) := by
       rw [Finset.sum_add_distrib]
 
