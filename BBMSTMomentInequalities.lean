@@ -103,7 +103,6 @@ theorem weighted_moment_gap_lower_bound
     {n : ℕ} (p alpha : Fin n → ℚ) (eps : ℚ)
     (hp : ∀ i, 0 ≤ p i)
     (heps0 : 0 ≤ eps)
-    (hepshalf : eps ≤ (1 : ℚ) / 2)
     (hinterior : ∀ i, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
     eps * (1 - eps) * (∑ i : Fin n, p i) ≤
       (∑ i : Fin n, p i * alpha i) -
