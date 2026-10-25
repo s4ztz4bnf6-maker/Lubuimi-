@@ -54,6 +54,22 @@ theorem weighted_second_moment_le_first
     nlinarith [mul_nonneg (ha0 i) hcompl]
   exact mul_le_mul_of_nonneg_left hsq (hp i)
 
+/**
+Exact slack decomposition: the difference between the weighted first and
+second moments is precisely the sum of p_i * alpha_i * (1-alpha_i).
+This is stronger in diagnostic value than the inequality alone: it identifies
+which fibres contribute slack, without assuming normalized weights.
+-/
+theorem weighted_moment_gap_identity
+    {n : ℕ} (p alpha : Fin n → ℚ) :
+    (∑ i : Fin n, p i * alpha i) -
+      (∑ i : Fin n, p i * (alpha i) ^ 2) =
+    ∑ i : Fin n, p i * (alpha i * (1 - alpha i)) := by
+  rw [Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro i hi
+  ring
+
 /--
 On the source-side range 0 < delta <= 1/2, the BBMST denominator
 4*delta*(1-delta) is strictly positive and at most one. Strict positivity
@@ -73,5 +89,6 @@ theorem guarded_moment_denominator_bounds
 #print axioms max_min_sum_identity
 #print axioms weighted_second_moment_le_first
 #print axioms guarded_moment_denominator_bounds
+#print axioms weighted_moment_gap_identity
 
 end BBMSTAudit
