@@ -60,4 +60,20 @@ theorem valid_second_moment_denominator_lower_bound
 
 #print axioms valid_second_moment_denominator_lower_bound
 
+
+/-- Reciprocal denominator control: once the second-moment denominator is
+guarded away from zero, its inverse is bounded above by 1/(2δ). This is a
+quantitative stability estimate for later moment bounds, not the source
+second-moment inequality itself. -/
+theorem valid_second_moment_reciprocal_upper_bound
+    {N : ℕ} (p : ValidSieveParameters N) (i : Fin N) :
+    1 / (4 * p.delta i * (1 - p.delta i)) ≤ 1 / (2 * p.delta i) := by
+  have hden := valid_second_moment_denominator_pos p i
+  have htwo : 0 < 2 * p.delta i := by positivity
+  have hlow := valid_second_moment_denominator_lower_bound p i
+  rw [div_le_div_iff₀ hden htwo]
+  nlinarith
+
+#print axioms valid_second_moment_reciprocal_upper_bound
+
 end MeasureTransition
