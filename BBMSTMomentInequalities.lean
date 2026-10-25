@@ -54,7 +54,7 @@ theorem weighted_second_moment_le_first
     nlinarith [mul_nonneg (ha0 i) hcompl]
   exact mul_le_mul_of_nonneg_left hsq (hp i)
 
-/**
+/--
 Exact slack decomposition: the difference between the weighted first and
 second moments is precisely the sum of p_i * alpha_i * (1-alpha_i).
 This is stronger in diagnostic value than the inequality alone: it identifies
