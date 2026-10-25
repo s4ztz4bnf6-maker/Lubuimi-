@@ -1,0 +1,120 @@
+import BBMSTProductBox
+
+/-!
+# Exact product-box event cardinality
+
+For a uniform finite product with a common finite coordinate alphabet, fixing
+some coordinates leaves one independent choice at every free coordinate.
+This turns the set-theoretic merge lemma into an exact counting identity.
+Combined with `product_box_intersection_eq_merge_event`, it gives the exact
+pair-intersection count whenever shared assignments are compatible.
+
+This is a finite counting lemma only; it does not establish the BBMST moment
+bound or the global sieve criterion.
+-/
+
+namespace BBMSTAudit
+
+/-- The event of a coordinate-fixing product-box hyperplane has exactly
+`|S|^(number of free coordinates)` elements. The equivalence explicitly
+forgets fixed coordinates and reconstructs them from the hyperplane. -/
+theorem product_box_event_cardinality
+    {ι S : Type*} [Fintype ι] [DecidableEq ι] [Fintype S]
+    (H : ProductBoxHyperplane ι (fun _ => S))
+    [Fintype {x : ι → S // x ∈ H.event}] :
+    Fintype.card {x : ι → S // x ∈ H.event} =
+      Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} := by
+  classical
+  let eventEquiv :
+      {x : ι → S // x ∈ H.event} ≃
+        ({i : ι // i ∉ H.fixedCoords} → S) :=
+    { toFun := fun x i => x.val i.val
+      invFun := fun y =>
+        ⟨(fun i : ι =>
+            if hi : i ∈ H.fixedCoords then H.fixedValue i else y ⟨i, hi⟩),
+          by
+            change ∀ i ∈ H.fixedCoords, _ = _
+            intro i hi
+            simp [hi]⟩
+      left_inv := by
+        intro x
+        apply Subtype.ext
+        funext i
+        by_cases hi : i ∈ H.fixedCoords
+        · have hx := x.property
+          change ∀ i ∈ H.fixedCoords, x.val i = H.fixedValue i at hx
+          exact hx i hi
+        · rfl
+      right_inv := by
+        intro y
+        funext i
+        simp [i.property] }
+  calc
+    Fintype.card {x : ι → S // x ∈ H.event}
+        = Fintype.card ({i : ι // i ∉ H.fixedCoords} → S) :=
+          Fintype.card_congr eventEquiv
+    _ = Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} :=
+          Fintype.card_fun
+
+#print axioms product_box_event_cardinality
+
+/-- For compatible product-box constraints, the intersection count is the
+count for the union of the fixed-coordinate supports. No independence
+assumption is made about overlapping events. -/
+theorem product_box_compatible_intersection_cardinality
+    {ι S : Type*} [Fintype ι] [DecidableEq ι] [Fintype S]
+    (H K : ProductBoxHyperplane ι (fun _ => S))
+    [Fintype {x : ι → S // x ∈ H.event ∩ K.event}]
+    [Fintype {x : ι → S // x ∈ (H.merge K).event}]
+    (hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    Fintype.card {x : ι → S // x ∈ H.event ∩ K.event} =
+      Fintype.card S ^
+        Fintype.card {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords} := by
+  classical
+  have hmerge :
+      H.event ∩ K.event = (H.merge K).event :=
+    product_box_intersection_eq_merge_event H K hno
+  let e : {x : ι → S // x ∈ H.event ∩ K.event} ≃
+      {x : ι → S // x ∈ (H.merge K).event} :=
+    { toFun := fun x => ⟨x.val, by
+          change x.val ∈ H.event ∩ K.event at x.property
+          change x.val ∈ (H.merge K).event
+          rw [← hmerge]
+          exact x.property⟩
+      invFun := fun x => ⟨x.val, by
+          change x.val ∈ (H.merge K).event at x.property
+          change x.val ∈ H.event ∩ K.event
+          rw [hmerge]
+          exact x.property⟩
+      left_inv := by intro x; apply Subtype.ext; rfl
+      right_inv := by intro x; apply Subtype.ext; rfl }
+  calc
+    Fintype.card {x : ι → S // x ∈ H.event ∩ K.event}
+        = Fintype.card {x : ι → S // x ∈ (H.merge K).event} :=
+          Fintype.card_congr e
+    _ = Fintype.card S ^
+        Fintype.card {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords} :=
+          product_box_event_cardinality (H.merge K)
+
+#print axioms product_box_compatible_intersection_cardinality
+
+/-- Conflicting singleton assignments have no common witness in the finite
+product. This is the exact zero-overlap branch complementary to the
+compatible intersection-cardinality formula above. -/
+theorem product_box_incompatible_intersection_isEmpty
+    {ι S : Type*} [DecidableEq ι]
+    (H K : ProductBoxHyperplane ι (fun _ => S))
+    (hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    IsEmpty {x : ι → S // x ∈ H.event ∩ K.event} := by
+  classical
+  refine ⟨fun x => ?_⟩
+  obtain ⟨i, hiH, hiK, hne⟩ := hconflict
+  have hagree : H.fixedValue i = K.fixedValue i :=
+    product_box_overlap_agreement H K x.val x.property.1 x.property.2 hiH hiK
+  exact hne hagree
+
+#print axioms product_box_incompatible_intersection_isEmpty
+
+end BBMSTAudit
