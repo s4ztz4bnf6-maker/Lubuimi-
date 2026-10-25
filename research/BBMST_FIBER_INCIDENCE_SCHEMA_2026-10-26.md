@@ -67,3 +67,13 @@ Before accepting the new interface, retain a test demonstrating that:
 ## Acceptance status
 
 This is a source-guided implementation plan, not a compiled Lean result. Do not mark the main theorem proved until the geometric statements compile on the pinned toolchain, the transitive axiom audit is clean, and the statement is checked against the published source.
+
+## Sharpened finite-mass lemma target (2026-10-26 follow-up)
+
+Before formalizing any source-specific moment estimate, isolate the purely finite measure statement. For a finite type \(S\), weights \(w:S\to\mathbb Q\) with \(0\le w(x)\), a fiber \(F\subseteq S\), and disjoint subsets \(R,U\subseteq F\) with \(F=R\cup U\), prove
+\[
+ \sum_{x\in F}w(x)=\sum_{x\in R}w(x)+\sum_{x\in U}w(x).
+\]
+This should be proved by finite-sum partition lemmas, not by a probability quotient. Separately prove the zero-mass lemma: if \(\sum_{x\in F}w(x)=0\) and all weights are nonnegative, then each \(x\in F\) has \(w(x)=0\). This is the formal escape hatch for empty or zero-mass fibers and avoids Lean's totalized rational division from silently defining a degenerate conditional probability.
+
+The source-specific stage should then consume these lemmas and add its own geometric hypotheses. It must not infer a hyperplane incidence bound from finite-sum algebra alone. This separation gives a reusable algebraic kernel and makes the true research burden visible: the exact geometric/moment inequalities from BBMST and their parameter certificate.
