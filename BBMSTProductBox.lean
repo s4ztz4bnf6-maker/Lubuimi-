@@ -690,3 +690,31 @@ theorem ordered_pair_weight_sum_stratified_by_overlap_support
 #print axioms ordered_pair_weight_sum_stratified_by_overlap_support
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Coarser companion to the overlap-support stratification: regroup an ordered
+pair-weight sum by the *cardinality* of the shared fixed-coordinate set.
+This identity is exact and preserves ordered-pair multiplicity and diagonal
+terms. It is only a bookkeeping theorem; it does not assert that cardinality
+alone determines intersection mass in heterogeneous product boxes.
+-/
+theorem ordered_pair_weight_sum_stratified_by_overlap_cardinality
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (pairs : Finset (ProductBoxHyperplane ι S × ProductBoxHyperplane ι S))
+    (weight : ProductBoxHyperplane ι S × ProductBoxHyperplane ι S → ℚ) :
+    (∑ p ∈ pairs, weight p) =
+      ∑ r : ℕ,
+        ∑ p ∈ pairs with
+          (p.1.fixedCoords ∩ p.2.fixedCoords).card = r, weight p := by
+  classical
+  simpa using
+    (Finset.sum_fiberwise pairs
+      (fun p => (p.1.fixedCoords ∩ p.2.fixedCoords).card) weight).symm
+
+#print axioms ordered_pair_weight_sum_stratified_by_overlap_cardinality
+
+end BBMSTAudit
