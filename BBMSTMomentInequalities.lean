@@ -1,3 +1,31 @@
+
+/--
+Finite max/min decomposition: pointwise, max(x,y)+min(x,y)=x+y.
+This is useful for separating overlapping and non-overlapping masses in
+the BBMST good/bad-event transfer without assuming normalized weights.
+-/ 
+theorem max_min_sum_identity
+    {n : ℕ} (f g : Fin n → ℚ) :
+    (∑ i : Fin n, max (f i) (g i)) +
+      (∑ i : Fin n, min (f i) (g i)) =
+    (∑ i : Fin n, f i) + (∑ i : Fin n, g i) := by
+  calc
+    (∑ i : Fin n, max (f i) (g i)) +
+        (∑ i : Fin n, min (f i) (g i)) =
+        ∑ i : Fin n, (max (f i) (g i) + min (f i) (g i)) := by
+          rw [Finset.sum_add_distrib]
+    _ = ∑ i : Fin n, (f i + g i) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      by_cases h : f i ≤ g i
+      · simp [max_eq_right h, min_eq_left h]
+      · have h' : g i ≤ f i := le_of_not_ge h
+        simp [max_eq_left h', min_eq_right h']
+    _ = (∑ i : Fin n, f i) + (∑ i : Fin n, g i) := by
+      rw [Finset.sum_add_distrib]
+
+#print axioms max_min_sum_identity
+
 import Mathlib
 
 /-!
