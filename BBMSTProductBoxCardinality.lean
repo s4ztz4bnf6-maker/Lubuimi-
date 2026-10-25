@@ -25,12 +25,11 @@ theorem product_box_event_cardinality
     Fintype.card {x : ι → S // x ∈ H.event} =
       Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} := by
   classical
-  let freeCoords := {i : ι // i ∉ H.fixedCoords}
   let eventEquiv :
-      {x : ι → S // x ∈ H.event} ≃ (freeCoords → S) where
-    toFun := fun (x : {x : ι → S // x ∈ H.event}) =>
-      fun (i : freeCoords) => x.val i.val
-    invFun := fun (y : freeCoords → S) =>
+      {x : ι → S // x ∈ H.event} ≃
+        ({i : ι // i ∉ H.fixedCoords} → S) where
+    toFun := fun x => fun i => x.val i.val
+    invFun := fun y =>
       ⟨(fun i => if hi : i ∈ H.fixedCoords then H.fixedValue i else y ⟨i, hi⟩),
         by
           intro i hi
@@ -48,8 +47,10 @@ theorem product_box_event_cardinality
       simp [i.property]
   calc
     Fintype.card {x : ι → S // x ∈ H.event}
-        = Fintype.card (freeCoords → S) := Fintype.card_congr eventEquiv
-    _ = Fintype.card S ^ Fintype.card freeCoords := Fintype.card_fun
+        = Fintype.card ({i : ι // i ∉ H.fixedCoords} → S) :=
+          Fintype.card_congr eventEquiv
+    _ = Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} :=
+          Fintype.card_fun
 
 #print axioms product_box_event_cardinality
 
@@ -85,7 +86,7 @@ theorem product_box_compatible_intersection_cardinality
         Fintype.card {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords} :=
           product_box_event_cardinality (H.merge K)
 
-#print axioms product_box_compatible_intersection_cardinality
+/#print axioms product_box_compatible_intersection_cardinality
 
 /-- Incompatible singleton assignments have no common witness in the finite
 product. This is the exact zero-overlap branch complementary to the
