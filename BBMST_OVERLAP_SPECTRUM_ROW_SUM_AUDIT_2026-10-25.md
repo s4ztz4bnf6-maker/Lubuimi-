@@ -73,3 +73,28 @@ then group the row sum by the intersection signature F_H∩F_K. Only after
 this should one compare the grouped sum with the source paper's finite sieve
 and tail estimates. This remains a reduction plan, not a proof of the
 global BBMST estimate.
+
+
+## Source-scope and proof-chain checkpoint (2026-10-25)
+
+The audited upstream CI run for the first-moment identity and existing
+product-box geometry completed successfully (run 40151190202). The newer
+row-sum research-note commit has its own CI still running; do not conflate
+these runs.
+
+The target theorem remains the published square-free-moduli result. A proof
+bridge must identify, for each original arithmetic object, the corresponding
+fixed-coordinate event and prove that admissibility, distinctness, and
+square-freeness are preserved. Only then can the generic identity
+R_H = sum_{K compatible H} product_{i in F_H∩F_K}|S_i|
+be compared to the source sieve bound. Without that bridge, a bound for
+abstract product boxes is not yet a bound for the original covering-system
+problem.
+
+A formalization-ready intermediate statement is: for a finite family I of
+admissible source configurations and each H∈I, partition the compatible K∈I
+by the signature G=F_H∩F_K; show the row sum equals
+sum_G (product_{i∈G}|S_i|)·N_H(G), where N_H(G) counts compatible K with
+exact shared-support signature G. This is a finite reindexing identity.
+Its utility depends on obtaining source-specific bounds on N_H(G); the
+identity alone does not prove the required global estimate.
