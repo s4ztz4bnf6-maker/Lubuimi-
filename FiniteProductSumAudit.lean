@@ -8,7 +8,6 @@ rewrite interface. -/
 theorem finite_product_sum_factorization
     {n : ℕ}
     (X : Fin n → Type*) [∀ i, Fintype (X i)]
-    [Fintype (∀ i, X i)]
     (f : ∀ i, X i → ℚ) :
     (∑ x : (∀ i, X i), ∏ i, f i (x i)) =
       ∏ i, ∑ y : X i, f i y := by
