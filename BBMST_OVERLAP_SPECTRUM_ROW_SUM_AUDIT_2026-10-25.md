@@ -48,3 +48,28 @@ Then compare it term-by-term with the original proof's sieve/covering quantity. 
 ## Status
 
 This note is a mathematical reduction and an explicit diagnostic, not a Lean-checked theorem and not a proof of the BBMST theorem.
+
+
+## Refined overlap target: a weighted row-sum identity (2026-10-25)
+
+For a finite product box with coordinate sizes q_i=|S_i|, let H and K fix
+coordinate sets F_H and F_K. If their assignments conflict on a shared
+coordinate, their intersection is empty. If they are compatible, then
+P(H)=prod_{i in F_H} q_i^{-1} and
+P(H∩K)=prod_{i in F_H∪F_K} q_i^{-1}. Hence the normalized overlap inflation is
+P(H∩K)/(P(H)P(K)) = prod_{i in F_H∩F_K} q_i.
+
+Consequently the exact row sum of the normalized overlap kernel is
+R_H = sum_{K compatible with H} prod_{i in F_H∩F_K} q_i.
+This formula identifies the actual quantitative bottleneck: a useful
+spectral/second-moment argument must upper-bound these row sums, or a
+sharper weighted operator norm, using the square-free-modulus incidence
+constraints of the source theorem. Generic positive semidefiniteness alone
+does not bound R_H and cannot establish the BBMST union estimate.
+
+Next formalization target: define the finite product probability exactly,
+prove the normalized overlap identity for compatible/incompatible pairs,
+then group the row sum by the intersection signature F_H∩F_K. Only after
+this should one compare the grouped sum with the source paper's finite sieve
+and tail estimates. This remains a reduction plan, not a proof of the
+global BBMST estimate.
