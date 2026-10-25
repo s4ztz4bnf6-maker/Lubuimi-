@@ -790,3 +790,34 @@ theorem product_box_card_pos_of_admissible
 #print axioms product_box_card_pos_of_admissible
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/-- The rational denominator used by uniform counting mass is nonzero on an
+admissible product box. This is the exact guard needed before interpreting
+the quotient as a normalized probability rather than merely a total rational
+expression. -/
+theorem product_box_uniform_mass_denominator_ne_zero
+    {ι : Type u} [Fintype ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (hS : ProductBoxAdmissible S) :
+    (Fintype.card (∀ i, S i) : ℚ) ≠ 0 := by
+  have hcard : 0 < Fintype.card (∀ i, S i) :=
+    product_box_card_pos_of_admissible hS
+  exact_mod_cast (Nat.ne_of_gt hcard)
+
+/-- The uniform intersection mass has a genuinely nonzero denominator under
+the product-box admissibility hypothesis. No global sieve estimate is implied. -/
+theorem product_box_intersection_mass_denominator_ne_zero
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (H K : ProductBoxHyperplane ι S)
+    (hS : ProductBoxAdmissible S) :
+    (Fintype.card (∀ i, S i) : ℚ) ≠ 0 :=
+  product_box_uniform_mass_denominator_ne_zero hS
+
+#print axioms product_box_uniform_mass_denominator_ne_zero
+#print axioms product_box_intersection_mass_denominator_ne_zero
+
+end BBMSTAudit
