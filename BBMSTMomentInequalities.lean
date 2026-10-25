@@ -1,9 +1,20 @@
+import Mathlib
+
+/-!
+# Generic finite moment inequalities for the BBMST bridge
+
+This file isolates elementary finite-sum facts needed before the
+source-specific BBMST stage construction is formalized. It is not itself
+Theorem 3.1 and does not discharge the project-specific sieve axioms.
+-/
+
+namespace BBMSTAudit
 
 /--
 Finite max/min decomposition: pointwise, max(x,y)+min(x,y)=x+y.
 This is useful for separating overlapping and non-overlapping masses in
 the BBMST good/bad-event transfer without assuming normalized weights.
--/ 
+-/
 theorem max_min_sum_identity
     {n : ℕ} (f g : Fin n → ℚ) :
     (∑ i : Fin n, max (f i) (g i)) +
@@ -23,20 +34,6 @@ theorem max_min_sum_identity
         simp [max_eq_left h', min_eq_right h']
     _ = (∑ i : Fin n, f i) + (∑ i : Fin n, g i) := by
       rw [Finset.sum_add_distrib]
-
-#print axioms max_min_sum_identity
-
-import Mathlib
-
-/-!
-# Generic finite moment inequalities for the BBMST bridge
-
-This file isolates elementary finite-sum facts needed before the
-source-specific BBMST stage construction is formalized. It is not itself
-Theorem 3.1 and does not discharge the project-specific sieve axioms.
--/
-
-namespace BBMSTAudit
 
 /--
 For nonnegative weights and fibre shares in [0,1], the weighted second
@@ -73,6 +70,7 @@ theorem guarded_moment_denominator_bounds
   · have hsq : 0 ≤ (1 - 2 * delta) ^ 2 := sq_nonneg (1 - 2 * delta)
     nlinarith
 
+#print axioms max_min_sum_identity
 #print axioms weighted_second_moment_le_first
 #print axioms guarded_moment_denominator_bounds
 
