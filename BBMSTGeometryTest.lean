@@ -882,6 +882,13 @@ theorem eventMass_le_good_bad_transfer
     (hbad : eventMass μ (fun x => ¬ G x) ≤ η) :
     eventMass μ E ≤ C * eventMass ν E + η := by
   classical
+  -- Match the classical decidability used inside eventMass's filtered sum.
+  -- Otherwise unfolding eventMass can expose a definitional mismatch between
+  -- direct propDecidable and the synthesized DecidableAnd instance.
+  letI : DecidablePred (fun x : CoordinatePoint space => E x ∧ G x) :=
+    fun x => Classical.propDecidable _
+  letI : DecidablePred (fun x : CoordinatePoint space => E x ∧ ¬ G x) :=
+    fun x => Classical.propDecidable _
   have hsplit :
       eventMass μ E =
         eventMass μ (fun x => E x ∧ G x) +
