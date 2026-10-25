@@ -25,12 +25,12 @@ theorem product_box_event_cardinality
     Fintype.card {x : ι → S // x ∈ H.event} =
       Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} := by
   classical
-  let Free := {i : ι // i ∉ H.fixedCoords}
+  let freeCoords := {i : ι // i ∉ H.fixedCoords}
   let eventEquiv :
-      {x : ι → S // x ∈ H.event} ≃ (Free → S) where
+      {x : ι → S // x ∈ H.event} ≃ (freeCoords → S) where
     toFun := fun (x : {x : ι → S // x ∈ H.event}) =>
-      fun (i : Free) => x.val i.val
-    invFun := fun (y : Free → S) =>
+      fun (i : freeCoords) => x.val i.val
+    invFun := fun (y : freeCoords → S) =>
       ⟨(fun i => if hi : i ∈ H.fixedCoords then H.fixedValue i else y ⟨i, hi⟩),
         by
           intro i hi
@@ -48,8 +48,8 @@ theorem product_box_event_cardinality
       simp [i.property]
   calc
     Fintype.card {x : ι → S // x ∈ H.event}
-        = Fintype.card (Free → S) := Fintype.card_congr eventEquiv
-    _ = Fintype.card S ^ Fintype.card Free := Fintype.card_fun
+        = Fintype.card (freeCoords → S) := Fintype.card_congr eventEquiv
+    _ = Fintype.card S ^ Fintype.card freeCoords := Fintype.card_fun
 
 #print axioms product_box_event_cardinality
 
@@ -72,7 +72,11 @@ theorem product_box_compatible_intersection_cardinality
       H.event ∩ K.event = (H.merge K).event :=
     product_box_intersection_eq_merge_event H K hno
   let e : {x : ι → S // x ∈ H.event ∩ K.event} ≃
-      {x : ι → S // x ∈ (H.merge K).event} := Equiv.setCongr hmerge
+      {x : ι → S // x ∈ (H.merge K).event} where
+    toFun := fun x => ⟨x.val, by simpa [hmerge] using x.property⟩
+    invFun := fun x => ⟨x.val, by simpa [hmerge] using x.property⟩
+    left_inv := by intro x; rfl
+    right_inv := by intro x; rfl
   calc
     Fintype.card {x : ι → S // x ∈ H.event ∩ K.event}
         = Fintype.card {x : ι → S // x ∈ (H.merge K).event} :=
