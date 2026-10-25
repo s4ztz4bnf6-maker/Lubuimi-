@@ -13,6 +13,6 @@ theorem finite_product_sum_factorization
     (∑ x : (∀ i, X i), ∏ i, f i (x i)) =
       ∏ i, ∑ y : X i, f i y := by
   classical
-  rw [← Fintype.prod_sum]
+  rw [Fintype.prod_sum]
 
 #print axioms finite_product_sum_factorization
