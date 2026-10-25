@@ -130,4 +130,45 @@ theorem weighted_moment_gap_lower_bound
 
 #print axioms weighted_moment_gap_lower_bound
 
+
+/--
+Boundary/interior split for the moment gap. Only fibres in the chosen
+subset S must have shares bounded away from 0 and 1; all other fibres need
+only satisfy 0 ≤ alpha ≤ 1. This avoids the overly strong assumption that
+every source-side BBMST fibre is uniformly interior.
+-/
+theorem weighted_moment_gap_lower_bound_on_subset
+    {n : ℕ} (p alpha : Fin n → ℚ) (eps : ℚ) (S : Finset (Fin n))
+    (hp : ∀ i, 0 ≤ p i)
+    (ha0 : ∀ i, 0 ≤ alpha i)
+    (ha1 : ∀ i, alpha i ≤ 1)
+    (hinterior : ∀ i ∈ S, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
+    eps * (1 - eps) * (∑ i ∈ S, p i) ≤
+      (∑ i : Fin n, p i * alpha i) -
+        (∑ i : Fin n, p i * (alpha i) ^ 2) := by
+  rw [weighted_moment_gap_identity]
+  calc
+    eps * (1 - eps) * (∑ i ∈ S, p i) =
+        ∑ i ∈ S, p i * (eps * (1 - eps)) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro i hi
+          ring
+    _ ≤ ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
+          apply Finset.sum_le_sum
+          intro i hi
+          have hprod :
+              0 ≤ (alpha i - eps) * (1 - eps - alpha i) :=
+            mul_nonneg (sub_nonneg.mpr (hinterior i hi).1)
+              (sub_nonneg.mpr (hinterior i hi).2)
+          have hshare :
+              eps * (1 - eps) ≤ alpha i * (1 - alpha i) := by
+            nlinarith [hprod]
+          exact mul_le_mul_of_nonneg_left hshare (hp i)
+    _ ≤ ∑ i : Fin n, p i * (alpha i * (1 - alpha i)) := by
+          apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ S)
+          intro i hi hnot
+          exact mul_nonneg (hp i)
+            (mul_nonneg (ha0 i) (sub_nonneg.mpr (ha1 i)))
+
 end BBMSTAudit
