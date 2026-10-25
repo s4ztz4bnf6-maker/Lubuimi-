@@ -72,5 +72,6 @@ theorem sieve_denominator_lower_bound
 #print axioms delta_in_open_unit_interval
 #print axioms sieve_denominator_pos
 #print axioms guarded_stage_count_positive
+#print axioms sieve_denominator_lower_bound
 
 end BBMSTAudit
