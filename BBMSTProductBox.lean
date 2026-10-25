@@ -823,3 +823,36 @@ theorem product_box_intersection_mass_denominator_ne_zero
 #print axioms product_box_intersection_mass_denominator_ne_zero
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Joint overlap/union stratification of an ordered-pair weight sum. The overlap
+support alone can group pairs with different unions and hence different
+intersection weights in heterogeneous product spaces. This exact refinement
+retains both supports, ordered-pair multiplicity, and diagonal terms. It is
+a reindexing identity only; no moment bound is inferred from it.
+-/
+theorem ordered_pair_weight_sum_stratified_by_overlap_and_union
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (pairs : Finset (ProductBoxHyperplane ι S × ProductBoxHyperplane ι S))
+    (weight : ProductBoxHyperplane ι S × ProductBoxHyperplane ι S → ℚ) :
+    (∑ p ∈ pairs, weight p) =
+      ∑ signature : Finset ι × Finset ι,
+        ∑ p ∈ pairs with
+          (p.1.fixedCoords ∩ p.2.fixedCoords,
+            p.1.fixedCoords ∪ p.2.fixedCoords) = signature,
+          weight p := by
+  classical
+  simpa using
+    (Finset.sum_fiberwise pairs
+      (fun p =>
+        (p.1.fixedCoords ∩ p.2.fixedCoords,
+          p.1.fixedCoords ∪ p.2.fixedCoords))
+      weight).symm
+
+#print axioms ordered_pair_weight_sum_stratified_by_overlap_and_union
+
+end BBMSTAudit
