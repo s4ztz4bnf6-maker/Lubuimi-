@@ -652,9 +652,9 @@ theorem product_box_intersection_uniform_mass_compatible_or_zero
   classical
   by_cases hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
       H.fixedValue i ≠ K.fixedValue i
-  · rw [if_pos hconflict]
+  · simp only [dif_pos hconflict]
     exact product_box_incompatible_intersection_uniform_mass H K hconflict
-  · rw [if_neg hconflict]
+  · simp only [dif_neg hconflict]
     exact product_box_compatible_intersection_uniform_mass H K hconflict
 
 #print axioms product_box_intersection_uniform_mass_compatible_or_zero
