@@ -53,6 +53,22 @@ theorem guarded_stage_count_positive
     {n : ℕ} (p : GuardedSieveParams n) : 0 < n :=
   p.stageCount_pos
 
+
+/--
+Quantitative denominator lower bound: on the source-side range 0 < δ ≤ 1/2,
+the denominator 4*δ*(1-δ) is at least 2*δ. This can be useful when later
+bounds must control reciprocal factors; it does not itself prove a sieve
+moment estimate.
+-/
+theorem sieve_denominator_lower_bound
+    {n : ℕ} (p : GuardedSieveParams n) (i : Fin n) :
+    2 * p.delta i ≤ 4 * p.delta i * (1 - p.delta i) := by
+  have hδ : 0 < p.delta i := p.delta_pos i
+  have hhalf : p.delta i ≤ (1 : ℚ) / 2 := p.delta_le_half i
+  have hprod : 0 ≤ p.delta i * ((1 : ℚ) / 2 - p.delta i) :=
+    mul_nonneg (le_of_lt hδ) (by linarith)
+  nlinarith [hprod]
+
 #print axioms delta_in_open_unit_interval
 #print axioms sieve_denominator_pos
 #print axioms guarded_stage_count_positive
