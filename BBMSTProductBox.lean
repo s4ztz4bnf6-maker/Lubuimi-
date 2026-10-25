@@ -752,3 +752,41 @@ theorem second_moment_pair_mass_stratified_by_overlap_support
 #print axioms second_moment_pair_mass_stratified_by_overlap_support
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Admissibility of a finite product sample space: every coordinate space has
+at least one element. This hypothesis is separate from the total algebraic
+definitions of event mass, because rational division by zero is defined in
+Lean and does not itself certify a probability space.
+-/
+def ProductBoxAdmissible
+    {ι : Type u} [Fintype ι] (S : ι → Type v) : Prop :=
+  ∀ i, Nonempty (S i)
+
+/-- Coordinatewise nonemptiness supplies an actual point in the dependent
+product. The classical choice is only used to select one value per
+coordinate; it does not assume any BBMST-specific combinatorial claim. -/
+theorem product_box_nonempty_of_admissible
+    {ι : Type u} [Fintype ι] {S : ι → Type v}
+    (hS : ProductBoxAdmissible S) :
+    Nonempty (∀ i, S i) := by
+  classical
+  exact ⟨fun i => Classical.choice (hS i)⟩
+
+/-- Consequently, an admissible finite product has positive cardinality,
+so its rational cardinality is a nonzero denominator for uniform counting
+mass. -/
+theorem product_box_card_pos_of_admissible
+    {ι : Type u} [Fintype ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (hS : ProductBoxAdmissible S) :
+    0 < Fintype.card (∀ i, S i) := by
+  exact Fintype.card_pos_iff.mpr (product_box_nonempty_of_admissible hS)
+
+#print axioms product_box_nonempty_of_admissible
+#print axioms product_box_card_pos_of_admissible
+
+end BBMSTAudit
