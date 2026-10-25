@@ -1,4 +1,5 @@
 import ErdosSelfridge_v17_fixed
+import BBMSTMassAuditCore
 import Mathlib
 
 /-!
@@ -96,6 +97,9 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
   norm_num [sieveSum, List.range, List.range.loop, List.foldl, List.take,
     sieveTerm, M1bound, M2bound, ck, sieveProd, updateFactor]
 
+#print axioms BBMSTAudit.mass_additive_of_disjoint
+#print axioms BBMSTAudit.mass_additive_zero_of_disjoint
+#print axioms BBMSTAudit.mass_partition
 #print axioms degenerate_sieveTerm
 #print axioms degenerate_sieveSum
 #print axioms extractPrimes_valid
