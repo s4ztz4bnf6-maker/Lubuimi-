@@ -91,4 +91,44 @@ theorem guarded_moment_denominator_bounds
 #print axioms guarded_moment_denominator_bounds
 #print axioms weighted_moment_gap_identity
 
+
+/--
+Quantitative moment-gap bound: if every fibre share lies in
+[eps, 1-eps], then its contribution to the first-minus-second moment gap
+is at least eps*(1-eps) times its weight. This identifies a usable
+source-bridge target: prove an interior-share bound on the relevant BBMST
+fibres, rather than merely invoking the qualitative alpha^2 <= alpha.
+-/
+theorem weighted_moment_gap_lower_bound
+    {n : ℕ} (p alpha : Fin n → ℚ) (eps : ℚ)
+    (hp : ∀ i, 0 ≤ p i)
+    (heps0 : 0 ≤ eps)
+    (hepshalf : eps ≤ (1 : ℚ) / 2)
+    (hinterior : ∀ i, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
+    eps * (1 - eps) * (∑ i : Fin n, p i) ≤
+      (∑ i : Fin n, p i * alpha i) -
+        (∑ i : Fin n, p i * (alpha i) ^ 2) := by
+  rw [weighted_moment_gap_identity]
+  calc
+    eps * (1 - eps) * (∑ i : Fin n, p i) =
+        ∑ i : Fin n, (eps * (1 - eps)) * p i := by
+          rw [Finset.mul_sum]
+    _ = ∑ i : Fin n, p i * (eps * (1 - eps)) := by
+          apply Finset.sum_congr rfl
+          intro i hi
+          ring
+    _ ≤ ∑ i : Fin n, p i * (alpha i * (1 - alpha i)) := by
+          apply Finset.sum_le_sum
+          intro i hi
+          have hprod :
+              0 ≤ (alpha i - eps) * (1 - eps - alpha i) :=
+            mul_nonneg (sub_nonneg.mpr (hinterior i).1)
+              (sub_nonneg.mpr (hinterior i).2)
+          have hshare :
+              eps * (1 - eps) ≤ alpha i * (1 - alpha i) := by
+            nlinarith [hprod]
+          exact mul_le_mul_of_nonneg_left hshare (hp i)
+
+#print axioms weighted_moment_gap_lower_bound
+
 end BBMSTAudit
