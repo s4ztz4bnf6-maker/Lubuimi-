@@ -76,8 +76,14 @@ theorem product_box_compatible_intersection_cardinality
       {x : ι → S // x ∈ (H.merge K).event} where
     toFun := fun x => ⟨x.val, by simpa [hmerge] using x.property⟩
     invFun := fun x => ⟨x.val, by simpa [hmerge] using x.property⟩
-    left_inv := by intro x; rfl
-    right_inv := by intro x; rfl
+    left_inv := by
+      intro x
+      apply Subtype.ext
+      rfl
+    right_inv := by
+      intro x
+      apply Subtype.ext
+      rfl
   calc
     Fintype.card {x : ι → S // x ∈ H.event ∩ K.event}
         = Fintype.card {x : ι → S // x ∈ (H.merge K).event} :=
