@@ -20,7 +20,8 @@ namespace BBMSTAudit
 forgets fixed coordinates and reconstructs them from the hyperplane. -/
 theorem product_box_event_cardinality
     {ι S : Type*} [Fintype ι] [DecidableEq ι] [Fintype S]
-    (H : ProductBoxHyperplane ι (fun _ => S)) :
+    (H : ProductBoxHyperplane ι (fun _ => S))
+    [Fintype {x : ι → S // x ∈ H.event}] :
     Fintype.card {x : ι → S // x ∈ H.event} =
       Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} := by
   classical
@@ -57,6 +58,8 @@ independence assumption is made about overlapping events. -/
 theorem product_box_compatible_intersection_cardinality
     {ι S : Type*} [Fintype ι] [DecidableEq ι] [Fintype S]
     (H K : ProductBoxHyperplane ι (fun _ => S))
+    [Fintype {x : ι → S // x ∈ H.event ∩ K.event}]
+    [Fintype {x : ι → S // x ∈ (H.merge K).event}]
     (hno : ¬ ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
       H.fixedValue i ≠ K.fixedValue i) :
     Fintype.card {x : ι → S // x ∈ H.event ∩ K.event} =
