@@ -86,7 +86,7 @@ theorem product_box_compatible_intersection_cardinality
         Fintype.card {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords} :=
           product_box_event_cardinality (H.merge K)
 
-/#print axioms product_box_compatible_intersection_cardinality
+#print axioms product_box_compatible_intersection_cardinality
 
 /-- Incompatible singleton assignments have no common witness in the finite
 product. This is the exact zero-overlap branch complementary to the
