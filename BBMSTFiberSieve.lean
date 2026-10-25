@@ -917,3 +917,27 @@ theorem affine_pair_intersection_cardinality_rank_defect
           rw [← hTCard, ← hUCard]
           exact (mul_assoc _ _ _).symm
 #print axioms affine_pair_intersection_cardinality_rank_defect
+
+/-!
+## Ratio-free finite-fiber mass conservation
+
+This identity is independent of any choice of normalization denominator.
+It remains valid for an empty fiber and for zero total mass, so it can be
+used before introducing the normalized density α = removedMass / totalMass.
+The source-specific work is still to identify the actual BBMST fiber and prove
+that its removed/surviving sets form this partition.
+-/
+
+/-- If a finite fiber is partitioned into disjoint removed and surviving
+subsets, its total weight is the sum of the two sub-masses. No division,
+positivity-of-denominator hypothesis, or probability axiom is needed. -/
+theorem finite_fiber_mass_partition
+    {α : Type*} [DecidableEq α]
+    (F R S : Finset α) (w : α → ℚ)
+    (hpartition : R ∪ S = F)
+    (hdisjoint : Disjoint R S) :
+    (∑ x in F, w x) =
+      (∑ x in R, w x) + (∑ x in S, w x) := by
+  rw [← hpartition, Finset.sum_union hdisjoint]
+
+#print axioms finite_fiber_mass_partition
