@@ -65,7 +65,7 @@ theorem weighted_moment_gap_identity
     (∑ i : Fin n, p i * alpha i) -
       (∑ i : Fin n, p i * (alpha i) ^ 2) =
     ∑ i : Fin n, p i * (alpha i * (1 - alpha i)) := by
-  rw [Finset.sum_sub_distrib]
+  rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro i hi
   ring
