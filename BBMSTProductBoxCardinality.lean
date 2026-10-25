@@ -74,4 +74,22 @@ theorem product_box_compatible_intersection_cardinality
 
 #print axioms product_box_compatible_intersection_cardinality
 
+/-- Incompatible singleton assignments have no common witness in the finite
+product. This is the exact zero-overlap branch complementary to the
+compatible intersection-cardinality formula above. -/
+theorem product_box_incompatible_intersection_isEmpty
+    {ι S : Type*} [DecidableEq ι]
+    (H K : ProductBoxHyperplane ι (fun _ => S))
+    (hconflict : ∃ i, i ∈ H.fixedCoords ∧ i ∈ K.fixedCoords ∧
+      H.fixedValue i ≠ K.fixedValue i) :
+    IsEmpty {x : ι → S // x ∈ H.event ∩ K.event} := by
+  classical
+  refine ⟨fun x => ?_⟩
+  obtain ⟨i, hiH, hiK, hne⟩ := hconflict
+  have hagree : H.fixedValue i = K.fixedValue i :=
+    product_box_overlap_agreement H K x.1 x.2.1 x.2.2 hiH hiK
+  exact hne hagree
+
+#print axioms product_box_incompatible_intersection_isEmpty
+
 end BBMSTAudit
