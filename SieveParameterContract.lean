@@ -58,3 +58,47 @@ theorem guarded_stage_count_positive
 #print axioms guarded_stage_count_positive
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Algebraic kernel lemma: the maximum and minimum of two rationals partition
+their sum exactly. This lemma is independent of all sieve hypotheses and is
+intended to be reusable in the later source-faithful moment/overlap argument.
+-/
+theorem max_min_add_identity (x y : ℚ) :
+    max x y + min x y = x + y := by
+  rcases le_total x y with h | h
+  · rw [max_eq_right h, min_eq_left h]
+    ring
+  · rw [max_eq_left h, min_eq_right h]
+    ring
+
+/--
+Finite-sum lift of the max/min partition identity. It makes no positivity,
+nonemptiness, or parameter assumptions; those belong to the separate
+BBMST source contract. In particular, this is an algebraic conservation
+identity, not a proof of the published sieve moment bound.
+-/
+theorem finset_sum_max_min_identity
+    {α : Type*} (s : Finset α) (f g : α → ℚ) :
+    (∑ x ∈ s, max (f x) (g x)) +
+      (∑ x ∈ s, min (f x) (g x)) =
+    (∑ x ∈ s, f x) + (∑ x ∈ s, g x) := by
+  calc
+    (∑ x ∈ s, max (f x) (g x)) +
+        (∑ x ∈ s, min (f x) (g x)) =
+      ∑ x ∈ s, (max (f x) (g x) + min (f x) (g x)) := by
+        rw [Finset.sum_add_distrib]
+    _ = ∑ x ∈ s, (f x + g x) := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      exact max_min_add_identity (f x) (g x)
+    _ = (∑ x ∈ s, f x) + (∑ x ∈ s, g x) := by
+      rw [Finset.sum_add_distrib]
+
+#print axioms max_min_add_identity
+#print axioms finset_sum_max_min_identity
+
+end BBMSTAudit
