@@ -40,3 +40,12 @@ To reach the BBMST conclusion, import the published adaptive quantities \(R_k,N_
 
 ## Evidence boundary
 The last documented successful workflow covered earlier targets. The newer denominator-guard commit has no confirmed status result in the connector snapshot; an empty status response is not a pass. Neither the guard nor the exact overlap identities establish the global Erdős–Selfridge result.
+
+
+## Critical statement-fidelity boundary: which Erdős–Selfridge result?
+
+The published paper by Balister, Bollobás, Morris, Sahasrabudhe and Tiba (Algebra & Number Theory 15 (2021), 609–626) proves that a covering system whose moduli are all **distinct and square-free** must contain an even modulus. This is a substantial theorem, but it is not a resolution of the unrestricted Erdős question for arbitrary distinct odd moduli. The formal target in this repository must be named and scoped to the square-free-modulus theorem unless an additional argument genuinely removes that hypothesis.
+
+Authoritative published-version record: https://ora.ox.ac.uk/objects/uuid:3c55267c-60be-4652-89a7-db3db5f62c25
+
+This distinction is a hard audit gate: formalizing the square-free theorem cannot be described as solving the unrestricted Erdős–Selfridge problem. The source paper's published version must govern the definitions and quantitative estimates, not a preprint or a secondary summary.
