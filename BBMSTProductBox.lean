@@ -712,9 +712,15 @@ theorem ordered_pair_weight_sum_stratified_by_overlap_cardinality
         ∑ p ∈ pairs with
           (p.1.fixedCoords ∩ p.2.fixedCoords).card = r, weight p := by
   classical
-  simpa using
-    (Finset.sum_fiberwise pairs
-      (fun p => (p.1.fixedCoords ∩ p.2.fixedCoords).card) weight).symm
+  exact (Finset.sum_fiberwise_of_maps_to
+    (s := pairs)
+    (t := pairs.image (fun p =>
+      (p.1.fixedCoords ∩ p.2.fixedCoords).card))
+    (g := fun p => (p.1.fixedCoords ∩ p.2.fixedCoords).card)
+    (by
+      intro p hp
+      exact Finset.mem_image.mpr ⟨p, hp, rfl⟩)
+    weight).symm
 #print axioms ordered_pair_weight_sum_stratified_by_overlap_cardinality
 
 end BBMSTAudit
