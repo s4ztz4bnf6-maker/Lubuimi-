@@ -724,3 +724,31 @@ theorem ordered_pair_weight_sum_stratified_by_overlap_cardinality
 #print axioms ordered_pair_weight_sum_stratified_by_overlap_cardinality
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Second-moment pair mass regrouped by the exact shared-coordinate support.
+This corollary composes the product-box intersection formula with finite
+fiberwise reindexing. It is an exact identity, not a quantitative upper bound:
+all compatible and incompatible ordered pairs, including the diagonal, remain
+present with their true intersection masses.
+-/
+theorem second_moment_pair_mass_stratified_by_overlap_support
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (pairs : Finset (ProductBoxHyperplane ι S × ProductBoxHyperplane ι S)) :
+    (∑ p ∈ pairs, productBoxIntersectionUniformMass p.1 p.2) =
+      ∑ overlap : Finset ι,
+        ∑ p ∈ pairs with
+          (p.1.fixedCoords ∩ p.2.fixedCoords = overlap),
+          productBoxIntersectionUniformMass p.1 p.2 := by
+  simpa using
+    (ordered_pair_weight_sum_stratified_by_overlap_support
+      (pairs := pairs)
+      (weight := fun p => productBoxIntersectionUniformMass p.1 p.2))
+
+#print axioms second_moment_pair_mass_stratified_by_overlap_support
+
+end BBMSTAudit
