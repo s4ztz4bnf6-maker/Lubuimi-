@@ -36,3 +36,5 @@ jobs:
         run: lake env lean AuditCheck.lean
       - name: Compile guarded stage-aligned parameter contract
         run: lake env lean SieveParameterContract.lean
+      - name: Compile generic finite moment inequalities
+        run: lake env lean BBMSTMomentInequalities.lean
