@@ -2,34 +2,32 @@
 
 This is a research plan, not a claim that the Erdős–Selfridge theorem has been proved by this branch. Existing product-box lemmas establish exact finite intersection geometry and overlap-support reindexing, but not the quantitative estimate required by the published BBMST argument.
 
-AI-mathematics work should separate a checked Lean endpoint, source-faithful statement, novelty, and acceptance. ProofAtlas records exact declarations and evidence status; Tao's reliability discussion emphasizes kernel checking plus statement-fidelity review.
+AI-mathematics work should separate a checked Lean endpoint, source-faithful statement, novelty, and acceptance. ProofAtlas records formalization/evidence status; Tao's reliability discussion emphasizes kernel checking plus statement-fidelity review.
 - https://www.proofatlas.ai/
 - https://terrytao.wordpress.com/2026/10/09/what-mathematicians-should-know-about-the-lean-theorem-proverquestions-of-reliability-and-ai/
 - https://www.quantamagazine.org/why-the-legendary-erdos-problems-are-falling-to-ai-20260803/
 
 ## Refined mathematical target
-Let \(\Omega=\prod_{i\in I} S_i\) be a finite product space with every \(S_i\ne\varnothing\), equipped with uniform measure. An event \(H\) fixes coordinates \(F_H\subseteq I\). For a pair \((H,K)\), conflicting assignments on \(F_H\cap F_K\) imply \(\mu(H\cap K)=0\). Otherwise,
-\[
-\mu(H\cap K)=\frac{\prod_{i\notin F_H\cup F_K}|S_i|}{\prod_{i\in I}|S_i|}.
-\]
+
+Let Ω=∏_{i∈I} S_i be a finite product space with every S_i nonempty, equipped with uniform measure. An event H fixes coordinates F_H⊆I. For a pair (H,K), conflicting assignments on F_H∩F_K imply μ(H∩K)=0. Otherwise,
+μ(H∩K)=∏_{i∉F_H∪F_K}|S_i| / ∏_{i∈I}|S_i|.
+
 The exact second-moment sum must retain overlap support and compatibility. Overlap cardinality alone is insufficient when coordinate spaces have unequal sizes.
 
-The code contains exact lemmas for these identities, an admissibility predicate, and a nonzero-denominator guard. These are foundations, not the desired moment bound.
+## New route: fiberwise overlap decomposition
 
-## New route: weighted overlap signature
-Attach to each ordered pair the signature
-\[
-\sigma(H,K)=\big(F_H\cap F_K,\; \operatorname{compatible}(H,K)\big).
-\]
-Retain the coordinate weight
-\[
-w(H,K)=\frac{\prod_{i\notin F_H\cup F_K}|S_i|}{\prod_{i\in I}|S_i|}
-\]
-only on compatible pairs. The overlap alone is not a scalar statistic: the union of fixed coordinates and the coordinate cardinalities still matter. The formal target is *fiberwise exact decomposition first, source-derived upper bound second*.
+For each ordered pair (H,K), define its compatibility predicate Compat(H,K), overlap O=F_H∩F_K, and union U=F_H∪F_K. Keep the ordered pair index set, including diagonal terms. Partition the second-moment sum by the exact signature (O,U,Compat) rather than only by |O|. For each signature fiber, prove:
+1. the fiber is a disjoint finite subtype of ordered pairs (so no multiplicity is lost);
+2. incompatible pairs contribute exactly zero;
+3. each compatible pair contributes the exact product weight from coordinates outside U;
+4. summing fiber weights reconstructs the original ordered-pair second moment by finite-sum reindexing.
 
-To reach the BBMST conclusion, import the published adaptive quantities \(R_k,N_k,B_k,\alpha_k\), state their hypotheses literally, prove the first-/second-moment estimates, and discharge the numerical criterion in Theorem 3.1. The published paper, not an earlier preprint or AI summary, is authoritative for the quantitative statement.
+Only after this identity is kernel-checked should a source-derived inequality be applied. Any inequality that replaces coordinate-dependent weights by a count must explicitly prove the needed uniform-cardinality or domination hypothesis. No independence assumption is valid for overlapping events merely because a product-space model is used.
+
+To reach the published BBMST conclusion, import the source's adaptive quantities R_k,N_k,B_k,α_k, state their hypotheses literally, prove the first-/second-moment estimates, and discharge the numerical criterion in Theorem 3.1. The published paper, not an earlier preprint or AI summary, is authoritative for the quantitative statement.
 
 ## Mandatory audit gates
+
 - Product-space nonemptiness and denominator nonzero are explicit.
 - Conflicting assignments contribute exactly zero.
 - Ordered-pair multiplicity and diagonal terms are preserved.
@@ -39,12 +37,12 @@ To reach the BBMST conclusion, import the published adaptive quantities \(R_k,N_
 - Compare the exact formal proposition with the published source before claiming it proves the original theorem.
 
 ## Evidence boundary
-The last documented successful workflow covered earlier targets. The newer denominator-guard commit has no confirmed status result in the connector snapshot; an empty status response is not a pass. Neither the guard nor the exact overlap identities establish the global Erdős–Selfridge result.
 
+The newer denominator-guard and overlap notes have no confirmed status result in the connector snapshot; an empty status response is not a pass. Neither the guard nor the exact overlap identities establish the global Erdős–Selfridge result.
 
 ## Critical statement-fidelity boundary: which Erdős–Selfridge result?
 
-The published paper by Balister, Bollobás, Morris, Sahasrabudhe and Tiba (Algebra & Number Theory 15 (2021), 609–626) proves that a covering system whose moduli are all **distinct and square-free** must contain an even modulus. This is a substantial theorem, but it is not a resolution of the unrestricted Erdős question for arbitrary distinct odd moduli. The formal target in this repository must be named and scoped to the square-free-modulus theorem unless an additional argument genuinely removes that hypothesis.
+The published paper by Balister, Bollobás, Morris, Sahasrabudhe and Tiba (Algebra & Number Theory 15 (2021), 609–626) proves that a covering system whose moduli are all distinct and square-free must contain an even modulus. This is a substantial theorem, but it is not a resolution of the unrestricted Erdős question for arbitrary distinct odd moduli. The formal target in this repository must be named and scoped to the square-free-modulus theorem unless an additional argument genuinely removes that hypothesis.
 
 Authoritative published-version record: https://ora.ox.ac.uk/objects/uuid:3c55267c-60be-4652-89a7-db3db5f62c25
 
