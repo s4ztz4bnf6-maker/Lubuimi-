@@ -14,8 +14,8 @@ open scoped BigOperators
 additive exceptional mass. If
 mu(E) <= C * nu(E) + eta and nu(E) <= D * rho(E) + theta, then
 mu(E) <= (C * D) * rho(E) + C * theta + eta.
-The hypotheses C,D >= 0 are explicit because multiplying inequalities
-by a negative constant would reverse their direction. -/
+The hypothesis C >= 0 is required to multiply the second inequality
+without reversing its direction; no sign condition on D is needed. -/
 theorem eventMass_compose_additive_error
     {n : ℕ} {space : CoordinateSpace n}
     (μ ν ρ : ProductDistribution space)
