@@ -38,7 +38,7 @@ theorem product_box_event_cardinality
       apply Subtype.ext
       funext i
       by_cases hi : i ∈ H.fixedCoords
-      · simpa [hi] using (x.2 i hi).symm
+      · simpa [hi] using x.2 i hi
       · simp [hi]
     right_inv := by
       intro y
