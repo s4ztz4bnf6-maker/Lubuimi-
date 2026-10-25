@@ -784,6 +784,7 @@ theorem product_box_card_pos_of_admissible
     [∀ i, Fintype (S i)]
     (hS : ProductBoxAdmissible S) :
     0 < Fintype.card (∀ i, S i) := by
+  classical
   exact Fintype.card_pos_iff.mpr (product_box_nonempty_of_admissible hS)
 
 #print axioms product_box_nonempty_of_admissible
@@ -803,6 +804,7 @@ theorem product_box_uniform_mass_denominator_ne_zero
     [∀ i, Fintype (S i)]
     (hS : ProductBoxAdmissible S) :
     (Fintype.card (∀ i, S i) : ℚ) ≠ 0 := by
+  classical
   have hcard : 0 < Fintype.card (∀ i, S i) :=
     product_box_card_pos_of_admissible hS
   exact_mod_cast (Nat.ne_of_gt hcard)
