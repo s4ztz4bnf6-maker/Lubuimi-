@@ -660,3 +660,33 @@ theorem product_box_intersection_uniform_mass_compatible_or_zero
 #print axioms product_box_intersection_uniform_mass_compatible_or_zero
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Exact finite reindexing of an ordered pair-weight sum by the *overlap
+support* of its two product-box constraints. Since the key is the actual
+intersection of fixed-coordinate sets, this stratification preserves more
+information than overlap cardinality alone. It preserves ordered-pair
+multiplicity and diagonal pairs because it is a fiberwise partition of the
+given finite pair set. No probability estimate or BBMST global bound is
+assumed here.
+-/
+theorem ordered_pair_weight_sum_stratified_by_overlap_support
+    {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
+    [∀ i, Fintype (S i)]
+    (pairs : Finset (ProductBoxHyperplane ι S × ProductBoxHyperplane ι S))
+    (weight : ProductBoxHyperplane ι S × ProductBoxHyperplane ι S → ℚ) :
+    (∑ p ∈ pairs, weight p) =
+      ∑ overlap : Finset ι,
+        ∑ p ∈ pairs with
+          (p.1.fixedCoords ∩ p.2.fixedCoords = overlap), weight p := by
+  classical
+  simpa using
+    (Finset.sum_fiberwise pairs
+      (fun p => p.1.fixedCoords ∩ p.2.fixedCoords) weight).symm
+
+#print axioms ordered_pair_weight_sum_stratified_by_overlap_support
+
+end BBMSTAudit
