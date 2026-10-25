@@ -781,7 +781,7 @@ so its rational cardinality is a nonzero denominator for uniform counting
 mass. -/
 theorem product_box_card_pos_of_admissible
     {ι : Type u} [Fintype ι] {S : ι → Type v}
-    [∀ i, Fintype (S i)]
+    [∀ i, Fintype (S i)] [Fintype (∀ i, S i)]
     (hS : ProductBoxAdmissible S) :
     0 < Fintype.card (∀ i, S i) := by
   classical
@@ -801,7 +801,7 @@ the quotient as a normalized probability rather than merely a total rational
 expression. -/
 theorem product_box_uniform_mass_denominator_ne_zero
     {ι : Type u} [Fintype ι] {S : ι → Type v}
-    [∀ i, Fintype (S i)]
+    [∀ i, Fintype (S i)] [Fintype (∀ i, S i)]
     (hS : ProductBoxAdmissible S) :
     (Fintype.card (∀ i, S i) : ℚ) ≠ 0 := by
   classical
@@ -813,7 +813,7 @@ theorem product_box_uniform_mass_denominator_ne_zero
 the product-box admissibility hypothesis. No global sieve estimate is implied. -/
 theorem product_box_intersection_mass_denominator_ne_zero
     {ι : Type u} [Fintype ι] [DecidableEq ι] {S : ι → Type v}
-    [∀ i, Fintype (S i)]
+    [∀ i, Fintype (S i)] [Fintype (∀ i, S i)]
     (H K : ProductBoxHyperplane ι S)
     (hS : ProductBoxAdmissible S) :
     (Fintype.card (∀ i, S i) : ℚ) ≠ 0 :=
