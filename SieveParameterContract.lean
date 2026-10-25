@@ -69,9 +69,23 @@ theorem sieve_denominator_lower_bound
     mul_nonneg (le_of_lt hδ) (by linarith)
   nlinarith [hprod]
 
+/--
+Matching upper bound for the guarded denominator. Together with
+sieve_denominator_lower_bound, this gives the useful envelope
+2*δ ≤ 4*δ*(1-δ) ≤ 1 on the source-side parameter range.
+-/
+theorem sieve_denominator_le_one
+    {n : ℕ} (p : GuardedSieveParams n) (i : Fin n) :
+    4 * p.delta i * (1 - p.delta i) ≤ 1 := by
+  have hsq : 0 ≤ (1 - 2 * p.delta i) ^ 2 :=
+    sq_nonneg (1 - 2 * p.delta i)
+  nlinarith
+
+
 #print axioms delta_in_open_unit_interval
 #print axioms sieve_denominator_pos
 #print axioms guarded_stage_count_positive
 #print axioms sieve_denominator_lower_bound
+#print axioms sieve_denominator_le_one
 
 end BBMSTAudit
