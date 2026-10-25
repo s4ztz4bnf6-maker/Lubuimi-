@@ -34,3 +34,45 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+
+## 2026-10-23: second-moment bridge, made explicit
+
+The current module `BBMSTOverlapConditioning.lean` now contains the purely
+finite rational identities
+
+- `finite_weighted_fiber_expansion`: expansion after splitting a shared
+  coordinate from two residual blocks;
+- `finite_square_sum_expansion` and
+  `finite_weighted_square_sum_expansion`: ordered-pair expansion of a square;
+- `finite_pairwise_square_difference` and
+  `finite_sum_sq_le_card_mul_sum_sq`: the finite variance identity and its
+  Cauchy--Schwarz consequence;
+- `finite_event_indicator_square` and
+  `finite_event_indicator_product`: pointwise indicator rules.
+
+These identities are necessary algebraic infrastructure, not a substitute
+for the BBMST estimates. The next proof layer must instantiate them with the
+published paper's actual finite probability space and hyperplane indicators.
+In particular, for events E_i, the square expansion gives
+`(sum_i 1_{E_i})^2 = sum_{i,j} 1_{E_i ∩ E_j}` pointwise; after taking the
+specified probability measure, the right side becomes
+`sum_{i,j} P(E_i ∩ E_j)`. The hard step is bounding these intersections
+using the paper's geometry and moment hypotheses, not proving the formal
+expansion again.
+
+### Guardrails for the next implementation
+
+1. Do not replace the intersection estimate with independence: hyperplane
+   events can be dependent.
+2. Do not infer a uniform positive uncovered mass from nonemptiness alone;
+   a single uncovered point gives only a bound of order inverse sample size.
+3. Keep the published 2021 version as source of truth. In particular, retain
+   its corrected union-bound argument in Theorem 3.1 and the corrected
+   inequality direction in Lemma 5.3.
+4. The project's own `sf_sieve_lt_one` and `sieve_criterion` remain open
+   obligations; the moment identities do not discharge either axiom.
+
+This note records the exact bridge still missing between the verified
+finite-sum algebra and the source-specific geometric probability estimates.
+It does not claim a completed BBMST proof.

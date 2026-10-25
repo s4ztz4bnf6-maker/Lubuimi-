@@ -34,3 +34,19 @@ jobs:
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+      - name: Compile disjoint-block factorization lemma
+        run: lake env lean BBMSTDisjointFactorization.lean
+      - name: Compile finite weighted overlap-conditioning identity
+        run: lake env lean BBMSTOverlapConditioning.lean
+      - name: Compile effective block-size monotonicity
+        run: lake env lean BBMSTBlockSize.lean
+      - name: Compile scalar BBMST fiber-mass normalization
+        run: lake env lean BBMSTFiberSieve.lean
+      - name: Compile source-faithful product-box hyperplane geometry
+        run: |
+          set -o pipefail
+          lake env lean BBMSTProductBox.lean 2>&1 | tee /tmp/bbmst-product-box-audit.log
+          if grep -q 'sorryAx' /tmp/bbmst-product-box-audit.log; then
+            echo "Forbidden sorryAx found in transitive BBMST product-box theorem axioms."
+            exit 1
+          fi
