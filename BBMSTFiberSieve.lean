@@ -936,8 +936,8 @@ theorem finite_fiber_mass_partition
     (F R S : Finset α) (w : α → ℚ)
     (hpartition : R ∪ S = F)
     (hdisjoint : Disjoint R S) :
-    (∑ x in F, w x) =
-      (∑ x in R, w x) + (∑ x in S, w x) := by
+    (∑ x ∈ F, w x) =
+      (∑ x ∈ R, w x) + (∑ x ∈ S, w x) := by
   rw [← hpartition, Finset.sum_union hdisjoint]
 
 #print axioms finite_fiber_mass_partition
