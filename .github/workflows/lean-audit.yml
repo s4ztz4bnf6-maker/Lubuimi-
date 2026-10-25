@@ -44,6 +44,8 @@ jobs:
         run: lake env lean BBMSTFiberSieve.lean
       - name: Compile source-faithful product-box hyperplane geometry
         run: lake env lean BBMSTProductBox.lean
+      - name: Compile exact product-box cardinality and compatible intersections
+        run: lake env lean BBMSTProductBoxCardinality.lean
       - name: Install sandbox dependency for independent recheck
         run: sudo apt-get update && sudo apt-get install -y bubblewrap
       - name: Export and independently recheck project declarations
