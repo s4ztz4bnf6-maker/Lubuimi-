@@ -707,25 +707,14 @@ theorem ordered_pair_weight_sum_stratified_by_overlap_cardinality
     (pairs : Finset (ProductBoxHyperplane ι S × ProductBoxHyperplane ι S))
     (weight : ProductBoxHyperplane ι S × ProductBoxHyperplane ι S → ℚ) :
     (∑ p ∈ pairs, weight p) =
-      ∑ r ∈ Finset.range (Fintype.card ι + 1),
+      ∑ r ∈ pairs.image (fun p =>
+          (p.1.fixedCoords ∩ p.2.fixedCoords).card),
         ∑ p ∈ pairs with
           (p.1.fixedCoords ∩ p.2.fixedCoords).card = r, weight p := by
   classical
-  -- Every overlap is a subset of the finite index type, so its cardinality
-  -- lies in [0, card ι]. The bounded range avoids pretending ℕ is finite.
-  have hcard (p : ProductBoxHyperplane ι S × ProductBoxHyperplane ι S) :
-      (p.1.fixedCoords ∩ p.2.fixedCoords).card < Fintype.card ι + 1 := by
-    have hle := Finset.card_le_univ (p.1.fixedCoords ∩ p.2.fixedCoords)
-    omega
-  rw [Finset.sum_fiberwise_of_maps_to
-    (s := pairs)
-    (f := fun p => (p.1.fixedCoords ∩ p.2.fixedCoords).card)
-    (t := Finset.range (Fintype.card ι + 1))
-    (g := weight)
-    (by
-      intro p hp
-      exact Finset.mem_range.mpr (hcard p))]
-
+  simpa using
+    (Finset.sum_fiberwise pairs
+      (fun p => (p.1.fixedCoords ∩ p.2.fixedCoords).card) weight).symm
 #print axioms ordered_pair_weight_sum_stratified_by_overlap_cardinality
 
 end BBMSTAudit
