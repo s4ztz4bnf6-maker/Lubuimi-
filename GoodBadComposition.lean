@@ -21,7 +21,7 @@ theorem eventMass_compose_additive_error
     (μ ν ρ : ProductDistribution space)
     (E : CoordinatePoint space → Prop)
     (C D η θ : ℚ)
-    (hC : 0 ≤ C) (hD : 0 ≤ D)
+    (hC : 0 ≤ C)
     (hfirst : eventMass μ E ≤ C * eventMass ν E + η)
     (hsecond : eventMass ν E ≤ D * eventMass ρ E + θ) :
     eventMass μ E ≤ (C * D) * eventMass ρ E + C * θ + η := by
