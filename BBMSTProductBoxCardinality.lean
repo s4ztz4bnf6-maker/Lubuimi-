@@ -26,9 +26,11 @@ theorem product_box_event_cardinality
       Fintype.card S ^ Fintype.card {i : ι // i ∉ H.fixedCoords} := by
   classical
   let Free := {i : ι // i ∉ H.fixedCoords}
-  let eventEquiv : {x : ι → S // x ∈ H.event} ≃ (Free → S) where
-    toFun := fun x i => x.1 i.1
-    invFun := fun y =>
+  let eventEquiv :
+      {x : ι → S // x ∈ H.event} ≃ (Free → S) where
+    toFun := fun (x : {x : ι → S // x ∈ H.event}) =>
+      fun (i : Free) => x.val i.val
+    invFun := fun (y : Free → S) =>
       ⟨(fun i => if hi : i ∈ H.fixedCoords then H.fixedValue i else y ⟨i, hi⟩),
         by
           intro i hi
@@ -38,12 +40,12 @@ theorem product_box_event_cardinality
       apply Subtype.ext
       funext i
       by_cases hi : i ∈ H.fixedCoords
-      · simpa [hi] using x.2 i hi
+      · simpa [hi] using x.property i hi
       · simp [hi]
     right_inv := by
       intro y
       funext i
-      simp [i.2]
+      simp [i.property]
   calc
     Fintype.card {x : ι → S // x ∈ H.event}
         = Fintype.card (Free → S) := Fintype.card_congr eventEquiv
@@ -69,8 +71,15 @@ theorem product_box_compatible_intersection_cardinality
   have hmerge :
       H.event ∩ K.event = (H.merge K).event :=
     product_box_intersection_eq_merge_event H K hno
-  rw [hmerge]
-  exact product_box_event_cardinality (H.merge K)
+  let e : {x : ι → S // x ∈ H.event ∩ K.event} ≃
+      {x : ι → S // x ∈ (H.merge K).event} := Equiv.setCongr hmerge
+  calc
+    Fintype.card {x : ι → S // x ∈ H.event ∩ K.event}
+        = Fintype.card {x : ι → S // x ∈ (H.merge K).event} :=
+          Fintype.card_congr e
+    _ = Fintype.card S ^
+        Fintype.card {i : ι // i ∉ H.fixedCoords ∪ K.fixedCoords} :=
+          product_box_event_cardinality (H.merge K)
 
 #print axioms product_box_compatible_intersection_cardinality
 
@@ -87,7 +96,7 @@ theorem product_box_incompatible_intersection_isEmpty
   refine ⟨fun x => ?_⟩
   obtain ⟨i, hiH, hiK, hne⟩ := hconflict
   have hagree : H.fixedValue i = K.fixedValue i :=
-    product_box_overlap_agreement H K x.1 x.2.1 x.2.2 hiH hiK
+    product_box_overlap_agreement H K x.val x.property.1 x.property.2 hiH hiK
   exact hne hagree
 
 #print axioms product_box_incompatible_intersection_isEmpty
