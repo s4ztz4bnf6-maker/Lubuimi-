@@ -67,3 +67,52 @@ References:
 - Lean FRO, *Postmortem for the Kernel Soundness Bug Hunt*: https://leodemoura.github.io/blog/2026-8-24-postmortem-for-the-kernel-soundness-bug-hunt/
 - ProofAtlas: https://proofatlas.ai/
 - MAA, *AI solves an 80-year-old Erdős problem*: https://maa.org/math-values/ai-solves-an-80-year-old-erdos-problem/
+
+
+## 6. Source-faithful equation map checked against the published 2021 paper
+
+Primary source: Balister, Bollobás, Morris, Sahasrabudhe, Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), 609–626, DOI [10.2140/ant.2021.15.609](https://doi.org/10.2140/ant.2021.15.609). The publisher-version PDF is also available at https://par.nsf.gov/servlets/purl/10300177.
+
+### Geometry and stage definitions (pp. 610–612)
+
+- The ambient box is \(Q=S_1\times\cdots\times S_n\), with each finite \(S_i\) having at least two elements.
+- A hyperplane is a product whose coordinate factor is either the whole \(S_i\) or a singleton. Its fixed-coordinate set \(F(A)\subseteq[n]\) records exactly the singleton factors.
+- “Nontrivial” is the predicate \(F(A)\ne\varnothing\); “parallel” means equality of fixed-coordinate sets. These are definitions derived from the hyperplane representation, not independent booleans that a caller may assign arbitrarily.
+- \(F_k=\{F\in\mathcal F:F\subseteq[k]\}\), \(N_k=F_k\setminus F_{k-1}\), \(B_k=\bigcup_{F\in N_k}A_F\), and \(R_k=Q\setminus\bigcup_{F\in F_k}A_F\). In particular, \(R_k=R_{k-1}\setminus B_k\).
+
+### Measure update and Lemma 2.1 (pp. 612–613, equations (2)–(6))
+
+For \(x\in Q_{k-1}\), the removed fiber fraction is
+\[
+\alpha_k(x)=\frac{|\{y\in S_k:(x,y)\in B_k\}|}{|S_k|}.
+\]
+The next measure \(P_k\) is the paper's piecewise update (equation (3)), with separate covered/uncovered multipliers involving \(\alpha_k(x)\) and \(\delta_k\). The proof interface must retain the source range \(0\le\delta_k\le1/2\), positivity/nonzero-denominator conditions for each active branch, and the probability-mass normalization.
+
+Lemma 2.1 requires three distinct facts, not one generic “preserves mass” claim:
+1. \(P_k(S)=P_{k-1}(S)\) for every \(Q_{k-1}\)-measurable \(S\) (equation (4));
+2. \(P_k(S)\le P_{k-1}(S)/(1-\delta_k)\) for every \(S\subseteq Q\) (equation (5));
+3. \(P_k(S)\le P_{k-1}(S)\) whenever \(S\subseteq B_k\) (equation (6)).
+
+The scalar theorem fiber_update_preserves_mass proves only the normalization calculation for one fiber; it does not by itself establish these measure-theoretic statements for the product box.
+
+### The exact moment bridge (pp. 614–616, Theorems 3.1–3.2)
+
+Write \(M_k^{(1)}=\mathbb E_{k-1}[\alpha_k]\) and \(M_k^{(2)}=\mathbb E_{k-1}[\alpha_k^2]\). Theorem 3.1's sieve criterion is
+\[
+\sum_{k=a+1}^{n}\min\left\{M_k^{(1)},\frac{M_k^{(2)}}{4\delta_k(1-\delta_k)}\right\}<1,
+\]
+which forces the uncovered set to be nonempty. This is the theorem-level bridge the current sieve_criterion / sf_sieve_lt_one interface must actually prove from the staged measure and union-bound argument, not assume.
+
+Theorem 3.2 bounds the first and second moments using the paper's coefficient function \(c\) and distortion function \(\nu\), specifically \(M_k^{(1)}\le c_{k-1}(1)/|S_k|\) and \(M_k^{(2)}\le c_{k-1}(3)/|S_k|^2\). Under the additional source condition that no new-stage hyperplane has codimension one, it sharpens the second-moment bound to
+\[
+M_k^{(2)}\le\frac{c_{k-1}(3)-2c_{k-1}(1)+1}{|S_k|^2}.
+\]
+In the representation above, codimension one means exactly one fixed coordinate; at stage \(k\), this is the singleton fixed set \(\{k\}\). The condition must be proved from the actual \(N_k\) family and fixed-coordinate sets, not supplied as an unconstrained field such as noCodimOne.
+
+**Zero-threshold edge case:** the published theorem's displayed fraction contains \(\delta_k\) in the denominator, while the measure construction permits \(\delta_k=0\) in its stated interval. The formalization must resolve this carefully by matching the exact theorem's intended hypotheses or a justified limiting/branch definition. Lean's rational convention \(x/0=0\) is not a valid automatic interpretation of the displayed real inequality. Keep the \(\delta=0\) regression tests and do not silently identify this ambiguity with a proof.
+
+### Scope boundary
+
+Theorem 1.1 proves nonexistence only for distinct square-free moduli: every such covering has an even modulus. It does not settle the unrestricted Erdős–Selfridge odd-covering conjecture. The geometric theorem 1.2 and its Chinese-remainder correspondence are required to preserve this exact scope.
+
+Source lines checked from the publisher-version PDF: definition of hyperplanes and Theorems 1.1–1.2 (pp. 610–611); staged sieve and Lemma 2.1 (pp. 612–613); Theorems 3.1–3.2 and their proof (pp. 614–616).
