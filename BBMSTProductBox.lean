@@ -856,3 +856,29 @@ theorem ordered_pair_weight_sum_stratified_by_overlap_and_union
 #print axioms ordered_pair_weight_sum_stratified_by_overlap_and_union
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+/--
+Finite first-moment identity: summing the number of satisfied events over
+all samples equals summing the size of each event over the event family.
+Together with `finite_second_moment_ordered_pair_identity`, this supplies
+the exact first- and second-moment counting interface. It does not itself
+give the BBMST-specific lower bound on the probability of avoiding the union.
+-/
+theorem finite_first_moment_event_count_identity
+    {Ω : Type u} {I : Type v} [DecidableEq Ω] [DecidableEq I]
+    (samples : Finset Ω) (indices : Finset I)
+    (E : I → Ω → Prop) [∀ i ω, Decidable (E i ω)] :
+    (∑ ω ∈ samples,
+      ∑ i ∈ indices, if E i ω then (1 : ℚ) else 0) =
+    ∑ i ∈ indices,
+      ∑ ω ∈ samples, if E i ω then (1 : ℚ) else 0 := by
+  classical
+  rw [Finset.sum_comm (s := samples) (t := indices)
+    (f := fun ω i => if E i ω then (1 : ℚ) else 0)]
+
+#print axioms finite_first_moment_event_count_identity
+
+end BBMSTAudit
