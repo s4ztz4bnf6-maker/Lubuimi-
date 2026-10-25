@@ -3,12 +3,11 @@ import Mathlib
 /-!
 # A guarded, stage-aligned parameter interface for the BBMST sieve
 
-This file is a safe interface prototype, not a replacement for the existing
-axioms in `ErdosSelfridge_v17_fixed.lean`. It makes three invalid states
-unrepresentable at the type boundary: an empty stage family, a missing
-parameter at an index, and a delta outside the open interval (0,1).
-A later bridge theorem must still connect this interface to the source-faithful
-BBMST construction before it can discharge any project axiom.
+This is a safe interface prototype, not a replacement for the existing
+axioms in `ErdosSelfridge_v17_fixed.lean`. It requires a nonempty stage
+family, aligned stage indices, positive block sizes, and the source-side
+restriction 0 < δ ≤ 1/2. A bridge to the published BBMST construction is
+still required before any project axiom can be discharged.
 -/
 
 namespace BBMSTAudit
@@ -24,25 +23,29 @@ structure GuardedSieveParams (n : ℕ) where
   delta : Fin n → ℚ
   blockSize_pos : ∀ i, 0 < blockSize i
   delta_pos : ∀ i, 0 < delta i
-  delta_lt_one : ∀ i, delta i < 1
+  delta_le_half : ∀ i, delta i ≤ (1 : ℚ) / 2
 
-/-- Every indexed stage has a delta parameter in the required open interval. -/
+/-- The source-side delta restriction implies membership in the open unit interval. -/
 theorem delta_in_open_unit_interval
     {n : ℕ} (p : GuardedSieveParams n) (i : Fin n) :
-    0 < p.delta i ∧ p.delta i < 1 :=
-  ⟨p.delta_pos i, p.delta_lt_one i⟩
+    0 < p.delta i ∧ p.delta i < 1 := by
+  constructor
+  · exact p.delta_pos i
+  · have hhalf : p.delta i ≤ (1 : ℚ) / 2 := p.delta_le_half i
+    linarith
 
 /--
 The rational denominator 4*δ*(1-δ) is strictly positive for a guarded
-parameter. This rules out the division-by-zero degeneration at the interface
+parameter. This rules out division-by-zero degeneration at the interface
 level, without asserting that the published moment bounds have been proved.
 -/
 theorem sieve_denominator_pos
     {n : ℕ} (p : GuardedSieveParams n) (i : Fin n) :
     0 < (4 : ℚ) * p.delta i * (1 - p.delta i) := by
   have hδ : 0 < p.delta i := p.delta_pos i
-  have hcomplement : 0 < 1 - p.delta i :=
-    sub_pos.mpr (p.delta_lt_one i)
+  have hcomplement : 0 < 1 - p.delta i := by
+    have hhalf : p.delta i ≤ (1 : ℚ) / 2 := p.delta_le_half i
+    linarith
   positivity
 
 /-- A guarded stage family cannot have zero stages. -/
