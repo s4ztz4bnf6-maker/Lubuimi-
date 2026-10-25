@@ -25,7 +25,8 @@ theorem weighted_second_moment_le_first
   apply Finset.sum_le_sum
   intro i hi
   have hsq : alpha i ^ 2 ≤ alpha i := by
-    nlinarith [mul_nonneg (ha0 i) (show 0 ≤ 1 - alpha i by linarith)]
+    have hcompl : 0 ≤ 1 - alpha i := sub_nonneg.mpr (ha1 i)
+    nlinarith [mul_nonneg (ha0 i) hcompl]
   exact mul_le_mul_of_nonneg_left hsq (hp i)
 
 /--
