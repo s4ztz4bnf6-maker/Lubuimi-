@@ -114,3 +114,46 @@ theorem mass_pos_iff_exists_positive_weight
 #print axioms mass_pos_iff_exists_positive_weight
 
 end BBMSTAudit
+
+
+/-! ## Typed BBMST stage parameters and safe quotient branch
+
+The published sieve uses stage parameters in the range 0 ≤ δₖ ≤ 1/2.
+A function indexed by Fin n makes stage alignment intrinsic, unlike a list
+whose missing entries can be silently replaced by getD defaults. The
+positive-denominator lemma justifies the quotient branch only when δₖ > 0;
+the δₖ = 0 case must be handled separately in the sieve definition.
+-/
+
+namespace BBMSTAudit
+
+/-- Stage-aligned parameters in the source interval [0, 1/2]. -/
+structure IndexedStageParameters (n : ℕ) where
+  delta : Fin n → ℚ
+  nonneg : ∀ i, 0 ≤ delta i
+  le_half : ∀ i, delta i ≤ (1 : ℚ) / 2
+
+/-- The denominator in the second-moment quotient is positive on the
+positive-parameter branch. -/
+theorem bbmst_second_moment_denominator_pos
+    (δ : ℚ) (hδ : 0 < δ) (hupper : δ ≤ (1 : ℚ) / 2) :
+    0 < 4 * δ * (1 - δ) := by
+  have hone : 0 < 1 - δ := by linarith
+  positivity
+
+/-- Every indexed source parameter lies in the published interval. -/
+theorem indexed_stage_parameter_range
+    {n : ℕ} (p : IndexedStageParameters n) (i : Fin n) :
+    0 ≤ p.delta i ∧ p.delta i ≤ (1 : ℚ) / 2 :=
+  ⟨p.nonneg i, p.le_half i⟩
+
+/-- The source interval permits δ = 0, but that case cannot enter a
+quotient whose denominator is 4δ(1-δ). -/
+theorem zero_parameter_denominator_zero :
+    4 * (0 : ℚ) * (1 - 0) = 0 := by norm_num
+
+#print axioms bbmst_second_moment_denominator_pos
+#print axioms indexed_stage_parameter_range
+#print axioms zero_parameter_denominator_zero
+
+end BBMSTAudit
