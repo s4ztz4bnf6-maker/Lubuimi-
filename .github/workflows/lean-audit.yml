@@ -32,6 +32,8 @@ jobs:
         run: mkdir -p .lake/build/lib/lean
       - name: Compile division-free mass core
         run: lake env lean -o .lake/build/lib/lean/BBMSTMassAuditCore.olean BBMSTMassAuditCore.lean
+      - name: Compile zero-mass characterization
+        run: lake env lean BBMSTZeroMassCharacterization.lean
       - name: Compile finite fiber split core
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiberAuditCore.olean BBMSTFiberAuditCore.lean
       - name: Compile audited upstream source
