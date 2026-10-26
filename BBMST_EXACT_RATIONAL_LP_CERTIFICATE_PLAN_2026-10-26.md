@@ -1,0 +1,40 @@
+# BBMST: exact rational LP certificate boundary
+
+Date: 2026-10-26
+Status: proof architecture; no BBMST-specific certificate extracted and no Lean build claimed.
+
+## Verified source facts and current blocker
+
+The official supplementary page for “The Erdős–Selfridge problem with square-free moduli” by Paul Balister, Béla Bollobás, Robert Morris, Julian Sahasrabudhe, and Marius Tiba states that its initial distribution on [3]×[5]×[7]×[11] is checked by C code using Gurobi to solve multiple linear programs. It separately links output listing configurations with bounds greater than 9.018 and a portable C program for optimizing d_k, k=6,…,21.
+
+Official source: https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html
+
+The linked C source endpoint is https://people.maths.ox.ac.uk/balister/es/coverlp.c. The web retrieval interface rejects it because the server returns content type text/x-csrc. Therefore no LP matrix, objective vector, feasible point, dual vector, or numerical certificate has yet been extracted here. None should be invented.
+
+## Exact weak-duality certificate
+
+Use a rational LP in standard form: minimize cᵀx subject to Ax ≥ b and x ≥ 0, with A,b,c rational. A proposed dual vector y is a valid lower-bound certificate if y ≥ 0 and Aᵀy ≤ c. For every primal-feasible x,
+
+bᵀy ≤ (Ax)ᵀy = xᵀAᵀy ≤ cᵀx.
+
+Thus bᵀy is a certified lower bound on every feasible primal objective. The proof requires only finite sums, rational order, and multiplication by nonnegative rationals; it does not require trusting the optimizer.
+
+Conversely, a primal feasible x provides an upper bound on the minimum. Matching exact primal and dual objectives proves optimality, provided both vectors satisfy their respective constraints and the LP itself faithfully encodes the intended finite problem.
+
+## Lean checker design (not yet implemented)
+
+1. Represent dimensions by finite index types, for example Fin m and Fin n; represent A as Fin m → Fin n → ℚ, b as Fin m → ℚ, c as Fin n → ℚ.
+2. Define primal feasibility explicitly: each component x_j ≥ 0 and for each i, b_i ≤ Σ_j A_ij x_j.
+3. Define dual feasibility explicitly: each y_i ≥ 0 and for each j, Σ_i A_ij y_i ≤ c_j.
+4. Prove a generic weak-duality theorem by multiplying each primal inequality by y_i ≥ 0, summing, rearranging finite sums, then applying the dual inequalities multiplied by x_j ≥ 0.
+5. Import source coefficients as exact rational literals or numerator/positive-denominator pairs. Never parse rounded decimal output as if it were exact.
+6. Audit every denominator as positive and nonzero before any normalization. Do not allow ℚ division by zero, getD defaults, or unconstrained parameters to turn an invalid LP into a vacuous result.
+7. Separately prove statement fidelity: the finite variables, constraints, objective and strict numerical threshold must match the source's geometric/probabilistic argument.
+
+## Boundary of what this proves
+
+The generic weak-duality lemma is not the BBMST theorem. It becomes a project-specific result only after the published model and exact data have been recovered, independently transcribed, and checked. Even a perfect LP certificate proves only the finite optimization subclaim; the bridge from that subclaim to the covering-system theorem must also be formalized from the paper.
+
+## Immediate next step
+
+Retrieve the supplemental C source from a client that accepts text/x-csrc or clone the public supplemental repository if available; preserve a checksum and version. Extract the exact LP constraints, solve or recover rational primal/dual witnesses, then verify them independently before Lean formalization. No BBMST-specific LP certificate, Lean compilation, axiom audit, or CI run is claimed by this note.
