@@ -19,7 +19,7 @@ def normalizedResidualCoveredMass (δ α : ℚ) : ℚ :=
 
 /-- Residual covered mass never exceeds the original nonnegative fraction. -/
 theorem normalizedResidualCoveredMass_le_alpha
-    (α δ : ℚ) (hα0 : 0 ≤ α)
+    (α δ : ℚ) (hα0 : 0 ≤ α) (hα1 : α ≤ 1)
     (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     normalizedResidualCoveredMass δ α ≤ α := by
   unfold normalizedResidualCoveredMass
