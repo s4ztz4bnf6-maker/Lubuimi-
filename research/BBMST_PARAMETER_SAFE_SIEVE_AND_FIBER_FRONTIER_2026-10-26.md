@@ -22,9 +22,8 @@ Use a structure that makes the domain constraints explicit rather than passing a
       delta : Fin N → ℚ
       delta_pos : ∀ i, 0 < delta i
       delta_lt_one : ∀ i, delta i < 1
-      length_is_stage_count : True
 
-The final field above is intentionally only a placeholder for the actual stage-count equality, which must be derived from the source definitions rather than asserted vacuously. In the repaired version, avoid parallel lists entirely: index both block sizes and deltas by the same Fin N. If the paper imposes the stronger interval 0<δᵢ<1/2, encode that exact interval instead; do not guess the mathematical domain from the denominator alone.
+Here N is the stage count, and the same Fin N should index both the block-size data and the delta parameters; this removes the possibility of short or overlong parallel lists by construction. If the source theorem imposes the stronger interval 0<δᵢ<1/2, encode that exact interval instead; do not guess the mathematical domain from the denominator alone.
 
 This contract blocks empty/misaligned parameter data at the type boundary, but it does not prove the intended sieve inequality. That inequality still needs a source-faithful proof.
 
