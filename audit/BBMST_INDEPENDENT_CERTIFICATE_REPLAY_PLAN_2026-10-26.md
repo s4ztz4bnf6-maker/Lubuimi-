@@ -113,3 +113,9 @@ The public reconstruction does provide a documented complete proof chain, includ
 - [ ] Lean proves arithmetic and finite-model result without new axioms.
 - [ ] Published source-to-model reduction is independently audited line by line or formalized.
 - [ ] The paper statement and exact formal theorem are independently compared and the comparison is published.
+
+
+## Finite diagnostic test run on 2026-10-26 (not a certificate replay)
+I independently checked the algebraic monotonicity identity over 30,780 rational-grid cases satisfying 0≤p≤u<1 and C≥1/4. For each case, exact `Fraction` arithmetic verified both
+`f(u)-f(p) = (u-p)(C-1/4)/((1-u)(1-p))`
+and `f(p)≤f(u)`. All 30,780 tests passed. This is a regression check of the algebraic formula, not a proof of Lemma 5.4 and not an execution of the public BBMST certificate checker.
