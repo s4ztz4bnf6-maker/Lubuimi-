@@ -46,8 +46,10 @@ theorem normalizedRemovedMass_le_second_moment
           (4 * δ * (α - δ)) / (4 * δ * (1 - δ)) := by
       field_simp [ne_of_gt hδ0, ne_of_gt hden1] <;> ring
     rw [hfrac]
+    have hnum : 4 * δ * (α - δ) ≤ α ^ 2 := by
+      nlinarith [sq_nonneg (α - 2 * δ)]
     apply (div_le_div_iff₀ hden2 hden2).2
-    nlinarith [sq_nonneg (α - 2 * δ)]
+    exact mul_le_mul_of_nonneg_right hnum (le_of_lt hden2)
 
 #print axioms normalizedRemovedMass_le_alpha
 #print axioms normalizedRemovedMass_le_second_moment
