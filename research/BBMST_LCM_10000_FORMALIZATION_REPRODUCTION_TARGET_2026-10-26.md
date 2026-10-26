@@ -7,29 +7,19 @@ Status: external result identified and source pins inspected; not yet independen
 
 Ibrahim Mian and Shayaan Siddique, “Kernel-Checked Exclusions for the Erdős-Selfridge Odd Covering Problem: Any Odd Covering of Z Has lcm Exceeding 10000” (arXiv:2607.25628, v1, 28 July 2026), provide the repository https://github.com/ibrahimmian36/centurion.
 
-Their Lean theorem is stated as:
+Their theorem `odd_covering_lcm_gt_10000` states that for a finite family of congruence classes covering every integer, with pairwise distinct odd moduli greater than one, the LCM of the moduli is strictly greater than 10,000. The Erdős–Selfridge question itself remains open.
 
-```lean
-theorem odd_covering_lcm_gt_10000
-    {ι : Type} [Fintype ι] (n : ι → ℕ) (a : ι → ℤ)
-    (hgt : ∀ i, 1 < n i) (hodd : ∀ i, Odd (n i))
-    (hinj : Function.Injective n)
-    (hcov : ∀ x : ℤ, ∃ i, (n i : ℤ) ∣ (x - a i)) :
-    10000 < Finset.univ.lcm n
-```
+## Exact dependency and source pins inspected
 
-The family is finite and covers every integer; its moduli are pairwise distinct, odd, and greater than one. The conclusion is the strict lower bound LCM > 10,000. The Erdős–Selfridge question itself remains open.
+From the upstream `main` branch at inspection time:
+- Upstream HEAD commit: `76ed2325673ade215d8ce56e2c6d66bffd6d0ed4` (2026-09-28; title/citation cleanup).
+- Lean toolchain: `leanprover/lean4:v4.30.0`.
+- Mathlib input version: `v4.30.0`.
+- Mathlib Git revision in `lake-manifest.json`: `c5ea00351c28e24afc9f0f84379aa41082b1188f`.
+- `lean-toolchain` blob SHA: `af9e5d339aeb37e4e6ba2603fb873e637678e304`.
+- `Erdos7/AxiomAudit.lean` blob SHA: `8196010711ee15188e685337c46c19acf4972ceb`.
 
-## Exact dependency pins inspected
-
-From the repository's current `main` branch:
-- Lean toolchain: `leanprover/lean4:v4.30.0`
-- Mathlib input version: `v4.30.0`
-- Mathlib Git revision in `lake-manifest.json`: `c5ea00351c28e24afc9f0f84379aa41082b1188f`
-- Lean toolchain file blob SHA: `af9e5d339aeb37e4e6ba2603fb873e637678e304`
-- `Erdos7/AxiomAudit.lean` blob SHA: `8196010711ee15188e685337c46c19acf4972ceb`
-
-The manifest also pins the transitive Lake dependencies. For a truly reproducible audit, record the repository HEAD commit as well as these file hashes; `main` is mutable, so this note does not yet identify an immutable source snapshot.
+The manifest pins transitive Lake dependencies too. The exact HEAD and pins above now define an immutable reproduction target. The Lean build and axiom gate have not been run by this repository.
 
 ## Proof architecture described by the authors
 
@@ -40,7 +30,7 @@ The manifest also pins the transitive Lake dependencies. For a truly reproducibl
 - A kernel-checked enumeration establishes that these are the only odd non-deficient candidates in the relevant range.
 - A bridge transports the result to the official `StrictCoveringSystem ℤ` formulation of Erdős #7.
 
-The authors report that 63 published theorems depend only on `propext`, `Classical.choice`, and `Quot.sound`, with no `sorry`, `native_decide`, or solver in the trusted base. The source's `Erdos7/AxiomAudit.lean` scans compiled declarations across `Erdos7.*` and rejects additional axioms. This is stronger than a hand-maintained list, but the reported gate still needs to be run in a clean build before we claim reproduction.
+The authors report that 63 published theorems depend only on `propext`, `Classical.choice`, and `Quot.sound`, with no `sorry`, `native_decide`, or solver in the trusted base. The source's `Erdos7/AxiomAudit.lean` scans compiled declarations across `Erdos7.*` and rejects additional axioms. This is stronger than a hand-maintained list, but the gate must still be run in a clean build before we claim reproduction.
 
 ## Why this is a useful intermediate target
 
@@ -68,4 +58,4 @@ The external rank-nine theorem, if independently reproduced with matching hypoth
 
 ## Next action
 
-Capture the exact upstream HEAD SHA, then reproduce a clean build with Lean 4.30.0 and the manifest pins, and inspect `#print axioms` for the final theorem. This environment has inspected the source and pins but has not run that build. Until then this is an external theorem and a reproducibility plan, not a locally verified theorem.
+Reproduce a clean build using upstream HEAD `76ed2325673ade215d8ce56e2c6d66bffd6d0ed4`, Lean 4.30.0 and the manifest pins, then inspect `#print axioms` for the final theorem. Source and pins have been inspected; a build has not been run. This remains an external theorem and a reproducibility plan, not a locally verified theorem.
