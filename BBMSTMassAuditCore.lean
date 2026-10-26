@@ -52,3 +52,32 @@ theorem point_weight_eq_zero_of_mass_eq_zero
 
 
 end BBMSTAudit
+
+
+/--
+A strictly positive finite mass cannot be carried entirely by zero-weight
+points. This is the ratio-free existence step needed before selecting a
+positive-mass fiber; it avoids conditional probabilities and division by
+a possibly zero denominator.
+-/
+theorem exists_positive_weight_of_positive_mass
+    (s : Finset α) (w : α → ℚ)
+    (hw : ∀ x ∈ s, 0 ≤ w x)
+    (hs : 0 < ∑ x ∈ s, w x) :
+    ∃ x ∈ s, 0 < w x := by
+  by_contra h
+  have hnot : ∀ x ∈ s, ¬ 0 < w x := by
+    intro x hx
+    intro hpos
+    exact h ⟨x, hx, hpos⟩
+  have hzero : ∀ x ∈ s, w x = 0 := by
+    intro x hx
+    have hle : w x ≤ 0 := le_of_not_gt (hnot x hx)
+    linarith [hw x hx]
+  have hsum : (∑ x ∈ s, w x) = 0 := by
+    apply Finset.sum_eq_zero
+    intro x hx
+    exact hzero x hx
+  linarith
+
+#print axioms exists_positive_weight_of_positive_mass
