@@ -32,4 +32,23 @@ theorem mass_partition (hdisj : Disjoint s t) (hcover : s ∪ t = u) :
     (∑ x ∈ u, w x) = (∑ x ∈ s, w x) + (∑ x ∈ t, w x) := by
   rw [← hcover, Finset.sum_union hdisj]
 
+
+/--
+Zero-mass fibers contain only zero-weight points, provided all point weights
+are nonnegative. This ratio-free lemma is the safe branch for empty or
+zero-mass fibers; it does not introduce conditional probabilities or divide
+by the fiber mass.
+-/
+theorem point_weight_eq_zero_of_mass_eq_zero
+    (s : Finset α) (w : α → ℚ)
+    (hw : ∀ x ∈ s, 0 ≤ w x)
+    (hsum : (∑ x ∈ s, w x) = 0) :
+    ∀ x ∈ s, w x = 0 := by
+  intro x hx
+  have hle : w x ≤ ∑ y ∈ s, w y :=
+    Finset.single_le_sum (fun y hy => hw y hy) hx
+  rw [hsum] at hle
+  linarith [hw x hx]
+
+
 end BBMSTAudit
