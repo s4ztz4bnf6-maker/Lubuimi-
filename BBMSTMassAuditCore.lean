@@ -141,6 +141,21 @@ theorem bbmst_second_moment_denominator_pos
   have hone : 0 < 1 - δ := by linarith
   positivity
 
+/--
+Source-faithful case split: within 0 ≤ δ ≤ 1/2, either δ is exactly zero
+and must be handled by the zero branch, or the quotient denominator is
+strictly positive. This prevents the δ = 0 / division-by-zero case from
+being silently treated as an ordinary second-moment quotient.
+-/
+theorem bbmst_second_moment_denominator_cases
+    (δ : ℚ) (hδ : 0 ≤ δ) (hupper : δ ≤ (1 : ℚ) / 2) :
+    δ = 0 ∨ 0 < 4 * δ * (1 - δ) := by
+  by_cases hzero : δ = 0
+  · exact Or.inl hzero
+  · right
+    have hpos : 0 < δ := lt_of_le_of_ne hδ (Ne.symm hzero)
+    exact bbmst_second_moment_denominator_pos δ hpos hupper
+
 /-- Every indexed source parameter lies in the published interval. -/
 theorem indexed_stage_parameter_range
     {n : ℕ} (p : IndexedStageParameters n) (i : Fin n) :
@@ -153,6 +168,7 @@ theorem zero_parameter_denominator_zero :
     4 * (0 : ℚ) * (1 - 0) = 0 := by norm_num
 
 #print axioms bbmst_second_moment_denominator_pos
+#print axioms bbmst_second_moment_denominator_cases
 #print axioms indexed_stage_parameter_range
 #print axioms zero_parameter_denominator_zero
 
