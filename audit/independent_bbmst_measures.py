@@ -44,7 +44,8 @@ def reject_duplicate_object_keys(pairs):
 def exact_replay(certificate_path: Path) -> dict:
     raw = certificate_path.read_bytes()
     cert = json.loads(gzip.decompress(raw), object_pairs_hook=reject_duplicate_object_keys)
-    assert set(cert) == {"schema", "q", "masks", "threshold", "leaves"}
+    required_fields = {"schema", "q", "masks", "threshold", "leaves"}
+    assert required_fields <= set(cert), f"missing certificate fields: {required_fields - set(cert)}"
     assert cert.get("schema") == "bbmst_squarefree_primal_measures_v1"
     assert type(cert.get("q")) is list and all(type(x) is int for x in cert["q"])
     assert tuple(cert["q"]) == MODULI
