@@ -30,6 +30,8 @@ def verify(data):
     if not A or len(A) != len(b) or len(A) != len(y):
         raise ValueError("row dimension mismatch or empty matrix")
     n = len(c)
+    if n == 0:
+        raise ValueError("empty variable vector: degenerate certificate")
     if any(len(row) != n for row in A) or len(x) != n:
         raise ValueError("column dimension mismatch")
     if any(v < 0 for v in x) or any(v < 0 for v in y):
