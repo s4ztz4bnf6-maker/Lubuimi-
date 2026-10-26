@@ -46,3 +46,16 @@ Until then the accurate status is: source inspected; replay pending.
 
 ## Immediate priority
 Build a second implementation that independently regenerates the 480-point space and all 9,283 certificate records, then emits a machine-readable report with pinned hashes, leaf counts, duplicate/missing checks, exact aggregates/slack, mutation outcomes, and a canonical transcript. The transcript is data, not a trusted proof.
+
+## 10. Scope refinement from the pinned upstream source card
+
+The source documentation also says that the Corollary 5.2 checker verifies a segmented prime sieve / recurrence from index 22 through K=14,000,000. Therefore a full independent replay must not stop after the 480-point finite measure certificate. It must independently check all three reported components:
+- Lemma 5.4: exhaustive finite configuration-tree / weight certificate;
+- Lemma 5.3: 16 rational distortion parameters and endpoint inequalities;
+- Corollary 5.2: the finite prime-sieve/recurrence and rational logarithm bounds through the stated cutoff.
+
+The upstream command is documented as:
+`uv run --no-sync python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py`
+with an expected runtime of about 30 seconds in its intended repository environment. This session did not execute it because the local runtime could not resolve GitHub and the connector only exposes source content, not a runnable checkout. Thus no full or partial certificate pass is claimed.
+
+A reproducible independent audit should publish component-specific outputs and hashes, rather than a single PASS that obscures which parts ran. In particular, the prime-sieve loop must be independently implemented or checked against a second method on overlapping ranges, and the exact rational logarithm enclosure must be reviewed as a mathematical inequality rather than treated as a numerical approximation.
