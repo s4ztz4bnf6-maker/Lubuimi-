@@ -30,6 +30,8 @@ jobs:
           use-mathlib-cache: true
       - name: Compile division-free mass core
         run: lake env lean BBMSTMassAuditCore.lean
+      - name: Compile finite fiber split core
+        run: lake env lean BBMSTFiberAuditCore.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
