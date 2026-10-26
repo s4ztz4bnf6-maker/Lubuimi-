@@ -2,7 +2,7 @@
 Date: 2026-10-26
 
 ## Status
-The pinned upstream checker and certificate were executed in a clean GitHub Actions checkout, with all three components passing independently as separate invocations. This establishes reproducible execution of the upstream verifier, not an independent second implementation of its mathematics. A separate verifier and the source-to-theorem reduction audit remain open; no Lean proof of the complete BBMST theorem is claimed.
+The pinned upstream checker and certificate were executed in a clean GitHub Actions checkout, with all three components passing independently as separate invocations. This establishes reproducible execution of the upstream verifier, not an independent second implementation of its mathematics. A second implementation now independently replays the finite measure component (Lemma 5.4) and passes in CI. The independent implementations of the rational-parameter and prime-tail components, adversarial mutation tests, and source-to-theorem reduction audit remain open; no Lean proof of the complete BBMST theorem is claimed.
 
 Primary preprint: https://arxiv.org/abs/1901.11465
 Upstream checker pinned at commit 05a6a79d5c64985d0e8a73697fd63a2731d6acc4:
@@ -45,7 +45,7 @@ An independent-verification claim requires: pinned source/certificate; independe
 Until then the accurate status is: source inspected; replay pending.
 
 ## Immediate priority
-Build a second implementation that independently regenerates the 480-point space and all 9,283 certificate records, then emits a machine-readable report with pinned hashes, leaf counts, duplicate/missing checks, exact aggregates/slack, mutation outcomes, and a canonical transcript. The transcript is data, not a trusted proof.
+The second implementation of the finite measure component now exists and passes CI. Next priorities: add independent implementations for the 16 rational distortion parameters and the large-prime recurrence/logarithmic termination; add mutation tests; emit exact aggregate/slack and canonical transcript; then formalize the finite combinatorial core in Lean. The transcript is data, not a trusted proof.
 
 ## 10. Scope refinement from the pinned upstream source card
 
@@ -76,3 +76,14 @@ Pinned inputs as recorded by the run:
 - compressed certificate SHA-256: `4db09b719b82732d8cfa76ec20045374f081a7acde865f5f6f2e212e84162fd5`
 
 The job uploaded the component JSON outputs as artifact `bbmst-independent-component-replay`. This is an execution replay of the pinned verifier, not yet an independent implementation: the remaining high-value check is a second implementation that regenerates the configuration tree and weights without importing upstream helpers, plus adversarial mutation tests and source-to-theorem sign-off.
+
+
+## 12. Independent second implementation: finite measure component
+
+Corrected rerun: https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/40410444043
+Commit under test: `da65cbc2be729207dae1a759a024e16deaa45e6e`
+Artifact: `bbmst-independent-component-replay` (artifact digest `sha256:b35e3d6232fe76caef9624512f069f8fe519e74898761b29997e378e4c57e`).
+
+The independent implementation is `audit/independent_bbmst_measures.py`. It does not import the upstream checker. It reconstructs the 480-point Cartesian space, coordinate projection classes, configuration tree/pruning, certificate leaf keys, point coverage, orbit signatures and nonnegative integer weights; it checks the strict core inequality using exact integer arithmetic and rejects duplicate JSON object keys. The CI job explicitly uses `set -o pipefail`, so a Python failure cannot be masked by `tee`. The corrected job reports the independent step completed successfully, as well as the three pinned upstream component invocations.
+
+**Scope of this result:** this is independent corroboration of the finite-measure certificate component only. It does not yet independently reproduce the rational-parameter or prime-tail checks, does not establish the published theorem reduction, and is not a Lean/kernel-checked proof of the complete Erdős–Selfridge result. Mutation tests and a fully independent mathematical audit remain open. The earlier independent-script attempt failed and was incorrectly masked by the pipeline; that run is not counted as evidence.
