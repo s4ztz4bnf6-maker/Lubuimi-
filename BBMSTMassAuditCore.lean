@@ -174,6 +174,24 @@ theorem bbmst_second_moment_denominator_zero_iff
   · rintro rfl
     norm_num
 
+/--
+On the full source interval [0, 1/2], the second-moment denominator is
+strictly positive exactly on the positive-parameter branch.
+-/
+theorem bbmst_second_moment_denominator_pos_iff
+    (δ : ℚ) (hδ : 0 ≤ δ) (hupper : δ ≤ (1 : ℚ) / 2) :
+    0 < 4 * δ * (1 - δ) ↔ 0 < δ := by
+  constructor
+  · intro hden
+    by_contra hnot
+    have hzero : δ = 0 := le_antisymm (le_of_not_gt hnot) hδ
+    rw [hzero] at hden
+    norm_num at hden
+  · intro hpos
+    exact bbmst_second_moment_denominator_pos δ hpos hupper
+
+#print axioms bbmst_second_moment_denominator_pos_iff
+
 /-- Every indexed source parameter lies in the published interval. -/
 theorem indexed_stage_parameter_range
     {n : ℕ} (p : IndexedStageParameters n) (i : Fin n) :
