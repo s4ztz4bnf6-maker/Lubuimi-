@@ -51,6 +51,11 @@ jobs:
           set -o pipefail
           python audit/independent_bbmst_parameters.py | tee independent-bbmst-parameters.json
           sha256sum audit/independent_bbmst_parameters.py
+      - name: Independent prime-tail and logarithmic-termination replay
+        run: |
+          set -o pipefail
+          python audit/independent_bbmst_tail.py | tee independent-bbmst-tail.json
+          sha256sum audit/independent_bbmst_tail.py
       - name: Upload exact replay outputs
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,4 +67,5 @@ jobs:
             bbmst-tail.json
             independent-bbmst-measures.json
             independent-bbmst-parameters.json
+            independent-bbmst-tail.json
           if-no-files-found: warn
