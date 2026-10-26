@@ -112,3 +112,38 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
 #print axioms sf_sieve_lt_one
+
+
+/-! ## Explicit source-parameter guard (audit repair interface)
+
+The counterexample above shows that nonemptiness alone is not sufficient:
+every used delta must be strictly between zero and one, and the delta list
+must match the stage list. This structure is deliberately separate from
+the upstream sieve axiom; it does not silently change that axiom or claim
+the global Erdős–Selfridge theorem.
+-/
+
+structure AuditedSieveParameters (stages : List ℚ) where
+  deltas : List ℚ
+  length_eq : deltas.length = stages.length
+  delta_pos : ∀ i, i < stages.length → 0 < deltas[i]!
+  delta_lt_one : ∀ i, i < stages.length → deltas[i]! < 1
+
+theorem audited_parameters_nonempty
+    {stages : List ℚ} (hstage : 0 < stages.length)
+    (p : AuditedSieveParameters stages) : p.deltas ≠ [] := by
+  intro hnil
+  have hlen := p.length_eq
+  rw [hnil] at hlen
+  simp at hlen
+  omega
+
+theorem audited_parameters_reject_zero_singleton :
+    ¬ ∃ p : AuditedSieveParameters [1], p.deltas = [0] := by
+  rintro ⟨p, hp⟩
+  have hpos := p.delta_pos 0 (by simp)
+  rw [hp] at hpos
+  norm_num at hpos
+
+#print axioms audited_parameters_nonempty
+#print axioms audited_parameters_reject_zero_singleton
