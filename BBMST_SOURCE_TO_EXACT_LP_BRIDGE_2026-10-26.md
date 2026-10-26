@@ -88,3 +88,27 @@ The local singleton-fiber fact (a hyperplane that fixes the final coordinate has
 - [ ] Record the transitive axiom audit and build/CI status for the exact commit.
 
 Until the source-to-paper inequality direction and all required certificates are checked, this is an auditable formalization route, not a completed BBMST proof.
+
+
+## Update 2026-10-26: an external exact-certificate reconstruction already exists
+
+A fresh search found a substantially more advanced independent source:
+https://github.com/plasma-ai/erdos/tree/05a6a79d5c64985d0e8a73697fd63a2731d6acc4/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli
+
+Its accompanying problem page reports:
+https://erdosproblems.ai/wiki/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli
+
+The page describes the published BBMST proof chain, 9,283 primal certificates for the exhaustive configuration tree in Lemma 5.4, exact integer/rational checking on all 480 points, a strict bound 9.018071, a rational vector for Lemma 5.3, and exact integer recurrence checks for Corollary 5.2. The checker is:
+https://github.com/plasma-ai/erdos/blob/05a6a79d5c64985d0e8a73697fd63a2731d6acc4/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py
+
+The checker source was fetched and inspected. Its header explicitly says that the retained integer primal weights were proposed by an independent SciPy/HiGHS replay, while the checker itself uses exact arithmetic and does not trust an optimizer. The page explicitly labels this an ordinary computational proof certificate, not a Lean build.
+
+This changes the optimal next step. We should NOT spend effort rebuilding all 9,283 primal certificates from the rounded Oxford Gurobi output. Instead:
+1. Independently retrieve and run the pinned exact checker and preserve its output, if the source/certificate can be materialized.
+2. Audit the exact certificate's mathematical correspondence to the published Lemma 5.4, including the 480-point box Q5=[2]x[4]x[6]x[10], the 9.018071 bound, and the zero-mass/survival conventions.
+3. Formalize the checker-level finite arithmetic and the generic rational feasibility/measure lemmas in Lean, with a source-to-paper statement map.
+4. Only then connect Lemma 5.4 to Lemma 5.3, Corollary 5.2, Theorem 1.2, and the Chinese-remainder equivalence in Theorem 1.1.
+
+Important boundary: this external reconstruction is strong computational evidence and a finite-certificate proof chain, but it is not Lean-verified. It is not our repository's code and has not been run in this environment. Do not claim an independent replay, Lean build, or completed formalization.
+
+The external page also identifies a source-text nuance: the published prose after equation (21) appears to say the normalization factor is (1-p), while the displayed formula and reconstruction use 1/(1-p). The reconstruction explicitly records this as a discrepancy in the source presentation, not as an author-issued erratum. This is a key statement-fidelity check for our audit.
