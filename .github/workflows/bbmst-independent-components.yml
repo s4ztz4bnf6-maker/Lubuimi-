@@ -1,0 +1,53 @@
+name: Independent BBMST certificate-component replay
+
+on:
+  push:
+    branches:
+      - audit/bbmst-fiber-incidence-2026-10-26
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  replay-three-components:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout audit harness
+        uses: actions/checkout@v4
+      - name: Checkout pinned upstream evidence
+        uses: actions/checkout@v4
+        with:
+          repository: plasma-ai/erdos
+          ref: 05a6a79d5c64985d0e8a73697fd63a2731d6acc4
+          path: upstream
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Record pinned source and certificate hashes
+        working-directory: upstream
+        run: |
+          sha256sum library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py
+          sha256sum library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/initial_measures.json.gz
+      - name: Replay component 1 of 3: finite measure certificates
+        working-directory: upstream
+        run: |
+          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component measures --output ../bbmst-measures.json
+      - name: Replay component 2 of 3: rational distortion parameters
+        working-directory: upstream
+        run: |
+          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component parameters --output ../bbmst-parameters.json
+      - name: Replay component 3 of 3: large-prime recurrence and logarithmic termination
+        working-directory: upstream
+        run: |
+          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component tail --output ../bbmst-tail.json
+      - name: Upload exact replay outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bbmst-independent-component-replay
+          path: |
+            bbmst-measures.json
+            bbmst-parameters.json
+            bbmst-tail.json
+          if-no-files-found: warn
