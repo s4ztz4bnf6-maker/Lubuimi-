@@ -33,6 +33,10 @@ jobs:
         working-directory: upstream
         run: |
           env PYTHONPATH=. python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component measures --output ../bbmst-measures.json
+      - name: Independent second implementation of finite measure certificates
+        run: |
+          python audit/independent_bbmst_measures.py upstream/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/initial_measures.json.gz | tee independent-bbmst-measures.json
+          sha256sum audit/independent_bbmst_measures.py
       - name: "Replay component 2 of 3: rational distortion parameters"
         working-directory: upstream
         run: |
@@ -50,4 +54,5 @@ jobs:
             bbmst-measures.json
             bbmst-parameters.json
             bbmst-tail.json
+            independent-bbmst-measures.json
           if-no-files-found: warn
