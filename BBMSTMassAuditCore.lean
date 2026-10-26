@@ -54,6 +54,10 @@ theorem point_weight_eq_zero_of_mass_eq_zero
 end BBMSTAudit
 
 
+namespace BBMSTAudit
+
+variable {α : Type*} [DecidableEq α]
+
 /--
 A strictly positive finite mass cannot be carried entirely by zero-weight
 points. This is the ratio-free existence step needed before selecting a
@@ -81,3 +85,6 @@ theorem exists_positive_weight_of_positive_mass
   linarith
 
 #print axioms exists_positive_weight_of_positive_mass
+
+
+end BBMSTAudit
