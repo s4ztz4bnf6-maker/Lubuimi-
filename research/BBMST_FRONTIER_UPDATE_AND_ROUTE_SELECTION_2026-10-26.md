@@ -33,3 +33,14 @@ Compare our bbmst_rational_dual_check.py against the proof-carrying certificate 
 - Öztürk, “A symmetry-reduced decision procedure and computational results for odd covering systems” (August 2026 preprint; public ResearchGate record): https://www.researchgate.net/publication/412316619_A_symmetry-reduced_decision_procedure_and_computational_results_for_odd_covering_systems_the_Erdos-Selfridge_problem_Erdos_Problem_7
 - Michael Schroeder's project notes on 7-/8-prime lower bounds: https://michaelschroeder.ai/
 - BBMST square-free case: https://doi.org/10.2140/ant.2021.15.609
+
+
+## Implementation update — 2026-10-26
+
+The exact finite-cover checker now has a bitset implementation. For period L and modulus m dividing L, the integer
+`(2^L - 1) / (2^m - 1)`
+has precisely the bits at positions 0,m,2m,...,L-m set. Shifting this mask by a normalized residue r encodes the full class r (mod m) inside [0,L). Bitwise OR therefore computes the union of the finite classes exactly, without floating-point arithmetic. The period cap remains important because bit-mask size grows with L.
+
+A differential test file was added. In a separate local check, the bitset decision agreed with the definition-level scan on 1,049 small systems (moduli selected with repetition from {2,3,4,5}, up to three classes, all residue choices). This tests the implementation equivalence on that finite test family; it is not a universal proof of the implementation or a global exclusion result. The GitHub workflow associated with the regression-test commit was still running at the time of this update.
+
+The new checker is deliberately scoped to verifying a proposed cover. The next proof-bearing extension should be a finite exclusion certificate format: canonical candidate LCM, symmetry representatives, exhaustive branch/peeling trace, and local capacity inequalities, each checked independently. Merely failing to find a cover in a search remains insufficient.
