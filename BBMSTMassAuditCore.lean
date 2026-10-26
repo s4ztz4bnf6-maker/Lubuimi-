@@ -1,6 +1,6 @@
 import Mathlib
 
-/--
+/-
 Finite-mass algebra for the BBMST formalization.
 
 This file proves only general finite-sum identities. It does not encode the
@@ -23,7 +23,7 @@ theorem mass_additive_zero_of_disjoint (h : Disjoint s t)
     (∑ x ∈ s ∪ t, w x) = 0 := by
   rw [Finset.sum_union h, hs, ht, add_zero]
 
-/--
+/-
 Mass of a finite carrier equals the sum of the masses of two disjoint
 pieces when those pieces cover the carrier. No denominator or conditional
 probability is introduced.
