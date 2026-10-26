@@ -50,3 +50,13 @@ c_5(3) − 0.75 c_5(1) = 8.731669, with an adjusted bound of 9.108898 after acco
 This is a concrete new source artifact for reconstructing the finite geometry and checking output arithmetic. However, these displayed decimal values are outputs, not exact rational certificates; the output alone does not expose all LP constraints or prove the optimizer's result. The next safe step is to recover the corresponding source model and reconstruct exact rational values independently. Source output reference: https://people.maths.ox.ac.uk/balister/es/coverresults.txt
 
 No exact LP certificate or theorem proof is claimed.
+
+
+## Arithmetic consistency check on the first displayed row
+
+The first row reports c_5(3) = 10.772621 and c_5(1) = 2.721270, followed by
+c_5(3) − 0.75 c_5(1) = 8.731669. Direct arithmetic on the displayed rounded decimals gives
+
+10.772621 − 0.75 × 2.721270 = 8.7316685,
+
+which rounds to 8.731669 at six decimal places. This confirms internal rounding consistency for that expression only. It does not validate the omitted-hyperplane adjustment (9.108898), the LP optimization, or the theorem's deduction. All values in the output are displayed decimals and must not be treated as exact rationals.
