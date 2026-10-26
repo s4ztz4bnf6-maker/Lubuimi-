@@ -882,6 +882,13 @@ theorem eventMass_le_good_bad_transfer
     (hbad : eventMass μ (fun x => ¬ G x) ≤ η) :
     eventMass μ E ≤ C * eventMass ν E + η := by
   classical
+  -- Match the classical decidability used inside eventMass's filtered sum.
+  -- Otherwise unfolding eventMass can expose a definitional mismatch between
+  -- direct propDecidable and the synthesized DecidableAnd instance.
+  letI : DecidablePred (fun x : CoordinatePoint space => E x ∧ G x) :=
+    fun x => Classical.propDecidable _
+  letI : DecidablePred (fun x : CoordinatePoint space => E x ∧ ¬ G x) :=
+    fun x => Classical.propDecidable _
   have hsplit :
       eventMass μ E =
         eventMass μ (fun x => E x ∧ G x) +
@@ -892,21 +899,20 @@ theorem eventMass_le_good_bad_transfer
     apply Finset.sum_congr rfl
     intro x hx
     by_cases he : E x <;> by_cases hg : G x <;> simp [he, hg]
+  have hgood_inter :
+      eventMass μ (fun x => E x ∧ G x) ≤
+        C * eventMass ν (fun x => E x ∧ G x) := by
+    unfold eventMass
+    rw [Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro x hx
+    exact hgood x (Finset.mem_filter.mp hx).2.2
   have hgoodmass :
-      eventMass μ (fun x => E x ∧ G x) ≤
-        C * eventMass ν E := by
-    calc
-      eventMass μ (fun x => E x ∧ G x) ≤
-          C * eventMass ν (fun x => E x ∧ G x) := by
-        unfold eventMass
-        rw [Finset.mul_sum]
-        apply Finset.sum_le_sum
-        intro hx
-        exact hgood x (Finset.mem_filter.mp hx).2.2
-      _ ≤ C * eventMass ν E :=
-        mul_le_mul_of_nonneg_left
-          (eventMass_mono ν (fun x => E x ∧ G x) E
-            (by intro x hx; exact hx.1)) hC
+      eventMass μ (fun x => E x ∧ G x) ≤ C * eventMass ν E :=
+    le_trans hgood_inter
+      (mul_le_mul_of_nonneg_left
+        (eventMass_mono ν (fun x => E x ∧ G x) E
+          (by intro x hx; exact hx.1)) hC)
   have hbadmass :
       eventMass μ (fun x => E x ∧ ¬ G x) ≤ η := by
     apply le_trans
