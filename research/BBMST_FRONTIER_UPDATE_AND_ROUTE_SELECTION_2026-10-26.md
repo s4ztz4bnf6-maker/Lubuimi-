@@ -25,16 +25,16 @@ Recommended route:
 
 ## Exact arithmetic for the first surviving candidates
 
-For a fixed LCM N, any covering with pairwise distinct moduli m satisfying 1<m<N and m|N must obey the necessary reciprocal-capacity inequality
-sum_{m|N, 1<m<N} 1/m >= 1,
-because the sum over the actual selected moduli must be at least 1 and is bounded above by the sum over all available proper divisors. The exact checker in research/tools/bbmst_divisor_capacity_certificate.py computes this bound using rational arithmetic and emits the full divisor list; tests are in research/tools/test_bbmst_divisor_capacity_certificate.py.
+For a fixed LCM N, every selected modulus m divides N and satisfies m>1. Crucially, m=N is allowed in principle, so the necessary reciprocal-capacity inequality is
+sum_{m|N, m>1} 1/m >= 1.
+The sum over the actual selected moduli must be at least 1 and is bounded above by the sum over all available divisors greater than 1. The exact checker in research/tools/bbmst_divisor_capacity_certificate.py computes this corrected bound using rational arithmetic; tests are in research/tools/test_bbmst_divisor_capacity_certificate.py. The proper-divisor-only sum is kept as a diagnostic, but is not the necessary bound unless one separately proves N cannot be selected.
 
 Exact results:
-- N=10395: sigma_1(N)=23040, sigma_1(N)/N=512/231, available proper-divisor reciprocal capacity = 12644/10395, with 30 available proper divisors >1.
-- N=12285: sigma_1(N)=26880, sigma_1(N)/N=256/117, capacity = 14594/12285, with 30 available proper divisors >1.
-- N=17325: sigma_1(N)=38688, sigma_1(N)/N=12896/5775, capacity = 1942/1575, with 34 available proper divisors >1.
+- N=10395: sigma_1(N)=23040, sigma_1(N)/N=512/231; proper-divisor-only diagnostic = 12644/10395; corrected capacity including N = 281/231, with 31 available moduli >1.
+- N=12285: sigma_1(N)=26880, sigma_1(N)/N=256/117; proper-divisor-only diagnostic = 14594/12285; corrected capacity including N = 139/117, with 31 available moduli >1.
+- N=17325: sigma_1(N)=38688, sigma_1(N)/N=12896/5775; proper-divisor-only diagnostic = 1942/1575; corrected capacity including N = 7121/5775, with 35 available moduli >1.
 
-Independent exact arithmetic checked these three candidates and the identity capacity = sigma_1(N)/N - 1 - 1/N for every N from 2 through 149. All checks passed. These candidates pass this necessary condition, so it does not exclude them. This is a reproducible baseline for the next stronger local capacity or peeling certificate, not a solution of any candidate instance.
+Audit correction (2026-10-26): the previous version of this note and checker omitted the modulus N itself. That omission was not justified because a covering with LCM N can in principle use modulus N. The corrected identity is capacity = sigma_1(N)/N - 1. Exact arithmetic checked this identity for every N from 2 through 149, and the regression suite now explicitly tests the N-modulus case. All three candidates pass the corrected necessary condition, so this still does not exclude any candidate. This is a corrected baseline, not a solution of a candidate instance.
 
 ## Existing tools in this repository
 
