@@ -1,5 +1,4 @@
 import Mathlib
-import BBMSTMassAuditCore
 
 /-!
 A source-independent finite-fiber split lemma for the BBMST formalization.
