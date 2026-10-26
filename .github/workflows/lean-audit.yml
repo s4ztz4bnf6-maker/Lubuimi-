@@ -29,9 +29,9 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile division-free mass core
-        run: lake env lean BBMSTMassAuditCore.lean
+        run: lake env lean -o .lake/build/lib/lean/BBMSTMassAuditCore.olean BBMSTMassAuditCore.lean
       - name: Compile finite fiber split core
-        run: lake env lean BBMSTFiberAuditCore.lean
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiberAuditCore.olean BBMSTFiberAuditCore.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
