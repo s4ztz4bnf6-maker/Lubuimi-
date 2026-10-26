@@ -38,3 +38,15 @@ The generic weak-duality lemma is not the BBMST theorem. It becomes a project-sp
 ## Immediate next step
 
 Retrieve the supplemental C source from a client that accepts text/x-csrc or clone the public supplemental repository if available; preserve a checksum and version. Extract the exact LP constraints, solve or recover rational primal/dual witnesses, then verify them independently before Lean formalization. No BBMST-specific LP certificate, Lean compilation, axiom audit, or CI run is claimed by this note.
+
+## New retrieval result (2026-10-26)
+
+Although the C source itself is rejected by the web retrieval layer, the linked output file is accessible as plain text:
+https://people.maths.ox.ac.uk/balister/es/coverresults.txt
+
+It contains 2,624 lines. The opening lines say it lists configurations satisfying a displayed bound condition greater than 9.018. For example, its first configuration has 11 hyperplanes over the 4-coordinate product, 331 uncovered points, and reports
+c_5(3) − 0.75 c_5(1) = 8.731669, with an adjusted bound of 9.108898 after accounting for omitted hyperplanes (output lines 0–24).
+
+This is a concrete new source artifact for reconstructing the finite geometry and checking output arithmetic. However, these displayed decimal values are outputs, not exact rational certificates; the output alone does not expose all LP constraints or prove the optimizer's result. The next safe step is to recover the corresponding source model and reconstruct exact rational values independently. Source output reference: https://people.maths.ox.ac.uk/balister/es/coverresults.txt
+
+No exact LP certificate or theorem proof is claimed.
