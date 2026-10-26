@@ -44,3 +44,14 @@ A verified finite exclusion is useful engineering but is not a new resolution if
 ## Next deliverable
 
 Produce a pinned artifact manifest with source URL, repository commit, Lean/Mathlib versions, theorem identifier, statement text, transitive axioms, and clean-build log. Until all fields are populated, label the result “external claim under audit,” not “verified dependency.”
+
+
+## Additional quantitative corollary to audit
+
+The companion also states that every finite distinct odd family with moduli greater than one supported on at most eight primes leaves natural density at least
+[
+1/1{,}002{,}375
+]
+uncovered. This is a quantitative strengthening of mere noncoverage for that prime-support range. Audit separately whether the density is defined over the full integer line through periodicity modulo the LCM, and whether the formal declaration proves the lower bound directly or via the rank-nine theorem. Do not infer the numeric lower bound from the qualitative theorem alone.
+
+For a fixed finite family, the uncovered density is exactly (u/N), where (N) is the LCM and (u) is the number of uncovered residues modulo (N). The exact finite-cover checker can validate a proposed family and compute (u/N), but the universal lower bound requires the external theorem's proof; checking finitely many families is not enough.
