@@ -56,7 +56,7 @@ The source documentation also says that the Corollary 5.2 checker verifies a seg
 
 The upstream command is documented as:
 `uv run --no-sync python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py`
-with an expected runtime of about 30 seconds in its intended repository environment. This session did not execute it because the local runtime could not resolve GitHub and the connector only exposes source content, not a runnable checkout. Thus no full or partial certificate pass is claimed.
+with an expected runtime of about 30 seconds in its intended repository environment. This session did not execute it because the local runtime could not resolve GitHub and the connector only exposes source content, not a runnable checkout. At that stage, no full or partial certificate pass was claimed; the later independent finite-measure replay is recorded in Section 12.
 
 A reproducible independent audit should publish component-specific outputs and hashes, rather than a single PASS that obscures which parts ran. In particular, the prime-sieve loop must be independently implemented or checked against a second method on overlapping ranges, and the exact rational logarithm enclosure must be reviewed as a mathematical inequality rather than treated as a numerical approximation.
 
