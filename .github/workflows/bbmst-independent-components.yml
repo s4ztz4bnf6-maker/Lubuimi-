@@ -47,7 +47,10 @@ jobs:
         run: |
           env PYTHONPATH=. python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component tail --output ../bbmst-tail.json
       - name: Independent exact-rational replay of Lemma 5.3 parameters
-        run: python audit/independent_bbmst_parameters.py | tee independent-bbmst-parameters.json
+        run: |
+          set -o pipefail
+          python audit/independent_bbmst_parameters.py | tee independent-bbmst-parameters.json
+          sha256sum audit/independent_bbmst_parameters.py
       - name: Upload exact replay outputs
         if: always()
         uses: actions/upload-artifact@v4
