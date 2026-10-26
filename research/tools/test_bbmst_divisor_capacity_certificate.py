@@ -11,9 +11,9 @@ class DivisorCapacityTests(unittest.TestCase):
 
     def test_reference_candidates_exact_capacity_including_lcm(self):
         expected = {
-            10395: (23040, Fraction(1, 1) + Fraction(12644, 10395), 31),
-            12285: (26880, Fraction(1, 1) + Fraction(14594, 12285), 31),
-            17325: (38688, Fraction(1, 1) + Fraction(1942, 1575), 35),
+            10395: (23040, Fraction(12644, 10395) + Fraction(1, 10395), 31),
+            12285: (26880, Fraction(14594, 12285) + Fraction(1, 12285), 31),
+            17325: (38688, Fraction(1942, 1575) + Fraction(1, 17325), 35),
         }
         for n, (sigma, capacity, count) in expected.items():
             cert = capacity_certificate(n)
