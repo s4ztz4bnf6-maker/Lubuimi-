@@ -156,7 +156,7 @@ theorem bbmst_second_moment_denominator_cases
     have hpos : 0 < δ := lt_of_le_of_ne hδ (Ne.symm hzero)
     exact bbmst_second_moment_denominator_pos δ hpos hupper
 
-/**
+/-!
 The denominator vanishes exactly on the zero-parameter branch throughout
 the source range. This is stronger than merely checking that the positive
 branch has a nonzero denominator.
