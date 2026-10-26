@@ -1,42 +1,42 @@
-# BBMST public certificate: independent replay and formalization plan — 2026-10-26
+# BBMST public certificate: independent replay plan — 2026-10-26
 
 ## Status boundary
-The public Python checker and certificate reconstruction are evidence for a finite computational lemma. We have inspected the checker source, but have not executed it in this work session, replayed the full certificate payload, or established the paper-to-model reduction in Lean. No independent PASS or fully formal BBMST proof is claimed.
+The public Python checker was inspected but not executed in this work session; the full payload was not replayed and the paper-to-model reduction is not formalized here. No independent PASS or fully formal BBMST proof is claimed.
 
-## Finite certificate obligation
-For each generated partial configuration, the certificate gives nonnegative integer weights w_r on uncovered points, total W=Σw_r>0, hyperplane maxima M_I, and residual sum U over still-unassigned fixed-coordinate sets. The checker requires W>U and checks the strict rational bound by integer cross-multiplication:
+## Exact finite obligation
+For each generated partial configuration, integer weights w_r≥0 are assigned to uncovered points, W=Σw_r>0, M_I is the maximum weight on a hyperplane with fixed-coordinate set I, and U is the residual sum over unassigned fixed sets. The checker requires W>U and verifies by integer cross-multiplication:
+
 10^6 (Σ_I (4·3^|I|−3) M_I − U) < 9018071·4(W−U).
-All terms are integers, so this avoids floating-point comparison for the final inequality. The checker must regenerate the allowed configuration tree and reject missing full-depth certificates and off-tree payloads.
+
+The rational statement behind this is
+(Σ_I (4·3^|I|−3)M_I−U)/(4(W−U)) < 9018071/10^6.
+Since W>U, the denominator 4(W−U) is strictly positive. Multiplication by this positive denominator and by 10^6 preserves the strict inequality and gives exactly the integer check above. Conversely, the integer inequality implies the rational inequality by division by the same positive quantity. This bridge is elementary but should be a separate theorem in Lean, with denominator positivity explicit; it must not be folded into untrusted certificate parsing.
+
+All quantities in the final check are integers, so no floating-point comparison is required. The tree and complete leaf coverage must be regenerated, not trusted from the payload alone.
 
 ## Independent verification ladder
-A. Reproduce the upstream checker in a clean pinned environment and record the exact repository commit, Python version, command, exit code, and output. Preserve certificate input hashes.
-
-B. Write a second minimal checker that does not import the upstream checker or its tree-generation helpers. Its trusted inputs should be frozen certificate data plus a small explicit configuration specification. Independently regenerate:
-- the 480-point reduced space Q₅=[2]×[4]×[6]×[10];
-- incidence of every point with every allowed coordinate hyperplane;
-- each M_I by direct integer summation;
-- W, U, and both sides of the strict inequality.
-Compare per-leaf tuples (configuration id, W, U, all M_I, inequality slack), not only the final maximum. Fail closed on duplicates, missing leaves, unexpected keys, negative weights, and zero denominators.
-
-C. Publish a canonical machine-readable certificate: sorted keys, explicit integer encodings, no floats or implicit defaults. Publish SHA-256 hashes for every input and checker source. Include a one-command reproduction script and a corrupted-weight fixture that must be rejected.
-
-D. Formalize the finite verifier in Lean 4 with explicit finite types; prove that the integer inequality implies the corresponding rational strict inequality. Keep the certificate's actual truth separate from the paper-to-model reduction.
-
-E. Prove the paper-to-model bridge: reduction from the original [3]×[5]×[7]×[11] initial-distribution optimization to the 480-point Q₅ model, the normalization recurrence, and all hypotheses of Lemma 5.4. The paper's prose says renormalization multiplies mass by (1−p), while its formula and derived bound use 1/(1−p). Resolve this source-text inconsistency by citing the formula and proving the recurrence.
+1. Run the upstream checker in a pinned clean environment. Record repository commit, runtime versions, exact command, exit code, full output, and hashes of every certificate input.
+2. Build a second checker that imports none of the upstream checker or tree-generation code. From frozen certificate data, independently regenerate Q₅=[2]×[4]×[6]×[10], point-to-hyperplane incidence, all M_I, W, U, and inequality slack. Compare leaf-by-leaf tuples, not just the maximum. Reject duplicate/missing leaves, unexpected keys, negative weights, and zero denominators.
+3. Canonicalize the certificate: sorted keys, integer-only encodings, no floats or implicit defaults. Publish SHA-256 hashes and a one-command reproduction script. Include a deliberately corrupted certificate fixture that must fail.
+4. Formalize the finite verifier in Lean 4 with explicit finite types; prove that the integer inequality implies the corresponding rational strict inequality. Keep the certificate's actual truth separate from the paper-to-model reduction.
+5. Prove the reduction from the original [3]×[5]×[7]×[11] initial-distribution optimization to the 480-point Q₅ model, then prove the normalization recurrence and every hypothesis of Lemma 5.4. The paper's prose says renormalization multiplies mass by (1−p), while its formula uses 1/(1−p); cite and prove the recurrence rather than silently adopting the prose.
 
 ## Critical distinction
-A direct finite certificate can establish a strict upper bound for the exact finite model if the checker and payload are complete. It does not by itself prove the full theorem: the source-faithful reduction from the paper's combinatorial/probabilistic setup to that finite model is a separate obligation. Proving an optimizer is optimal is unnecessary if a feasible exact certificate already proves the desired inequality; do not conflate LP optimality with certificate validity.
+A complete exact finite certificate can prove the finite-model bound without proving LP optimality. The source-faithful reduction from the paper to that model remains a separate mathematical obligation. The current checker source describes itself as a computational proof certificate, not a Lean build. Therefore the checker pass, if reproduced, would establish the finite arithmetic claim within its checker assumptions; it would not alone establish the complete theorem in the paper.
 
-## External sources
+The same distinction is emphasized by recent large-scale AI mathematics releases: a formal artifact can be correct while proving a weaker or different statement than the accompanying manuscript. Every formal result here therefore needs a human statement-fidelity audit against the source lemma, coordinate model, and normalization hypotheses.
+
+## Sources
 - Original paper: https://arxiv.org/abs/1901.11465
-- Public certificate reconstruction: https://github.com/plasma-ai/erdos/tree/05a6a79d5c64985d0e8a73697fd63a2731d6acc4
-- Exact checker: https://github.com/plasma-ai/erdos/blob/05a6a79d5c64985d0e8a73697fd63a2731d6acc4/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py
-- Original supplemental material: https://www.memphis.edu/msci/people/pbalistr/erdos-selfridge.php
+- Public reconstruction: https://github.com/plasma-ai/erdos/tree/05a6a79d5c64985d0e8a73697fd63a2731d6acc4
+- Checker: https://github.com/plasma-ai/erdos/blob/05a6a79d5c64985d0e8a73697fd63a2731d6acc4/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py
+- OpenAI public mathematics artifact repository: https://github.com/openai/math
+- Hales on Lean reliability and statement fidelity: https://terrytao.wordpress.com/2026/10/09/what-mathematicians-should-know-about-the-lean-theorem-proverquestions-of-reliability-and-ai/
 
 ## Acceptance criteria
-- [ ] Upstream checker passes on pinned commit with archived output.
+- [ ] Upstream checker passes on pinned commit and output is archived.
 - [ ] Independent checker agrees leaf-by-leaf.
-- [ ] Certificate and checker hashes are published.
-- [ ] Corruption tests fail as expected.
-- [ ] Lean proves the arithmetic implication and finite model result without new axioms.
-- [ ] Paper-to-model reduction is formalized or independently proved line by line.
+- [ ] Certificate and checker hashes are published; corruption test fails.
+- [ ] Lean proves arithmetic and finite-model result without new axioms.
+- [ ] Paper-to-model reduction is proved line-by-line or formalized.
+- [ ] The paper statement and exact formal theorem are independently compared and the comparison is published.
