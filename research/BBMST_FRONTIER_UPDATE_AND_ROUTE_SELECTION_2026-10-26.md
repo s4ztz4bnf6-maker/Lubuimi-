@@ -6,7 +6,7 @@ The Erdős–Selfridge odd covering problem asks whether finitely many residue c
 
 ## Literature sweep: relevant recent frontier
 
-A July 2026 Lean 4 preprint by Ibrahim Mian and Shayaan Siddique explicitly proves, kernel-checked, that any odd distinct covering has lcm greater than 10,000. It formalizes the density/abundancy reduction, the odd-abundant candidate floor, CRT-capacity certificates for 23 odd abundant numbers below 10,000, and a finite-to-infinite periodicity bridge. The paper says the contribution is epistemic/formal rather than new mathematics, and the conjecture remains open. This is now a source-checked statement, not merely an unverified summary; the artifact itself has not yet been independently rebuilt in this repository.
+A July 2026 Lean 4 preprint by Ibrahim Mian and Shayaan Siddique explicitly proves, kernel-checked, that any odd distinct covering has lcm greater than 10,000. It formalizes the density/abundancy reduction, the odd-abundant candidate floor, CRT-capacity certificates for 23 odd abundant numbers below 10,000, and a finite-to-infinite periodicity bridge. The paper says the contribution is epistemic/formal rather than new mathematics, and the conjecture remains open. This is a source-checked statement, not merely an unverified summary; the artifact itself has not yet been independently rebuilt in this repository.
 
 A separate public preprint by Ege Öztürk reports a symmetry-reduced fixed-lcm decision procedure and recursive peeling certificates, with an exclusion up to lcm 405,404. Treat the numerical scope as a preprint claim until its exact certificate and Lean artifact are independently reproduced here. Michael Schroeder's project notes report a lower bound of eight distinct prime divisors for a hypothetical odd distinct covering; this also remains external until its source and formal artifact are audited.
 
@@ -22,6 +22,15 @@ Recommended route:
 4. **Symmetry quotient.** For fixed N, normalize residue choices under translations x -> x+t modulo N and any further automorphisms proved to preserve the covering property. Canonicalization must be accompanied by a completeness lemma, not merely heuristic pruning.
 5. **Proof-carrying exclusion.** SAT/ILP may discover unsatisfiable instances or peeling traces, but the trusted result must be a compact certificate whose checker validates every branch and local inequality. The checker must reject truncated traces and must establish that all candidate moduli/residue branches were covered.
 6. **Finite/infinite bridge.** Keep the bidirectional theorem explicit: a finite family covers Z iff it covers every residue modulo its lcm. Do not infer an exclusion of all odd coverings from a bounded lcm search unless a theorem bounds the lcm of every hypothetical covering.
+
+## Exact arithmetic on the first candidate
+
+Independent integer arithmetic gives:
+- N=10395=3^3*5*7*11; sigma_1(N)=23040, so sigma_1(N)/N=512/231>2. There are 32 divisors total and 30 proper divisors greater than 1.
+- N=12285=3^3*5*7*13; sigma_1(N)=26880, so sigma_1(N)/N=256/117>2. There are 30 proper divisors greater than 1.
+- N=17325=3^2*5^2*7*11; sigma_1(N)=38688, so sigma_1(N)/N=12896/5775>2. There are 34 proper divisors greater than 1.
+
+These exact calculations confirm that the three values survive the simple abundancy necessary condition; they do not show that any of them is a covering number. For N=10395 the next certificate must reason about the actual residue classes modulo each allowed divisor, not just sigma_1(N).
 
 ## Existing tools in this repository
 
