@@ -8,9 +8,8 @@ BBMST fiber update. It does not prove the geometric incidence estimate or
 the global sieve theorem.
 
 Terminology is important: max 0 ((α - δ) / (1 - δ)) is the *residual
-covered mass* after the update, not the amount of mass removed. The
-distinction matters when this scalar lemma is connected to the source proof.
--/
+covered mass* after the update, not the amount of mass removed.
+-/ 
 
 namespace BBMSTAudit
 
@@ -18,9 +17,9 @@ namespace BBMSTAudit
 def normalizedResidualCoveredMass (δ α : ℚ) : ℚ :=
   max 0 ((α - δ) / (1 - δ))
 
-/-- Residual covered mass never exceeds the original covered fraction. -/
+/-- Residual covered mass never exceeds the original nonnegative fraction. -/
 theorem normalizedResidualCoveredMass_le_alpha
-    (α δ : ℚ) (hα0 : 0 ≤ α) (hα1 : α ≤ 1)
+    (α δ : ℚ) (hα0 : 0 ≤ α)
     (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     normalizedResidualCoveredMass δ α ≤ α := by
   unfold normalizedResidualCoveredMass
@@ -34,11 +33,11 @@ theorem normalizedResidualCoveredMass_le_alpha
 Second-moment bound for residual covered mass:
 rδ(α) ≤ α²/(4δ(1−δ)).
 The proof explicitly uses δ>0 and δ<1, so no zero-denominator convention
-can make the statement vacuous.
+can make the statement vacuous. No bounds on α are needed for this scalar
+inequality because the positive-part operation handles the inactive branch.
 -/
 theorem normalizedResidualCoveredMass_le_second_moment
-    (α δ : ℚ) (hα0 : 0 ≤ α) (hα1 : α ≤ 1)
-    (hδ0 : 0 < δ) (hδ1 : δ < 1) :
+    (α δ : ℚ) (hδ0 : 0 < δ) (hδ1 : δ < 1) :
     normalizedResidualCoveredMass δ α ≤ α ^ 2 / (4 * δ * (1 - δ)) := by
   unfold normalizedResidualCoveredMass
   have hden1 : 0 < 1 - δ := by linarith
