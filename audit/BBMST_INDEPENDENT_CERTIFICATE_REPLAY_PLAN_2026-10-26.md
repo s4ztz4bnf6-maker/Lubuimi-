@@ -47,6 +47,16 @@ The second checker must not import upstream Python, tree generation, or incidenc
 
 The independent checker should emit a deterministic record for every leaf: canonical key, counts of points/configurations, W, U, each M_I, S, and a digest of the canonical record. Compare these records leaf-by-leaf with a separately exported upstream trace. Comparing only the largest bound is inadequate because a missing leaf can make the maximum look better.
 
+### Strict trace schema and determinism
+To make the two implementations genuinely independent and their outputs comparable, freeze a small schema before coding:
+- Each integer is represented as a JSON integer; reject booleans (which some languages treat as integers), floats, decimal strings, and implicit coercions.
+- Each finite set is serialized in sorted canonical order; duplicates are errors, not silently deduplicated.
+- Every leaf has an explicit unique identifier derived from its canonical configuration, not from its position in the source traversal.
+- Every computed field is recomputed by the verifier. Supplied W, U, maxima, slack, counts, and hashes are comparison fields only and never trusted inputs.
+- The verifier rejects unknown keys and missing required keys. Version the schema and include the source commit and raw compressed-file SHA-256 in the run manifest.
+- Hash canonical records after deterministic UTF-8 serialization with a specified key order and no whitespace ambiguity. Record both raw payload hash and canonical semantic-trace hash; these hashes answer different questions.
+- A successful run must report total expected leaves, actual unique leaves, missing IDs, duplicate IDs, first mismatching record, and minimum positive slack. A zero or negative minimum slack is failure, even if rounded decimal output appears to pass.
+
 ### Mutation and completeness tests
 The checker must reject:
 1. one removed leaf;
