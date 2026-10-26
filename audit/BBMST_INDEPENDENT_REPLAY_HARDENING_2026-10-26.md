@@ -2,7 +2,7 @@
 Date: 2026-10-26
 
 ## Status
-This is an audit and formalization design note, not a claim that the published certificate has been independently replayed. The upstream checker source was inspected, but the checker and full certificate were not executed in this session; no Lean build is claimed.
+The pinned upstream checker and certificate were executed in a clean GitHub Actions checkout, with all three components passing independently as separate invocations. This establishes reproducible execution of the upstream verifier, not an independent second implementation of its mathematics. A separate verifier and the source-to-theorem reduction audit remain open; no Lean proof of the complete BBMST theorem is claimed.
 
 Primary preprint: https://arxiv.org/abs/1901.11465
 Upstream checker pinned at commit 05a6a79d5c64985d0e8a73697fd63a2731d6acc4:
@@ -59,3 +59,20 @@ The upstream command is documented as:
 with an expected runtime of about 30 seconds in its intended repository environment. This session did not execute it because the local runtime could not resolve GitHub and the connector only exposes source content, not a runnable checkout. Thus no full or partial certificate pass is claimed.
 
 A reproducible independent audit should publish component-specific outputs and hashes, rather than a single PASS that obscures which parts ran. In particular, the prime-sieve loop must be independently implemented or checked against a second method on overlapping ranges, and the exact rational logarithm enclosure must be reviewed as a mathematical inequality rather than treated as a numerical approximation.
+
+
+## 11. Recorded three-component execution (2026-10-26)
+
+The workflow `.github/workflows/bbmst-independent-components.yml` ran the pinned upstream checkout at commit `05a6a79d5c64985d0e8a73697fd63a2731d6acc4`. All three component invocations exited 0:
+
+- **Measures / Lemma 5.4:** 5 checks passed; all 9,283 certified leaves checked; every full-depth configuration had a certificate, every supplied leaf belonged to the regenerated tree, and all exact strict measure bounds passed.
+- **Parameters / Lemma 5.3:** 4 checks passed; both endpoint initializations passed positivity and the stated strict (f_{21}) upper bound.
+- **Tail / Corollary 5.2:** 3 checks passed; the exact recurrence and strict-survival checks reached terminal index (K=14{,}000{,}000), terminal prime (256{,}203{,}161), and the rational logarithmic termination criterion.
+
+Run: https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/40409201579
+
+Pinned inputs as recorded by the run:
+- checker SHA-256: `2791c2606261c159bc079f8e4aaf31214e10011d84bb58835b6df185c3f8e79`
+- compressed certificate SHA-256: `4db09b719b82732d8cfa76ec20045374f081a7acde865f5f6f2e212e84162fd5`
+
+The job uploaded the component JSON outputs as artifact `bbmst-independent-component-replay`. This is an execution replay of the pinned verifier, not yet an independent implementation: the remaining high-value check is a second implementation that regenerates the configuration tree and weights without importing upstream helpers, plus adversarial mutation tests and source-to-theorem sign-off.
