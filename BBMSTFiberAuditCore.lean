@@ -16,26 +16,6 @@ theorem mass_filter_partition
     (∑ x ∈ F, w x) =
       (∑ x ∈ F.filter P, w x) +
       (∑ x ∈ F.filter (fun x => ¬ P x), w x) := by
-  have hdisj : Disjoint (F.filter P) (F.filter (fun x => ¬ P x)) := by
-    refine Finset.disjoint_left.mpr ?_
-    intro x hx hy
-    simp only [Finset.mem_filter] at hx hy
-    exact hy.2 hx.2
-  have hcover : F.filter P ∪ F.filter (fun x => ¬ P x) = F := by
-    ext x
-    simp only [Finset.mem_union, Finset.mem_filter]
-    constructor
-    · rintro (⟨hF, _⟩ | ⟨hF, _⟩)
-      · exact hF
-      · exact hF
-    · intro hF
-      by_cases hp : P x
-      · exact Or.inl ⟨hF, hp⟩
-      · exact Or.inr ⟨hF, hp⟩
-  calc
-    (∑ x ∈ F, w x) =
-        (∑ x ∈ F.filter P, w x) +
-        (∑ x ∈ F.filter (fun x => ¬ P x), w x) := by
-          rw [← hcover, Finset.sum_union hdisj]
+  exact Finset.sum_filter_add_sum_filter_not F P w
 
 end BBMSTAudit
