@@ -28,11 +28,44 @@ Both denominator factors are positive; u−p≥0 and C−1/4≥0. Thus f(p)≤f(
 
 The source normalization wording must be read carefully: after deleting mass p, the unnormalized surviving measure has total mass 1−p, so its empty-fixed-set contribution decreases by p/4; normalization then divides the entire expression by 1−p. The resulting expression is (C−p/4)/(1−p). This is consistent with the displayed formula and should be encoded explicitly in the formal proof, rather than summarized as if the normalized total mass itself were 1−p.
 
+## New replay design: three independent layers
+The replay must distinguish three objects which are easy to conflate:
+- **Payload integrity:** the compressed bytes and JSON parse as expected.
+- **Finite arithmetic truth:** the enumerated configurations and exact inequalities satisfy the bound.
+- **Mathematical reduction:** the finite model is a valid realization of the paper's original probabilistic/geometric statement.
+
+Passing layer 1 does not imply layer 2; passing layers 1–2 does not imply layer 3.
+
+### Canonical independent data model
+The second checker must not import upstream Python, tree generation, or incidence helpers. It should define its own canonical objects:
+- A point is an integer tuple in Q₅ = [2]×[4]×[6]×[10], encoded as four bounded coordinates.
+- A hyperplane/configuration key is a sorted tuple of coordinate choices with a fixed, documented ordering.
+- A leaf is a canonical tuple of (configuration key, assigned point IDs, integer weights, residual data), with all integers encoded as integers, never floats.
+- For every leaf, independently recompute incidence from the defining relation, not from a supplied incidence list; recompute M_I by a maximum over the relevant finite set; recompute W and U by integer summation; compute signed slack
+  S = 9018071·4(W−U) − 10^6(Σ_I(4·3^|I|−3)M_I−U).
+  Acceptance requires W>U and S>0 for every leaf.
+
+The independent checker should emit a deterministic record for every leaf: canonical key, counts of points/configurations, W, U, each M_I, S, and a digest of the canonical record. Compare these records leaf-by-leaf with a separately exported upstream trace. Comparing only the largest bound is inadequate because a missing leaf can make the maximum look better.
+
+### Mutation and completeness tests
+The checker must reject:
+1. one removed leaf;
+2. a duplicated leaf;
+3. a changed coordinate or incidence bit;
+4. a negative weight;
+5. a zero or negative W−U;
+6. a one-unit perturbation of a weight that flips S≤0;
+7. a float replacing an integer;
+8. an unknown JSON key or silently defaulted field;
+9. a changed certificate byte that invalidates the pinned digest.
+
+Each fixture should have a known expected failure stage. The tests do not prove correctness of the checker, but expose common implementation errors and demonstrate that the verifier is not merely accepting arbitrary input.
+
 ## Independent verification ladder
 1. Run the upstream checker in a pinned clean environment with all components. Record repository commit, runtime versions, exact command, exit code, full output, and hashes of the compressed certificate and script.
 2. Repeat each component separately (measures, parameters, tail) so a failing component is isolated and output is independently archived.
-3. Build a second checker that imports none of the upstream checker or tree-generation code. From frozen certificate data, independently regenerate Q₅=[2]×[4]×[6]×[10], point-to-hyperplane incidence, all M_I, W, U, and inequality slack. Compare leaf-by-leaf tuples, not just the maximum. Reject duplicate/missing leaves, unexpected keys, negative weights, and zero denominators.
-4. Canonicalize the certificate: sorted keys, integer-only encodings, no floats or implicit defaults. Publish SHA-256 hashes and a one-command reproduction script. Include a deliberately corrupted certificate fixture that must fail.
+3. Build the independent checker described above. Regenerate Q₅, point-to-hyperplane incidence, all M_I, W, U, and exact slack. Compare leaf-by-leaf tuples, not just the maximum. Reject duplicate/missing leaves, unexpected keys, negative weights, and zero denominators.
+4. Canonicalize the certificate: sorted keys, integer-only encodings, no floats or implicit defaults. Publish SHA-256 hashes and a one-command reproduction script. Include deliberately corrupted fixtures that must fail.
 5. Formalize the finite verifier in Lean 4 with explicit finite types; prove that the integer inequality implies the corresponding rational strict inequality. Prove the monotonicity identity above as a separate theorem. Keep the certificate's actual truth separate from the paper-to-model reduction.
 6. Prove the reduction from the original [3]×[5]×[7]×[11] initial-distribution optimization to the 480-point Q₅ model, then prove the normalization recurrence and every hypothesis of Lemma 5.4. The paper's prose says renormalization multiplies mass by (1−p), while its formula uses 1/(1−p); cite and prove the recurrence rather than silently adopting the prose.
 
