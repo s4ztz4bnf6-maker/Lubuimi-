@@ -16,6 +16,13 @@ theorem mass_filter_partition
     (∑ x ∈ F, w x) =
       (∑ x ∈ F.filter P, w x) +
       (∑ x ∈ F.filter (fun x => ¬ P x), w x) := by
-  exact Finset.sum_filter_add_sum_filter_not F P w
+  calc
+    (∑ x ∈ F, w x) =
+        (∑ x ∈ F.filter P ∪ F.filter (fun x => ¬ P x), w x) := by
+          rw [hcover]
+    _ =
+        (∑ x ∈ F.filter P, w x) +
+        (∑ x ∈ F.filter (fun x => ¬ P x), w x) :=
+          Finset.sum_union hdisj
 
 end BBMSTAudit
