@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Exact divisor-density certificates for candidate covering-system LCMs.
+"""Exact divisor-density capacity for a proposed odd covering-system LCM.
 
-For a hypothetical covering whose distinct moduli all divide N and are > 1,
-the sum of reciprocal moduli must be at least 1. The sum over every available
-proper divisor m of N with m>1 is therefore a necessary capacity bound:
-    sum_{m|N, 1<m<N} 1/m >= 1.
-This tool computes that bound exactly with fractions. Passing the bound is
-necessary only; it does not construct or certify a covering.
+If a finite covering has LCM N, every selected modulus m divides N and
+m > 1. The modulus N itself is allowed, so the necessary upper-capacity
+test must include N among available moduli:
+    sum_{m|N, m>1} 1/m >= 1.
+This is a necessary condition only, not a residue-class covering test.
 """
 from __future__ import annotations
 import argparse
@@ -29,30 +28,34 @@ def divisors(n: int) -> list[int]:
 
 def capacity_certificate(n: int) -> dict:
     ds = divisors(n)
-    available = [d for d in ds if 1 < d < n]
+    available = [d for d in ds if d > 1]
+    proper = [d for d in available if d < n]
     capacity = sum((Fraction(1, d) for d in available), Fraction(0, 1))
+    proper_capacity = sum((Fraction(1, d) for d in proper), Fraction(0, 1))
     sigma = sum(ds)
     abundance = Fraction(sigma, n)
-    necessary = capacity >= 1
     return {
-        "status": "exact_divisor_capacity_certificate",
+        "status": "exact_divisor_density_capacity_certificate",
         "N": n,
         "divisors": ds,
-        "divisor_count": len(ds),
-        "available_proper_moduli_count": len(available),
-        "available_proper_moduli": available,
+        "available_moduli_count_including_N": len(available),
+        "available_moduli_including_N": available,
+        "available_proper_moduli_count": len(proper),
+        "available_proper_moduli": proper,
         "sigma_1_N": sigma,
         "abundancy": f"{abundance.numerator}/{abundance.denominator}",
-        "reciprocal_capacity_over_distinct_proper_moduli": {
+        "reciprocal_capacity_over_all_available_moduli": {
             "numerator": capacity.numerator,
             "denominator": capacity.denominator,
             "exact": f"{capacity.numerator}/{capacity.denominator}",
-            "at_least_one": necessary,
+            "at_least_one": capacity >= 1,
         },
-        "necessary_condition_passes": necessary,
+        "proper_divisor_capacity_diagnostic_only": f"{proper_capacity.numerator}/{proper_capacity.denominator}",
+        "necessary_condition_passes": capacity >= 1,
         "warning": (
-            "This checks only the reciprocal-density capacity condition. "
-            "Passing does not imply any residue-class assignment covers Z/NZ."
+            "The modulus N itself is included because a covering can in principle "
+            "use it. This checks reciprocal-density capacity only; passing does not "
+            "imply any residue-class assignment covers Z/NZ."
         ),
     }
 
