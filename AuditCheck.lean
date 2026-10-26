@@ -147,3 +147,41 @@ theorem audited_parameters_reject_zero_singleton :
 
 #print axioms audited_parameters_nonempty
 #print axioms audited_parameters_reject_zero_singleton
+
+
+/-! ## Source-range parameter representation
+
+The BBMST stage parameter is represented with its published range
+0 ≤ δ ≤ 1/2 and aligned with the stage list. Zero is permitted here:
+the source sieve has a separate zero-parameter branch, so positivity must
+only be required locally when a quotient branch is actually used.
+This structure guards data shape and range; it does not prove the BBMST
+moment estimates or parameter-existence theorem.
+-/
+
+/-- Length-aligned BBMST delta data in the source's full parameter range. -/
+structure BBMSTStageParameters (stages : List ℚ) where
+  deltas : List ℚ
+  length_eq : deltas.length = stages.length
+  delta_nonneg : ∀ i, i < stages.length → 0 ≤ deltas[i]!
+  delta_le_half : ∀ i, i < stages.length → deltas[i]! ≤ (1 : ℚ) / 2
+
+/-- A nonempty stage list cannot be paired with an empty delta list. -/
+theorem bbmst_stage_parameters_nonempty
+    {stages : List ℚ} (hstage : 0 < stages.length)
+    (p : BBMSTStageParameters stages) : p.deltas ≠ [] := by
+  intro hnil
+  have hlen := p.length_eq
+  rw [hnil] at hlen
+  simp at hlen
+  omega
+
+/-- Every indexed parameter satisfies the exact source interval. -/
+theorem bbmst_stage_parameter_range
+    {stages : List ℚ} (p : BBMSTStageParameters stages)
+    (i : ℕ) (hi : i < stages.length) :
+    0 ≤ p.deltas[i]! ∧ p.deltas[i]! ≤ (1 : ℚ) / 2 :=
+  ⟨p.delta_nonneg i hi, p.delta_le_half i hi⟩
+
+#print axioms bbmst_stage_parameters_nonempty
+#print axioms bbmst_stage_parameter_range
