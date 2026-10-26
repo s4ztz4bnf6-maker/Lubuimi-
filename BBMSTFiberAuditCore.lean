@@ -35,7 +35,7 @@ theorem mass_filter_partition
   calc
     (∑ x ∈ F, w x) =
         (∑ x ∈ (F.filter P ∪ F.filter (fun x => ¬ P x)), w x) := by
-          rw [hcover]
+          rw [← hcover]
     _ =
         (∑ x ∈ F.filter P, w x) +
         (∑ x ∈ F.filter (fun x => ¬ P x), w x) := by
