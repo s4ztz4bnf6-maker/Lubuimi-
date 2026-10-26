@@ -50,3 +50,27 @@ The existing finite mass partition is bookkeeping only; it does not prove incide
 - MAA discussion: https://maa.org/math-values/ai-solves-an-80-year-old-erdos-problem/
 
 This is a more modular proof plan, not a claim that the global Erdős–Selfridge/BBMST theorem is now established.
+
+
+## New audit layer: the incidence Gram matrix
+
+A useful intermediate object is the matrix
+\[
+G_{ij}:=\mu(H_i\cap H_j).
+\]
+For every real vector \(c=(c_i)\),
+\[
+c^T Gc=\mathbb E\!\left[\left(\sum_i c_i\mathbf1_{H_i}\right)^2\right]\ge 0.
+\]
+Thus \(G\) is positive semidefinite, and this statement needs only a finite probability space and nonnegative weights summing to one. Its diagonal is \(G_{ii}=\mu(H_i)\), while off-diagonal entries are precisely the intersection data the BBMST geometry must control.
+
+**Why this helps:** it cleanly separates (i) a formally elementary positivity theorem, (ii) the source-specific theorem restricting which Gram matrices can arise from the paper's hyperplanes, and (iii) the final numerical optimization. A generic PSD bound is not automatically strong enough to prove the BBMST sieve estimate; any stronger claim must be derived from the actual incidence hypotheses, not inserted as an axiom.
+
+Suggested Lean boundary:
+- define the indicator of each event as a real-valued function on a finite type;
+- define expectation by a normalized nonnegative weight function with a separately proved positive total mass;
+- prove the Gram identity by finite-sum rearrangement;
+- prove nonnegativity from pointwise square nonnegativity;
+- only then introduce the BBMST-specific intersection constraints.
+
+This is an additional reusable lemma architecture, not yet a Lean-checked theorem in this repository.
