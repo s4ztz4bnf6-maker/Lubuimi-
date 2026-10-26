@@ -23,14 +23,18 @@ Recommended route:
 5. **Proof-carrying exclusion.** SAT/ILP may discover unsatisfiable instances or peeling traces, but the trusted result must be a compact certificate whose checker validates every branch and local inequality. The checker must reject truncated traces and must establish that all candidate moduli/residue branches were covered.
 6. **Finite/infinite bridge.** Keep the bidirectional theorem explicit: a finite family covers Z iff it covers every residue modulo its lcm. Do not infer an exclusion of all odd coverings from a bounded lcm search unless a theorem bounds the lcm of every hypothetical covering.
 
-## Exact arithmetic on the first candidate
+## Exact arithmetic for the first surviving candidates
 
-Independent integer arithmetic gives:
-- N=10395=3^3*5*7*11; sigma_1(N)=23040, so sigma_1(N)/N=512/231>2. There are 32 divisors total and 30 proper divisors greater than 1.
-- N=12285=3^3*5*7*13; sigma_1(N)=26880, so sigma_1(N)/N=256/117>2. There are 30 proper divisors greater than 1.
-- N=17325=3^2*5^2*7*11; sigma_1(N)=38688, so sigma_1(N)/N=12896/5775>2. There are 34 proper divisors greater than 1.
+For a fixed LCM N, any covering with pairwise distinct moduli m satisfying 1<m<N and m|N must obey the necessary reciprocal-capacity inequality
+sum_{m|N, 1<m<N} 1/m >= 1,
+because the sum over the actual selected moduli must be at least 1 and is bounded above by the sum over all available proper divisors. The exact checker in research/tools/bbmst_divisor_capacity_certificate.py computes this bound using rational arithmetic and emits the full divisor list; tests are in research/tools/test_bbmst_divisor_capacity_certificate.py.
 
-These exact calculations confirm that the three values survive the simple abundancy necessary condition; they do not show that any of them is a covering number. For N=10395 the next certificate must reason about the actual residue classes modulo each allowed divisor, not just sigma_1(N).
+Exact results:
+- N=10395: sigma_1(N)=23040, sigma_1(N)/N=512/231, available proper-divisor reciprocal capacity = 12644/10395, with 30 available proper divisors >1.
+- N=12285: sigma_1(N)=26880, sigma_1(N)/N=256/117, capacity = 14594/12285, with 30 available proper divisors >1.
+- N=17325: sigma_1(N)=38688, sigma_1(N)/N=12896/5775, capacity = 1942/1575, with 34 available proper divisors >1.
+
+Independent exact arithmetic checked these three candidates and the identity capacity = sigma_1(N)/N - 1 - 1/N for every N from 2 through 149. All checks passed. These candidates pass this necessary condition, so it does not exclude them. This is a reproducible baseline for the next stronger local capacity or peeling certificate, not a solution of any candidate instance.
 
 ## Existing tools in this repository
 
