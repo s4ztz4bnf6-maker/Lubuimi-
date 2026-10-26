@@ -24,7 +24,7 @@ theorem normalizedRemovedMass_le_alpha
   · exact hα0
   · have hden : 0 < 1 - δ := by linarith
     rw [div_le_iff₀ hden]
-    nlinarith [mul_nonneg hδ0 (show 0 ≤ 1 - α by linarith)]
+    nlinarith [mul_nonneg (le_of_lt hδ0) (show 0 ≤ 1 - α by linarith)]
 
 /--
 The second-moment bound for the normalized removed mass:
