@@ -49,7 +49,7 @@ theorem normalizedRemovedMass_le_second_moment
     have hnum : 4 * δ * (α - δ) ≤ α ^ 2 := by
       nlinarith [sq_nonneg (α - 2 * δ)]
     apply (div_le_div_iff₀ hden2 hden2).2
-    exact mul_le_mul_of_nonneg_right hnum (le_of_lt hden2)
+    exact hnum
 
 #print axioms normalizedRemovedMass_le_alpha
 #print axioms normalizedRemovedMass_le_second_moment
