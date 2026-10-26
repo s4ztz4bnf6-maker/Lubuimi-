@@ -82,7 +82,7 @@ The job uploaded the component JSON outputs as artifact `bbmst-independent-compo
 
 Corrected rerun: https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/40410444043
 Commit under test: `da65cbc2be729207dae1a759a024e16deaa45e6e`
-Artifact: `bbmst-independent-component-replay` (artifact digest `sha256:b35e3d6232fe76caef9624512f069f8fe519e74898761b29997e378e4c57e`).
+Artifact: `bbmst-independent-component-replay` (artifact digest `sha256:b35e3d6232fe76caef9624512f069f8fe519e74898761b29927397e378e4c57e`).
 
 The independent implementation is `audit/independent_bbmst_measures.py`. It does not import the upstream checker. It reconstructs the 480-point Cartesian space, coordinate projection classes, configuration tree/pruning, certificate leaf keys, point coverage, orbit signatures and nonnegative integer weights; it checks the strict core inequality using exact integer arithmetic and rejects duplicate JSON object keys. The CI job explicitly uses `set -o pipefail`, so a Python failure cannot be masked by `tee`. The corrected job reports the independent step completed successfully, as well as the three pinned upstream component invocations.
 
