@@ -1,56 +1,54 @@
-# Source map: BBMSST square-free theorem to a finite hyperplane model
+# Source map: BBMST square-free theorem to a finite hyperplane model
 
 Date: 2026-10-26
 
-## Source and exact scope
+## Correction and source scope
 
-Primary source: Balister, Bollobas, Morris, Sahasrabudhe, Tiba, The Erdős–Selfridge problem with square-free moduli, arXiv:1901.11465, especially Theorems 1.1 and 1.2 and the geometric setup in Section 1.
+This file was corrected after checking the published source. The broad claim that for arbitrary finite coordinate sets of size at least two every hyperplane cover contains parallel hyperplanes is too strong without the source's hypotheses. The precise theorem must be copied from Balister–Bollobás–Morris–Sahasrabudhe–Tiba, The Erdős–Selfridge problem with square-free moduli, Algebra & Number Theory 15 (2021), 609–626, arXiv:1901.11465.
 
-The source proves the square-free-moduli variant: a finite covering system with distinct square-free moduli cannot have all moduli odd. It does not prove the unrestricted Erdős–Selfridge conjecture for arbitrary odd distinct moduli. Any Lean theorem developed from this model must preserve that scope in its name and statement.
+Their Theorem 1.2 uses the specific coordinate sets S_k = [p_k+1], where p_k is the k-th prime, and states that any collection of nontrivial hyperplanes covering Q = S_1 × ... × S_n contains two parallel hyperplanes. Here a hyperplane A = A_1 × ... × A_n has each A_k either S_k or a singleton. Its fixed-coordinate set is F(A) = {k : A_k ≠ S_k}; nontrivial means F(A) is nonempty; parallel means equal fixed-coordinate sets.
+
+The arithmetic consequence is the square-free-moduli theorem: a finite cover by progressions with distinct, odd, square-free moduli greater than 1 cannot cover Z. It does not by itself prove the unrestricted Erdős–Selfridge conjecture.
+
+Primary sources:
+- https://arxiv.org/abs/1901.11465
+- https://par.nsf.gov/servlets/purl/10300177
+- https://ora.ox.ac.uk/objects/uuid:3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s
 
 ## Finite geometric translation
 
-For each coordinate i in {1,...,n}, let S_i be a finite set with at least two elements and let Q be the product of all S_i.
+Let p_k be the k-th prime and S_k = {0, ..., p_k}. Then |S_k| = p_k + 1. Let Q be their finite product.
 
-A hyperplane is a product A = product_i A_i where each coordinate A_i is either all of S_i or a singleton {s_i}. Represent it by a partial assignment:
-- fixed coordinates record the subset of coordinates held constant;
-- value records the selected element at each fixed coordinate.
+Represent a hyperplane by a partial assignment:
+- fixed is a Finset of coordinates;
+- value gives one selected coordinate value for each fixed coordinate;
+- coordinates outside fixed range freely over S_k.
 
-Its fixed-coordinate set F(A) is the set of fixed coordinates. Two hyperplanes are parallel exactly when their fixed-coordinate sets are equal. A valid nontrivial hyperplane has a nonempty fixed-coordinate set; this corresponds to excluding the whole space as a covering progression.
+Its fixed-coordinate set is exactly fixed. Two hyperplanes are parallel iff their fixed-coordinate sets agree. Nontriviality means fixed is nonempty.
 
-The geometric statement to formalize first is:
-if a finite family of such hyperplanes covers Q, then two distinct family members have the same fixed-coordinate set.
+Formalization tasks:
+1. Define the coordinate-index type and finite product Q.
+2. Define a partial assignment with dependent coordinate values.
+3. Define its associated hyperplane as a Finset/set of points in Q.
+4. Prove membership iff all fixed coordinates equal the assigned values.
+5. Prove parallelism iff fixed-coordinate sets agree.
+6. State the cover condition and the exact Theorem 1.2 with |S_k| = p_k + 1; do not generalize the theorem to arbitrary coordinate cardinalities without proof.
+7. Formalize the CRT bridge from square-free moduli to this product box, including the finite prime universe and smoothness/truncation assumptions.
+8. Compare the resulting arithmetic statement line by line with Theorem 1.1.
 
-This is the source's Theorem 1.2 in its prime-coordinate specialization, and the paper states a broader geometric sieve framework around it. Keep the theorem parameterized over the precise finite coordinate sets only when the source theorem actually supports that generality.
+## Extension toward non-square-free moduli
 
-## Arithmetic bridge and its restrictions
+Repeated prime factors require a richer coordinate model. A relevant route is to replace a prime coordinate F_p with a prime-power coordinate Z/p^gamma Z, whose subsets are cosets of p^ell Z/p^gamma Z. Not every hyperplane in the resulting product corresponds to an arithmetic progression, so the arithmetic-to-geometric map must be proved rather than assumed.
 
-For the square-free arithmetic statement, take S_i to be residue classes modulo distinct primes. By the Chinese remainder theorem, a progression with square-free modulus d corresponds to fixing the coordinates for the prime divisors of d and leaving all other coordinates free. Distinct moduli imply distinct fixed-coordinate sets only after the prime universe and smoothness/truncation assumptions have been stated.
+Recent preprint-level work by Ege Öztürk (August 2026) proposes a level-vector version of the sieve argument and a reduction of the square-freeness threshold from 73 to 37, while explicitly leaving the full Erdős–Selfridge problem open. See the companion audit document research/BBMST_RECENT_LEVEL_VECTOR_RESULTS_AUDIT_2026-10-26.md. Treat this as a research lead requiring independent reproduction, not as an established theorem until its proof and certificate are checked.
 
-The arithmetic-to-geometric map must therefore record:
-1. the finite prime universe;
-2. the square-free factorization of each modulus;
-3. the requirement that every prime divisor belongs to the chosen universe;
-4. the CRT equivalence between congruence classes and points of the product box;
-5. the correspondence between a progression and its partial coordinate assignment;
-6. the exact covering equivalence.
+## Acceptance criteria
 
-Do not claim that this directly covers arbitrary odd moduli: repeated prime powers are not represented by a single coordinate over the prime residue field in this simple model.
+- The exact source hypotheses appear in the Lean theorem.
+- No arbitrary-cardinality generalization is smuggled in.
+- Every arithmetic/geometric correspondence is proved.
+- Degenerate hyperplanes and empty fixed-coordinate sets are handled explicitly.
+- The final transitive axiom audit is recorded.
+- Any claim about arbitrary odd moduli remains explicitly open unless the prime-power extension is proved.
 
-## Formalization order
-
-1. Define a finite partial assignment and its fixed-coordinate set.
-2. Define the associated hyperplane as a finite set of points of Q.
-3. Prove membership iff all fixed coordinates agree.
-4. Prove the parallel criterion is equality of fixed-coordinate sets.
-5. Prove a finite family covers Q iff every point belongs to at least one hyperplane.
-6. Formalize the exact cited finite geometric theorem, with the exact source assumptions.
-7. Separately formalize the CRT correspondence for square-free moduli and prove that the arithmetic theorem follows.
-8. Audit the theorem's transitive axioms and compare the Lean statement to source Theorem 1.2.
-9. Only after this known square-free result is source-faithfully formalized should it be used as a verified component in attempts to handle non-square-free moduli.
-
-## Why this is the right immediate target
-
-The current mass/fiber files establish general finite-sum infrastructure but do not encode hyperplanes, the fixed-coordinate sets, the covering relation, or the CRT correspondence. This source map prevents a generic mass lemma from being mistaken for the central combinatorial theorem and gives a concrete bridge from the original paper to Lean definitions.
-
-The remaining hard gap to the unrestricted Erdős–Selfridge conjecture is the treatment of repeated prime factors / arbitrary odd moduli. No claim is made here that the square-free theorem resolves that gap.
+The current generic mass/fiber lemmas are infrastructure only. They do not prove the geometric theorem or the unrestricted Erdős–Selfridge conjecture.
