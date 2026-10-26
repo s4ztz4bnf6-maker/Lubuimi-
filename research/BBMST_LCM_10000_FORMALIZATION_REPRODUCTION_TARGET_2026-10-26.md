@@ -1,7 +1,7 @@
 # BBMST audit update: independent kernel-checked LCM floor as a reproduction benchmark
 
 Date: 2026-10-26
-Status: external result identified and scoped; not yet independently reproduced in this repository.
+Status: external result identified and source pins inspected; not yet independently built in this repository.
 
 ## Source and exact theorem target
 
@@ -18,9 +18,18 @@ theorem odd_covering_lcm_gt_10000
     10000 < Finset.univ.lcm n
 ```
 
-This means: a finite family of congruence classes covers every integer, with pairwise distinct odd moduli greater than one, only if the least common multiple of those moduli exceeds 10,000.
+The family is finite and covers every integer; its moduli are pairwise distinct, odd, and greater than one. The conclusion is the strict lower bound LCM > 10,000. The Erdős–Selfridge question itself remains open.
 
-The authors report 63 published theorems depending only on `propext`, `Classical.choice`, and `Quot.sound`, with no `sorry`, `native_decide`, or solver in the trusted base. The repository and paper must still be independently pinned, built, and audited before these can be recorded as our own reproduction.
+## Exact dependency pins inspected
+
+From the repository's current `main` branch:
+- Lean toolchain: `leanprover/lean4:v4.30.0`
+- Mathlib input version: `v4.30.0`
+- Mathlib Git revision in `lake-manifest.json`: `c5ea00351c28e24afc9f0f84379aa41082b1188f`
+- Lean toolchain file blob SHA: `af9e5d339aeb37e4e6ba2603fb873e637678e304`
+- `Erdos7/AxiomAudit.lean` blob SHA: `8196010711ee15188e685337c46c19acf4972ceb`
+
+The manifest also pins the transitive Lake dependencies. For a truly reproducible audit, record the repository HEAD commit as well as these file hashes; `main` is mutable, so this note does not yet identify an immutable source snapshot.
 
 ## Proof architecture described by the authors
 
@@ -31,13 +40,13 @@ The authors report 63 published theorems depending only on `propext`, `Classical
 - A kernel-checked enumeration establishes that these are the only odd non-deficient candidates in the relevant range.
 - A bridge transports the result to the official `StrictCoveringSystem ℤ` formulation of Erdős #7.
 
-The repository explicitly describes the mathematical content as known and the contribution as epistemic/formal rather than progress on resolving the open Erdős–Selfridge question. This distinction matters: reproducing a kernel-checked known partial theorem improves assurance and our proof infrastructure, but does not by itself advance the conjecture's mathematical frontier.
+The authors report that 63 published theorems depend only on `propext`, `Classical.choice`, and `Quot.sound`, with no `sorry`, `native_decide`, or solver in the trusted base. The source's `Erdos7/AxiomAudit.lean` scans compiled declarations across `Erdos7.*` and rejects additional axioms. This is stronger than a hand-maintained list, but the reported gate still needs to be run in a clean build before we claim reproduction.
 
 ## Why this is a useful intermediate target
 
-It is a modular reproduction milestone and an independent reference for our finite-cover certificate interface. The exact checker should calculate, for a fixed candidate family with LCM N, the number U of uncovered residues among 0,...,N-1. Periodicity then gives uncovered natural density U/N. If U=0, that particular family covers all integers; if U>0, that family is not a cover.
+For a fixed candidate family with LCM N, our checker computes the exact number U of uncovered residues among 0,...,N-1. Periodicity gives uncovered natural density U/N. If U=0, that family covers all integers; if U>0, that family is not a cover.
 
-This finite-instance computation does not prove the universal LCM theorem. The universal result also requires the density reduction, exhaustive candidate classification, all capacity certificates, and the theorem transport.
+This finite-instance computation does not prove the universal LCM theorem. The universal result also requires the density reduction, exhaustive candidate classification, all capacity certificates, and theorem transport.
 
 ## Statement-fidelity checklist
 
@@ -49,8 +58,9 @@ This finite-instance computation does not prove the universal LCM theorem. The u
 6. The density/abundancy implication handles divisor multiplicities correctly.
 7. Candidate enumeration is exhaustive for its claimed range.
 8. The final theorem's transitive axioms match the reported claim.
-9. Lean toolchain and Mathlib revision are pinned; clean build is reproducible.
-10. No proof holes or unreviewed trusted escape hatches remain.
+9. The repository HEAD and all dependency revisions are immutable and recorded.
+10. A clean `lake build Erdos7` and `scripts/axiom_gate.sh` pass.
+11. No proof holes or unreviewed trusted escape hatches remain.
 
 ## Relationship to the nine-prime result
 
@@ -58,4 +68,4 @@ The external rank-nine theorem, if independently reproduced with matching hypoth
 
 ## Next action
 
-Fetch the repository's exact Lean toolchain, dependency manifest, theorem identifiers, source commit, and build instructions. Pin the artifact hashes, reproduce a clean build, and inspect `#print axioms` for the final theorem. Until then this is an external theorem and a reproduction plan, not a locally verified theorem.
+Capture the exact upstream HEAD SHA, then reproduce a clean build with Lean 4.30.0 and the manifest pins, and inspect `#print axioms` for the final theorem. This environment has inspected the source and pins but has not run that build. Until then this is an external theorem and a reproducibility plan, not a locally verified theorem.
