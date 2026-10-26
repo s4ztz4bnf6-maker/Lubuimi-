@@ -32,13 +32,27 @@ def decode_plane_key(key):
     return tuple(tuple(int(x) for x in plane.split(",")) for plane in key.split(";"))
 
 
+def reject_duplicate_object_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON object key: {key!r}")
+        result[key] = value
+    return result
+
+
 def exact_replay(certificate_path: Path) -> dict:
     raw = certificate_path.read_bytes()
-    cert = json.loads(gzip.decompress(raw))
+    cert = json.loads(gzip.decompress(raw), object_pairs_hook=reject_duplicate_object_keys)
+    assert set(cert) == {"schema", "q", "masks", "threshold", "leaves"}
     assert cert.get("schema") == "bbmst_squarefree_primal_measures_v1"
-    assert tuple(cert.get("q", ())) == MODULI
-    assert tuple(cert.get("masks", ())) == PLANE_MASKS
-    assert cert.get("threshold") == [TARGET_NUM, TARGET_DEN]
+    assert type(cert.get("q")) is list and all(type(x) is int for x in cert["q"])
+    assert tuple(cert["q"]) == MODULI
+    assert type(cert.get("masks")) is list and all(type(x) is int for x in cert["masks"])
+    assert tuple(cert["masks"]) == PLANE_MASKS
+    assert type(cert.get("threshold")) is list
+    assert len(cert["threshold"]) == 2 and all(type(x) is int for x in cert["threshold"])
+    assert cert["threshold"] == [TARGET_NUM, TARGET_DEN]
     leaf_table = cert["leaves"]
     assert isinstance(leaf_table, dict)
 
