@@ -156,6 +156,24 @@ theorem bbmst_second_moment_denominator_cases
     have hpos : 0 < δ := lt_of_le_of_ne hδ (Ne.symm hzero)
     exact bbmst_second_moment_denominator_pos δ hpos hupper
 
+/**
+The denominator vanishes exactly on the zero-parameter branch throughout
+the source range. This is stronger than merely checking that the positive
+branch has a nonzero denominator.
+-/
+theorem bbmst_second_moment_denominator_zero_iff
+    (δ : ℚ) (hupper : δ ≤ (1 : ℚ) / 2) :
+    4 * δ * (1 - δ) = 0 ↔ δ = 0 := by
+  constructor
+  · intro h
+    have hone : 0 < 1 - δ := by linarith
+    have hmul : δ * (1 - δ) = 0 := by nlinarith [h]
+    rcases mul_eq_zero.mp hmul with hδ | hδ
+    · exact hδ
+    · linarith
+  · rintro rfl
+    norm_num
+
 /-- Every indexed source parameter lies in the published interval. -/
 theorem indexed_stage_parameter_range
     {n : ℕ} (p : IndexedStageParameters n) (i : Fin n) :
@@ -169,6 +187,7 @@ theorem zero_parameter_denominator_zero :
 
 #print axioms bbmst_second_moment_denominator_pos
 #print axioms bbmst_second_moment_denominator_cases
+#print axioms bbmst_second_moment_denominator_zero_iff
 #print axioms indexed_stage_parameter_range
 #print axioms zero_parameter_denominator_zero
 
