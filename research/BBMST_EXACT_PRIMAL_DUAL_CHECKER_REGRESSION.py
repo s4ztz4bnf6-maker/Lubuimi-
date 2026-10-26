@@ -34,6 +34,9 @@ def must_reject(data):
     raise AssertionError(f"invalid certificate accepted: {data}")
 
 def run():
+    # Empty-variable LPs can make a nominal certificate vacuously pass; reject
+    # them explicitly for the nondegenerate BBMST certificate workflow.
+    must_reject({"A":[[]], "b":["0"], "c":[], "x":[], "y":["0"]})
     for i in range(100):
         base = valid_case(i)
         bad_x = {**base, "x": base["x"].copy()}
