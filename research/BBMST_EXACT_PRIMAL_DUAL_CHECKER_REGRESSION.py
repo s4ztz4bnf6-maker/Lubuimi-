@@ -16,11 +16,14 @@ def valid_case(i: int):
     n = 1 + (i % 5)
     b = [Fraction(i+j+1, j+1) for j in range(n)]
     c = [Fraction(j+1, i+1) for j in range(n)]
+    # Identity constraints plus a redundant non-diagonal sum constraint.
     A = [[Fraction(int(i == j)) for j in range(n)] for i in range(n)]
+    A.append([Fraction(1) for _ in range(n)])
+    b.append(sum(b, Fraction(0)))
     data = {"A":[[s(v) for v in row] for row in A],
             "b":[s(v) for v in b], "c":[s(v) for v in c],
-            "x":[s(v) for v in b], "y":[s(v) for v in c]}
-    assert verify(data) == (sum((u*v for u,v in zip(b,c)), Fraction(0)),)*2
+            "x":[s(v) for v in b[:n]], "y":[s(v) for v in c] + ["0"]}
+    assert verify(data) == (sum((u*v for u,v in zip(b[:n],c)), Fraction(0)),)*2
     return data
 
 def must_reject(data):
@@ -50,4 +53,4 @@ def run():
     return 100
 
 if __name__ == "__main__":
-    print(f"PASS: {run()} valid rational LPs; four rejection classes per case")
+    print(f"PASS: {run()} valid rational LPs with redundant non-diagonal rows; four rejection classes per case")
