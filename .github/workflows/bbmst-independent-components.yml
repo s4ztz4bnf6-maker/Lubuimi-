@@ -32,15 +32,15 @@ jobs:
       - name: "Replay component 1 of 3: finite measure certificates"
         working-directory: upstream
         run: |
-          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component measures --output ../bbmst-measures.json
+          env PYTHONPATH=. python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component measures --output ../bbmst-measures.json
       - name: "Replay component 2 of 3: rational distortion parameters"
         working-directory: upstream
         run: |
-          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component parameters --output ../bbmst-parameters.json
+          env PYTHONPATH=. python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component parameters --output ../bbmst-parameters.json
       - name: "Replay component 3 of 3: large-prime recurrence and logarithmic termination"
         working-directory: upstream
         run: |
-          python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component tail --output ../bbmst-tail.json
+          env PYTHONPATH=. python library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py --component tail --output ../bbmst-tail.json
       - name: Upload exact replay outputs
         if: always()
         uses: actions/upload-artifact@v4
