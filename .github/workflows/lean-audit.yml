@@ -28,6 +28,8 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Prepare Lean module output directory
+        run: mkdir -p .lake/build/lib/lean
       - name: Compile division-free mass core
         run: lake env lean -o .lake/build/lib/lean/BBMSTMassAuditCore.olean BBMSTMassAuditCore.lean
       - name: Compile finite fiber split core
