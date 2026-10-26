@@ -88,3 +88,29 @@ theorem exists_positive_weight_of_positive_mass
 
 
 end BBMSTAudit
+
+
+namespace BBMSTAudit
+
+variable {α : Type*} [DecidableEq α]
+
+/--
+For a finite carrier with nonnegative point weights, positive total mass is
+equivalent to the existence of a positive-weight point. This packages both
+directions into one interface for later fiber arguments and keeps the proof
+division-free.
+-/
+theorem mass_pos_iff_exists_positive_weight
+    (s : Finset α) (w : α → ℚ)
+    (hw : ∀ x ∈ s, 0 ≤ w x) :
+    0 < ∑ x ∈ s, w x ↔ ∃ x ∈ s, 0 < w x := by
+  constructor
+  · exact exists_positive_weight_of_positive_mass s w hw
+  · rintro ⟨x, hx, hpos⟩
+    have hle : w x ≤ ∑ y ∈ s, w y :=
+      Finset.single_le_sum (fun y hy => hw y hy) hx
+    linarith
+
+#print axioms mass_pos_iff_exists_positive_weight
+
+end BBMSTAudit
