@@ -78,6 +78,31 @@ noncomputable def coordinateProduct {n : ℕ} {α : Type} [Fintype α]
   classical
   exact Finset.univ.filter (fun x => ∀ i, x i ∈ S i)
 
+ /--
+The coordinate hyperplane at value c, intersected with the finite product Q.
+If c is not in S i, this set is empty.
+-/
+noncomputable def coordinateHyperplane {n : ℕ} {α : Type} [Fintype α]
+    (S : Fin n → Finset α) (i : Fin n) (c : α) :
+    Finset (Fin n → α) := by
+  classical
+  exact (coordinateProduct S).filter (fun x => x i = c)
+
+/-- Membership in a coordinate hyperplane is product membership plus one
+fixed-coordinate equation. -/
+theorem mem_coordinateHyperplane
+    {n : ℕ} {α : Type} [Fintype α]
+    (S : Fin n → Finset α) (i : Fin n) (c : α) (x : Fin n → α) :
+    x ∈ coordinateHyperplane S i c ↔
+      x ∈ coordinateProduct S ∧ x i = c := by
+  classical
+  simp [coordinateHyperplane]
+
+/--
+The product after deleting c from coordinate i is exactly Q with the
+coordinate hyperplane H_{i,c} removed.
+-/
+
 /--
 Deleting c from exactly coordinate i is the same as restricting the original
 coordinate product to points whose i-th coordinate is not c.
@@ -111,6 +136,18 @@ theorem coordinate_erase_restriction
     · subst j
       exact Finset.mem_erase.mpr ⟨Ne.symm hne, hx i⟩
     · simpa [hji] using hx j
+
+theorem coordinate_erase_eq_complement_hyperplane
+    {n : ℕ} {α : Type} [Fintype α] [DecidableEq α]
+    (S : Fin n → Finset α) (i : Fin n) (c : α) :
+    coordinateProduct (fun j => if j = i then (S j).erase c else S j) =
+      (coordinateProduct S).filter (fun x => x ∉ coordinateHyperplane S i c) := by
+  classical
+  ext x
+  rw [coordinate_erase_restriction]
+  rw [Finset.mem_filter]
+  rw [mem_coordinateHyperplane]
+  simp
 
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
