@@ -6,7 +6,7 @@ Status: audit plan; it does not prove the Erdős–Selfridge odd-covering conjec
 
 The current upstream target's transitive axiom report includes project-specific assumptions named `sieve_criterion` and `sf_sieve_lt_one`, in addition to standard Lean foundations. Until their definitions are replaced by derivations from the original hypotheses, the top-level theorem remains conditional.
 
-The typed `ParameterData n` interface prevents an empty index type when `n > 0` and stores positivity and upper-bound hypotheses for every coordinate. It does **not** prove that the `primeIndex` values are prime, nor derive the bounds from the BBMST geometry.
+The strengthened typed `ParameterData n` interface puts prime indices, block sizes, and delta values on the same `Fin n` index type; it requires primality and oddness of each prime index, positive block sizes, and `0 < delta ≤ 1/2`. The kernel lemma `sieve_denominator_pos` then proves the denominator `4 * delta * (1 - delta)` is strictly positive. These fields are assumptions carried by the package: the interface does **not** derive them from a `CoveringSystem` or from BBMST geometry.
 
 ## 2. Proof-dependency graph
 
@@ -57,3 +57,10 @@ The source definition exposes a concrete interface defect to repair before attem
 3. Define the term so its denominator is used only under an explicit nonzero proof, or use a division-free equivalent inequality.
 4. Strengthen the statement of the sieve criterion to carry the exact source hypotheses, then prove a nondegenerate test theorem from the definitions.
 5. Only after that interface is source-faithful, derive the criterion and SF witness from the published BBMST argument or a separately checked finite certificate. The current axiom names cannot be removed merely by making the helper interface compile.
+
+
+## 7. Typed denominator guard added
+
+The interface now has one shared finite index type for prime indices, block sizes, and delta parameters. The added theorem sieve_denominator_pos derives strict positivity of the rational denominator from the stored delta bounds, so the typed path cannot use the division-by-zero behavior that breaks the raw List/getD interface. Its transitive axiom report is included in BBMSTParameterDataAudit.lean.
+
+This closes only a representation-level hole. The theorem still assumes valid prime/block/delta data and does not yet derive that data from the original covering system; the two project-specific axioms remain open.
