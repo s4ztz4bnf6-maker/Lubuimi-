@@ -38,7 +38,7 @@ n\equiv (3^{j+1})^{-1}
 \pmod{2^{A_{j+1}+1}}.
 \]
 
-Since each \(a_j\ge1\), the exponents \(A_{j+1}+1\) strictly increase. The word's cylinder is therefore either empty (the residue conditions conflict under reduction to the smaller moduli), or exactly one residue class modulo \(2^{A_k+1}\). This is a finite, exact decision procedure for word realizability.
+Since each \(a_j\ge1\), the exponents \(A_{j+1}+1\) strictly increase. The nested conditions determine at most one residue class modulo \\(2^{A_k+1}\\). For the standard accelerated Syracuse map, every finite word with all \\(a_j\\ge1\\) is realizable: the conditions are automatically compatible, by induction using \\(N_{j+1}=3N_j+2^{A_j}\\) and the fact that 3 is invertible modulo powers of two. Thus the cylinder is never empty for a valid positive valuation word. It is a canonical encoding of the word, not a pruning mechanism that eliminates arbitrary words. An implementation that reports an empty cylinder for such a word has a bug in its recurrence, modulus, or residue calculation.
 
 For a positive odd \(n\), satisfaction of all these congruences implies the word is realized: inductively \(N_j(n)/2^{A_j}\) is a positive odd integer and the recurrence gives the prescribed Syracuse step. Conversely, every realized word satisfies every congruence. Positivity must be stated when converting the congruences into an orbit of positive integers.
 
