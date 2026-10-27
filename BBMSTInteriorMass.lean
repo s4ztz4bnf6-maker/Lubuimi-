@@ -74,4 +74,55 @@ theorem weighted_moment_gap_identity
 #print axioms BBMSTInteriorMass.interior_subset_gap_lower_bound
 #print axioms BBMSTInteriorMass.positive_gap_of_positive_interior_mass
 
+
+/--
+Boundary-rigidity characterization of the exact moment gap.
+
+For nonnegative weights and shares in [0,1], the gap vanishes exactly when
+every positive-weight fibre has endpoint share 0 or 1. This isolates the
+precise source-specific task: the BBMST geometry must rule out an
+endpoint-only configuration on the support. The lemma itself is algebraic
+and does not assert that the geometry does so.
+-/
+theorem moment_gap_zero_iff_boundary_supported
+    {n : ℕ} (p alpha : Fin n → ℚ)
+    (hp : ∀ i, 0 ≤ p i)
+    (ha0 : ∀ i, 0 ≤ alpha i)
+    (ha1 : ∀ i, alpha i ≤ 1) :
+    (∑ i, p i * (alpha i * (1 - alpha i)) = 0) ↔
+      ∀ i, p i > 0 → alpha i = 0 ∨ alpha i = 1 := by
+  constructor
+  · intro hgap i hpi
+    have hterm_nonneg : 0 ≤ p i * (alpha i * (1 - alpha i)) :=
+      mul_nonneg (hp i) (mul_nonneg (ha0 i) (sub_nonneg.mpr (ha1 i)))
+    have hterm_le :
+        p i * (alpha i * (1 - alpha i)) ≤
+          ∑ j : Fin n, p j * (alpha j * (1 - alpha j)) :=
+      Finset.single_le_sum
+        (fun j hj => mul_nonneg (hp j)
+          (mul_nonneg (ha0 j) (sub_nonneg.mpr (ha1 j))))
+        (Finset.mem_univ i)
+    have hterm : p i * (alpha i * (1 - alpha i)) = 0 := by
+      linarith
+    have hshare : alpha i * (1 - alpha i) = 0 := by
+      rcases (mul_eq_zero.mp hterm) with hweight | hshare
+      · linarith
+      · exact hshare
+    rcases mul_eq_zero.mp hshare with hzero | hone
+    · exact Or.inl hzero
+    · right
+      linarith
+  · intro hboundary
+    apply Finset.sum_eq_zero
+    intro i hi
+    by_cases hpi : p i = 0
+    · simp [hpi]
+    · have hpos : p i > 0 := lt_of_le_of_ne (hp i) (Ne.symm hpi)
+      rcases hboundary i hpos with hzero | hone
+      · simp [hzero]
+      · simp [hone]
+
+
+#print axioms BBMSTInteriorMass.moment_gap_zero_iff_boundary_supported
+
 end BBMSTInteriorMass
