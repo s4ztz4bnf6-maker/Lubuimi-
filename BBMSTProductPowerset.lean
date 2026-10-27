@@ -19,7 +19,6 @@ theorem product_one_add_weight_eq_sum_powerset
     (∏ j ∈ T, (1 + x * w j)) =
       ∑ J ∈ T.powerset,
         x ^ J.card * (∏ j ∈ J, w j) := by
-  classical
   calc
     (∏ j ∈ T, (1 + x * w j))
         = ∏ j ∈ T, (x * w j + 1) := by
