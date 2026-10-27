@@ -59,3 +59,38 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
 end SyracuseAudit
 
 #print axioms SyracuseAudit.affine_identity
+
+
+/--
+Exact descent-margin equivalence for the affine recurrence.
+
+This is an algebraic theorem only. To apply it to Syracuse, a separate
+realization theorem must connect the rational sequence x to an actual
+positive odd Syracuse orbit and its valuation word.
+-/
+theorem affine_descent_iff_margin
+    (a : ℕ → ℕ) (x : ℕ → ℚ)
+    (hstep : ∀ k, x (k + 1) = (3 * x k + 1) / (2 : ℚ) ^ (a k))
+    (k : ℕ) :
+    x k < x 0 ↔
+      (offset a k : ℚ) <
+        (((2 : ℚ) ^ exponent a k - (3 : ℚ) ^ k) * x 0) := by
+  have hid := affine_identity a x hstep k
+  have hp : 0 < (2 : ℚ) ^ exponent a k := by positivity
+  constructor
+  · intro hx
+    have hmul :
+        (2 : ℚ) ^ exponent a k * x k <
+          (2 : ℚ) ^ exponent a k * x 0 :=
+      (mul_lt_mul_left hp).2 hx
+    rw [hid] at hmul
+    nlinarith
+  · intro hmargin
+    have hmul :
+        (2 : ℚ) ^ exponent a k * x k <
+          (2 : ℚ) ^ exponent a k * x 0 := by
+      rw [hid]
+      nlinarith
+    exact (mul_lt_mul_left hp).1 hmul
+
+#print axioms affine_descent_iff_margin
