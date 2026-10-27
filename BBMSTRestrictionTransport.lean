@@ -4,11 +4,9 @@ import Mathlib
 # BBMST restriction transport: finite cover survives deletion
 
 This file formalizes the set-theoretic core of the source's codimension-one
-reduction. It does not yet encode coordinate cylinders or prove the full
-geometric theorem. The theorem below is exact: after removing covered sets,
-the surviving sets still cover every point that remains outside all removed
-sets. A second lemma records the cardinality margin needed when one value is
-deleted from a coordinate domain of size at least three.
+reduction. The generic transport theorem is exact, but does not by itself
+encode the geometric source theorem. The coordinate-product identity below
+connects deletion of one coordinate value to restriction of the product.
 -/
 
 namespace BBMSTRestrictionTransport
@@ -71,7 +69,53 @@ theorem card_erase_ge_two
   · simp [ha]
     omega
 
+/--
+Finite coordinate product represented as a finite set of functions. Each
+coordinate i is constrained to lie in S i.
+-/
+noncomputable def coordinateProduct {n : ℕ} {α : Type} [Fintype α]
+    (S : Fin n → Finset α) : Finset (Fin n → α) := by
+  classical
+  exact Finset.univ.filter (fun x => ∀ i, x i ∈ S i)
+
+/--
+Deleting c from exactly coordinate i is the same as restricting the original
+coordinate product to points whose i-th coordinate is not c.
+This is the explicit product-level identity needed before transporting a
+cover across the codimension-one reduction.
+-/
+theorem coordinate_erase_restriction
+    {n : ℕ} {α : Type} [Fintype α] [DecidableEq α]
+    (S : Fin n → Finset α) (i : Fin n) (c : α) (x : Fin n → α) :
+    x ∈ coordinateProduct (fun j => if j = i then (S j).erase c else S j) ↔
+      x ∈ coordinateProduct S ∧ x i ≠ c := by
+  classical
+  constructor
+  · intro hx
+    change (∀ j, x j ∈ (if j = i then (S j).erase c else S j)) at hx
+    constructor
+    · change (∀ j, x j ∈ S j)
+      intro j
+      by_cases hji : j = i
+      · subst j
+        exact Finset.mem_of_mem_erase (by simpa using hx i)
+      · simpa [hji] using hx j
+    · have hi := hx i
+      simpa using hi
+  · rintro ⟨hx, hne⟩
+    change (∀ j, x j ∈ (if j = i then (S j).erase c else S j))
+    intro j
+    by_cases hji : j = i
+    · subst j
+      exact Finset.mem_erase.mpr ⟨Ne.symm hne, (show x i ∈ S i from by
+        change (∀ j, x j ∈ S j) at hx
+        exact hx i)⟩
+    · simpa [hji] using (show x j ∈ S j from by
+        change (∀ j, x j ∈ S j) at hx
+        exact hx j)
+
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
+#print axioms coordinate_erase_restriction
 
 end BBMSTRestrictionTransport
