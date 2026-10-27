@@ -45,11 +45,10 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                push_cast
+                norm_cast
                 ring
 
 #print axioms affine_identity
-
 
 /--
 A repeated state in a deterministic trajectory forces all subsequent
@@ -72,6 +71,6 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
           rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
 
 /-- The repeated-state lemma has only the standard foundational dependencies. -/
-#print axioms SyracuseAudit.repeated_state_periodic
+#print axioms repeated_state_periodic
 
 end SyracuseAudit
