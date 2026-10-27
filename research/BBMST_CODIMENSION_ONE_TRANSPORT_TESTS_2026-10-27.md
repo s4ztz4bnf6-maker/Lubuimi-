@@ -24,7 +24,7 @@ Then \(|S_i'|\ge |S_i|-1\ge2\), so every \(S_i'\) is nonempty and \(Q'=\prod_i S
 
 Every point of \(Q'\) avoids each removed codimension-one hyperplane: its omitted coordinate is not the excluded singleton value. Since the original family covered \(Q\), the surviving hyperplanes therefore cover \(Q'\).
 
-A surviving hyperplane has the same fixed-coordinate set after restriction, and its assigned values remain in the corresponding restricted coordinate sets. Its codimension is unchanged. Since all codimension-one hyperplanes were removed, every surviving hyperplane has codimension at least two relative to the restricted box. Equality of fixed-coordinate sets after restriction would imply equality before restriction, so pairwise nonparallelism is preserved.
+Each retained hyperplane has the same fixed-coordinate set after restriction, and by construction its assigned values lie in the corresponding restricted coordinate sets. Its codimension is unchanged. Since all codimension-one hyperplanes were removed, every surviving hyperplane has codimension at least two relative to the restricted box. Equality of fixed-coordinate sets after restriction would imply equality before restriction, so pairwise nonparallelism is preserved.
 
 **Scope guard:** the transport argument assumes the source's exact hyperplane representation and pairwise-nonparallel hypothesis. Lean must encode and prove those facts; it must not replace them with an oracle predicate.
 
