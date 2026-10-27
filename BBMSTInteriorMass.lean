@@ -1,0 +1,63 @@
+import Mathlib
+
+/-!
+# Interior-fibre mass certificate for the BBMST moment bridge
+
+The generic inequality alpha^2 <= alpha gives no quantitative gap when
+shares are near 0 or 1. This module isolates a stronger, falsifiable target:
+find a source-defined subset of fibres with shares uniformly inside
+[eps, 1-eps] and prove that the subset carries positive weight.
+
+This is only a weighted finite-sum lemma. It does not assert that the BBMST
+geometry supplies such a subset or prove the Erdős-Selfridge theorem.
+-/
+
+namespace BBMSTInteriorMass
+
+theorem interior_subset_gap_lower_bound
+    {n : ℕ} (p alpha : Fin n → ℚ) (S : Finset (Fin n)) (eps : ℚ)
+    (hp : ∀ i, 0 ≤ p i)
+    (heps : 0 ≤ eps)
+    (hinterior : ∀ i ∈ S, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
+    eps * (1 - eps) * (∑ i ∈ S, p i) ≤
+      ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
+  calc
+    eps * (1 - eps) * (∑ i ∈ S, p i) =
+        ∑ i ∈ S, (eps * (1 - eps)) * p i := by
+          rw [Finset.mul_sum]
+    _ ≤ ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
+      apply Finset.sum_le_sum
+      intro i hi
+      have hprod :
+          0 ≤ (alpha i - eps) * (1 - eps - alpha i) :=
+        mul_nonneg (sub_nonneg.mpr (hinterior i hi).1)
+          (sub_nonneg.mpr (hinterior i hi).2)
+      have hshare :
+          eps * (1 - eps) ≤ alpha i * (1 - alpha i) := by
+        nlinarith [hprod]
+      calc
+        (eps * (1 - eps)) * p i ≤
+            (alpha i * (1 - alpha i)) * p i :=
+          mul_le_mul_of_nonneg_right hshare (hp i)
+        _ = p i * (alpha i * (1 - alpha i)) := by ring
+
+/-- A positive mass of uniformly interior fibres gives a strictly positive
+moment gap, provided 0 < eps < 1. -/
+theorem positive_gap_of_positive_interior_mass
+    {n : ℕ} (p alpha : Fin n → ℚ) (S : Finset (Fin n)) (eps : ℚ)
+    (hp : ∀ i, 0 ≤ p i)
+    (heps0 : 0 < eps) (heps1 : eps < 1)
+    (hinterior : ∀ i ∈ S, eps ≤ alpha i ∧ alpha i ≤ 1 - eps)
+    (hmass : 0 < ∑ i ∈ S, p i) :
+    0 < ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
+  have hbound := interior_subset_gap_lower_bound p alpha S eps
+    (fun i => hp i) (le_of_lt heps0) hinterior
+  have hfactor : 0 < eps * (1 - eps) := by positivity
+  have hpositive : 0 < eps * (1 - eps) * (∑ i ∈ S, p i) :=
+    mul_pos hfactor hmass
+  linarith
+
+#print axioms BBMSTInteriorMass.interior_subset_gap_lower_bound
+#print axioms BBMSTInteriorMass.positive_gap_of_positive_interior_mass
+
+end BBMSTInteriorMass
