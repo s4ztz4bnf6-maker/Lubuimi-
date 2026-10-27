@@ -83,3 +83,28 @@ theorem contains_iff_project
           simpa [Hyperplane.contains, projectHyperplane, hA] using hx
         have hx'' : x i = s := Subtype.ext hx'
         simpa [ReducedHyperplane.contains, hA] using hx''
+
+
+/-- Two distinct surviving coordinate values force the reduced coordinate
+space to have at least two elements. This isolates the cardinality step:
+the source-geometric argument must still provide the two witnesses. -/
+theorem reduced_coordinate_card_ge_two
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (forbidden : Finset α) (x y : α)
+    (hx : x ∉ forbidden) (hy : y ∉ forbidden) (hxy : x ≠ y) :
+    2 ≤ Fintype.card {z : α // z ∉ forbidden} := by
+  let f : Fin 2 → {z : α // z ∉ forbidden} :=
+    fun i => if h : i.val = 0 then ⟨x, hx⟩ else ⟨y, hy⟩
+  have hf : Function.Injective f := by
+    intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all [f, hxy]
+  simpa using Fintype.card_le_of_injective f hf
+
+/-- In particular, the reduced coordinate space is nonempty. -/
+theorem reduced_coordinate_nonempty
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (forbidden : Finset α) (x y : α)
+    (hx : x ∉ forbidden) (hy : y ∉ forbidden) (hxy : x ≠ y) :
+    Nonempty {z : α // z ∉ forbidden} := by
+  have hcard := reduced_coordinate_card_ge_two forbidden x y hx hy hxy
+  exact Fintype.card_pos_iff.mp (by omega)
