@@ -15,6 +15,10 @@ type as the prime/block data, rather than being unrelated lists with a
 default value supplied by getD. -/
 structure ParameterData (n : ℕ) where
   primeIndex : Fin n → ℕ
+  primeIndex_prime : ∀ i, Nat.Prime (primeIndex i)
+  primeIndex_odd : ∀ i, primeIndex i % 2 = 1
+  blockSize : Fin n → ℚ
+  blockSize_pos : ∀ i, 0 < blockSize i
   delta : Fin n → ℚ
   delta_pos : ∀ i, 0 < delta i
   delta_le_half : ∀ i, delta i ≤ (1 / 2 : ℚ)
