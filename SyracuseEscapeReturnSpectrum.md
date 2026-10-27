@@ -88,3 +88,38 @@ This is a sharper structural statement than the raw escape-return definition, bu
 3. State the Collatz target separately as eventual hitting of (1), not divergence.
 4. Keep the valuation-word affine identity independent; add a word-realization congruence theorem only after deriving its exact modulus and parity conditions.
 5. Search for a nontrivial cycle by exact finite constraints as a counterexample generator, not as evidence that no cycle exists.
+
+
+## 7. Candidate new-to-this-project structure: exact valuation cylinders
+
+For a finite word \(\mathbf a=(a_0,\ldots,a_{k-1})\), retain the cumulative exponents \(A_j\) and offsets \(C_j\) from §2. For a proposed odd start \(n\), define
+\[
+N_j(n):=3^j n+C_j.
+\]
+The recurrence for the offsets gives the exact identity
+\[
+N_{j+1}(n)=3N_j(n)+2^{A_j}.
+\]
+If the word is realized by the odd Syracuse orbit, then
+\[
+v_2(3n_j+1)=a_j
+\quad\Longleftrightarrow\quad
+v_2(N_{j+1}(n))=A_{j+1}.
+\]
+Equivalently, for positive (N_{j+1}(n)),
+\[
+N_{j+1}(n)\equiv 2^{A_{j+1}}
+\pmod{2^{A_{j+1}+1}}.
+\]
+Thus define the finite-word cylinder as the set of positive odd (n) satisfying all these congruences for (0\le j<k), with (a_j\ge1). This is intended to characterize exact valuation-word realization, not just divisibility by (2^{A_j}).
+
+Each individual condition is one residue class modulo a power of two. Since these moduli are nested, their intersection is either empty or a single residue class modulo the largest power, after compatibility is checked. This gives an exact finite arithmetic test for a proposed word and a direct way to detect impossible valuation patterns.
+
+**Novelty status:** this is a project-specific synthesis of the affine offset recurrence with nested 2-adic congruence cylinders. I am not claiming the underlying 2-adic cylinder idea is new in the literature. The research question is whether this exact interface yields a useful invariant on *returning* valuation words that is strong enough to rule out nontrivial cycles or to find a counterexample.
+
+### Falsifiable tests and proof obligations
+
+1. For every word of length (k) with small entries (a_j\ge1), enumerate odd starts modulo (2^{A_k+1}) and compare the cylinder prediction with direct exact iteration.
+2. Check that incompatible congruences give an empty cylinder and compatible ones give exactly one residue class at the maximal modulus.
+3. Formalize the equivalence between exact valuation and the congruence above, with all integer-division and positivity hypotheses explicit.
+4. Only after those checks, study the affine descent inequality (C_j < (2^{A_j}-3^j)n) on realized cylinders. A nonempty cylinder alone gives no descent theorem and no global orbit classification.
