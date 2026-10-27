@@ -120,13 +120,13 @@ theorem coordinate_erase_restriction
         have hi : x i ∈ (S i).erase c := by simpa using hx i
         exact Finset.mem_of_mem_erase hi
       · simpa [hji] using hx j
-    · have hi := hx i
-      simpa using hi
+    · have hi : x i ∈ (S i).erase c := by simpa using hx i
+      exact (Finset.mem_erase.mp hi).1
   · rintro ⟨hx, hne⟩
     intro j
     by_cases hji : j = i
     · subst j
-      exact Finset.mem_erase.mpr ⟨Ne.symm hne, hx i⟩
+      exact Finset.mem_erase.mpr ⟨hne, hx i⟩
     · simpa [hji] using hx j
 
 theorem coordinate_erase_eq_complement_hyperplane
@@ -137,7 +137,12 @@ theorem coordinate_erase_eq_complement_hyperplane
   classical
   ext x
   rw [coordinate_erase_restriction]
-  simp [mem_coordinateHyperplane]
+  simp only [Finset.mem_filter, mem_coordinateHyperplane]
+  constructor
+  · rintro ⟨hx, hne⟩
+    exact ⟨hx, fun h => hne h.2⟩
+  · rintro ⟨hx, hnot⟩
+    exact ⟨hx, fun heq => hnot ⟨hx, heq⟩⟩
 
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
