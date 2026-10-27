@@ -64,3 +64,10 @@ The source definition exposes a concrete interface defect to repair before attem
 The interface now has one shared finite index type for prime indices, block sizes, and delta parameters. The added theorem sieve_denominator_pos derives strict positivity of the rational denominator from the stored delta bounds, so the typed path cannot use the division-by-zero behavior that breaks the raw List/getD interface. Its transitive axiom report is included in BBMSTParameterDataAudit.lean.
 
 This closes only a representation-level hole. The theorem still assumes valid prime/block/delta data and does not yet derive that data from the original covering system; the two project-specific axioms remain open.
+
+
+## 8. Source-fidelity clarification
+
+The cited 2021 BBMST paper is by Paul Balister, Béla Bollobás, Robert Morris, Julian Sahasrabudhe, and Marius Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), 609–626, arXiv:1901.11465. Its Theorem 1.1 states the square-free-moduli result; it does not, by itself, settle unrestricted odd covering systems. The current formalization's unrestricted conclusion must therefore stand or fall on the exact general sieve criterion plus the separately proved block-size comparison, not on an unqualified citation to the square-free theorem alone. See the [arXiv record](https://arxiv.org/abs/1901.11465) and the [Oxford repository record](https://ora.ox.ac.uk/objects/uuid/3c55267c-60be-4652-89a7-db3db5f62c25).
+
+The current Lean development does contain a monotonicity argument comparing square-free and general block sizes, but its top-level theorem remains conditional because the criterion and the SF witness are axioms, and the criterion's present interface admits the degenerate witness described in §5. Both the theorem scope and the witness validity must be audited independently.
