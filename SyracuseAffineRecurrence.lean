@@ -48,7 +48,6 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
                 push_cast
                 ring
 
-#print axioms SyracuseAudit.affine_identity
 
 /--
 A repeated state in a deterministic trajectory forces all subsequent
@@ -72,3 +71,5 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
 
 /-- The repeated-state lemma has only the standard foundational dependencies. -/
 end SyracuseAudit
+
+#print axioms SyracuseAudit.affine_identity
