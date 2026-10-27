@@ -46,7 +46,7 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
                 push_cast
-                norm_cast
+                ring
 
 #print axioms affine_identity
 
