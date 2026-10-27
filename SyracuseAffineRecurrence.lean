@@ -39,8 +39,7 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
                 push_cast
-                norm_cast
-                ring
+                ring_nf
 
 theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     (hstep : ∀ k, x (k + 1) = F (x k))
