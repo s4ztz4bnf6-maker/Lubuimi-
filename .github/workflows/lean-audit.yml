@@ -28,6 +28,8 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Compile the typed BBMST parameter interface
+        run: lake env lean BBMSTParameterData.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
