@@ -29,9 +29,13 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile isolated BBMST powerset identity
-        run: lake env lean BBMSTProductPowerset.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTProductPowerset.olean BBMSTProductPowerset.lean
       - name: Compile finite double-sum factorization
-        run: lake env lean BBMSTDoubleSum.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTDoubleSum.olean BBMSTDoubleSum.lean
       - name: Compile integrated BBMST equation (11) factorization
         run: lake env lean BBMSTEq11Factorization.lean
       - name: Compile audited upstream source
