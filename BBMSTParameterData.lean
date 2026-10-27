@@ -35,4 +35,14 @@ theorem parameter_data_has_positive_coordinate
   obtain ⟨i⟩ := nonempty_index_of_pos hn
   exact ⟨i, p.delta_pos i⟩
 
+
+/-- Under the typed parameter bounds, the sieve denominator is strictly
+positive, so its use does not rely on rational division-by-zero semantics. -/
+theorem sieve_denominator_pos {n : ℕ} (p : ParameterData n) (i : Fin n) :
+    0 < (4 : ℚ) * p.delta i * (1 - p.delta i) := by
+  have hδ := p.delta_pos i
+  have hδ_le := p.delta_le_half i
+  have hcompl : 0 < (1 : ℚ) - p.delta i := by linarith
+  positivity
+
 end BBMSTAudit
