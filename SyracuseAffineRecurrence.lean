@@ -40,7 +40,6 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
                 rw [pow_add, hstep k]
                 have hpow : (2 : ℚ) ^ a k ≠ 0 := by positivity
                 field_simp
-                ring
         _ = 3 * ((2 : ℚ) ^ exponent a k * x k) +
               (2 : ℚ) ^ exponent a k := by ring
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
