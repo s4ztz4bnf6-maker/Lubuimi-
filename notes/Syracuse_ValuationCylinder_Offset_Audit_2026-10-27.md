@@ -7,7 +7,7 @@ Connect finite prescribed valuation words to exact residue classes of the initia
 ## Affine recurrence
 
 For the accelerated odd map
-`T(n)=(3n+1)/2^{a}`, where `a=v₂(3n+1)`, fix a valuation word `a₀,…,a_{k-1}`. Put `A₀=0`, `A_j=∑_{i<j}a_i`, and define `C₀=0`, `C_{j+1}=3C_j+2^{A_j}`. For any orbit segment realizing the word,
+`T(n)=(3n+1)/2^a`, where `a=v₂(3n+1)`, fix a valuation word `a₀,…,a_{k-1}`. Put `A₀=0`, `A_j=∑_{i<j}a_i`, and define `C₀=0`, `C_{j+1}=3C_j+2^{A_j}`. For any orbit segment realizing the word,
 `2^{A_j} n_j = 3^j n₀ + C_j`.
 The identity follows by induction from `2^{a_j}n_{j+1}=3n_j+1`.
 
@@ -24,7 +24,7 @@ For a whole valuation word, later constraints must be pulled back through the pr
 
 ## Descent threshold
 
-Let `D_k=2^{A_k}-3^k). From the affine identity,
+Let `D_k=2^{A_k}-3^k`. From the affine identity,
 `n_k<n₀ ↔ C_k < D_k n₀`
 provided the segment realizes the word and `D_k>0`. This is a conditional threshold for a fixed word. Neither `D_k>0` for every word nor a uniform descent bound has been proved here.
 
