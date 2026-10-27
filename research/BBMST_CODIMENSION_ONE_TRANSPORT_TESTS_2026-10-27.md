@@ -11,13 +11,12 @@ The source issue is that the strengthened second-moment estimate is only availab
 
 ## 2. Restrict the coordinate sets
 
-Every codimension-one hyperplane fixes all coordinates except one, say coordinate \(i\), to singleton values. Pairwise nonparallelism implies there is at most one codimension-one hyperplane for each omitted coordinate: two such hyperplanes would have the same fixed-coordinate set and hence be parallel.
+Every codimension-one hyperplane fixes exactly one coordinate, say coordinate \(i\), to a singleton value \(s_i\). Pairwise nonparallelism implies there is at most one codimension-one hyperplane for each fixed coordinate \(i\): two such hyperplanes would have the same fixed-coordinate set and hence be parallel.
 
 For each coordinate define
 \[
 S_i'=\begin{cases}
-S_i\setminus\{s_i\},&\text{if a codimension-one hyperplane omits coordinate }i
-\text{ and fixes it to }s_i,\\
+S_i\setminus\{s_i\},&\text{if a codimension-one hyperplane fixes coordinate }i\text{ to }s_i,\\
 S_i,&\text{otherwise.}
 \end{cases}
 \]
