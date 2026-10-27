@@ -51,8 +51,7 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
                   norm_num [Nat.cast_pow]
                 rw [hcast]
                 push_cast
-                ring
-
+                ring_nf
 
 /--
 A repeated state in a deterministic trajectory forces all subsequent
