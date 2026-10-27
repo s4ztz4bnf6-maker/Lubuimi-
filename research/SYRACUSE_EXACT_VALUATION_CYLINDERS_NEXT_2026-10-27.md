@@ -79,6 +79,24 @@ Formalize these as separate lemmas, in this order:
 
 Keep the exact affine identity independent of the congruence theorem. Run a transitive axiom audit on the final theorem and compile with the repository's pinned Lean/Mathlib toolchain before calling it verified.
 
-## 6. What this does not solve
+## 6. Exact descent threshold on a valuation cylinder
+
+For a word of length \(k\), put
+\[
+D_w=2^{A_k}-3^k.
+\]
+For every start \(n\) in its cylinder, the affine identity gives
+\[
+n_k<n\iff C_k<D_w n.
+\]
+Consequently:
+
+- If \(D_w\le0\), no positive start realizing this word descends at its endpoint, because \(C_k>0\).
+- If \(D_w>0\), descent holds exactly when \(n>C_k/D_w\).
+- If the cylinder is represented by its least positive odd residue \(r_w\) modulo \(M_w=2^{A_k+1}\), all its positive starts are \(r_w+qM_w\), \(q\ge0\). Hence every sufficiently large member of this cylinder descends for this fixed word; the exact exceptional candidates are the finitely many \(q\) satisfying \(r_w+qM_w\le C_k/D_w\).
+
+This is a sharper finite certificate than an average-drift heuristic. It also identifies the actual global bottleneck: one must show that for every odd \(n>1\), some prefix of its own realized valuation word has \(D_w>0\) and crosses the exact threshold \(C_w<D_w n\). Once a lower iterate is proved, strong induction would reduce the starting value repeatedly until 1. Establishing that universal prefix property is still the hard Collatz problem; the cylinder identity does not establish it by itself.
+
+## 7. What this does not solve
 
 This makes finite-word realization exact, but also removes a hoped-for shortcut: no valid positive valuation word can be discarded as unrealizable. The substantive global problem remains to prove a useful uniform bound on the affine offset/descent margin across realized words, or to use the residue-class structure to classify return words. It does not rule out nontrivial cycles or prove that every orbit reaches 1. The global Collatz step remains open.
