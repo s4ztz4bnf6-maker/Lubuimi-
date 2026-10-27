@@ -28,6 +28,8 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Compile isolated BBMST powerset identity
+        run: lake env lean BBMSTProductPowerset.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
