@@ -14,28 +14,28 @@ namespace BBMSTOverlapBudget
 
 /-- Indices in the finite family whose events contain a point. -/
 def hits {ι α : Type*} [DecidableEq ι]
-    (I : Finset ι) (E : ι → α → Prop) [DecidableRel (fun i => E i ·)] (x : α) : Finset ι :=
+    (I : Finset ι) (E : ι → α → Prop) [DecidableRel E] (x : α) : Finset ι :=
   I.filter (fun i => E i x)
 
 /-- Incidence multiplicity at a point. -/
 def incidenceCount {ι α : Type*} [DecidableEq ι]
-    (I : Finset ι) (E : ι → α → Prop) [DecidableRel (fun i => E i ·)] (x : α) : ℕ :=
+    (I : Finset ι) (E : ι → α → Prop) [DecidableRel E] (x : α) : ℕ :=
   (hits I E x).card
 
 /-- Coverage contributes one unit exactly when at least one event hits. -/
 def coverageUnit {ι α : Type*} [DecidableEq ι]
-    (I : Finset ι) (E : ι → α → Prop) [DecidableRel (fun i => E i ·)] (x : α) : ℕ :=
+    (I : Finset ι) (E : ι → α → Prop) [DecidableRel E] (x : α) : ℕ :=
   if (hits I E x).Nonempty then 1 else 0
 
 /-- The excess incidence after paying for the first hit. -/
 def overlapExcess {ι α : Type*} [DecidableEq ι]
-    (I : Finset ι) (E : ι → α → Prop) [DecidableRel (fun i => E i ·)] (x : α) : ℕ :=
+    (I : Finset ι) (E : ι → α → Prop) [DecidableRel E] (x : α) : ℕ :=
   incidenceCount I E x - coverageUnit I E x
 
 /-- Exact pointwise decomposition: coverage plus overlap excess equals all incidences. -/
 theorem incidence_eq_coverage_plus_overlap
     {ι α : Type*} [DecidableEq ι]
-    (I : Finset ι) (E : ι → α → Prop) [DecidableRel (fun i => E i ·)] (x : α) :
+    (I : Finset ι) (E : ι → α → Prop) [DecidableRel E] (x : α) :
     coverageUnit I E x + overlapExcess I E x = incidenceCount I E x := by
   let t := hits I E x
   by_cases ht : t.Nonempty
