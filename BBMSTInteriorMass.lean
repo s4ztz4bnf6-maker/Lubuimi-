@@ -57,6 +57,20 @@ theorem positive_gap_of_positive_interior_mass
     mul_pos hfactor hmass
   linarith
 
+/-- Exact finite-sum identity behind the BBMST second-moment gap.
+This is algebra only: the theorem does not assert that geometric fibre
+shares are interior or that their total weight is uniformly positive. -/
+theorem weighted_moment_gap_identity
+    {n : ℕ} (p alpha : Fin n → ℚ) :
+    (∑ i, p i * alpha i) - (∑ i, p i * alpha i ^ 2) =
+      ∑ i, p i * (alpha i * (1 - alpha i)) := by
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro i hi
+  ring
+
+#print axioms BBMSTInteriorMass.weighted_moment_gap_identity
+
 #print axioms BBMSTInteriorMass.interior_subset_gap_lower_bound
 #print axioms BBMSTInteriorMass.positive_gap_of_positive_interior_mass
 
