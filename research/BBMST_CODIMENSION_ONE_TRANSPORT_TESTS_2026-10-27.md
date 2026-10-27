@@ -22,9 +22,9 @@ S_i,&\text{otherwise.}
 \]
 Then \(|S_i'|\ge |S_i|-1\ge2\), so every \(S_i'\) is nonempty and \(Q'=\prod_i S_i'\) is nonempty.
 
-Every point of \(Q'\) avoids each removed codimension-one hyperplane: its omitted coordinate is not the excluded singleton value. Since the original family covered \(Q\), the surviving hyperplanes therefore cover \(Q'\).
+Every point of \(Q'\) avoids each removed codimension-one hyperplane because its fixed coordinate is not the excluded singleton value. More generally, any original hyperplane whose fixed assignment includes an excluded value has empty intersection with \(Q'\). Define the restricted family to consist of the original hyperplanes whose every fixed value remains in the corresponding \(S_i'\), and interpret them inside \(Q'\). Since the original family covered \(Q\) and every point of \(Q'\) avoids every hyperplane discarded this way, the restricted family still covers \(Q'\).
 
-Each retained hyperplane has the same fixed-coordinate set after restriction, and by construction its assigned values lie in the corresponding restricted coordinate sets. Its codimension is unchanged. Since all codimension-one hyperplanes were removed, every surviving hyperplane has codimension at least two relative to the restricted box. Equality of fixed-coordinate sets after restriction would imply equality before restriction, so pairwise nonparallelism is preserved.
+Each retained hyperplane has the same fixed-coordinate set after restriction, and by construction its assigned values lie in the corresponding restricted coordinate sets. Its codimension is unchanged. Since all codimension-one hyperplanes were removed, every retained hyperplane has codimension at least two relative to the restricted box. Equality of fixed-coordinate sets after restriction would imply equality before restriction, so pairwise nonparallelism is preserved.
 
 **Scope guard:** the transport argument assumes the source's exact hyperplane representation and pairwise-nonparallel hypothesis. Lean must encode and prove those facts; it must not replace them with an oracle predicate.
 
@@ -49,7 +49,7 @@ Avoid one monolithic theorem. Prove these independent statements:
 2. restricted_coordinate_card: \(|S_i'|\ge2\).
 3. restricted_box_nonempty: construct a point of \(Q'\) from nonemptiness of every \(S_i'\).
 4. removed_hyperplane_avoided: every point of \(Q'\) avoids every removed hyperplane.
-5. surviving_family_covers: coverage of \(Q\) plus avoidance of removed hyperplanes implies coverage of \(Q'\) by survivors.
+5. surviving_family_covers: define the restricted family by retaining exactly those hyperplanes whose fixed values all lie in the restricted coordinate sets; prove coverage of \(Q'\) because every discarded hyperplane is disjoint from \(Q'\).
 6. codim_preserved: restriction does not change a survivor's fixed-coordinate set or codimension.
 7. nonparallel_preserved: pairwise nonparallelism survives restriction.
 8. apply_second_moment_after_restriction: only now invoke the source's strengthened estimate, using the actual cardinalities \(|S_i'|\), never the original sizes by silent substitution.
