@@ -140,7 +140,7 @@ theorem normalizedRemovedMass_le_alpha
       le_of_lt (div_pos (by linarith) hden)
     rw [max_eq_right hquot]
     apply (div_le_iff₀ hden).2
-    nlinarith [mul_nonneg hδ_pos (sub_nonneg.mpr hα_le_one)]
+    nlinarith [mul_nonneg (le_of_lt hδ_pos) (sub_nonneg.mpr hα_le_one)]
 
 theorem normalizedRemovedMass_le_secondMoment
     (α δ : ℚ)
