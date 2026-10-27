@@ -45,7 +45,7 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                push_cast
+                norm_num [Nat.cast_add, Nat.cast_mul, Nat.cast_pow]
                 ring
 
 
@@ -69,7 +69,6 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
         _ = x (j + (t + 1)) := by
           rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
 
-/-- The repeated-state lemma has only the standard foundational dependencies. -/
 end SyracuseAudit
 
 #print axioms SyracuseAudit.affine_identity
