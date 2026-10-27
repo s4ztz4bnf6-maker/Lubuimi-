@@ -20,13 +20,15 @@ def Avoids {α : Type} [DecidableEq α]
 
 /-- Restrict a finite domain to points avoiding all removed sets. -/
 def restrictDomain {α : Type} [DecidableEq α]
-    (Q : Finset α) (removed : Finset (Finset α)) : Finset α :=
-  Q.filter (fun x => Avoids x removed)
+    (Q : Finset α) (removed : Finset (Finset α)) : Finset α := by
+  classical
+  exact Q.filter (fun x => Avoids x removed)
 
 /-- Keep only cover members that were not removed. -/
 def survivingCover {α : Type} [DecidableEq α]
-    (cover removed : Finset (Finset α)) : Finset (Finset α) :=
-  cover.filter (fun H => H ∉ removed)
+    (cover removed : Finset (Finset α)) : Finset (Finset α) := by
+  classical
+  exact cover.filter (fun H => H ∉ removed)
 
 /--
 Exact restriction-and-cover transport: if the cover covers Q, then the members
@@ -40,14 +42,18 @@ theorem surviving_cover_covers_restricted_domain
     (hcover : ∀ x ∈ Q, ∃ H ∈ cover, x ∈ H) :
     ∀ x ∈ restrictDomain Q removed,
       ∃ H ∈ survivingCover cover removed, x ∈ H := by
+  classical
   intro x hx
+  change x ∈ Q.filter (fun y => Avoids y removed) at hx
   have hxQ : x ∈ Q := (Finset.mem_filter.mp hx).1
   have hxAvoid : Avoids x removed := (Finset.mem_filter.mp hx).2
   obtain ⟨H, hHcover, hxH⟩ := hcover x hxQ
   have hHnot : H ∉ removed := by
     intro hHremoved
     exact (hxAvoid H hHremoved) hxH
-  exact ⟨H, Finset.mem_filter.mpr ⟨hHcover, hHnot⟩, hxH⟩
+  refine ⟨H, ?_, hxH⟩
+  change H ∈ cover.filter (fun K => K ∉ removed)
+  exact Finset.mem_filter.mpr ⟨hHcover, hHnot⟩
 
 /--
 Deleting at most one value from a coordinate set of size at least three
@@ -58,10 +64,11 @@ theorem card_erase_ge_two
     {α : Type} [DecidableEq α]
     (S : Finset α) (a : α) (hcard : 3 ≤ S.card) :
     2 ≤ (S.erase a).card := by
+  classical
   by_cases ha : a ∈ S
   · rw [Finset.card_erase_of_mem ha]
     omega
-  · simp [Finset.erase_eq_of_not_mem ha]
+  · simp [ha]
     omega
 
 #print axioms surviving_cover_covers_restricted_domain
