@@ -65,7 +65,7 @@ For every word length \(k\) in a bounded test range:
 5. Compare all positive odd starts below a chosen bound against direct exact iteration.
 6. Preserve the smallest mismatch as a regression test.
 
-A finite search can falsify a faulty characterization, but it cannot prove the universal theorem. Since a compatible cylinder gives one class modulo \(2^{A_k+1}\), it also gives a finite representation of all starts realizing the word, not a bound on the size of those starts.
+A finite search can falsify a faulty characterization, but it cannot prove the universal theorem. The finite-word cylinders are all nonempty for valid words, so enumeration of arbitrary words does not shrink the set of possible valuation patterns. The useful value is instead an exact arithmetic encoding of every word and a way to study how the affine offset (C_k) behaves on that residue class.
 
 ## 5. Next Lean obligations
 
