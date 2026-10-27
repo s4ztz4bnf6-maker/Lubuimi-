@@ -46,7 +46,6 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
                 push_cast
-                simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow]
                 ring
 
 #print axioms affine_identity
@@ -59,7 +58,7 @@ the finite-return/periodicity reduction; it makes no Collatz assumption.
 -/
 theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     (hstep : ∀ k, x (k + 1) = F (x k))
-    {i j : ℕ} (hij : i < j) (heq : x i = x j) :
+    {i j : ℕ} (heq : x i = x j) :
     ∀ t, x (i + t) = x (j + t) := by
   intro t
   induction t with
@@ -73,6 +72,6 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
           rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
 
 /-- The repeated-state lemma has only the standard foundational dependencies. -/
-#print axioms repeated_state_periodic
+#print axioms SyracuseAudit.repeated_state_periodic
 
 end SyracuseAudit
