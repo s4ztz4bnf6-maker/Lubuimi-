@@ -90,29 +90,27 @@ theorem coordinate_erase_restriction
     x ∈ coordinateProduct (fun j => if j = i then (S j).erase c else S j) ↔
       x ∈ coordinateProduct S ∧ x i ≠ c := by
   classical
+  change x ∈ Finset.univ.filter
+      (fun y => ∀ j, y j ∈ if j = i then (S j).erase c else S j) ↔
+    x ∈ Finset.univ.filter (fun y => ∀ j, y j ∈ S j) ∧ x i ≠ c
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   constructor
   · intro hx
-    change (∀ j, x j ∈ (if j = i then (S j).erase c else S j)) at hx
     constructor
-    · change (∀ j, x j ∈ S j)
-      intro j
+    · intro j
       by_cases hji : j = i
       · subst j
-        exact Finset.mem_of_mem_erase (by simpa using hx i)
+        have hi : x i ∈ (S i).erase c := by simpa using hx i
+        exact Finset.mem_of_mem_erase hi
       · simpa [hji] using hx j
     · have hi := hx i
       simpa using hi
   · rintro ⟨hx, hne⟩
-    change (∀ j, x j ∈ (if j = i then (S j).erase c else S j))
     intro j
     by_cases hji : j = i
     · subst j
-      exact Finset.mem_erase.mpr ⟨Ne.symm hne, (show x i ∈ S i from by
-        change (∀ j, x j ∈ S j) at hx
-        exact hx i)⟩
-    · simpa [hji] using (show x j ∈ S j from by
-        change (∀ j, x j ∈ S j) at hx
-        exact hx j)
+      exact Finset.mem_erase.mpr ⟨Ne.symm hne, hx i⟩
+    · simpa [hji] using hx j
 
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
