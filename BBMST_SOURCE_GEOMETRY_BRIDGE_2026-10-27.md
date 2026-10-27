@@ -9,11 +9,11 @@ Status: proof-obligation map. The finite mass partition and incidence identity c
 For a finite index set I, events E_i and a point x, let
 \[
 m(x)=\#\{i\in I:x\in E_i\},\qquad
-u(x)=\mathbf 1_{m(x)>0}.
+c(x)=\mathbf 1_{m(x)>0}.
 \]
 The checked bookkeeping identity is
 \[
-m(x)=u(x)+(m(x)-u(x)).
+m(x)=c(x)+(m(x)-c(x)).
 \]
 Summing over a finite sample space separates covered mass from excess incidence. This identity is general and does not encode the paper's geometric hypotheses.
 
