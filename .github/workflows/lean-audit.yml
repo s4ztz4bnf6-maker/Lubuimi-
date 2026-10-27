@@ -28,6 +28,8 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Compile division-free finite mass partition
+        run: lake env lean BBMSTFiniteMass.lean
       - name: Compile typed BBMST parameter interface
         run: |
           mkdir -p .lake/build/lib/lean
