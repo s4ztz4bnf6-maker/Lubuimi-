@@ -65,19 +65,21 @@ theorem contains_iff_project
   constructor
   · intro h i
     cases hA : A'.fixed i with
-    | none => trivial
+    | none =>
+        simp [Hyperplane.contains, projectHyperplane, hA]
     | some s =>
-      have hx := h i
-      rw [hA] at hx
-      dsimp at hx
-      exact congrArg Subtype.val hx
+        have hx := h i
+        simp [ReducedHyperplane.contains, hA] at hx
+        have hx' : (projectPoint x) i = s.1 := by
+          simpa [projectPoint] using congrArg Subtype.val hx
+        simpa [Hyperplane.contains, projectHyperplane, hA] using hx'
   · intro h i
-    dsimp [ReducedHyperplane.contains, Hyperplane.contains, projectHyperplane, projectPoint]
     cases hA : A'.fixed i with
-    | none => trivial
+    | none =>
+        simp [ReducedHyperplane.contains, hA]
     | some s =>
-      have hx := h i
-      dsimp [projectHyperplane] at hx
-      rw [hA] at hx
-      dsimp at hx
-      exact Subtype.ext hx
+        have hx := h i
+        have hx' : (projectPoint x) i = s.1 := by
+          simpa [Hyperplane.contains, projectHyperplane, hA] using hx
+        have hx'' : x i = s := Subtype.ext hx'
+        simpa [ReducedHyperplane.contains, hA] using hx''
