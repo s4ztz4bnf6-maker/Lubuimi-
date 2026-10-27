@@ -99,11 +99,6 @@ theorem mem_coordinateHyperplane
   simp [coordinateHyperplane]
 
 /--
-The product after deleting c from coordinate i is exactly Q with the
-coordinate hyperplane H_{i,c} removed.
--/
-
-/--
 Deleting c from exactly coordinate i is the same as restricting the original
 coordinate product to points whose i-th coordinate is not c.
 This is the explicit product-level identity needed before transporting a
@@ -115,10 +110,7 @@ theorem coordinate_erase_restriction
     x ∈ coordinateProduct (fun j => if j = i then (S j).erase c else S j) ↔
       x ∈ coordinateProduct S ∧ x i ≠ c := by
   classical
-  change x ∈ Finset.univ.filter
-      (fun y => ∀ j, y j ∈ if j = i then (S j).erase c else S j) ↔
-    x ∈ Finset.univ.filter (fun y => ∀ j, y j ∈ S j) ∧ x i ≠ c
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [coordinateProduct, Finset.mem_filter, Finset.mem_univ, true_and]
   constructor
   · intro hx
     constructor
@@ -145,9 +137,7 @@ theorem coordinate_erase_eq_complement_hyperplane
   classical
   ext x
   rw [coordinate_erase_restriction]
-  rw [Finset.mem_filter]
-  rw [mem_coordinateHyperplane]
-  simp
+  simp [mem_coordinateHyperplane]
 
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
