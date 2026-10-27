@@ -45,8 +45,8 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                norm_cast
-                ring
+                push_cast
+                ring_nf
 
 /--
 A repeated state in a deterministic trajectory forces all subsequent
