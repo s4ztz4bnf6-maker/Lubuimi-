@@ -17,7 +17,6 @@ namespace BBMSTInteriorMass
 theorem interior_subset_gap_lower_bound
     {n : ℕ} (p alpha : Fin n → ℚ) (S : Finset (Fin n)) (eps : ℚ)
     (hp : ∀ i, 0 ≤ p i)
-    (heps : 0 ≤ eps)
     (hinterior : ∀ i ∈ S, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
     eps * (1 - eps) * (∑ i ∈ S, p i) ≤
       ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
@@ -51,8 +50,9 @@ theorem positive_gap_of_positive_interior_mass
     (hmass : 0 < ∑ i ∈ S, p i) :
     0 < ∑ i ∈ S, p i * (alpha i * (1 - alpha i)) := by
   have hbound := interior_subset_gap_lower_bound p alpha S eps
-    (fun i => hp i) (le_of_lt heps0) hinterior
-  have hfactor : 0 < eps * (1 - eps) := by positivity
+    (fun i => hp i) hinterior
+  have hone : 0 < 1 - eps := by linarith
+  have hfactor : 0 < eps * (1 - eps) := mul_pos heps0 hone
   have hpositive : 0 < eps * (1 - eps) * (∑ i ∈ S, p i) :=
     mul_pos hfactor hmass
   linarith
