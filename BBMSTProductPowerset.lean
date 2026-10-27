@@ -16,21 +16,23 @@ theorem product_one_add_weight_eq_sum_powerset
     (T : Finset α)
     (w : α → R)
     (x : R) :
-    T.prod (fun j => 1 + x * w j) =
-      T.powerset.sum (fun J => x ^ J.card * J.prod w) := by
+    (∏ j ∈ T, (1 + x * w j)) =
+      ∑ J ∈ T.powerset,
+        x ^ J.card * (∏ j ∈ J, w j) := by
   classical
   calc
-    T.prod (fun j => 1 + x * w j)
-        = T.prod (fun j => x * w j + 1) := by
+    (∏ j ∈ T, (1 + x * w j))
+        = ∏ j ∈ T, (x * w j + 1) := by
           apply Finset.prod_congr rfl
           intro j hj
           exact add_comm 1 (x * w j)
-    _ = T.powerset.sum (fun J => J.prod (fun j => x * w j)) := by
-          simpa using (Finset.prod_add_one (s := T) (f := fun j => x * w j))
-    _ = T.powerset.sum (fun J => x ^ J.card * J.prod w) := by
+    _ = ∑ J ∈ T.powerset, ∏ j ∈ J, (x * w j) := by
+          rw [Finset.prod_add_one]
+    _ = ∑ J ∈ T.powerset,
+          x ^ J.card * (∏ j ∈ J, w j) := by
           apply Finset.sum_congr rfl
           intro J hJ
-          simp [Finset.prod_mul_distrib]
+          simp [Finset.prod_mul_distrib, mul_comm, mul_left_comm, mul_assoc]
 
 #print axioms product_one_add_weight_eq_sum_powerset
 
