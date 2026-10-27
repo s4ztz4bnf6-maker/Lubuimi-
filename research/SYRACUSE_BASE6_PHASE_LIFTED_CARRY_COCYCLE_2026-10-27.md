@@ -42,13 +42,17 @@ Again, the result's low base-six digit depends on q modulo two. Division by two 
 
 ## New object: phase-lifted carry state
 
-At precision k, record
+A fixed-precision state does not automatically evolve deterministically: every ordinary division by two can consume one bit of 2-adic input precision. To compute L ordinary Collatz steps modulo 6^k, use the input residue
 \[
-\mathcal S_k(n)=(n\bmod 6^k,\; n\bmod 2^{k+1}).
+n\pmod{2^{k+L}3^k}.
 \]
-The first component records the base-six prefix; the second records the dyadic phase controlling repeated division by powers of two. The pair is redundant at some scales, but that redundancy is deliberate: it makes explicit that base-six and 2-adic information are coupled rather than interchangeable.
+This modulus retains the required 2-adic precision for up to L divisions and the 3^k component needed for the base-six modulus. Equivalently, use a horizon-indexed lifted state whose dyadic precision decreases by at most one per step.
 
-A finite-depth transition table can be generated exactly from the modular definition of the Collatz map. Candidate Lyapunov weights should be assigned to these lifted states, not just to the base-six last digit. The key falsification condition is that a proposed weight must decrease on every realizable transition, including transitions that change the dyadic phase.
+The proposed finite-horizon state is therefore
+\[
+\mathcal S_{k,L}(n)=n\pmod{2^{k+L}3^k}.
+\]
+It is finite and exact for an L-step output modulo 6^k, but its state space grows with the horizon. That growth is not a nuisance to hide: it is the precise cost of resolving the carries/divisions. Candidate Lyapunov weights should be assigned to horizon-indexed states or to a proved quotient of them, not just to the base-six last digit. The key falsification condition is that a proposed weight must decrease on every realizable transition, including transitions that consume dyadic precision.
 
 ## What this does and does not establish
 
