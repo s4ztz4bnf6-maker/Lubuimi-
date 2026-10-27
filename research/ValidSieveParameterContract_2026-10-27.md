@@ -21,16 +21,17 @@ published Erdős–Selfridge theorem.
 For a finite stage list s, package parameters as data carrying proofs
 of all of the following:
 - deltas.length = s.length;
-- for every in-range index i, 0 < delta_i < 1;
-- every denominator used by a quotient is strictly positive;
+- for every in-range index i, 0 < delta_i ≤ 1/2, matching the intended
+  parameter range for this project;
+- every denominator actually used by a quotient is strictly positive;
 - all stated constraints on c1,c3 are explicit;
 - every index consumed by a product/sum is in range, so no getD default
   contributes to the theorem's mathematical meaning.
 
-The existing ValidSieveParams prototype handles length equality and strict
-range bounds. It is a useful start, but it does not itself prove that valid
-parameters exist for the theorem's actual block-size list, nor does it
-prove the sieve inequality.
+The existing ValidSieveParams prototype handles length equality and the
+weaker range 0 < delta_i < 1. It should be tightened to the source-faithful
+upper bound 1/2, and it does not itself prove that valid parameters exist for
+the theorem's actual block-size list or prove the sieve inequality.
 
 ## 3. Required repair of the theorem boundary
 
@@ -46,6 +47,7 @@ new axiom.
 The audit should retain tests for:
 - empty delta list;
 - a zero delta;
+- delta above 1/2;
 - too-short and too-long lists;
 - valid, length-matched parameters;
 - every denominator's positivity;
