@@ -1,0 +1,35 @@
+name: Reduced hyperplane projection lemma
+
+on:
+  push:
+    paths:
+      - "ReducedHyperplaneProjection.lean"
+      - ".github/workflows/reduced-hyperplane-projection.yml"
+      - "lean-toolchain"
+  pull_request:
+    paths:
+      - "ReducedHyperplaneProjection.lean"
+      - ".github/workflows/reduced-hyperplane-projection.yml"
+      - "lean-toolchain"
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Install dependencies and restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile isolated lemma
+        run: lake env lean ReducedHyperplaneProjection.lean
