@@ -38,8 +38,8 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_pow]
-                ring
+                congr 1
+                norm_cast
 
 theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     (hstep : ∀ k, x (k + 1) = F (x k))
@@ -47,7 +47,7 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     ∀ t, x (i + t) = x (j + t) := by
   intro t
   induction t with
-  | zero => simpa using heq
+  | zero => exact heq
   | succ t ih =>
       calc
         x (i + (t + 1)) = F (x (i + t)) := by
