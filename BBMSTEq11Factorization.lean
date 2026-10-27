@@ -27,18 +27,29 @@ theorem bbmst_eq11_factorization
       (V.powerset.sum (fun J =>
         c i * J.prod w * x ^ (m i + J.card)))) := by
   rw [BBMSTProductPowerset.product_one_add_weight_eq_sum_powerset]
-  rw [BBMSTDoubleSum.finset_double_sum_factorization]
-  · apply Finset.sum_congr rfl
-    intro i hi
-    apply Finset.sum_congr rfl
-    intro J hJ
-    simp only [Finset.prod_mul_distrib]
-    ring_nf
-    rw [pow_add]
-    ring
-  · exact V.powerset
-  · exact (fun J => J.prod w)
-  · exact (fun J => J.card)
+  have hdouble :=
+    BBMSTDoubleSum.finset_double_sum_factorization
+      U V.powerset c
+      (fun J => x ^ J.card * J.prod w)
+      m (fun _ => 0) x
+  calc
+    (U.sum (fun i => c i * x ^ m i)) *
+        (V.powerset.sum (fun J => x ^ J.card * J.prod w))
+      =
+    U.sum (fun i =>
+      V.powerset.sum (fun J =>
+        c i * (x ^ J.card * J.prod w) * x ^ (m i + 0))) := by
+          simpa using hdouble
+    _ =
+    U.sum (fun i =>
+      V.powerset.sum (fun J =>
+        c i * J.prod w * x ^ (m i + J.card))) := by
+          apply Finset.sum_congr rfl
+          intro i hi
+          apply Finset.sum_congr rfl
+          intro J hJ
+          rw [pow_add]
+          ring
 
 #print axioms bbmst_eq11_factorization
 
