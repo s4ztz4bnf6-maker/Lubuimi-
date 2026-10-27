@@ -2,48 +2,48 @@
 
 Date: 2026-10-27
 
-## Result (elementary, exact)
+## Exact result
 
 Let
 \[
 T(n)=\frac{3n+1}{2^{v_2(3n+1)}}
 \]
-be the accelerated odd Syracuse map. For every finite length \(N\ge 1\), there exists a positive odd integer \(n_0\) whose first \(N\) valuations are all one:
+be the accelerated odd Syracuse map. For every finite length \(N\ge1\), the positive odd integer
 \[
-v_2(3n_j+1)=1\quad(0\le j<N),\qquad n_{j+1}=T(n_j).
+n_0=2^{N+1}-1
 \]
+has first \(N\) valuations all equal to one.
 
-Reason: prescribe \(a_j=1\) for \(0\le j<N\). The exact prefix condition at time \(t\) is
+Proof: if the first \(t\) valuations are one, the affine recurrence gives
 \[
-3^t n_0+(3^t-2^t)\equiv 2^t\pmod {2^{t+1}},
+2^t n_t=3^t n_0+(3^t-2^t).
 \]
-equivalently \(3^t(n_0+1)\equiv 2^{t+1}\pmod {2^{t+1}}\), which reduces to
+The exact-prefix condition for the next valuation is
 \[
-n_0\equiv -1\pmod {2^{t+1}}
+3^t n_0+(3^t-2^t)\equiv 2^t\pmod {2^{t+1}}.
 \]
-for this displayed offset convention only if the affine expression is handled consistently. More directly, use the recurrence
+This simplifies to \(3^t(n_0+1)\equiv0\pmod {2^{t+1}}\). Since \(3^t\) is invertible modulo \(2^{t+1}\), it is equivalent to
 \[
-n_{j+1}=\frac{3n_j+1}{2}
+n_0\equiv -1\pmod {2^{t+1}}.
 \]
-and recursively solve the exact congruences \(3n_j+1\equiv2\pmod4\). At each prefix the coefficient of \(n_0\) is an odd power \(3^t\), hence invertible modulo \(2^{t+1}\); the prefix cylinders are nested and determine one residue class modulo \(2^{N+1}\). Its odd positive representative realizes the word.
-
-For this word,
+Hence \(n_0=2^{N+1}-1\) satisfies every prefix condition for \(t\le N\). The closed form is
 \[
-n_N=\frac{3^N(n_0+1)}{2^N}-1.
+n_N=\frac{3^N(n_0+1)}{2^N}-1
+=3^N\cdot 2-1,
 \]
-Thus \(n_N\) grows like \((3/2)^N n_0\) over that finite block.
+for this particular minimal start \(n_0=2^{N+1}-1\). So the orbit expands throughout this finite block.
 
 ## What this rules out
 
 No argument can prove that *every* sufficiently long fixed-length block strictly descends for *every* positive start. For each proposed block length, an exceptional start realizes the all-one word and expands throughout the block. This does **not** produce one infinite divergent orbit: the start depends on \(N\), and the compatible nested residues may converge to a 2-adic point that is not a positive integer.
 
-Consequently, a viable Lyapunov/carry theorem must be one of the following:
+Consequently, a viable Lyapunov/carry theorem must instead establish at least one of the following:
 
-1. a state-dependent block length or margin;
+1. a state-dependent block length or descent margin;
 2. a uniform bound on how long a positive integer can shadow an expanding word as a function of its size;
 3. a global constraint coupling admissible words across all prefixes, strong enough to exclude a single positive integer from realizing an infinite expanding itinerary.
 
-A word-entropy heuristic alone is insufficient: finite admissibility permits maximally expanding valuation blocks. The target object should track both the valuation word and its *integer-size cost* (the least positive representative of its 2-adic cylinder). This is a sharper version of the realizable carry envelope, and a potential candidate is the pair
+A word-entropy heuristic alone is insufficient: finite admissibility permits maximally expanding valuation blocks. The target object should track both the valuation word and its *integer-size cost* (the least positive representative of its 2-adic cylinder). One candidate is the pair
 \[
 \bigl(c_N(w),\ \log_2(1+n_{\min}(w))\bigr),
 \]
