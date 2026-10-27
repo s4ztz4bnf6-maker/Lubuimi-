@@ -37,3 +37,23 @@ The test suite guards against accidental weakening; it cannot prove the general 
 The project-specific axioms `sieve_criterion` and `sf_sieve_lt_one` are discharged only when their exact statements have kernel-checked proofs from the source-faithful definitions. A clean helper theorem does not clean the top-level theorem's dependency graph. Standard foundations such as `propext`, `Classical.choice`, and `Quot.sound` are not by themselves evidence of a missing mathematical proof.
 
 No claim of a completed proof is made.
+
+
+## 5. Confirmed CI and exact counterexample to the current interface
+
+CI run [40433708789](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/40433708789) succeeded for the typed parameter interface, the focused audit, the upstream source compilation, and the degenerate-witness tests. This is a successful *audit harness* run, not a proof of the top-level conjecture.
+
+The log's transitive axiom output is decisive:
+- helper lemmas such as degenerate_sieveTerm depend only on propext, Classical.choice, and Quot.sound;
+- degenerate_axiom_acceptance still depends on sieve_criterion;
+- erdos_selfridge still depends on sf_sieve_lt_one and sieve_criterion.
+
+The source definition exposes a concrete interface defect to repair before attempting to discharge the theorem. In sieveTerm, the value δs.getD k 0 is used in the denominator 4 * δ * (1 - δ). If δ=0, rational division by zero is defined in Lean's ℚ as zero; the second argument of min can therefore become zero. If the delta list is empty, getD silently supplies 0, while the source axiom sieve_criterion requires only hca1_ge and sieveSum < 1. The focused test confirms the degenerate sum can be made <1 and then accepted by the axiom. Thus the current Lean interface is weaker than the intended mathematical criterion.
+
+## 6. Minimal repair sequence
+
+1. Replace unrelated List ℚ arguments by one typed parameter object whose delta coordinates are indexed by the same finite prime/block index set.
+2. Require 0 < δ_i < 1 (or the exact stronger source bounds) for every active coordinate and require exact length/index alignment; do not treat getD defaults as mathematical data.
+3. Define the term so its denominator is used only under an explicit nonzero proof, or use a division-free equivalent inequality.
+4. Strengthen the statement of the sieve criterion to carry the exact source hypotheses, then prove a nondegenerate test theorem from the definitions.
+5. Only after that interface is source-faithful, derive the criterion and SF witness from the published BBMST argument or a separately checked finite certificate. The current axiom names cannot be removed merely by making the helper interface compile.
