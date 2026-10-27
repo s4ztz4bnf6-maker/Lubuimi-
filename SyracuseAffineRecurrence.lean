@@ -39,7 +39,12 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
                 push_cast
-                ring_nf
+                ring
+        _ = (3 : ℚ) ^ (k + 1) * x 0 +
+              (offset a (k + 1) : ℚ) := by
+                simp [offset]
+                push_cast
+                ring
 
 theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     (hstep : ∀ k, x (k + 1) = F (x k))
@@ -55,7 +60,6 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
         _ = F (x (j + t)) := congrArg F ih
         _ = x (j + (t + 1)) := by
           rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
-
 
 /--
 Exact descent-margin equivalence for the affine recurrence.
@@ -78,7 +82,7 @@ theorem affine_descent_iff_margin
     have hmul :
         (2 : ℚ) ^ exponent a k * x k <
           (2 : ℚ) ^ exponent a k * x 0 :=
-      (mul_lt_mul_left hp).2 hx
+      mul_lt_mul_of_pos_left hx hp
     rw [hid] at hmul
     nlinarith
   · intro hmargin
@@ -87,11 +91,10 @@ theorem affine_descent_iff_margin
           (2 : ℚ) ^ exponent a k * x 0 := by
       rw [hid]
       nlinarith
-    exact (mul_lt_mul_left hp).1 hmul
+    exact lt_of_mul_lt_mul_of_pos_left hmul hp
 
 #print axioms affine_descent_iff_margin
 
 end SyracuseAudit
 
 #print axioms SyracuseAudit.affine_identity
-
