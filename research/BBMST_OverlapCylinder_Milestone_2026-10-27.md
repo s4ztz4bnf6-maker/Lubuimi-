@@ -9,7 +9,7 @@ Let I be a finite coordinate set, let each coordinate take values in a common fi
 P(C(S,u)) = q^{-|S|}.
 For two cylinders C(S,u) and C(T,v), their intersection is empty exactly when the assignments disagree on S ∩ T. If they agree on the overlap, the combined assignment fixes S ∪ T, so
 P(C(S,u) ∩ C(T,v)) = q^{-|S∪T|}
-= P(C(S,u)) q^{-|T\S|}.
+= P(C(S,u)) q^{-|T \\setminus S|}.
 This is the overlap-aware identity. It avoids the invalid assumption that overlapping cylinders are independent.
 
 For coordinate alphabets with unequal sizes, replace q^{-|S|} by the product of the relevant coordinate weights; the same compatibility/union argument still works.
