@@ -50,4 +50,28 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
 
 #print axioms affine_identity
 
+
+/--
+A repeated state in a deterministic trajectory forces all subsequent
+states at the same offset to agree. This is the exact local step behind
+the finite-return/periodicity reduction; it makes no Collatz assumption.
+-/
+theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
+    (hstep : ∀ k, x (k + 1) = F (x k))
+    {i j : ℕ} (hij : i < j) (heq : x i = x j) :
+    ∀ t, x (i + t) = x (j + t) := by
+  intro t
+  induction t with
+  | zero => simpa using heq
+  | succ t ih =>
+      calc
+        x (i + (t + 1)) = F (x (i + t)) := by
+          rw [show i + (t + 1) = (i + t) + 1 by omega, hstep]
+        _ = F (x (j + t)) := congrArg F ih
+        _ = x (j + (t + 1)) := by
+          rw [show j + (t + 1) = (j + t) + 1 by omega, hstep
+
+/-- The repeated-state lemma has only the standard foundational dependencies. -/
+#print axioms repeated_state_periodic
+
 end SyracuseAudit
