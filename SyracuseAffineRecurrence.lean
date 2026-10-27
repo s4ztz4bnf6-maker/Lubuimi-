@@ -43,8 +43,6 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (offset a (k + 1) : ℚ) := by
                 simp [offset]
-                push_cast
-                ring
 
 theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
     (hstep : ∀ k, x (k + 1) = F (x k))
@@ -91,7 +89,7 @@ theorem affine_descent_iff_margin
           (2 : ℚ) ^ exponent a k * x 0 := by
       rw [hid]
       nlinarith
-    exact lt_of_mul_lt_mul_of_pos_left hmul hp
+    exact (mul_lt_mul_left hp).1 hmul
 
 #print axioms affine_descent_iff_margin
 
