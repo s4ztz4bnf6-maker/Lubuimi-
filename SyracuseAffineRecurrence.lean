@@ -56,10 +56,6 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
         _ = x (j + (t + 1)) := by
           rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
 
-end SyracuseAudit
-
-#print axioms SyracuseAudit.affine_identity
-
 
 /--
 Exact descent-margin equivalence for the affine recurrence.
@@ -94,3 +90,8 @@ theorem affine_descent_iff_margin
     exact (mul_lt_mul_left hp).1 hmul
 
 #print axioms affine_descent_iff_margin
+
+end SyracuseAudit
+
+#print axioms SyracuseAudit.affine_identity
+
