@@ -45,7 +45,12 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                norm_num [Nat.cast_add, Nat.cast_mul, Nat.cast_pow]
+                have hcast :
+                    (2 : ℚ) ^ exponent a k =
+                      (↑(2 ^ exponent a k) : ℚ) := by
+                  norm_num [Nat.cast_pow]
+                rw [hcast]
+                push_cast
                 ring
 
 
