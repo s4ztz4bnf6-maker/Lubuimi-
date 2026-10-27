@@ -74,11 +74,11 @@ Formalize these as separate lemmas, in this order:
 1. offset_recurrence: \(N_{j+1}=3N_j+2^{A_j}\).
 2. exact_v2_iff_mod: for positive \(N\), \(v_2(N)=A\) iff \(N\equiv2^A\pmod{2^{A+1}}\).
 3. word_condition_residue: multiplication by \(3^j\) gives one residue class modulo \(2^{A_j+1}\).
-4. cylinder_compatibility: nested congruences are either inconsistent or reduce from the largest modulus.
+4. cylinder_compatibility: prove that the nested congruences are automatically compatible for every word with (a_j\ge1), and that the largest-modulus residue implies every earlier condition.
 5. word_realization_iff: exact congruences are equivalent to realization of the prescribed finite word.
 
 Keep the exact affine identity independent of the congruence theorem. Run a transitive axiom audit on the final theorem and compile with the repository's pinned Lean/Mathlib toolchain before calling it verified.
 
 ## 6. What this does not solve
 
-This reduces the finite-word realization question to exact arithmetic. It does not establish a uniform descent bound for all realized words, rule out all nontrivial cycles, or prove that every orbit reaches 1. The global Collatz step remains open.
+This makes finite-word realization exact, but also removes a hoped-for shortcut: no valid positive valuation word can be discarded as unrealizable. The substantive global problem remains to prove a useful uniform bound on the affine offset/descent margin across realized words, or to use the residue-class structure to classify return words. It does not rule out nontrivial cycles or prove that every orbit reaches 1. The global Collatz step remains open.
