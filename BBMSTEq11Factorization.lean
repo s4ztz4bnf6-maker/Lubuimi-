@@ -14,6 +14,7 @@ namespace BBMSTEq11Factorization
 
 theorem bbmst_eq11_factorization
     {α β : Type*}
+    [DecidableEq β]
     (U : Finset α)
     (V : Finset β)
     (c : α → ℚ)
