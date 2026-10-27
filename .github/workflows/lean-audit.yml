@@ -28,6 +28,12 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Compile typed BBMST parameter interface
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTParameterData.olean BBMSTParameterData.lean
+      - name: Run transitive axiom audit for typed BBMST interface
+        run: lake env lean BBMSTParameterDataAudit.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
