@@ -19,13 +19,13 @@ def Avoids {α : Type} [DecidableEq α]
   ∀ H ∈ removed, x ∉ H
 
 /-- Restrict a finite domain to points avoiding all removed sets. -/
-def restrictDomain {α : Type} [DecidableEq α]
+noncomputable def restrictDomain {α : Type} [DecidableEq α]
     (Q : Finset α) (removed : Finset (Finset α)) : Finset α := by
   classical
   exact Q.filter (fun x => Avoids x removed)
 
 /-- Keep only cover members that were not removed. -/
-def survivingCover {α : Type} [DecidableEq α]
+noncomputable def survivingCover {α : Type} [DecidableEq α]
     (cover removed : Finset (Finset α)) : Finset (Finset α) := by
   classical
   exact cover.filter (fun H => H ∉ removed)
