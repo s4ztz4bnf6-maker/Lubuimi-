@@ -64,7 +64,6 @@ theorem contains_iff_project
       Hyperplane.contains (projectHyperplane forbidden A') (projectPoint x) := by
   constructor
   · intro h i
-    dsimp [ReducedHyperplane.contains, Hyperplane.contains, projectHyperplane, projectPoint]
     cases hA : A'.fixed i with
     | none => trivial
     | some s =>
