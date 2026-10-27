@@ -46,6 +46,7 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
                 push_cast
+                simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow]
                 ring
 
 #print axioms affine_identity
@@ -69,7 +70,7 @@ theorem repeated_state_periodic {α : Type} (F : α → α) (x : ℕ → α)
           rw [show i + (t + 1) = (i + t) + 1 by omega, hstep]
         _ = F (x (j + t)) := congrArg F ih
         _ = x (j + (t + 1)) := by
-          rw [show j + (t + 1) = (j + t) + 1 by omega, hstep
+          rw [show j + (t + 1) = (j + t) + 1 by omega, hstep]
 
 /-- The repeated-state lemma has only the standard foundational dependencies. -/
 #print axioms repeated_state_periodic
