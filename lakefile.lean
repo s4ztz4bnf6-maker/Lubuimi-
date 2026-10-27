@@ -8,3 +8,6 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4.git" 
 
 lean_lib ErdosSelfridgeAudit where
   roots := #[`ErdosSelfridge_v17_fixed, `AuditCheck]
+
+lean_lib SyracuseAudit where
+  roots := #[`SyracuseTest]
