@@ -26,13 +26,13 @@ theorem product_one_add_weight_eq_sum_powerset
           apply Finset.prod_congr rfl
           intro j hj
           exact add_comm 1 (x * w j)
-    _ = ∑ J ∈ T.powerset,
-          (∏ j ∈ J, x * w j) *
-            (∏ j ∈ T  J, (1 : R)) := by
-          rw [Finset.prod_add]
+    _ = ∑ J ∈ T.powerset, ∏ j ∈ J, (x * w j) := by
+          rw [Finset.prod_add_one]
     _ = ∑ J ∈ T.powerset,
           x ^ J.card * (∏ j ∈ J, w j) := by
-          simp [Finset.prod_mul_distrib]
+          apply Finset.sum_congr rfl
+          intro J hJ
+          simp [Finset.prod_mul_distrib, mul_comm, mul_left_comm, mul_assoc]
 
 #print axioms product_one_add_weight_eq_sum_powerset
 
