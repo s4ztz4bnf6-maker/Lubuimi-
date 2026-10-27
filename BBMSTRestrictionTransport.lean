@@ -144,6 +144,55 @@ theorem coordinate_erase_eq_complement_hyperplane
   · rintro ⟨hx, hnot⟩
     exact ⟨hx, fun heq => hnot ⟨hx, heq⟩⟩
 
+/-!
+## Coordinate support model for Module A
+
+A hyperplane pattern records, at each coordinate, either no fixed value or one
+fixed value. Its support is the finite set of coordinates with a fixed value.
+The definitions below make the combinatorial codimension and parallelism
+conventions explicit, rather than storing them as unconstrained flags.
+This is the coordinate-cylinder model; the bridge to the paper's full
+geometric formulation remains a separate obligation.
+-/
+
+structure CoordinatePattern {n : ℕ} (α : Fin n → Type) where
+  fixed : ∀ i, Option (α i)
+
+namespace CoordinatePattern
+
+/-- Coordinates on which a pattern fixes a value. -/
+noncomputable def support {n : ℕ} {α : Fin n → Type}
+    (H : CoordinatePattern α) : Finset (Fin n) := by
+  classical
+  exact Finset.univ.filter (fun i => H.fixed i ≠ none)
+
+/-- Combinatorial codimension of a coordinate pattern. -/
+noncomputable def codimension {n : ℕ} {α : Fin n → Type}
+    (H : CoordinatePattern α) : ℕ :=
+  H.support.card
+
+/-- Two coordinate patterns are parallel exactly when their fixed-coordinate
+supports agree; the actual fixed values may differ. -/
+def Parallel {n : ℕ} {α : Fin n → Type}
+    (H K : CoordinatePattern α) : Prop :=
+  H.support = K.support
+
+theorem mem_support_iff_fixed {n : ℕ} {α : Fin n → Type}
+    (H : CoordinatePattern α) (i : Fin n) :
+    i ∈ H.support ↔ H.fixed i ≠ none := by
+  classical
+  simp [support]
+
+theorem codimension_eq_card_support {n : ℕ} {α : Fin n → Type}
+    (H : CoordinatePattern α) :
+    H.codimension = H.support.card := rfl
+
+theorem parallel_iff_support_eq {n : ℕ} {α : Fin n → Type}
+    (H K : CoordinatePattern α) :
+    Parallel H K ↔ H.support = K.support := Iff.rfl
+
+end CoordinatePattern
+
 #print axioms surviving_cover_covers_restricted_domain
 #print axioms card_erase_ge_two
 #print axioms coordinate_erase_restriction
