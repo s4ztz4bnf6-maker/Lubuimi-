@@ -1,6 +1,6 @@
 import Mathlib
 
-/-!
+/-
 An algebraic identity for a prescribed valuation word.
 This is a rational affine recurrence lemma only: it does not show that
 arbitrary valuation words are realized by positive odd integers, nor that
@@ -45,8 +45,8 @@ theorem affine_identity (a : ℕ → ℕ) (x : ℕ → ℚ)
         _ = (3 : ℚ) ^ (k + 1) * x 0 +
               (3 * offset a k + (2 : ℚ) ^ exponent a k) := by
                 rw [ih, pow_succ]
-                push_cast
-                ring_nf
+                norm_cast
+                ring
 
 /--
 A repeated state in a deterministic trajectory forces all subsequent
