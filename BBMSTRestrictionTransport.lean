@@ -126,7 +126,7 @@ theorem coordinate_erase_restriction
     intro j
     by_cases hji : j = i
     · subst j
-      exact Finset.mem_erase.mpr ⟨hne, hx i⟩
+      simpa only [if_pos rfl] using (Finset.mem_erase.mpr ⟨hne, hx i⟩)
     · simpa [hji] using hx j
 
 theorem coordinate_erase_eq_complement_hyperplane
