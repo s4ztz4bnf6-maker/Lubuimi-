@@ -32,6 +32,8 @@ jobs:
         run: lake env lean BBMSTProductPowerset.lean
       - name: Compile finite double-sum factorization
         run: lake env lean BBMSTDoubleSum.lean
+      - name: Compile integrated BBMST equation (11) factorization
+        run: lake env lean BBMSTEq11Factorization.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
