@@ -1,0 +1,84 @@
+# Exact valuation cylinders: derivation and falsification protocol
+
+Date: 2026-10-27  
+Status: mathematical research specification; not Lean-checked and not a Collatz proof.
+
+## 1. Fix the exact convention
+
+Use the accelerated odd Syracuse map
+\[
+T(n)=\frac{3n+1}{2^{v_2(3n+1)}}\qquad(n>0\text{ odd}).
+\]
+A finite valuation word is \(w=(a_0,\ldots,a_{k-1})\), with every \(a_j\ge1\). Define
+\[
+A_0=C_0=0,\quad A_{j+1}=A_j+a_j,\quad
+C_{j+1}=3C_j+2^{A_j}.
+\]
+For an initial integer \(n\), put \(N_j(n)=3^j n+C_j\). The recurrence gives
+\[
+N_{j+1}(n)=3N_j(n)+2^{A_j}.
+\]
+
+## 2. Exact congruence test
+
+The affine identity is
+\[
+2^{A_j}n_j=N_j(n)=3^j n+C_j
+\]
+whenever the word is realized. At step \(j\), exact valuation \(a_j\) is equivalent to
+\[
+v_2(3n_j+1)=a_j
+\iff
+N_{j+1}(n)\equiv 2^{A_{j+1}}\pmod{2^{A_{j+1}+1}}.
+\]
+The right side is the exact-valuation condition, not merely divisibility by \(2^{A_{j+1}}\). Because \(3^{j+1}\) is invertible modulo every power of two, this condition determines one residue class of \(n\) modulo \(2^{A_{j+1}+1}\):
+\[
+n\equiv (3^{j+1})^{-1}
+(2^{A_{j+1}}-C_{j+1})
+\pmod{2^{A_{j+1}+1}}.
+\]
+
+Since each \(a_j\ge1\), the exponents \(A_{j+1}+1\) strictly increase. The word's cylinder is therefore either empty (the residue conditions conflict under reduction to the smaller moduli), or exactly one residue class modulo \(2^{A_k+1}\). This is a finite, exact decision procedure for word realizability.
+
+For a positive odd \(n\), satisfaction of all these congruences implies the word is realized: inductively \(N_j(n)/2^{A_j}\) is a positive odd integer and the recurrence gives the prescribed Syracuse step. Conversely, every realized word satisfies every congruence. Positivity must be stated when converting the congruences into an orbit of positive integers.
+
+## 3. Important implementation correction
+
+Do not encode the condition only as
+\[
+N_{j+1}(n)\equiv0\pmod{2^{A_{j+1}}}.
+\]
+That proves divisibility, but it does not prove the valuation is exactly \(A_{j+1}\). The extra residue bit
+\[
+N_{j+1}(n)\not\equiv0\pmod{2^{A_{j+1}+1}}
+\]
+is essential; the compact equivalent is congruence to \(2^{A_{j+1}}\) modulo \(2^{A_{j+1}+1}\).
+
+## 4. Concrete falsification protocol
+
+For every word length \(k\) in a bounded test range:
+
+1. Enumerate words with \(1\le a_j\le L\).
+2. Compute \(A_j,C_j\) using exact integers.
+3. Compute each residue condition modulo \(2^{A_{j+1}+1}\).
+4. Intersect conditions from the largest modulus downward; reject immediately if the top residue fails any lower congruence.
+5. Compare all positive odd starts below a chosen bound against direct exact iteration.
+6. Preserve the smallest mismatch as a regression test.
+
+A finite search can falsify a faulty characterization, but it cannot prove the universal theorem. Since a compatible cylinder gives one class modulo \(2^{A_k+1}\), it also gives a finite representation of all starts realizing the word, not a bound on the size of those starts.
+
+## 5. Next Lean obligations
+
+Formalize these as separate lemmas, in this order:
+
+1. offset_recurrence: \(N_{j+1}=3N_j+2^{A_j}\).
+2. exact_v2_iff_mod: for positive \(N\), \(v_2(N)=A\) iff \(N\equiv2^A\pmod{2^{A+1}}\).
+3. word_condition_residue: multiplication by \(3^j\) gives one residue class modulo \(2^{A_j+1}\).
+4. cylinder_compatibility: nested congruences are either inconsistent or reduce from the largest modulus.
+5. word_realization_iff: exact congruences are equivalent to realization of the prescribed finite word.
+
+Keep the exact affine identity independent of the congruence theorem. Run a transitive axiom audit on the final theorem and compile with the repository's pinned Lean/Mathlib toolchain before calling it verified.
+
+## 6. What this does not solve
+
+This reduces the finite-word realization question to exact arithmetic. It does not establish a uniform descent bound for all realized words, rule out all nontrivial cycles, or prove that every orbit reaches 1. The global Collatz step remains open.
