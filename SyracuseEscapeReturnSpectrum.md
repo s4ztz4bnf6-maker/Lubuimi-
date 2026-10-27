@@ -66,3 +66,25 @@ A Lean implementation should prove, separately:
 4. any proposed finite-return bound, without assuming the Collatz conjecture in a helper lemma.
 
 A finite search can falsify a candidate bound or find a counterexample in its tested range. It cannot establish that all bounded-return sets are finite. No claim of global convergence or divergence is made here.
+
+
+## 5. Deterministic finite-return lemma: exact global reduction
+
+For any deterministic map (F:S\to S), any orbit (x_{k+1}=F(x_k)), and any finite subset (B\subseteq S), if (x_k\in B) for infinitely many indices, then the orbit is eventually periodic. Indeed, some state (b\in B) occurs at indices (i<j); determinism gives (x_{i+t}=x_{j+t}) for every (t\ge0).
+
+For Syracuse, (B_M=\{n\in\mathbb N: n\text{ odd},\ 1\le n\le M\}) is finite. Thus:
+- infinitely many bounded returns under (M) imply eventual periodicity;
+- an eventually periodic orbit has infinitely many returns below some finite threshold;
+- consequently, for this integer-valued deterministic system, (n_k\to+\infty) iff the orbit is **not eventually periodic**.
+
+This is a sharper structural statement than the raw escape-return definition, but it does not classify the possible cycles.
+
+**Crucial target correction:** the Collatz conjecture for the accelerated odd map is that every positive odd orbit eventually reaches the fixed point (1). Since (T(1)=1), such an orbit does *not* tend to (+\infty). Therefore proving divergence of every orbit would contradict Collatz rather than prove it. The research target is to classify eventual cycles and rule out nontrivial cycles and nonperiodic orbits; the escape-return spectrum is useful for distinguishing these cases.
+
+## 6. Exact next proof obligations
+
+1. Formalize the deterministic finite-set return lemma in Lean without any Collatz-specific assumptions.
+2. Prove the specialization to (B_M) for the Syracuse map.
+3. State the Collatz target separately as eventual hitting of (1), not divergence.
+4. Keep the valuation-word affine identity independent; add a word-realization congruence theorem only after deriving its exact modulus and parity conditions.
+5. Search for a nontrivial cycle by exact finite constraints as a counterexample generator, not as evidence that no cycle exists.
