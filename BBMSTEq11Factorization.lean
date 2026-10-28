@@ -159,6 +159,4 @@ theorem denominator_ne_zero_for_finite_set
     (1 - δ j) * ((S j).card : ℚ) ≠ 0 :=
   ne_of_gt (denominator_pos_for_finite_set δ S j hδ0 hδhalf hS)
 
-/-- The factorized algebraic theorem is checked against Lean's standard axioms. -/
-
 end BBMSTEq11Factorization
