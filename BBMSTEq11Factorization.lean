@@ -52,6 +52,44 @@ theorem bbmst_eq11_factorization
           rw [pow_add]
           ring
 
+/-- The prefix index set corresponding to the paper's [a] = {1, ..., a}. -/
+def bbmstPrefix (a : ℕ) : Finset ℕ :=
+  Finset.Icc 1 a
+
+/-- The suffix index set corresponding to [a+1, k] = {a+1, ..., k}. -/
+def bbmstSuffix (a k : ℕ) : Finset ℕ :=
+  Finset.Icc (a + 1) k
+
+/--
+Interval-indexed version of the algebraic factorization.
+
+The prefix subsets are subsets of {1, ..., a}; the suffix subsets are subsets
+of {a+1, ..., k}. This establishes the index-set translation and algebraic
+factorization pattern only. The source-specific definitions of c(I), δ_j,
+and S_j, and their hypotheses, must still be supplied separately.
+-/
+theorem bbmst_eq11_factorization_on_intervals
+    (a k : ℕ)
+    (c : Finset ℕ → ℚ)
+    (w : ℕ → ℚ)
+    (x : ℚ) :
+    ((bbmstPrefix a).powerset.sum
+        (fun I => c I * x ^ I.card)) *
+        (bbmstSuffix a k).prod (fun j => 1 + x * w j)
+      =
+    (bbmstPrefix a).powerset.sum (fun I =>
+      (bbmstSuffix a k).powerset.sum (fun J =>
+        c I * J.prod w * x ^ (I.card + J.card))) := by
+  simpa [bbmstPrefix, bbmstSuffix] using
+    (bbmst_eq11_factorization
+      (U := (Finset.Icc 1 a).powerset)
+      (V := Finset.Icc (a + 1) k)
+      (c := c)
+      (w := w)
+      (m := fun I : Finset ℕ => I.card)
+      (x := x))
+
 #print axioms bbmst_eq11_factorization
+#print axioms bbmst_eq11_factorization_on_intervals
 
 end BBMSTEq11Factorization
