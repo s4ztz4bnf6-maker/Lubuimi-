@@ -1,0 +1,41 @@
+name: BBMST piecewise-constant sum focused compile
+
+on:
+  push:
+    branches:
+      - audit/sum-piecewise-const-2026-10-28
+    paths:
+      - 'BBMSTPiecewiseConst.lean'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - '.github/workflows/bbmst-piecewise-const.yml'
+  pull_request:
+    paths:
+      - 'BBMSTPiecewiseConst.lean'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - '.github/workflows/bbmst-piecewise-const.yml'
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.28.0 and resolve dependencies
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Install dependencies and restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile isolated piecewise-constant sum theorem
+        run: lake env lean BBMSTPiecewiseConst.lean
