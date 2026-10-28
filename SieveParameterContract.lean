@@ -14,9 +14,8 @@ explicit branch rather than Lean's totalized rational division by zero.
 
 `candidateSieveTerm` records the proposed zero-delta branch: use the first
 moment bound when delta is zero, and use the second-moment quotient otherwise.
-This matches the natural limiting interpretation of the minimum, but must be
-checked against the precise BBMST derivation before replacing the upstream
-formula. This file is a contract prototype, not a proof of the sieve theorem.
+This is a candidate semantics, not yet a source-validated replacement for the
+upstream formula. This file is a contract prototype, not a proof of the theorem.
 -/
 
 namespace SieveAudit
@@ -38,9 +37,9 @@ theorem delta_lt_one {n : Nat} (s : StageData n) (i : Fin n) :
 
 /-- Candidate branch semantics for a single sieve term. -/
 def candidateSieveTerm (δ m1 m2 : ℚ) : ℚ :=
-  if hδ : δ = 0 then m1 else min m1 (m2 / (4 * δ * (1 - δ)))
+  if δ = 0 then m1 else min m1 (m2 / (4 * δ * (1 - δ)))
 
-/-- If the delta is nonzero, its source bounds certify the denominator. -/
+/-- If delta is nonzero, its source bounds certify the denominator. -/
 theorem denominator_pos
     {n : Nat} (s : StageData n) (i : Fin n)
     (hδ : s.delta i ≠ 0) :
@@ -49,17 +48,19 @@ theorem denominator_pos
     by_contra hnot
     have hle : s.delta i ≤ 0 := le_of_not_gt hnot
     have hz : s.delta i = 0 := le_antisymm hle (s.delta_nonneg i)
-    exact False.elim (hδ hz)
+    exact hδ hz
   have hupper : 0 < 1 - s.delta i := by
     linarith [s.delta_le_half i]
-  exact mul_pos (by norm_num : (0 : ℚ) < 4) (mul_pos hδpos hupper)
+  have hfour : 0 < (4 : ℚ) * s.delta i :=
+    mul_pos (by norm_num : (0 : ℚ) < 4) hδpos
+  exact mul_pos hfour hupper
 
-/-- The zero-delta branch never evaluates the second-moment quotient. -/
+/-- The zero-delta branch avoids the second-moment quotient. -/
 theorem candidateSieveTerm_zero (m1 m2 : ℚ) :
     candidateSieveTerm 0 m1 m2 = m1 := by
   simp [candidateSieveTerm]
 
-/-- For nonzero delta, the candidate uses the ordinary quotient branch. -/
+/-- For nonzero delta, the candidate uses the quotient branch. -/
 theorem candidateSieveTerm_nonzero
     {δ m1 m2 : ℚ} (hδ : δ ≠ 0) :
     candidateSieveTerm δ m1 m2 =
