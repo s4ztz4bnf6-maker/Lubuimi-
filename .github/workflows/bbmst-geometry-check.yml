@@ -1,9 +1,10 @@
-name: BBMST geometry focused compile
+name: BBMST geometry and fiber fraction focused compile
 
 on:
   push:
     paths:
       - 'BBMSTGeometryTest.lean'
+      - 'BBMSTProbabilityRecursionTest.lean'
       - 'lakefile.lean'
       - 'lean-toolchain'
       - 'lake-manifest.json'
@@ -11,6 +12,7 @@ on:
   pull_request:
     paths:
       - 'BBMSTGeometryTest.lean'
+      - 'BBMSTProbabilityRecursionTest.lean'
       - 'lakefile.lean'
       - 'lean-toolchain'
       - 'lake-manifest.json'
@@ -37,3 +39,5 @@ jobs:
           use-mathlib-cache: true
       - name: Compile BBMST coordinate geometry sandbox
         run: lake env lean BBMSTGeometryTest.lean
+      - name: Compile BBMST fiber fraction lemmas
+        run: lake env lean BBMSTProbabilityRecursionTest.lean
