@@ -6,6 +6,7 @@ on:
       - "BBMSTMomentBridge.lean"
       - "BBMSTFiniteSieveStage.lean"
       - "BBMSTCoordinateStage.lean"
+      - "BBMSTWeightUpdate.lean"
       - ".github/workflows/lean-indicator-check.yml"
       - "lakefile.lean"
       - "lean-toolchain"
@@ -37,3 +38,5 @@ jobs:
         run: lake env lean BBMSTFiniteSieveStage.lean
       - name: Compile concrete coordinate-stage model and print axioms
         run: lake env lean BBMSTCoordinateStage.lean
+      - name: Compile source-faithful BBMST weight update and print axioms
+        run: lake env lean BBMSTWeightUpdate.lean
