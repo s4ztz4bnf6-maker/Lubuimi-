@@ -89,7 +89,81 @@ theorem bbmst_eq11_factorization_on_intervals
       (m := fun I : Finset ℕ => I.card)
       (x := x))
 
+/-! ## Semantic layer: denominator positivity and finite-set cardinalities -/
+
+/--
+The scalar denominator is positive when the perturbation parameter is at most
+one half and the finite-set cardinality is nonzero.
+-/
+theorem denominator_pos
+    (δ : ℚ)
+    (s : ℕ)
+    (hδ0 : 0 ≤ δ)
+    (hδhalf : δ ≤ (1 : ℚ) / 2)
+    (hs : 0 < s) :
+    0 < (1 - δ) * (s : ℚ) := by
+  have hfactor : 0 < 1 - δ := by
+    linarith
+  have hsize : (0 : ℚ) < (s : ℚ) := by
+    exact_mod_cast hs
+  exact mul_pos hfactor hsize
+
+/--
+The denominator for an actual finite set S j, represented by its cardinality,
+is positive under the paper-parameter bounds and nonemptiness of S j.
+The finite set is kept as a Finset; its size is not replaced by an unrelated
+natural-number parameter.
+-/
+theorem denominator_pos_for_finite_set
+    {γ : Type*}
+    (δ : ℕ → ℚ)
+    (S : ℕ → Finset γ)
+    (j : ℕ)
+    (hδ0 : 0 ≤ δ j)
+    (hδhalf : δ j ≤ (1 : ℚ) / 2)
+    (hS : (S j).Nonempty) :
+    0 < (1 - δ j) * ((S j).card : ℚ) := by
+  apply denominator_pos
+  · exact hδ0
+  · exact hδhalf
+  · exact Finset.card_pos.mpr hS
+
+/-- The individual BBMST-style weight attached to an index j. -/
+def weightFactor
+    {γ : Type*}
+    (δ : ℕ → ℚ)
+    (S : ℕ → Finset γ)
+    (j : ℕ) : ℚ :=
+  1 / ((1 - δ j) * ((S j).card : ℚ))
+
+/-- The finite-product weight of a suffix subset J. -/
+def nuWeight
+    {γ : Type*}
+    (δ : ℕ → ℚ)
+    (S : ℕ → Finset γ)
+    (J : Finset ℕ) : ℚ :=
+  J.prod (weightFactor δ S)
+
+/--
+The denominator is nonzero for each nonempty finite set S j under the
+parameter bounds. This explicitly justifies division in weightFactor.
+-/
+theorem denominator_ne_zero_for_finite_set
+    {γ : Type*}
+    (δ : ℕ → ℚ)
+    (S : ℕ → Finset γ)
+    (j : ℕ)
+    (hδ0 : 0 ≤ δ j)
+    (hδhalf : δ j ≤ (1 : ℚ) / 2)
+    (hS : (S j).Nonempty) :
+    (1 - δ j) * ((S j).card : ℚ) ≠ 0 :=
+  ne_of_gt (denominator_pos_for_finite_set δ S j hδ0 hδhalf hS)
+
+/-- The factorized algebraic theorem is checked against Lean's standard axioms. -/
 #print axioms bbmst_eq11_factorization
 #print axioms bbmst_eq11_factorization_on_intervals
+#print axioms denominator_pos
+#print axioms denominator_pos_for_finite_set
+#print axioms denominator_ne_zero_for_finite_set
 
 end BBMSTEq11Factorization
