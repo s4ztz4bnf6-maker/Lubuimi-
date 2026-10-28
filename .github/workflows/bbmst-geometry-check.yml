@@ -1,0 +1,32 @@
+name: BBMST geometry focused compile
+
+on:
+  push:
+    paths:
+      - 'BBMSTGeometryTest.lean'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - '.github/workflows/bbmst-geometry-check.yml'
+  pull_request:
+    paths:
+      - 'BBMSTGeometryTest.lean'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - 'lake-manifest.json'
+      - '.github/workflows/bbmst-geometry-check.yml'
+  workflow_dispatch:
+
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile BBMST coordinate geometry sandbox
+        run: lake env lean BBMSTGeometryTest.lean
