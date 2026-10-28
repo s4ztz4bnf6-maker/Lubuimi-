@@ -38,3 +38,5 @@ jobs:
         run: lake env lean SieveParameterContract.lean
       - name: Compile generic finite moment inequalities
         run: lake env lean BBMSTMomentInequalities.lean
+      - name: Compile BBMST coordinate geometry sandbox
+        run: lake env lean BBMSTGeometryTest.lean
