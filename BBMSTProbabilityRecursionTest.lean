@@ -72,9 +72,7 @@ theorem alpha_lt_one_of_not_mem_B
     · intro hs
       obtain ⟨z, hz⟩ := hs y
       apply h
-      have hz' : z.1 = y := hz
-      rw [← hz'] at z.property
-      exact z.property
+      simpa [hz] using z.property
   rw [div_lt_one hden]
   exact_mod_cast hcard
 
