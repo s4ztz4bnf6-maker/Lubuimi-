@@ -37,7 +37,12 @@ theorem sum_piecewise_const
   rw [← hunion, Finset.sum_union hdisj]
   have hF :
       (∑ y ∈ F, if y ∈ F then u else v) = (F.card : ℚ) * u := by
-    simp
+    calc
+      (∑ y ∈ F, if y ∈ F then u else v) = ∑ y ∈ F, u := by
+        apply Finset.sum_congr rfl
+        intro y hyF
+        rw [if_pos hyF]
+      _ = (F.card : ℚ) * u := by simp
   have hC :
       (∑ y ∈ C, if y ∈ F then u else v) = (C.card : ℚ) * v := by
     calc
