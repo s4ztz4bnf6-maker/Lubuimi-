@@ -5,6 +5,7 @@ on:
     paths:
       - "BBMSTMomentBridge.lean"
       - "BBMSTFiniteSieveStage.lean"
+      - "BBMSTCoordinateStage.lean"
       - ".github/workflows/lean-indicator-check.yml"
       - "lakefile.lean"
       - "lean-toolchain"
@@ -34,3 +35,5 @@ jobs:
           lake env lean -o .lake/build/lib/lean/BBMSTMomentBridge.olean BBMSTMomentBridge.lean
       - name: Compile finite sieve-stage module and print axioms
         run: lake env lean BBMSTFiniteSieveStage.lean
+      - name: Compile concrete coordinate-stage model and print axioms
+        run: lake env lean BBMSTCoordinateStage.lean
