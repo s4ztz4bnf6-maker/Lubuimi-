@@ -128,7 +128,7 @@ This remains true at delta = 0, where the quotient branch is not used. -/
 theorem safeStageContribution_le_firstMoment (m1 m2 delta : ℚ) :
     safeStageContribution m1 m2 delta ≤ m1 := by
   by_cases hδ : 0 < delta
-  · change min m1 (m2 / (4 * delta * (1 - delta))) ≤ m1
+  · simp only [safeStageContribution, if_pos hδ]
     exact min_le_left _ _
   · simp [safeStageContribution, hδ]
 
@@ -145,7 +145,7 @@ theorem safeStageContribution_nonneg
       exact mul_pos (mul_pos hfour hδ) htail
     have hquot : 0 ≤ m2 / (4 * delta * (1 - delta)) :=
       div_nonneg hm2 (le_of_lt hden)
-    change 0 ≤ min m1 (m2 / (4 * delta * (1 - delta)))
+    simp only [safeStageContribution, if_pos hδ]
     exact le_min hm1 hquot
   · simpa [safeStageContribution, hδ] using hm1
 
