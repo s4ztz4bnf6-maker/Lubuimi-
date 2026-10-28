@@ -22,7 +22,6 @@ theorem fiber_mass_sum
 
 #print axioms fiber_mass_sum
 
-
 /-- A zero total mass with nonnegative weights forces every point weight to vanish. -/
 theorem point_weight_eq_zero_of_sum_eq_zero
     {A : Type*} [Fintype A]
@@ -43,7 +42,6 @@ theorem point_weight_eq_zero_of_sum_eq_zero
 
 #print axioms point_weight_eq_zero_of_sum_eq_zero
 
-
 /-- Zero mass on a fiber forces every nonnegative weight in that fiber to vanish. -/
 theorem fiber_point_weight_eq_zero_of_mass_eq_zero
     {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
@@ -63,5 +61,41 @@ theorem fiber_point_weight_eq_zero_of_mass_eq_zero
   simpa [haf] using h
 
 #print axioms fiber_point_weight_eq_zero_of_mass_eq_zero
+
+/-- Every fiber has nonnegative mass when all point weights are nonnegative. -/
+theorem fiber_mass_nonneg
+    {A B : Type*} [Fintype A] [DecidableEq B]
+    (f : A → B) (w : A → ℚ)
+    (h_nonneg : ∀ a, 0 ≤ w a) (b : B) :
+    0 ≤ ∑ a : A, if f a = b then w a else 0 := by
+  apply Finset.sum_nonneg
+  intro a ha
+  split_ifs with h
+  · exact h_nonneg a
+  · norm_num
+
+#print axioms fiber_mass_nonneg
+
+/-- A positive point weight in a fiber forces the fiber's total mass to be positive. -/
+theorem fiber_mass_pos_of_point_pos
+    {A B : Type*} [Fintype A] [DecidableEq B]
+    (f : A → B) (w : A → ℚ)
+    (h_nonneg : ∀ a, 0 ≤ w a) (b : B) (a : A)
+    (hab : f a = b) (ha_pos : 0 < w a) :
+    0 < ∑ x : A, if f x = b then w x else 0 := by
+  have hle :
+      w a ≤ ∑ x : A, if f x = b then w x else 0 := by
+    simpa [hab] using
+      (Finset.single_le_sum
+        (s := Finset.univ)
+        (f := fun x => if f x = b then w x else 0)
+        (fun x _ => by
+          split_ifs with h
+          · exact h_nonneg x
+          · norm_num)
+        (Finset.mem_univ a))
+  exact lt_of_lt_of_le ha_pos hle
+
+#print axioms fiber_mass_pos_of_point_pos
 
 end BBMSTFiberMass
