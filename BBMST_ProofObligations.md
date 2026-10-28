@@ -45,3 +45,12 @@ is only an algebraic adapter. It does not establish that the paper's hyperplane 
 
 Audit rule: do not identify Lemma 3.4's moment estimate with the current `M2bound` until the correspondence of measures, `alpha_k`, the hyperplane family, and the exact hypotheses has been proved. A numerical-looking match of formulas is insufficient.
 
+
+
+## Guarded stage contribution follow-up (2026-10-28)
+
+The branch now contains safeStageContribution_le_firstMoment and safeStageContribution_nonneg in BBMSTMomentBridge.lean. These isolate two basic obligations for the guarded stage expression: it does not exceed the first-moment estimate, and it is nonnegative when the moment bounds are nonnegative and the delta upper bound is available. The zero-delta branch continues to select the first-moment estimate without selecting the quotient branch.
+
+**Verification status:** these additions were committed after successful run 40765932839. That run verified the earlier bridge and parameter lemmas, but it does not verify the later commits. The new lemmas remain pending a CI run on the current branch head. Do not cite them as kernel-checked until that run succeeds.
+
+**Mathematical scope:** this is parameter-safety plumbing only. It neither proves the BBMST moment estimates nor repairs the admitted sieve_criterion and sf_sieve_lt_one assumptions in the main theorem. The next proof-level task remains the source-faithful arithmetic-to-hyperplane representation and the proof of the actual moment bounds under the paper's stated hypotheses.
