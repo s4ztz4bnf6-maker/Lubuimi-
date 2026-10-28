@@ -152,5 +152,7 @@ theorem safeStageContribution_nonneg
 #print axioms secondMomentDenominator_pos
 #print axioms safeStageContribution_zero
 #print axioms safeStageContribution_positive
+#print axioms safeStageContribution_le_firstMoment
+#print axioms safeStageContribution_nonneg
 
 end BBMSTMomentBridge
