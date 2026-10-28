@@ -31,19 +31,9 @@ theorem sum_fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) :
     (∑ y : Qprev, fiberMass T w y) = ∑ x : Qk, w x := by
   classical
   unfold fiberMass fiber
-  calc
-    (∑ y : Qprev, ∑ x ∈ Finset.univ.filter (fun x => T.restrict x = y), w x)
-        = ∑ x : Qk, ∑ y : Qprev,
-            if T.restrict x = y then w x else 0 := by
-          simp_rw [Finset.sum_filter]
-          simp only [Finset.sum_comm]
-          congr 1
-          funext x
-          simp
-    _ = ∑ x : Qk, w x := by
-          congr 1
-          funext x
-          simp
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  simp
 
 /-- The incidence relation induced by the transition is equality of images. -/
 def sameFiber (T : Transition Qk Qprev) (x x' : Qk) : Prop :=
