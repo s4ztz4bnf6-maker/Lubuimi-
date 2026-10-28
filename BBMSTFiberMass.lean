@@ -39,7 +39,7 @@ theorem point_weight_eq_zero_of_sum_eq_zero
         (fun x _ => h_nonneg x)
         (Finset.mem_univ a))
   rw [h_sum] at hle
-  exact le_antisymm (h_nonneg a) hle
+  exact le_antisymm hle (h_nonneg a)
 
 #print axioms point_weight_eq_zero_of_sum_eq_zero
 
