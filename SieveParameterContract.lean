@@ -60,6 +60,13 @@ theorem candidateSieveTerm_zero (m1 m2 : ℚ) :
     candidateSieveTerm 0 m1 m2 = m1 := by
   simp [candidateSieveTerm]
 
+/-- If the first-moment estimate is positive, the zero-delta branch stays positive.
+This excludes the specific artificial zero caused by dividing by a zero denominator. -/
+theorem candidateSieveTerm_zero_pos {m1 m2 : ℚ} (hm1 : 0 < m1) :
+    0 < candidateSieveTerm 0 m1 m2 := by
+  rw [candidateSieveTerm_zero]
+  exact hm1
+
 /-- For nonzero delta, the candidate uses the quotient branch. -/
 theorem candidateSieveTerm_nonzero
     {δ m1 m2 : ℚ} (hδ : δ ≠ 0) :
@@ -75,6 +82,7 @@ theorem no_empty_stage_data : ¬ Nonempty (StageData 0) := by
 #print axioms delta_lt_one
 #print axioms denominator_pos
 #print axioms candidateSieveTerm_zero
+#print axioms candidateSieveTerm_zero_pos
 #print axioms candidateSieveTerm_nonzero
 #print axioms no_empty_stage_data
 
