@@ -77,6 +77,24 @@ theorem multiplier_nonneg
     positivity
   · positivity
 
+/-- The exceptional-fiber count is exactly alpha times the coordinate
+cardinality. This is the counting identity needed to turn the source's
+fractional update into finite-sum algebra. -/
+theorem exceptionalFiber_card_eq_alpha_mul_card
+    (C : CoordinateStage X S) (x : X) :
+    ((exceptionalFiber C x).card : ℚ) =
+      alpha C x * (Fintype.card S : ℚ) := by
+  unfold alpha
+  have hcard : (Fintype.card S : ℚ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt (coordinate_card_pos C))
+  field_simp
+
+/-- The mass on one coordinate fiber after the update. The next theorem
+will show that this equals the incoming mass w x. -/
+noncomputable def localMass
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X) : ℚ :=
+  ∑ s : S, updatedWeight C w delta x s
+
 #print axioms one_sub_alpha_pos_of_alpha_le_delta
 #print axioms alpha_pos_of_delta_lt_alpha
 #print axioms one_sub_delta_pos
