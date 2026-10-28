@@ -94,6 +94,17 @@ theorem exceptionalFiber_card_eq_alpha_mul_card
     exact_mod_cast (ne_of_gt (coordinate_card_pos C))
   field_simp
 
+/-- Split a finite sum over the exceptional fiber and its complement. -/
+theorem sum_split_exceptional
+    (C : CoordinateStage X S) (x : X) (f : S → ℚ) :
+    (∑ s : S, f s) =
+      (∑ s in Finset.univ.filter (fun s => C.exceptional x s), f s) +
+      (∑ s in Finset.univ.filter (fun s => ¬ C.exceptional x s), f s) := by
+  classical
+  simpa using
+    (Finset.sum_filter_add_sum_filter_not
+      (s := Finset.univ) (p := fun s : S => C.exceptional x s) (f := f)).symm
+
 /-- The mass on one coordinate fiber after the update. The next theorem
 will show that this equals the incoming mass w x. -/
 noncomputable def localMass
@@ -104,5 +115,6 @@ noncomputable def localMass
 #print axioms alpha_pos_of_delta_lt_alpha
 #print axioms one_sub_delta_pos
 #print axioms multiplier_nonneg
+#print axioms sum_split_exceptional
 
 end BBMSTWeightUpdate
