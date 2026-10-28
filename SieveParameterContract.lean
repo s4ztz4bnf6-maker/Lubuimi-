@@ -77,7 +77,7 @@ theorem candidateSieveTerm_nonzero
 /-- A zero-stage family cannot inhabit the certified contract. -/
 theorem no_empty_stage_data : ¬ Nonempty (StageData 0) := by
   rintro ⟨s⟩
-  omega
+  exact Nat.not_lt_zero _ s.stage_count_pos
 
 #print axioms delta_lt_one
 #print axioms denominator_pos
