@@ -43,4 +43,25 @@ theorem point_weight_eq_zero_of_sum_eq_zero
 
 #print axioms point_weight_eq_zero_of_sum_eq_zero
 
+
+/-- Zero mass on a fiber forces every nonnegative weight in that fiber to vanish. -/
+theorem fiber_point_weight_eq_zero_of_mass_eq_zero
+    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    (f : A → B) (w : A → ℚ)
+    (h_nonneg : ∀ a, 0 ≤ w a) (b : B)
+    (h_mass : (∑ a : A, if f a = b then w a else 0) = 0) :
+    ∀ a : A, f a = b → w a = 0 := by
+  have h_nonneg' : ∀ a, 0 ≤ (if f a = b then w a else 0) := by
+    intro a
+    split_ifs with h
+    · exact h_nonneg a
+    · norm_num
+  have h_zero := point_weight_eq_zero_of_sum_eq_zero
+    (fun a => if f a = b then w a else 0) h_nonneg' h_mass
+  intro a haf
+  have h := h_zero a
+  simpa [haf] using h
+
+#print axioms fiber_point_weight_eq_zero_of_mass_eq_zero
+
 end BBMSTFiberMass
