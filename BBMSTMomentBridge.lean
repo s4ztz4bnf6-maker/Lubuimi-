@@ -136,7 +136,7 @@ theorem safeStageContribution_le_firstMoment (m1 m2 delta : ℚ) :
 range, the guarded contribution is nonnegative. -/
 theorem safeStageContribution_nonneg
     (m1 m2 delta : ℚ) (hm1 : 0 ≤ m1) (hm2 : 0 ≤ m2)
-    (hδ0 : 0 ≤ delta) (hδhalf : delta ≤ (1 / 2 : ℚ)) :
+    (hδhalf : delta ≤ (1 / 2 : ℚ)) :
     0 ≤ safeStageContribution m1 m2 delta := by
   by_cases hδ : 0 < delta
   · have hden : 0 < 4 * delta * (1 - delta) := by
