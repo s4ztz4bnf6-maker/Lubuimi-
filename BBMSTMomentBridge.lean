@@ -87,4 +87,43 @@ theorem fiber_second_moment_incidence
 
 #print axioms fiber_second_moment_incidence
 
+
+/-- Stage data with aligned block sizes and sieve parameters.  The common
+index type prevents a missing delta from being silently replaced by a default. -/
+structure StageParameters (n : Nat) where
+  blockSize : Fin n → ℚ
+  delta : Fin n → ℚ
+  blockSize_pos : ∀ i, 0 < blockSize i
+  delta_nonneg : ∀ i, 0 ≤ delta i
+  delta_le_half : ∀ i, delta i ≤ (1 / 2 : ℚ)
+
+/-- In the positive-delta branch, the second-moment denominator is strictly
+positive.  The proof uses the explicit range 0 < delta ≤ 1/2. -/
+theorem secondMomentDenominator_pos {n : Nat}
+    (p : StageParameters n) (i : Fin n) (hδ : 0 < p.delta i) :
+    0 < 4 * p.delta i * (1 - p.delta i) := by
+  have htail : 0 < 1 - p.delta i := by
+    have hhalf := p.delta_le_half i
+    linarith
+  have hfour : 0 < (4 : ℚ) := by norm_num
+  exact mul_pos (mul_pos hfour hδ) htail
+
+/-- A guarded stage contribution: at delta = 0, use only the first-moment
+bound; the quotient is selected only when delta is positive. -/
+def safeStageContribution (m1 m2 delta : ℚ) : ℚ :=
+  if 0 < delta then min m1 (m2 / (4 * delta * (1 - delta))) else m1
+
+theorem safeStageContribution_zero (m1 m2 : ℚ) :
+    safeStageContribution m1 m2 0 = m1 := by
+  simp [safeStageContribution]
+
+theorem safeStageContribution_positive (m1 m2 delta : ℚ) (hδ : 0 < delta) :
+    safeStageContribution m1 m2 delta =
+      min m1 (m2 / (4 * delta * (1 - delta))) := by
+  simp [safeStageContribution, hδ]
+
+#print axioms secondMomentDenominator_pos
+#print axioms safeStageContribution_zero
+#print axioms safeStageContribution_positive
+
 end BBMSTMomentBridge
