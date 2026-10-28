@@ -138,7 +138,6 @@ theorem delta_eq_zero_or_pos (p : StageParameter) :
   by_cases h : p.delta = 0
   · exact Or.inl h
   · right
-    have hp := p.delta_nonneg
-    linarith
+    exact lt_of_le_of_ne p.delta_nonneg (Ne.symm h)
 
 end BBMSTFiberMass
