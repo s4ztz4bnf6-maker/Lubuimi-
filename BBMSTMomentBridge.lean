@@ -2,7 +2,7 @@ import Mathlib
 
 namespace BBMSTMomentBridge
 
-variable {Y : Type*} [Fintype Y]
+variable {Y : Type*} [Fintype Y] [DecidableEq Y]
 
 /-- The overlap of two point indicators is the indicator of equality. -/
 theorem sum_pair_indicator (a b : Y) :
