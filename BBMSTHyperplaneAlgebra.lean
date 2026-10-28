@@ -127,27 +127,10 @@ theorem merge_contains_iff (A B : Hyperplane S) (hcompat : A.Compatible B)
 theorem fixedSet_merge (A B : Hyperplane S) :
     (merge A B).fixedSet = A.fixedSet ∪ B.fixedSet := by
   ext i
-  constructor
-  · intro hi
-    rcases hi with ⟨x, hx⟩
-    dsimp [merge, mergeAt] at hx
-    cases ha : A.fixed i <;> cases hb : B.fixed i <;>
-      simp_all [fixedSet, mergeAt]
-  · intro hi
-    rcases hi with hi | hi
-    · rcases hi with ⟨x, hx⟩
-      refine ⟨x, ?_⟩
-      dsimp [merge, mergeAt]
-      rw [hx]
-      cases B.fixed i <;> rfl
-    · rcases hi with ⟨y, hy⟩
-      refine ⟨y, ?_⟩
-      dsimp [merge, mergeAt]
-      cases ha : A.fixed i with
-      | none => simpa [ha] using hy
-      | some x =>
-        rw [ha]
-        rfl
+  change (∃ x, mergeAt (A.fixed i) (B.fixed i) = some x) ↔
+    (∃ x, A.fixed i = some x) ∨ (∃ y, B.fixed i = some y)
+  cases ha : A.fixed i <;> cases hb : B.fixed i <;>
+    simp [mergeAt, ha, hb]
 
 end Hyperplane
 end BBMSTAudit
