@@ -87,15 +87,29 @@ theorem merge_contains_iff (A B : Hyperplane S) (hcompat : A.Compatible B)
   · intro hm
     constructor
     · intro i
-      have h := hm i
-      dsimp [merge, mergeAt] at h
-      cases ha : A.fixed i <;> cases hb : B.fixed i <;>
-        simp_all [Contains, mergeAt]
+      cases ha : A.fixed i with
+      | none => trivial
+      | some x =>
+        cases hb : B.fixed i with
+        | none =>
+          have hi := hm i
+          simpa [Contains, merge, mergeAt, ha, hb] using hi
+        | some y =>
+          have hi := hm i
+          simpa [Contains, merge, mergeAt, ha, hb] using hi
     · intro i
-      have h := hm i
-      dsimp [merge, mergeAt] at h
-      cases ha : A.fixed i <;> cases hb : B.fixed i <;>
-        simp_all [Contains, mergeAt, Compatible] at hcompat ⊢
+      cases hb : B.fixed i with
+      | none => trivial
+      | some y =>
+        cases ha : A.fixed i with
+        | none =>
+          have hi := hm i
+          simpa [Contains, merge, mergeAt, ha, hb] using hi
+        | some x =>
+          have hxy : x = y := by
+            simpa [Compatible, ha, hb] using hcompat i
+          have hi := hm i
+          simpa [Contains, merge, mergeAt, ha, hb, hxy] using hi
   · rintro ⟨ha, hb⟩ i
     dsimp [merge, mergeAt]
     cases hAi : A.fixed i with
