@@ -45,3 +45,43 @@ Only after these have been checked should the definitions be encoded in Lean. Th
 - Do not claim a Lean build or CI pass from this documentation-only commit.
 - Do not claim that a source-faithful formalization exists until the above acceptance criteria are met.
 - Do not introduce sorry, sorryAx, or new mathematical axioms to bridge missing definitions.
+## A1–A4: source-faithful hyperplanes and intersection algebra
+
+### Primary definition (published paper, p. 610; Theorem 1.2 setup)
+
+Let each coordinate set `S_i` be finite with at least two elements and let `Q = S_1 × ⋯ × S_n`. A hyperplane is a product `A = A_1 × ⋯ × A_n ⊆ Q` where each `A_i` is either the full coordinate set `S_i` or a singleton subset of `S_i`. The paper writes `A = [x_1, …, x_n]`, where each `x_i` is either an element of `S_i` or the wildcard `*`; the wildcard means the coordinate is unrestricted. The fixed-coordinate set is `F(A) = {i : x_i ∈ S_i}`. A hyperplane is nontrivial iff `F(A) ≠ ∅`. Two hyperplanes are parallel iff their fixed-coordinate sets are equal. See the published source, Section 1, pp. 609–610, immediately before Theorem 1.2.
+
+### Intersection lemma: exact mathematical statement
+
+Write a hyperplane as a partial assignment `x : F(A) → ⋃ᵢ S_i`, with `x(i) ∈ S_i`. For two hyperplanes `A` and `A'`:
+
+- If there exists a coordinate `i ∈ F(A) ∩ F(A')` at which the assigned values differ, then `A ∩ A' = ∅`.
+- Otherwise the assignments agree on all shared fixed coordinates; the intersection is the coordinate cylinder/hyperplane obtained by combining the assignments, and its fixed-coordinate set is `F(A) ∪ F(A')`.
+
+**Important qualification:** the source's phrase “a hyperplane” for the intersection must be handled carefully if the intersection is the whole space (empty fixed-coordinate set) or if later arguments require a *nontrivial* hyperplane. The bare intersection statement should allow the trivial whole-space product when both fixed-coordinate sets are empty; for the paper's nontrivial input hyperplanes, their union of fixed-coordinate sets is nonempty, so a nonempty intersection remains nontrivial.
+
+### Lean specification target (not yet implemented)
+
+Use a finite coordinate index type and a dependent family `S : ι → Type` with finite instances and `2 ≤ Fintype.card (S i)`. Represent a hyperplane by a partial coordinate assignment, e.g. `σ : ∀ i, Option (S i)`, with `none` meaning unrestricted and `some x` meaning fixed to `x`. Define membership pointwise. Define `fixedSet σ = {i | (σ i).isSome}` and define parallelism by equality of `fixedSet`, matching the paper. Do not use the existing test file's `NotParallel` predicate as a replacement for this source definition.
+
+Prove, from the definitions, the following lemmas before proceeding to probability:
+
+1. `mem_inter_iff`: membership in the intersection is membership in both hyperplanes.
+2. `inter_empty_of_conflicting_assignments`: conflicting values at a shared fixed coordinate imply disjointness.
+3. `compatible_assignments_inter`: if assignments agree on shared fixed coordinates, the intersection is represented by their merged partial assignment.
+4. `fixedSet_merge`: the merged assignment's fixed set is exactly the union of the two fixed sets.
+5. `inter_eq_empty_or_merge`: the intersection is empty or equals the merged hyperplane.
+
+These are specification targets, not claims that Lean declarations or compiled proofs already exist.
+
+### Link to the families on p. 612
+
+Once the hyperplane and `F(A)` definitions are fixed, the source defines `F = {F(A) : A ∈ A}` for a collection of nontrivial hyperplanes with no two parallel, then indexes the collection as `A = {A_F : F ∈ F}`. Since `F(A)` is injective on this collection by the nonparallel assumption, the notation `A_F` is well-defined. The families `F_k`, `A_k`, and `N_k` and the set `B_k` are then defined as recorded above. This dependence order is essential: do not define `N_k` independently of the source family `F`.
+
+### Source reference
+
+Published version: Balister et al., *Algebra & Number Theory* 15 (2021), 609–626, DOI 10.2140/ant.2021.15.609. The definition of a hyperplane and `F(A)` appears in the geometric setup preceding Theorem 1.2 on pp. 609–610; the family definitions `F`, `F_k`, `A_k`, `N_k`, and `B_k` appear on p. 612; Lemma 3.4's intersection/moment argument appears on p. 616. Published PDF: https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s.
+
+### Audit status
+
+This section records the source definition and a derived elementary intersection specification. No Lean code was added in this commit, and no build or CI status is claimed. In particular, this intersection lemma is not yet a proof of Lemma 3.4 or Theorem 3.2.
