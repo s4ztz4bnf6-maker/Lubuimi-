@@ -36,3 +36,5 @@ jobs:
         run: lake env lean AuditCheck.lean
       - name: Compile BBMST finite indicator bridge and audit axioms
         run: lake env lean BBMSTMomentBridge.lean
+      - name: Compile isolated finite sieve-stage module and audit axioms
+        run: lake env lean BBMSTFiniteSieveStage.lean
