@@ -25,6 +25,13 @@ def fiber (T : Transition Qk Qprev) (y : Qprev) : Finset Qk :=
 def fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) (y : Qprev) : ℚ :=
   ∑ x ∈ fiber T y, w x
 
+/-- Fiber mass as an indicator sum, matching the finite moment bridge. -/
+theorem fiberMass_indicator (T : Transition Qk Qprev) (w : Qk → ℚ)
+    (y : Qprev) :
+    fiberMass T w y = ∑ x : Qk, if T.restrict x = y then w x else 0 := by
+  classical
+  simp [fiberMass, fiber, Finset.sum_filter]
+
 /-- Every point belongs to exactly one fiber, so total fiber mass is conserved.
 This is a finite partition identity, not a probabilistic or geometric estimate. -/
 theorem sum_fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) :
