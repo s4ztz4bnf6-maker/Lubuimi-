@@ -90,9 +90,9 @@ theorem fiber_mass_pos_of_point_pos
         (s := Finset.univ)
         (f := fun x => if f x = b then w x else 0)
         (fun x _ => by
-          split_ifs with h
-          · exact h_nonneg x
-          · norm_num)
+          by_cases h : f x = b
+          · simp [h, h_nonneg x]
+          · simp [h])
         (Finset.mem_univ a))
   exact lt_of_lt_of_le ha_pos hle
 
