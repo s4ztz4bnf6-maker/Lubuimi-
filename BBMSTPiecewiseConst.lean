@@ -46,7 +46,7 @@ theorem sum_piecewise_const
         intro y hy
         have hyF : y ∉ F :=
           (Finset.mem_sdiff.mp (show y ∈ Finset.univ \ F by simpa [C] using hy)).2
-        simp [hyF]
+        rw [if_neg hyF]
       _ = (C.card : ℚ) * v := by simp
   have hCcard : C.card = Fintype.card S - F.card := by
     simpa [C] using card_complement_identity F
