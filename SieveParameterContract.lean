@@ -8,13 +8,15 @@ representation-level invariants only; it does not prove BBMST's sieve criterion
 or repair the upstream axioms.
 
 The common index type `Fin n` aligns block sizes and deltas by construction.
-The positivity of the stage count rules out an empty stage family. A delta may
-still be zero, because the current upstream existence axiom allows that case.
+The positive stage count rules out an empty stage family. The source permits
+delta = 0, while requiring delta in [0, 1/2]; the zero case therefore needs an
+explicit branch rather than Lean's totalized rational division by zero.
 
 `candidateSieveTerm` records the proposed zero-delta branch: use the first
 moment bound when delta is zero, and use the second-moment quotient otherwise.
-Before this definition may replace the upstream formula, its branch semantics
-must be checked against the exact BBMST statement and derivation.
+This matches the natural limiting interpretation of the minimum, but must be
+checked against the precise BBMST derivation before replacing the upstream
+formula. This file is a contract prototype, not a proof of the sieve theorem.
 -/
 
 namespace SieveAudit
@@ -27,7 +29,12 @@ structure StageData (n : Nat) where
   blockSize_pos : ∀ i, 0 < blockSize i
   delta : Fin n → ℚ
   delta_nonneg : ∀ i, 0 ≤ delta i
-  delta_lt_one : ∀ i, delta i < 1
+  delta_le_half : ∀ i, delta i ≤ 1 / 2
+
+/-- The source interval implies the strict upper bound needed by the update factor. -/
+theorem delta_lt_one {n : Nat} (s : StageData n) (i : Fin n) :
+    s.delta i < 1 := by
+  linarith [s.delta_le_half i]
 
 /-- Candidate branch semantics for a single sieve term. -/
 def candidateSieveTerm (δ m1 m2 : ℚ) : ℚ :=
@@ -44,7 +51,7 @@ theorem denominator_pos
     have hz : s.delta i = 0 := le_antisymm hle (s.delta_nonneg i)
     exact False.elim (hδ hz)
   have hupper : 0 < 1 - s.delta i := by
-    linarith [s.delta_lt_one i]
+    linarith [s.delta_le_half i]
   exact mul_pos (by norm_num : (0 : ℚ) < 4) (mul_pos hδpos hupper)
 
 /-- The zero-delta branch never evaluates the second-moment quotient. -/
@@ -58,5 +65,16 @@ theorem candidateSieveTerm_nonzero
     candidateSieveTerm δ m1 m2 =
       min m1 (m2 / (4 * δ * (1 - δ))) := by
   simp [candidateSieveTerm, hδ]
+
+/-- A zero-stage family cannot inhabit the certified contract. -/
+theorem no_empty_stage_data : ¬ Nonempty (StageData 0) := by
+  rintro ⟨s⟩
+  omega
+
+#print axioms delta_lt_one
+#print axioms denominator_pos
+#print axioms candidateSieveTerm_zero
+#print axioms candidateSieveTerm_nonzero
+#print axioms no_empty_stage_data
 
 end SieveAudit
