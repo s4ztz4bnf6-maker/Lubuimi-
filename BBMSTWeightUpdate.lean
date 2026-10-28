@@ -71,12 +71,12 @@ theorem multiplier_nonneg
   · have hden : 0 < 1 - alpha C x :=
       one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta hbranch
     positivity
-  · have hα : 0 < alpha C x :=
-      alpha_pos_of_delta_lt_alpha C delta x hdelta (lt_of_not_ge hbranch)
+  · have hαδ : delta < alpha C x := lt_of_not_ge hbranch
+    have hα : 0 < alpha C x :=
+      alpha_pos_of_delta_lt_alpha C delta x hdelta hαδ
     have hden : 0 < alpha C x * (1 - delta) :=
       mul_pos hα (one_sub_delta_pos delta hdelta)
-    have hnum : 0 ≤ alpha C x - delta :=
-      le_of_lt (lt_of_not_ge hbranch)
+    have hnum : 0 ≤ alpha C x - delta := sub_nonneg.mpr (le_of_lt hαδ)
     positivity
   · exact le_of_lt (by
       have hden : 0 < 1 - delta := one_sub_delta_pos delta hdelta
