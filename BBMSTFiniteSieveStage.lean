@@ -1,4 +1,5 @@
 import Mathlib
+import BBMSTMomentBridge
 
 /-!
 # Finite sieve-stage transition: first source-faithful interface
@@ -41,6 +42,20 @@ theorem sum_fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) :
   simp only [Finset.sum_filter]
   rw [Finset.sum_comm]
   simp
+
+/-- The sum of squared fiber masses is the weighted pair sum over equal images.
+This connects the transition interface to the finite second-moment identity;
+it does not yet provide any geometric incidence bound. -/
+theorem fiberMass_secondMoment (T : Transition Qk Qprev) (w : Qk → ℚ) :
+    (∑ y : Qprev, (fiberMass T w y) ^ 2) =
+      ∑ x : Qk, ∑ x' : Qk,
+        (if T.restrict x = T.restrict x' then w x * w x' else 0) := by
+  classical
+  simp_rw [fiberMass_indicator]
+  exact BBMSTMomentBridge.fiber_second_moment T.restrict w
+
+#print axioms fiberMass_indicator
+#print axioms fiberMass_secondMoment
 
 /-- The incidence relation induced by the transition is equality of images. -/
 def sameFiber (T : Transition Qk Qprev) (x x' : Qk) : Prop :=
