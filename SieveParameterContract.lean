@@ -33,6 +33,25 @@ theorem delta_index_exists (a : AlignedParameterLists)
   rw [← a.lengths_eq]
   exact i.isLt
 
+
+/-- Construct the checked interface from actual lists only when their lengths
+    have been proved equal. This is the intended source-adapter boundary. -/
+def alignedParameterListsOfEq (ss ds : List ℚ)
+    (hlen : ss.length = ds.length) : AlignedParameterLists :=
+  ⟨ss, ds, hlen⟩
+
+/-- The contract rejects the concrete empty-delta degeneration whenever the
+    block-size list is nonempty. This is a representation-level exclusion, not
+    a repair of the upstream axiom signature by itself. -/
+theorem empty_deltas_not_aligned_with_nonempty_blocks
+    (ss : List ℚ) (hss : 0 < ss.length) :
+    ¬ ∃ a : AlignedParameterLists,
+        a.blockSizes = ss ∧ a.deltas = [] := by
+  rintro ⟨a, hblocks, hdeltas⟩
+  have hzero : ss.length = 0 := by
+    simpa [hblocks, hdeltas] using a.lengths_eq
+  omega
+
 /-- Source-aligned stage data. The source adapter must prove that these
     values are the actual block sizes and parameters, not arbitrary inputs. -/
 structure StageData (n : Nat) where
