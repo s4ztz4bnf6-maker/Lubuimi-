@@ -8,6 +8,7 @@ representation-level invariants only; it does not prove BBMST's sieve criterion
 or repair the upstream axioms.
 
 The common index type `Fin n` aligns block sizes and deltas by construction.
+The list adapter below makes the corresponding length invariant explicit.
 The positive stage count rules out an empty stage family. The source permits
 delta = 0, while requiring delta in [0, 1/2]; the zero case therefore needs an
 explicit branch rather than Lean's totalized rational division by zero.
@@ -19,6 +20,18 @@ upstream formula. This file is a contract prototype, not a proof of the theorem.
 -/
 
 namespace SieveAudit
+
+/-- List-level interface: every block size has a corresponding delta entry. -/
+structure AlignedParameterLists where
+  blockSizes : List ℚ
+  deltas : List ℚ
+  lengths_eq : blockSizes.length = deltas.length
+
+/-- A valid block index is also a valid delta index. -/
+theorem delta_index_exists (a : AlignedParameterLists)
+    (i : Fin a.blockSizes.length) : i.val < a.deltas.length := by
+  rw [← a.lengths_eq]
+  exact i.isLt
 
 /-- Source-aligned stage data. The source adapter must prove that these
     values are the actual block sizes and parameters, not arbitrary inputs. -/
@@ -79,6 +92,7 @@ theorem no_empty_stage_data : ¬ Nonempty (StageData 0) := by
   rintro ⟨s⟩
   exact Nat.not_lt_zero _ s.stage_count_pos
 
+#print axioms delta_index_exists
 #print axioms delta_lt_one
 #print axioms denominator_pos
 #print axioms candidateSieveTerm_zero
