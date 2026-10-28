@@ -37,7 +37,9 @@ jobs:
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTDoubleSum.olean BBMSTDoubleSum.lean
       - name: Compile integrated BBMST equation (11) factorization
-        run: lake env lean BBMSTEq11Factorization.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTEq11Factorization.olean BBMSTEq11Factorization.lean
       - name: Run separate BBMST equation (11) axiom audit
         run: lake env lean BBMSTEq11AxiomAudit.lean
       - name: Compile audited upstream source
