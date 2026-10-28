@@ -1,0 +1,10 @@
+import Mathlib
+import BBMSTEq11Factorization
+
+open BBMSTEq11Factorization
+
+#print axioms bbmst_eq11_factorization
+#print axioms bbmst_eq11_factorization_on_intervals
+#print axioms denominator_pos
+#print axioms denominator_pos_for_finite_set
+#print axioms denominator_ne_zero_for_finite_set
