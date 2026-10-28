@@ -34,3 +34,14 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+## Scope gate added 2026-10-28
+
+Before translating Lemmas 3.3 and 3.4 into the current general odd-covering theorem, check the theorem's scope. The cited Balister–Bollobás–Morris–Sahasrabudhe–Tiba paper, *The Erdős–Selfridge problem with square-free moduli* (Algebra & Number Theory 15 (2021), 609–626), proves the obstruction for distinct square-free moduli. Its later remark on p. 625 gives a specific extension allowing nonsquare-free behavior at primes above 73; this is not, by itself, a theorem for arbitrary odd moduli without restrictions.
+
+Consequently, the geometric interface
+`fiber_second_moment_incidence`
+is only an algebraic adapter. It does not establish that the paper's hyperplane model covers the `CoveringSystem K` object in the current theorem, nor that the paper's geometric hypotheses hold for every such object. Before attempting to discharge `sieve_criterion`, formalize and prove the exact bridge from the arithmetic covering-system representation to the finite product/hyperplane model, including the square-free or prime-exponent restrictions actually required. If the target remains the unrestricted odd-modulus Erdős–Selfridge conjecture, the cited paper alone does not discharge that gap.
+
+Audit rule: do not identify Lemma 3.4's moment estimate with the current `M2bound` until the correspondence of measures, `alpha_k`, the hyperplane family, and the exact hypotheses has been proved. A numerical-looking match of formulas is insufficient.
+
