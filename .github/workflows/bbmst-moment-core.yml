@@ -1,0 +1,17 @@
+name: BBMST moment core compile
+on:
+  push:
+    branches:
+      - audit/bbmst-moment-core-compile-2026-10-28
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+      - name: Compile product-sum lemma and print axioms
+        run: lake env lean BBMSTMomentCore.lean
