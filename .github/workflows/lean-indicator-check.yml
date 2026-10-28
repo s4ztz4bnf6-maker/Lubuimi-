@@ -29,6 +29,8 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile isolated lemma and print axioms
-        run: lake env lean BBMSTMomentBridge.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTMomentBridge.olean BBMSTMomentBridge.lean
       - name: Compile finite sieve-stage module and print axioms
         run: lake env lean BBMSTFiniteSieveStage.lean
