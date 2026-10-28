@@ -23,7 +23,7 @@ def fiber (T : Transition Qk Qprev) (y : Qprev) : Finset Qk :=
 
 /-- Weighted mass of one fiber. Weights are not assumed positive yet. -/
 def fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) (y : Qprev) : ℚ :=
-  ∑ x in fiber T y, w x
+  ∑ x ∈ fiber T y, w x
 
 /-- Every point belongs to exactly one fiber, so total fiber mass is conserved.
 This is a finite partition identity, not a probabilistic or geometric estimate. -/
@@ -32,7 +32,7 @@ theorem sum_fiberMass (T : Transition Qk Qprev) (w : Qk → ℚ) :
   classical
   unfold fiberMass fiber
   calc
-    (∑ y : Qprev, ∑ x in Finset.univ.filter (fun x => T.restrict x = y), w x)
+    (∑ y : Qprev, ∑ x ∈ Finset.univ.filter (fun x => T.restrict x = y), w x)
         = ∑ x : Qk, ∑ y : Qprev,
             if T.restrict x = y then w x else 0 := by
           simp_rw [Finset.sum_filter]
