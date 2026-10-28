@@ -98,4 +98,43 @@ theorem fiber_mass_pos_of_point_pos
 
 #print axioms fiber_mass_pos_of_point_pos
 
+
+/-!
+## Typed stage-parameter interface
+
+All data belonging to one sieve stage live in one record, and a family of
+stages is indexed by `Fin n`. This prevents independent lists from silently
+having different lengths. The record is only a data interface: it does not
+assert that the fields satisfy the geometric hypotheses of BBMST.
+-/
+
+/-- Parameters attached to one stage of a finite sieve construction. -/
+structure StageParameter where
+  prime : ℕ
+  blockSize : ℕ
+  delta : ℚ
+  ca1 : ℚ
+  ca3 : ℚ
+  delta_nonneg : 0 ≤ delta
+  delta_le_half : delta ≤ (1 / 2 : ℚ)
+
+/-- A stage family has one fixed, shared index type for all parameters. -/
+structure ParameterData (n : ℕ) where
+  stage : Fin n → StageParameter
+
+/-- The denominator factor is strictly positive on the positive-delta branch. -/
+theorem delta_denominator_pos (p : StageParameter) (hδ : 0 < p.delta) :
+    0 < 4 * p.delta * (1 - p.delta) := by
+  have htail : 0 < 1 - p.delta := by
+    have hhalf : p.delta ≤ (1 / 2 : ℚ) := p.delta_le_half
+    linarith
+  exact mul_pos (mul_pos (by norm_num : (0 : ℚ) < 4) hδ) htail
+
+#print axioms delta_denominator_pos
+
+/-- The zero-delta case is explicit and is not routed through a quotient. -/
+theorem delta_eq_zero_or_pos (p : StageParameter) :
+    p.delta = 0 ∨ 0 < p.delta := by
+  exact le_total p.delta 0 |>.imp_right (by intro h; linarith)
+
 end BBMSTFiberMass
