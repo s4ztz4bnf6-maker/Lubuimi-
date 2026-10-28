@@ -122,6 +122,34 @@ theorem safeStageContribution_positive (m1 m2 delta : ℚ) (hδ : 0 < delta) :
       min m1 (m2 / (4 * delta * (1 - delta))) := by
   simp [safeStageContribution, hδ]
 
+
+/-- The guarded contribution never exceeds the first-moment bound.
+This remains true at delta = 0, where the quotient branch is not used. -/
+theorem safeStageContribution_le_firstMoment (m1 m2 delta : ℚ) :
+    safeStageContribution m1 m2 delta ≤ m1 := by
+  by_cases hδ : 0 < delta
+  · simp [safeStageContribution, hδ]
+    exact min_le_left _ _
+  · simp [safeStageContribution, hδ]
+
+/-- If both moment bounds are nonnegative and delta is in the admissible
+range, the guarded contribution is nonnegative. -/
+theorem safeStageContribution_nonneg
+    (m1 m2 delta : ℚ) (hm1 : 0 ≤ m1) (hm2 : 0 ≤ m2)
+    (hδ0 : 0 ≤ delta) (hδhalf : delta ≤ (1 / 2 : ℚ)) :
+    0 ≤ safeStageContribution m1 m2 delta := by
+  by_cases hδ : 0 < delta
+  · have hden : 0 < 4 * delta * (1 - delta) := by
+      have htail : 0 < 1 - delta := by linarith
+      have hfour : 0 < (4 : ℚ) := by norm_num
+      exact mul_pos (mul_pos hfour hδ) htail
+    have hquot : 0 ≤ m2 / (4 * delta * (1 - delta)) :=
+      div_nonneg hm2 (le_of_lt hden)
+    simp [safeStageContribution, hδ]
+    exact le_min hm1 hquot
+  · simp [safeStageContribution, hδ]
+    exact hm1
+
 #print axioms secondMomentDenominator_pos
 #print axioms safeStageContribution_zero
 #print axioms safeStageContribution_positive
