@@ -35,8 +35,8 @@ jobs:
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTMomentBridge.olean BBMSTMomentBridge.lean
       - name: Compile finite sieve-stage module and print axioms
-        run: lake env lean BBMSTFiniteSieveStage.lean
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteSieveStage.olean BBMSTFiniteSieveStage.lean
       - name: Compile concrete coordinate-stage model and print axioms
-        run: lake env lean BBMSTCoordinateStage.lean
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCoordinateStage.olean BBMSTCoordinateStage.lean
       - name: Compile source-faithful BBMST weight update and print axioms
         run: lake env lean BBMSTWeightUpdate.lean
