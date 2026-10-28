@@ -22,4 +22,25 @@ theorem fiber_mass_sum
 
 #print axioms fiber_mass_sum
 
+
+/-- A zero total mass with nonnegative weights forces every point weight to vanish. -/
+theorem point_weight_eq_zero_of_sum_eq_zero
+    {A : Type*} [Fintype A]
+    (w : A → ℚ)
+    (h_nonneg : ∀ a, 0 ≤ w a)
+    (h_sum : (∑ a : A, w a) = 0) :
+    ∀ a : A, w a = 0 := by
+  intro a
+  have hle : w a ≤ ∑ x : A, w x := by
+    simpa using
+      (Finset.single_le_sum
+        (s := Finset.univ)
+        (f := w)
+        (fun x _ => h_nonneg x)
+        (Finset.mem_univ a))
+  rw [h_sum] at hle
+  exact le_antisymm (h_nonneg a) hle
+
+#print axioms point_weight_eq_zero_of_sum_eq_zero
+
 end BBMSTFiberMass
