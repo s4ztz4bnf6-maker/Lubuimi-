@@ -66,4 +66,26 @@ theorem fiber_second_moment
 
 #print axioms fiber_second_moment
 
+
+/-- A geometric incidence relation represents equality of fibers exactly.
+This is an interface only: the caller must prove the equivalence from the
+actual geometric definitions; no geometric estimate is assumed here. -/
+theorem fiber_second_moment_incidence
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (f : X → Y) (w : X → ℚ)
+    (incident : X → X → Prop)
+    (h_incident : ∀ x x' : X, incident x x' ↔ f x = f x') :
+    (∑ y : Y, (∑ x : X, if f x = y then w x else 0) ^ 2)
+      = ∑ x : X, ∑ x' : X,
+          (if incident x x' then w x * w x' else 0) := by
+  classical
+  rw [fiber_second_moment]
+  apply Finset.sum_congr rfl
+  intro x hx
+  apply Finset.sum_congr rfl
+  intro x' hx'
+  simp [h_incident x x']
+
+#print axioms fiber_second_moment_incidence
+
 end BBMSTMomentBridge
