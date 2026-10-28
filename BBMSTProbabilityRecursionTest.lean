@@ -69,10 +69,11 @@ theorem alpha_lt_one_of_not_mem_B
       (fun z : {w : S // B (x, w)} => z.1)
     · intro a b hab
       exact Subtype.ext hab
-    · intro hs
-      obtain ⟨z, hz⟩ := hs y
-      apply h
-      simpa [hz] using z.property
+    · intro h_surj
+      rcases h_surj y with ⟨⟨z, hz⟩, hzy⟩
+      change z = y at hzy
+      subst y
+      exact h hz
   rw [div_lt_one hden]
   exact_mod_cast hcard
 
