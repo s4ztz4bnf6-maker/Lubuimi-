@@ -160,10 +160,5 @@ theorem denominator_ne_zero_for_finite_set
   ne_of_gt (denominator_pos_for_finite_set δ S j hδ0 hδhalf hS)
 
 /-- The factorized algebraic theorem is checked against Lean's standard axioms. -/
-#print axioms bbmst_eq11_factorization
-#print axioms bbmst_eq11_factorization_on_intervals
-#print axioms denominator_pos
-#print axioms denominator_pos_for_finite_set
-#print axioms denominator_ne_zero_for_finite_set
 
 end BBMSTEq11Factorization
