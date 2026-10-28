@@ -24,8 +24,9 @@ def ValidDelta (delta : ℚ) : Prop := 0 ≤ delta ∧ delta ≤ (1 / 2 : ℚ)
 /-- The exact local multiplier prescribed by Lemma 2.1. -/
 noncomputable def multiplier
     (C : CoordinateStage X S) (delta : ℚ)
-    (x : X) (s : S) : ℚ :=
-  if alpha C x ≤ delta then
+    (x : X) (s : S) : ℚ := by
+  classical
+  exact if alpha C x ≤ delta then
     if C.exceptional x s then 0 else 1 / (1 - alpha C x)
   else
     if C.exceptional x s then
@@ -67,7 +68,9 @@ theorem multiplier_nonneg
   unfold multiplier
   split_ifs with hbranch hex
   · norm_num
-  · positivity
+  · have hden : 0 < 1 - alpha C x :=
+      one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta hbranch
+    positivity
   · have hα : 0 < alpha C x :=
       alpha_pos_of_delta_lt_alpha C delta x hdelta (lt_of_not_ge hbranch)
     have hden : 0 < alpha C x * (1 - delta) :=
@@ -75,7 +78,9 @@ theorem multiplier_nonneg
     have hnum : 0 ≤ alpha C x - delta :=
       le_of_lt (lt_of_not_ge hbranch)
     positivity
-  · positivity
+  · exact le_of_lt (by
+      have hden : 0 < 1 - delta := one_sub_delta_pos delta hdelta
+      positivity)
 
 /-- The exceptional-fiber count is exactly alpha times the coordinate
 cardinality. This is the counting identity needed to turn the source's
