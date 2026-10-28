@@ -1,0 +1,30 @@
+name: BBMST moment core compile v2
+on:
+  push:
+    branches:
+      - audit/bbmst-moment-core-compile-v2-2026-10-28
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lean --version
+      - name: Resolve pinned Mathlib and fetch cache
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+          lake exe cache get
+      - name: Compile product-sum lemma and print axioms
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake env lean BBMSTMomentCore.lean
