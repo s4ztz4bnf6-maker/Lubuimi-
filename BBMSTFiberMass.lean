@@ -135,6 +135,10 @@ theorem delta_denominator_pos (p : StageParameter) (hδ : 0 < p.delta) :
 /-- The zero-delta case is explicit and is not routed through a quotient. -/
 theorem delta_eq_zero_or_pos (p : StageParameter) :
     p.delta = 0 ∨ 0 < p.delta := by
-  exact le_total p.delta 0 |>.imp_right (by intro h; linarith)
+  by_cases h : p.delta = 0
+  · exact Or.inl h
+  · right
+    have hp := p.delta_nonneg
+    linarith
 
 end BBMSTFiberMass
