@@ -18,8 +18,6 @@ open BBMSTCoordinateStage
 
 variable {X S : Type*} [Fintype X] [Fintype S]
 
--- This file uses classical case splits in theorem statements as well as proofs.
-local instance (p : Prop) : Decidable p := Classical.propDecidable p
 
 /-- The source parameter range for a BBMST sieve stage. -/
 def ValidDelta (delta : ℚ) : Prop := 0 ≤ delta ∧ delta ≤ (1 / 2 : ℚ)
@@ -207,9 +205,10 @@ theorem localMass_eq_of_alpha_le_delta
   ring
 
 
-/-- In the second branch, both classes receive their prescribed constant
+ /-- In the second branch, both classes receive their prescribed constant
 multipliers: the exceptional fiber gets (alpha - delta)/(alpha*(1-delta)),
 and its complement gets 1/(1-delta). -/
+open Classical in
 theorem multiplier_eq_second_branch
     (C : CoordinateStage X S) (delta : ℚ) (x : X)
     (h : delta < alpha C x) (s : S) :
@@ -291,7 +290,7 @@ theorem localMass_eq_of_delta_lt_alpha
             simp [hsx]
       _ = _ := by simp
   rw [hexceptional, hnonexceptional, hcard, hcomp]
-  field_simp
+  field_simp [hS, hden, hδne, hαne]
   <;> ring
 
 /-- The second-branch conservation statement using the actual
