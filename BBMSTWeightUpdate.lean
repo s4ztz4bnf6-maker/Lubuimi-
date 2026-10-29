@@ -269,6 +269,10 @@ theorem localMass_eq_of_delta_lt_alpha
       exact_mod_cast htotalNat
     rw [hcard] at htotal
     nlinarith
+  have hexceptional_card :
+      (Finset.univ.filter (fun s : S => C.exceptional x s)).card =
+        (exceptionalFiber C x).card := by
+    simp [exceptionalFiber]
   have hexceptional :
       (∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
         (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
@@ -286,7 +290,10 @@ theorem localMass_eq_of_delta_lt_alpha
               have hsx : C.exceptional x s := (Finset.mem_filter.mp hs).2
               rw [multiplier_eq_second_branch C delta x h s]
               simp [hsx]
-      _ = _ := by simp
+      _ = ((Finset.univ.filter (fun s : S => C.exceptional x s)).card : ℚ) *
+          ((w x / (Fintype.card S : ℚ)) *
+            ((alpha C x - delta) / (alpha C x * (1 - delta))) ) := by simp
+      _ = _ := by rw [hexceptional_card]
   have hnonexceptional :
       (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
         (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
