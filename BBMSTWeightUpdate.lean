@@ -18,6 +18,9 @@ open BBMSTCoordinateStage
 
 variable {X S : Type*} [Fintype X] [Fintype S]
 
+-- This file uses classical case splits in theorem statements as well as proofs.
+local instance (p : Prop) : Decidable p := Classical.propDecidable p
+
 /-- The source parameter range for a BBMST sieve stage. -/
 def ValidDelta (delta : ℚ) : Prop := 0 ≤ delta ∧ delta ≤ (1 / 2 : ℚ)
 
