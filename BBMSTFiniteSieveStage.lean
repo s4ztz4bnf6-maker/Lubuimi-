@@ -68,3 +68,66 @@ theorem sameFiber_iff (T : Transition Qk Qprev) (x x' : Qk) :
 #print axioms sameFiber_iff
 
 end BBMSTFiniteSieveStage
+
+
+/-!
+## Concrete finite probability mass for a removed set
+
+This is a definition-level finite measure interface. It proves the elementary
+mass bounds needed before connecting a sieve stage to the paper's geometric
+objects. It does not assert any BBMST-specific estimate.
+-/
+
+/-- A probability weight on a finite type, represented by exact rationals. -/
+structure FiniteProbability (X : Type*) [Fintype X] where
+  weight : X → ℚ
+  weight_nonneg : ∀ x, 0 ≤ weight x
+  normalized : (∑ x : X, weight x) = 1
+
+namespace FiniteProbability
+
+variable {X : Type*} [Fintype X] [DecidableEq X]
+
+/-- The probability mass of a finite subset. -/
+def mass (P : FiniteProbability X) (B : Finset X) : ℚ :=
+  ∑ x : X, if x ∈ B then P.weight x else 0
+
+/-- Removed mass is nonnegative. -/
+theorem mass_nonneg (P : FiniteProbability X) (B : Finset X) :
+    0 ≤ P.mass B := by
+  unfold mass
+  apply Finset.sum_nonneg
+  intro x hx
+  split_ifs
+  · exact P.weight_nonneg x
+  · norm_num
+
+/-- The mass of any finite subset is at most the total probability mass. -/
+theorem mass_le_one (P : FiniteProbability X) (B : Finset X) :
+    P.mass B ≤ 1 := by
+  rw [← P.normalized]
+  unfold mass
+  apply Finset.sum_le_sum
+  intro x hx
+  split_ifs with h
+  · exact le_rfl
+  · exact P.weight_nonneg x
+
+/-- The mass parameter is derived from the removed set, not supplied freely. -/
+def removedMass (P : FiniteProbability X) (B : Finset X) : ℚ :=
+  P.mass B
+
+theorem removedMass_nonneg (P : FiniteProbability X) (B : Finset X) :
+    0 ≤ P.removedMass B :=
+  P.mass_nonneg B
+
+theorem removedMass_le_one (P : FiniteProbability X) (B : Finset X) :
+    P.removedMass B ≤ 1 :=
+  P.mass_le_one B
+
+#print axioms mass_nonneg
+#print axioms mass_le_one
+#print axioms removedMass_nonneg
+#print axioms removedMass_le_one
+
+end FiniteProbability
