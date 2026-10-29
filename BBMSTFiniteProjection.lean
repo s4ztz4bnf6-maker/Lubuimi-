@@ -21,6 +21,7 @@ variable (P : FiniteProjection)
 
 /-- The fiber over a predecessor state, derived from the projection. -/
 def fiber (y : P.Qprev) : Finset P.Qnext := by
+  classical
   letI := P.instPrev
   letI := P.instNext
   exact Finset.univ.filter fun x => P.project x = y
