@@ -1,6 +1,17 @@
 name: BBMST indicator lemma check
 
 on:
+  push:
+    branches:
+      - "audit/bbmst-sum-pair-indicator-2026-10-28"
+    paths:
+      - "BBMSTMomentBridge.lean"
+      - "BBMSTFiniteSieveStage.lean"
+      - "BBMSTCoordinateStage.lean"
+      - "BBMSTWeightUpdate.lean"
+      - ".github/workflows/lean-indicator-check.yml"
+      - "lakefile.lean"
+      - "lean-toolchain"
   pull_request:
     paths:
       - "BBMSTMomentBridge.lean"
