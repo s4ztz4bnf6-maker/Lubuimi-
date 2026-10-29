@@ -1,4 +1,5 @@
 import Mathlib
+import BBMSTFiniteSieveStage
 
 /-!
 # Concrete finite coordinate stages for the BBMST construction
@@ -25,6 +26,36 @@ noncomputable def exceptionalFiber
     (C : CoordinateStage X S) (x : X) : Finset S := by
   classical
   exact Finset.univ.filter (fun s => C.exceptional x s)
+
+/-- Uniform probability on the nonempty finite coordinate set. -/
+noncomputable def uniformProbability (C : CoordinateStage X S) :
+    FiniteProbability S where
+  weight := fun _ => (1 : ℚ) / (Fintype.card S : ℚ)
+  weight_nonneg := by
+    intro s
+    positivity
+  normalized := by
+    classical
+    have hcard : (Fintype.card S : ℚ) ≠ 0 := by
+      exact_mod_cast (ne_of_gt (coordinate_card_pos C))
+    simp only [Finset.sum_const, Finset.card_univ]
+    simp [hcard]
+
+/-- The exceptional mass under the uniform coordinate distribution is
+computed from the actual exceptional fiber. -/
+noncomputable def exceptionalMass
+    (C : CoordinateStage X S) (x : X) : ℚ :=
+  (uniformProbability C).mass (exceptionalFiber C x)
+
+/-- For uniform coordinates, the probability mass of the exceptional fiber
+agrees exactly with its cardinality fraction alpha. -/
+theorem exceptionalMass_eq_alpha
+    (C : CoordinateStage X S) (x : X) :
+    exceptionalMass C x = alpha C x := by
+  classical
+  unfold exceptionalMass FiniteProbability.mass uniformProbability alpha
+  simp only [Finset.sum_ite_mem]
+  simp [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc]
 
 /-- The exceptional-fiber fraction alpha(x), derived from the actual
 finite set of exceptional extensions rather than supplied as a free value. -/
