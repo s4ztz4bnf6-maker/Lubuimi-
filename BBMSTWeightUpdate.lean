@@ -203,6 +203,106 @@ theorem localMass_eq_of_alpha_le_delta
   field_simp
   ring
 
+
+/-- In the second branch, both classes receive their prescribed constant
+multipliers: the exceptional fiber gets (alpha - delta)/(alpha*(1-delta)),
+and its complement gets 1/(1-delta). -/
+theorem multiplier_eq_second_branch
+    (C : CoordinateStage X S) (delta : ℚ) (x : X)
+    (h : delta < alpha C x) (s : S) :
+    multiplier C delta x s =
+      if C.exceptional x s then
+        (alpha C x - delta) / (alpha C x * (1 - delta))
+      else 1 / (1 - delta) := by
+  simp [multiplier, not_le_of_gt h]
+
+/-- In the second BBMST branch, the updated mass on a coordinate fiber
+also equals the incoming mass. This completes local conservation for both
+branches of the source multiplier. -/
+theorem localMass_eq_of_delta_lt_alpha
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X)
+    (hdelta : ValidDelta delta) (h : delta < alpha C x) :
+    localMass C w delta x = w x := by
+  classical
+  unfold localMass updatedWeight
+  rw [sum_split_exceptional C x
+    (fun s : S => (w x / (Fintype.card S : ℚ)) * multiplier C delta x s)]
+  have hα : 0 < alpha C x :=
+    alpha_pos_of_delta_lt_alpha C delta x hdelta h
+  have hαne : alpha C x ≠ 0 := ne_of_gt hα
+  have hδ : 0 < 1 - delta := one_sub_delta_pos delta hdelta
+  have hδne : 1 - delta ≠ 0 := ne_of_gt hδ
+  have hden : alpha C x * (1 - delta) ≠ 0 :=
+    ne_of_gt (mul_pos hα hδ)
+  have hS : (Fintype.card S : ℚ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt (coordinate_card_pos C))
+  have hcard := exceptionalFiber_card_eq_alpha_mul_card C x
+  have hcomp :
+      ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) =
+        (1 - alpha C x) * (Fintype.card S : ℚ) := by
+    have htotalNat :
+        (Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card +
+          (exceptionalFiber C x).card = Fintype.card S := by
+      have htotal := Finset.card_filter_add_card_filter_not
+        (s := Finset.univ) (p := fun s : S => C.exceptional x s)
+      simpa [exceptionalFiber, add_comm] using htotal
+    have htotal :
+        ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) +
+          ((exceptionalFiber C x).card : ℚ) = (Fintype.card S : ℚ) := by
+      exact_mod_cast htotalNat
+    rw [hcard] at htotal
+    nlinarith
+  have hexceptional :
+      (∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
+        (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ((exceptionalFiber C x).card : ℚ) *
+          ((w x / (Fintype.card S : ℚ)) *
+            ((alpha C x - delta) / (alpha C x * (1 - delta))) ) := by
+    calc
+      (∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) *
+            ((alpha C x - delta) / (alpha C x * (1 - delta))) := by
+              apply Finset.sum_congr rfl
+              intro s hs
+              have hsx : C.exceptional x s := (Finset.mem_filter.mp hs).2
+              rw [multiplier_eq_second_branch C delta x h s]
+              simp [hsx]
+      _ = _ := by simp
+  have hnonexceptional :
+      (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+        (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) *
+          ((w x / (Fintype.card S : ℚ)) * (1 / (1 - delta))) := by
+    calc
+      (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) * (1 / (1 - delta)) := by
+            apply Finset.sum_congr rfl
+            intro s hs
+            have hsx : ¬ C.exceptional x s := (Finset.mem_filter.mp hs).2
+            rw [multiplier_eq_second_branch C delta x h s]
+            simp [hsx]
+      _ = _ := by simp
+  rw [hexceptional, hnonexceptional, hcard, hcomp]
+  field_simp
+  <;> ring
+
+/-- The second-branch conservation statement using the actual
+exceptional-fiber probability as the condition. -/
+theorem localMass_eq_of_exceptionalMass_gt_delta
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X)
+    (hdelta : ValidDelta delta)
+    (h : delta < exceptionalMass C x) :
+    localMass C w delta x = w x := by
+  apply localMass_eq_of_delta_lt_alpha C w delta x hdelta
+  simpa [exceptionalMass_eq_alpha] using h
+
+#print axioms localMass_eq_of_delta_lt_alpha
+#print axioms localMass_eq_of_exceptionalMass_gt_delta
+
 /-- Local conservation expressed using the actual exceptional-fiber
 probability as the branch condition. The existing update rule is retained;
 exceptionalMass_eq_alpha transports the condition to the source parameter. -/
