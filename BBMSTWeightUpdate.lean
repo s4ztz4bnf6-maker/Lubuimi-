@@ -117,6 +117,43 @@ theorem multiplier_eq_first_branch
       if C.exceptional x s then 0 else 1 / (1 - alpha C x) := by
   simp [multiplier, h]
 
+/-- In the first branch, the updated mass on a coordinate fiber equals
+the incoming mass. This is the local conservation identity for alpha <= delta. -/
+open Classical in
+theorem localMass_eq_of_alpha_le_delta
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X)
+    (hdelta : ValidDelta delta) (h : alpha C x ≤ delta) :
+    localMass C w delta x = w x := by
+  classical
+  unfold localMass updatedWeight
+  rw [sum_split_exceptional C x
+    (fun s : S => (w x / (Fintype.card S : ℚ)) * multiplier C delta x s)]
+  rw [multiplier_eq_first_branch C delta x h]
+  simp only [Finset.sum_filter]
+  have hα : 1 - alpha C x ≠ 0 :=
+    ne_of_gt (one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta h)
+  have hS : (Fintype.card S : ℚ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt (coordinate_card_pos C))
+  have hcard := exceptionalFiber_card_eq_alpha_mul_card C x
+  have hcomp :
+      ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) =
+        (1 - alpha C x) * (Fintype.card S : ℚ) := by
+    rw [Finset.card_filter]
+    rw [show (Finset.univ.filter (fun s : S => C.exceptional x s)) =
+      exceptionalFiber C x by rfl] at hcard
+    have htotal :
+        ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) +
+          ((exceptionalFiber C x).card : ℚ) = (Fintype.card S : ℚ) := by
+      exact_mod_cast (Finset.card_filter_add_card_filter_not
+        (s := Finset.univ) (p := fun s : S => C.exceptional x s))
+    rw [hcard] at htotal
+    nlinarith
+  push_cast at hcomp
+  simp only [Finset.sum_const_zero, Finset.sum_const, Finset.card_filter]
+  rw [hcomp]
+  field_simp
+  ring
+
 /-- The mass on one coordinate fiber after the update. The next theorem
 will show that this equals the incoming mass w x. -/
 noncomputable def localMass
