@@ -134,7 +134,6 @@ theorem localMass_eq_of_alpha_le_delta
   rw [sum_split_exceptional C x
     (fun s : S => (w x / (Fintype.card S : ℚ)) * multiplier C delta x s)]
   simp_rw [multiplier_eq_first_branch C delta x h]
-  simp only [Finset.sum_filter]
   have hα : 1 - alpha C x ≠ 0 :=
     ne_of_gt (one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta h)
   have hS : (Fintype.card S : ℚ) ≠ 0 := by
@@ -149,12 +148,15 @@ theorem localMass_eq_of_alpha_le_delta
       have htotal := Finset.card_filter_add_card_filter_not
         (s := Finset.univ) (p := fun s : S => C.exceptional x s)
       simpa [exceptionalFiber, add_comm] using htotal
-    have htotal : 
+    have htotal :
         ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) +
           ((exceptionalFiber C x).card : ℚ) = (Fintype.card S : ℚ) := by
       exact_mod_cast htotalNat
     rw [hcard] at htotal
     nlinarith
+  -- Keep the filtered sums intact until the complement-cardinality identity
+  -- has been established; then evaluate the constant sum on the complement.
+  simp only [Finset.sum_filter]
   simp
   rw [hcomp]
   field_simp
