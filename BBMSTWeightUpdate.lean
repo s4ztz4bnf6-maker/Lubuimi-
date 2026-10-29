@@ -143,18 +143,22 @@ theorem localMass_eq_of_alpha_le_delta
   have hcomp :
       ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) =
         (1 - alpha C x) * (Fintype.card S : ℚ) := by
-    have htotal :
+    have htotalNat :
+        (Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card +
+          (exceptionalFiber C x).card = Fintype.card S := by
+      have htotal := Finset.card_filter_add_card_filter_not
+        (s := Finset.univ) (p := fun s : S => C.exceptional x s)
+      simpa [exceptionalFiber, add_comm] using htotal
+    have htotal : 
         ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) +
           ((exceptionalFiber C x).card : ℚ) = (Fintype.card S : ℚ) := by
-      exact_mod_cast (Finset.card_filter_add_card_filter_not
-        (s := Finset.univ) (p := fun s : S => C.exceptional x s))
+      exact_mod_cast htotalNat
     rw [hcard] at htotal
     nlinarith
-  simp only [Finset.sum_const_zero, Finset.sum_const, Finset.card_filter]
+  simp
   rw [hcomp]
   field_simp
   ring
-
 
 #print axioms localMass_eq_of_alpha_le_delta
 
