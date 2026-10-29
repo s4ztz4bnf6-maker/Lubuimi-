@@ -4,5 +4,5 @@ import BBMSTFiniteProjection
 #print axioms FiniteProjection.self_mem_fiber
 #print axioms FiniteProjection.fiber_disjoint
 #print axioms FiniteProjection.fiberEquiv
-
 #print axioms FiniteProjection.sum_fiber_card
+#print axioms FiniteProjection.fiber_mass_sum
