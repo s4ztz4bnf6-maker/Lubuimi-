@@ -214,6 +214,7 @@ theorem multiplier_eq_second_branch
       if C.exceptional x s then
         (alpha C x - delta) / (alpha C x * (1 - delta))
       else 1 / (1 - delta) := by
+  classical
   simp [multiplier, not_le_of_gt h]
 
 /-- In the second BBMST branch, the updated mass on a coordinate fiber
