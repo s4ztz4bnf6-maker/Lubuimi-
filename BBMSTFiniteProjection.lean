@@ -47,4 +47,18 @@ theorem fiber_disjoint {y z : P.Qprev} (h : y ≠ z) :
     (mem_fiber_iff P z x).mp hxz
   exact h (hpy.symm.trans hpz)
 
+/-- Each next-state is equivalent to its image paired with its fiber element. -/
+noncomputable def fiberEquiv :
+    P.Qnext ≃ Σ y : P.Qprev, {x : P.Qnext // x ∈ P.fiber y} where
+  toFun x := ⟨P.project x, ⟨x, P.self_mem_fiber x⟩⟩
+  invFun z := z.2.1
+  left_inv := by
+    intro x
+    rfl
+  right_inv := by
+    rintro ⟨y, ⟨x, hx⟩⟩
+    have hxy : P.project x = y := (P.mem_fiber_iff y x).mp hx
+    subst y
+    rfl
+
 end FiniteProjection
