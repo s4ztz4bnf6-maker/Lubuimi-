@@ -106,6 +106,17 @@ theorem sum_split_exceptional
     (Finset.sum_filter_add_sum_filter_not
       (s := Finset.univ) (p := fun s : S => C.exceptional x s) (f := f)).symm
 
+open Classical in
+/-- In the first BBMST branch, the exceptional extensions receive zero
+multiplier and every nonexceptional extension receives the common factor
+1 / (1 - alpha). This is the pointwise reduction used by the local-mass proof. -/
+theorem multiplier_eq_first_branch
+    (C : CoordinateStage X S) (delta : ℚ) (x : X)
+    (h : alpha C x ≤ delta) (s : S) :
+    multiplier C delta x s =
+      if C.exceptional x s then 0 else 1 / (1 - alpha C x) := by
+  simp [multiplier, h]
+
 /-- The mass on one coordinate fiber after the update. The next theorem
 will show that this equals the incoming mass w x. -/
 noncomputable def localMass
