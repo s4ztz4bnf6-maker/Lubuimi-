@@ -96,7 +96,8 @@ theorem fiber_mass_sum
       ∑ x : {z : P.Qnext // z ∈ P.fiber y}, w x.1)
         = ∑ z : Σ y : P.Qprev,
             {x : P.Qnext // x ∈ P.fiber y}, w z.2.1 := by
-              rw [← Fintype.sum_sigma]
+              exact (Fintype.sum_sigma
+                (fun z : Σ y : P.Qprev, {x : P.Qnext // x ∈ P.fiber y} => w z.2.1)).symm
     _ = ∑ x : P.Qnext, w x := by
           exact (Equiv.sum_comp P.fiberEquiv
             (fun z : Σ y : P.Qprev,
