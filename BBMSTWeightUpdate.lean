@@ -205,10 +205,10 @@ theorem localMass_eq_of_alpha_le_delta
   ring
 
 
- /-- In the second branch, both classes receive their prescribed constant
+open Classical in
+/-- In the second branch, both classes receive their prescribed constant
 multipliers: the exceptional fiber gets (alpha - delta)/(alpha*(1-delta)),
 and its complement gets 1/(1-delta). -/
-open Classical in
 theorem multiplier_eq_second_branch
     (C : CoordinateStage X S) (delta : ℚ) (x : X)
     (h : delta < alpha C x) (s : S) :
