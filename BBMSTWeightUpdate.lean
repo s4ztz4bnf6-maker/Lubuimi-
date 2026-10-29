@@ -128,5 +128,6 @@ noncomputable def localMass
 #print axioms one_sub_delta_pos
 #print axioms multiplier_nonneg
 #print axioms sum_split_exceptional
+#print axioms multiplier_eq_first_branch
 
 end BBMSTWeightUpdate
