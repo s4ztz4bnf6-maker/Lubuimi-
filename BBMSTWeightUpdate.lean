@@ -125,7 +125,6 @@ noncomputable def localMass
 
 /-- In the first branch, the updated mass on a coordinate fiber equals
 the incoming mass. This is the local conservation identity for alpha <= delta. -/
-open Classical in
 theorem localMass_eq_of_alpha_le_delta
     (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X)
     (hdelta : ValidDelta delta) (h : alpha C x ≤ delta) :
@@ -144,9 +143,6 @@ theorem localMass_eq_of_alpha_le_delta
   have hcomp :
       ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) =
         (1 - alpha C x) * (Fintype.card S : ℚ) := by
-    rw [Finset.card_filter]
-    rw [show (Finset.univ.filter (fun s : S => C.exceptional x s)) =
-      exceptionalFiber C x by rfl] at hcard
     have htotal :
         ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) +
           ((exceptionalFiber C x).card : ℚ) = (Fintype.card S : ℚ) := by
@@ -154,7 +150,6 @@ theorem localMass_eq_of_alpha_le_delta
         (s := Finset.univ) (p := fun s : S => C.exceptional x s))
     rw [hcard] at htotal
     nlinarith
-  push_cast at hcomp
   simp only [Finset.sum_const_zero, Finset.sum_const, Finset.card_filter]
   rw [hcomp]
   field_simp
