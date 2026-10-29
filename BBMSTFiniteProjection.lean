@@ -64,8 +64,10 @@ noncomputable def fiberEquiv :
 
 /-- The cardinalities of all fibers sum to the cardinality of the next state space. -/
 theorem sum_fiber_card :
-    (∑ y : P.Qprev, Fintype.card {x : P.Qnext // x ∈ P.fiber y}) =
-      Fintype.card P.Qnext := by
+    (letI : Fintype P.Qprev := P.instPrev
+     letI : Fintype P.Qnext := P.instNext
+     (∑ y : P.Qprev, Fintype.card {x : P.Qnext // x ∈ P.fiber y}) =
+       Fintype.card P.Qnext) := by
   classical
   letI := P.instPrev
   letI := P.instNext
