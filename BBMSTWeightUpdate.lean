@@ -219,6 +219,20 @@ theorem multiplier_eq_second_branch
   classical
   simp [multiplier, not_le_of_gt h]
 
+/-- Pure rational identity underlying conservation in the second branch.
+All finite counting has already been reduced to the two cardinality equations;
+this lemma contains no Set/Finset conversions. -/
+theorem second_branch_mass_identity
+    (a delta w n e c : ℚ)
+    (hn : n ≠ 0) (ha : a ≠ 0) (hd : 1 - delta ≠ 0)
+    (had : a * (1 - delta) ≠ 0)
+    (he : e = a * n) (hc : c = (1 - a) * n) :
+    e * ((w / n) * ((a - delta) / (a * (1 - delta)))) +
+      c * ((w / n) * (1 / (1 - delta))) = w := by
+  rw [he, hc]
+  field_simp [hn, ha, hd, had]
+  <;> ring
+
 /-- In the second BBMST branch, the updated mass on a coordinate fiber
 also equals the incoming mass. This completes local conservation for both
 branches of the source multiplier. -/
@@ -255,6 +269,10 @@ theorem localMass_eq_of_delta_lt_alpha
       exact_mod_cast htotalNat
     rw [hcard] at htotal
     nlinarith
+  have hexceptional_card :
+      (Finset.univ.filter (fun s : S => C.exceptional x s)).card =
+        (exceptionalFiber C x).card := by
+    simp [exceptionalFiber]
   have hexceptional :
       (∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
         (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
@@ -272,7 +290,10 @@ theorem localMass_eq_of_delta_lt_alpha
               have hsx : C.exceptional x s := (Finset.mem_filter.mp hs).2
               rw [multiplier_eq_second_branch C delta x h s]
               simp [hsx]
-      _ = _ := by simp
+      _ = ((Finset.univ.filter (fun s : S => C.exceptional x s)).card : ℚ) *
+          ((w x / (Fintype.card S : ℚ)) *
+            ((alpha C x - delta) / (alpha C x * (1 - delta))) ) := by simp
+      _ = _ := by rw [hexceptional_card]
   have hnonexceptional :
       (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
         (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
@@ -289,13 +310,12 @@ theorem localMass_eq_of_delta_lt_alpha
             rw [multiplier_eq_second_branch C delta x h s]
             simp [hsx]
       _ = _ := by simp
-  have hfiltercard :
-      (Finset.univ.filter (fun s : S => C.exceptional x s)).card =
-        (exceptionalFiber C x).card := by
-    simp [exceptionalFiber]
-  rw [hexceptional, hnonexceptional, hcard, hcomp]
-  field_simp [hS, hden, hδne, hαne, hfiltercard]
-  <;> ring
+  rw [hexceptional, hnonexceptional]
+  exact second_branch_mass_identity
+    (alpha C x) delta (w x) (Fintype.card S : ℚ)
+    ((exceptionalFiber C x).card : ℚ)
+    ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ)
+    hS hαne hδne hden hcard hcomp
 
 /-- The second-branch conservation statement using the actual
 exceptional-fiber probability as the condition. -/
