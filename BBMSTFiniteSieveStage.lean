@@ -113,6 +113,24 @@ theorem mass_le_one (P : FiniteProbability X) (B : Finset X) :
   · exact le_rfl
   · exact P.weight_nonneg x
 
+/-- If a removed set has zero mass, every point in it has zero weight. -/
+theorem weight_eq_zero_of_mem_of_mass_eq_zero
+    (P : FiniteProbability X) (B : Finset X) (x : X)
+    (hx : x ∈ B) (hm : P.mass B = 0) : P.weight x = 0 := by
+  have hnonneg : ∀ y : X, 0 ≤ (if y ∈ B then P.weight y else 0) := by
+    intro y
+    split_ifs
+    · exact P.weight_nonneg y
+    · norm_num
+  have hterm : (if x ∈ B then P.weight x else 0) ≤ P.mass B := by
+    unfold mass
+    exact Finset.single_le_sum (fun y hy => hnonneg y) (Finset.mem_univ x)
+  rw [hm] at hterm
+  simp only [if_pos hx] at hterm
+  exact le_antisymm hterm (P.weight_nonneg x)
+
+#print axioms weight_eq_zero_of_mem_of_mass_eq_zero
+
 /-- The mass parameter is derived from the removed set, not supplied freely. -/
 def removedMass (P : FiniteProbability X) (B : Finset X) : ℚ :=
   P.mass B
