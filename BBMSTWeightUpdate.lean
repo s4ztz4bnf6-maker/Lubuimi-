@@ -289,13 +289,8 @@ theorem localMass_eq_of_delta_lt_alpha
             rw [multiplier_eq_second_branch C delta x h s]
             simp [hsx]
       _ = _ := by simp
-  have hsetcard :
-      (({s : S | C.exceptional x s} : Set S).ncard : ℚ) =
-        ((exceptionalFiber C x).card : ℚ) := by
-    classical
-    simp [exceptionalFiber]
   rw [hexceptional, hnonexceptional, hcard, hcomp]
-  field_simp [hS, hden, hδne, hαne, hsetcard]
+  field_simp [hS, hden, hδne, hαne]
   <;> ring
 
 /-- The second-branch conservation statement using the actual
