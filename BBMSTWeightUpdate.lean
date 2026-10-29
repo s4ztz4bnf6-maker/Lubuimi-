@@ -133,7 +133,6 @@ theorem localMass_eq_of_alpha_le_delta
   unfold localMass updatedWeight
   rw [sum_split_exceptional C x
     (fun s : S => (w x / (Fintype.card S : ℚ)) * multiplier C delta x s)]
-  simp_rw [multiplier_eq_first_branch C delta x h]
   have hα : 1 - alpha C x ≠ 0 :=
     ne_of_gt (one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta h)
   have hS : (Fintype.card S : ℚ) ≠ 0 := by
@@ -154,11 +153,31 @@ theorem localMass_eq_of_alpha_le_delta
       exact_mod_cast htotalNat
     rw [hcard] at htotal
     nlinarith
-  -- Keep the filtered sums intact until the complement-cardinality identity
-  -- has been established; then evaluate the constant sum on the complement.
-  simp only [Finset.sum_filter]
-  simp
-  rw [hcomp]
+  have hexzero :
+      (∑ s ∈ Finset.univ.filter (fun s : S => C.exceptional x s),
+        (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) = 0 := by
+    apply Finset.sum_eq_zero
+    intro s hs
+    have hsx : C.exceptional x s := (Finset.mem_filter.mp hs).2
+    rw [multiplier_eq_first_branch C delta x h s]
+    simp [hsx]
+  have hnonexceptional :
+      (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+        (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ((Finset.univ.filter (fun s : S => ¬ C.exceptional x s)).card : ℚ) *
+          ((w x / (Fintype.card S : ℚ)) * (1 / (1 - alpha C x))) := by
+    calc
+      (∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) * multiplier C delta x s) =
+        ∑ s ∈ Finset.univ.filter (fun s : S => ¬ C.exceptional x s),
+          (w x / (Fintype.card S : ℚ)) * (1 / (1 - alpha C x)) := by
+            apply Finset.sum_congr rfl
+            intro s hs
+            have hsx : ¬ C.exceptional x s := (Finset.mem_filter.mp hs).2
+            rw [multiplier_eq_first_branch C delta x h s]
+            simp [hsx]
+      _ = _ := by simp
+  rw [hexzero, hnonexceptional, hcomp]
   field_simp
   ring
 
