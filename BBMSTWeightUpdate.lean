@@ -98,8 +98,8 @@ theorem exceptionalFiber_card_eq_alpha_mul_card
 theorem sum_split_exceptional
     (C : CoordinateStage X S) (x : X) (f : S → ℚ) :
     (∑ s : S, f s) =
-      (∑ s in Finset.univ.filter (fun s => C.exceptional x s), f s) +
-      (∑ s in Finset.univ.filter (fun s => ¬ C.exceptional x s), f s) := by
+      (∑ s ∈ Finset.univ.filter (fun s => C.exceptional x s), f s) +
+      (∑ s ∈ Finset.univ.filter (fun s => ¬ C.exceptional x s), f s) := by
   classical
   simpa using
     (Finset.sum_filter_add_sum_filter_not
