@@ -34,6 +34,28 @@ noncomputable def multiplier
     else
       1 / (1 - delta)
 
+/-- The same local update written in terms of the exceptional-fiber probability. -/
+noncomputable def probabilityMultiplier
+    (C : CoordinateStage X S) (delta : ℚ)
+    (x : X) (s : S) : ℚ := by
+  classical
+  exact if exceptionalMass C x ≤ delta then
+    if C.exceptional x s then 0 else 1 / (1 - exceptionalMass C x)
+  else
+    if C.exceptional x s then
+      (exceptionalMass C x - delta) /
+        (exceptionalMass C x * (1 - delta))
+    else
+      1 / (1 - delta)
+
+theorem probabilityMultiplier_eq_multiplier
+    (C : CoordinateStage X S) (delta : ℚ) (x : X) (s : S) :
+    probabilityMultiplier C delta x s = multiplier C delta x s := by
+  classical
+  simp [probabilityMultiplier, multiplier, exceptionalMass_eq_alpha]
+
+#print axioms probabilityMultiplier_eq_multiplier
+
 /-- New point weight after uniformly extending the old weight over S and
 applying the source's local multiplier. -/
 noncomputable def updatedWeight
