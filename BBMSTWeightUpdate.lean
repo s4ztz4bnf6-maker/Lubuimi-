@@ -134,7 +134,7 @@ theorem localMass_eq_of_alpha_le_delta
   unfold localMass updatedWeight
   rw [sum_split_exceptional C x
     (fun s : S => (w x / (Fintype.card S : ℚ)) * multiplier C delta x s)]
-  rw [multiplier_eq_first_branch C delta x h]
+  simp_rw [multiplier_eq_first_branch C delta x h]
   simp only [Finset.sum_filter]
   have hα : 1 - alpha C x ≠ 0 :=
     ne_of_gt (one_sub_alpha_pos_of_alpha_le_delta C delta x hdelta h)
