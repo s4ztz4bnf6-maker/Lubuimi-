@@ -77,4 +77,29 @@ theorem sum_fiber_card :
           simp only [Fintype.card_sigma]
     _ = Fintype.card P.Qnext := (Fintype.card_congr (P.fiberEquiv)).symm
 
+
+/-- Weighted mass is conserved when the next-state space is partitioned
+    into the fibers of the projection. -/
+theorem fiber_mass_sum
+    {M : Type*} [AddCommMonoid M]
+    (w : P.Qnext → M) :
+    (letI : Fintype P.Qprev := P.instPrev
+     letI : Fintype P.Qnext := P.instNext
+     (∑ y : P.Qprev,
+       ∑ x : {z : P.Qnext // z ∈ P.fiber y}, w x.1)
+       = ∑ x : P.Qnext, w x) := by
+  classical
+  letI := P.instPrev
+  letI := P.instNext
+  calc
+    (∑ y : P.Qprev,
+      ∑ x : {z : P.Qnext // z ∈ P.fiber y}, w x.1)
+        = ∑ z : Σ y : P.Qprev,
+            {x : P.Qnext // x ∈ P.fiber y}, w z.2.1 := by
+              rw [← Fintype.sum_sigma]
+    _ = ∑ x : P.Qnext, w x := by
+          exact (Equiv.sum_comp P.fiberEquiv
+            (fun z : Σ y : P.Qprev,
+              {x : P.Qnext // x ∈ P.fiber y} => w z.2.1)).symm
+
 end FiniteProjection
