@@ -289,8 +289,12 @@ theorem localMass_eq_of_delta_lt_alpha
             rw [multiplier_eq_second_branch C delta x h s]
             simp [hsx]
       _ = _ := by simp
+  have hfiltercard :
+      (Finset.univ.filter (fun s : S => C.exceptional x s)).card =
+        (exceptionalFiber C x).card := by
+    simp [exceptionalFiber]
   rw [hexceptional, hnonexceptional, hcard, hcomp]
-  field_simp [hS, hden, hδne, hαne]
+  field_simp [hS, hden, hδne, hαne, hfiltercard]
   <;> ring
 
 /-- The second-branch conservation statement using the actual
