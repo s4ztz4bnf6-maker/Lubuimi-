@@ -27,6 +27,18 @@ noncomputable def exceptionalFiber
   classical
   exact Finset.univ.filter (fun s => C.exceptional x s)
 
+/-- The coordinate space really is nonempty, so its cardinality is positive;
+this is the denominator guard needed before using alpha in inequalities. -/
+theorem coordinate_card_pos (C : CoordinateStage X S) :
+    0 < Fintype.card S :=
+  Fintype.card_pos_iff.mpr C.nonempty_coordinates
+
+/-- The exceptional-fiber fraction alpha(x), derived from the actual
+finite set of exceptional extensions rather than supplied as a free value. -/
+noncomputable def alpha
+    (C : CoordinateStage X S) (x : X) : ℚ :=
+  (exceptionalFiber C x).card / Fintype.card S
+
 /-- Uniform probability on the nonempty finite coordinate set. -/
 noncomputable def uniformProbability (C : CoordinateStage X S) :
     FiniteProbability S where
@@ -44,8 +56,9 @@ noncomputable def uniformProbability (C : CoordinateStage X S) :
 /-- The exceptional mass under the uniform coordinate distribution is
 computed from the actual exceptional fiber. -/
 noncomputable def exceptionalMass
-    (C : CoordinateStage X S) (x : X) : ℚ :=
-  (uniformProbability C).mass (exceptionalFiber C x)
+    (C : CoordinateStage X S) (x : X) : ℚ := by
+  classical
+  exact (uniformProbability C).mass (exceptionalFiber C x)
 
 /-- For uniform coordinates, the probability mass of the exceptional fiber
 agrees exactly with its cardinality fraction alpha. -/
@@ -57,12 +70,6 @@ theorem exceptionalMass_eq_alpha
   simp only [Finset.sum_ite_mem]
   simp [div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc]
 
-/-- The exceptional-fiber fraction alpha(x), derived from the actual
-finite set of exceptional extensions rather than supplied as a free value. -/
-noncomputable def alpha
-    (C : CoordinateStage X S) (x : X) : ℚ :=
-  (exceptionalFiber C x).card / Fintype.card S
-
 /-- Membership in the exceptional fiber is exactly the stage's exceptional
 extension predicate. -/
 theorem mem_exceptionalFiber_iff
@@ -70,12 +77,6 @@ theorem mem_exceptionalFiber_iff
     s ∈ exceptionalFiber C x ↔ C.exceptional x s := by
   classical
   simp [exceptionalFiber]
-
-/-- The coordinate space really is nonempty, so its cardinality is positive;
-this is the denominator guard needed before using alpha in inequalities. -/
-theorem coordinate_card_pos (C : CoordinateStage X S) :
-    0 < Fintype.card S :=
-  Fintype.card_pos_iff.mpr C.nonempty_coordinates
 
 /-- The exceptional fiber is a subset of the full coordinate space. -/
 theorem exceptionalFiber_card_le
@@ -103,6 +104,7 @@ theorem alpha_le_one (C : CoordinateStage X S) (x : X) :
   rw [div_le_one hden]
   exact_mod_cast hcard
 
+#print axioms exceptionalMass_eq_alpha
 #print axioms mem_exceptionalFiber_iff
 #print axioms coordinate_card_pos
 #print axioms exceptionalFiber_card_le
