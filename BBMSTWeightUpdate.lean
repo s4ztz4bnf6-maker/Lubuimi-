@@ -203,6 +203,19 @@ theorem localMass_eq_of_alpha_le_delta
   field_simp
   ring
 
+/-- Local conservation expressed using the actual exceptional-fiber
+probability as the branch condition. The existing update rule is retained;
+exceptionalMass_eq_alpha transports the condition to the source parameter. -/
+theorem localMass_eq_of_exceptionalMass_le_delta
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X)
+    (hdelta : ValidDelta delta)
+    (h : exceptionalMass C x ≤ delta) :
+    localMass C w delta x = w x := by
+  apply localMass_eq_of_alpha_le_delta C w delta x hdelta
+  simpa [exceptionalMass_eq_alpha] using h
+
+#print axioms localMass_eq_of_exceptionalMass_le_delta
+
 #print axioms localMass_eq_of_alpha_le_delta
 
 #print axioms one_sub_alpha_pos_of_alpha_le_delta
