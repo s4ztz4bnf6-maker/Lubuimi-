@@ -117,6 +117,12 @@ theorem multiplier_eq_first_branch
       if C.exceptional x s then 0 else 1 / (1 - alpha C x) := by
   simp [multiplier, h]
 
+/-- The mass on one coordinate fiber after the update. The next theorem
+will show that this equals the incoming mass w x. -/
+noncomputable def localMass
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X) : ℚ :=
+  ∑ s : S, updatedWeight C w delta x s
+
 /-- In the first branch, the updated mass on a coordinate fiber equals
 the incoming mass. This is the local conservation identity for alpha <= delta. -/
 open Classical in
@@ -154,11 +160,8 @@ theorem localMass_eq_of_alpha_le_delta
   field_simp
   ring
 
-/-- The mass on one coordinate fiber after the update. The next theorem
-will show that this equals the incoming mass w x. -/
-noncomputable def localMass
-    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ) (x : X) : ℚ :=
-  ∑ s : S, updatedWeight C w delta x s
+
+#print axioms localMass_eq_of_alpha_le_delta
 
 #print axioms one_sub_alpha_pos_of_alpha_le_delta
 #print axioms alpha_pos_of_delta_lt_alpha
