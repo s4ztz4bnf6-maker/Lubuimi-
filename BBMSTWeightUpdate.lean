@@ -94,6 +94,8 @@ theorem exceptionalFiber_card_eq_alpha_mul_card
     exact_mod_cast (ne_of_gt (coordinate_card_pos C))
   field_simp
 
+classical
+
 /-- Split a finite sum over the exceptional fiber and its complement. -/
 theorem sum_split_exceptional
     (C : CoordinateStage X S) (x : X) (f : S → ℚ) :
