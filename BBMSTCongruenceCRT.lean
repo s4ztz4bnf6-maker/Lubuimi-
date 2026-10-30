@@ -87,30 +87,7 @@ theorem uncovered_residue_of_uncovered_fibre
           newFibreResidue (newData j) =
             (BBMSTArithmeticCRT.crtEquiv M q hMq z).2)) := by
   refine ⟨(BBMSTArithmeticCRT.crtEquiv M q hMq).symm (x, t), ?_⟩
-  intro hz
-  apply hx
-  exact (congruence_cover_iff_every_fibre oldData newData hMq).mp
-    (fun z => ?_) x t
-  simpa [BBMSTArithmeticCRT.crtEquiv] using
-    (show (∀ z : ZMod (M * q),
-      (∃ i, oldContains (oldData i)
-        (BBMSTArithmeticCRT.crtEquiv M q hMq z).1) ∨
-      (∃ j, newBaseContains (newData j)
-        (BBMSTArithmeticCRT.crtEquiv M q hMq z).1 ∧
-        newFibreResidue (newData j) =
-          (BBMSTArithmeticCRT.crtEquiv M q hMq z).2) from
-      fun z => by
-        by_cases hz' : z = (BBMSTArithmeticCRT.crtEquiv M q hMq).symm (x, t)
-        · subst z
-          simpa using hz
-        · exact False.elim (by
-            -- This branch is not needed: the witness is only a pointwise counterexample.
-            have : False := by
-              have := hx
-              exact this (by
-                -- contradiction would require the excluded fibre to be covered
-                exact False.elim (by assumption))
-            exact this))
+  simpa [BBMSTArithmeticCRT.crtEquiv] using hx
 
 #print axioms congruence_cover_iff_every_fibre
 
