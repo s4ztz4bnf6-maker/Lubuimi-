@@ -160,3 +160,72 @@ The GitHub combined commit status returned an empty status list. No Lean compila
 6. Only then connect the finite initial certificates and tail theorem.
 
 No conclusion about the unrestricted Erdős–Selfridge problem follows until the published square-free theorem is formalized and, separately, the non-square-free cases are addressed.
+
+
+## Exact published stage formulas (equations (2)–(6), pp. 612–613)
+
+Let (Q_k=Q_{k-1}\times S_k), and let (F_x=\{(x,y):y\in S_k\}) be the fibre over (x\in Q_{k-1}). The measure (P_{k-1}) is extended uniformly over each fibre. With (B_k) the set removed at stage (k), the source defines
+\[
+\alpha_k(x)=\frac{P_{k-1}(F_x\cap B_k)}{P_{k-1}(x)}
+=\frac{|\{y\in S_k:(x,y)\in B_k\}|}{|S_k|}.
+\tag{2}
+\]
+For zero-mass fibres, the rightmost finite counting ratio is the canonical definition; the left quotient is used only when (P_{k-1}(x)>0). This convention prevents an artificial (0/0) definition.
+
+The point weights are changed by
+\[
+P_k(x,y)=
+\begin{cases}
+\displaystyle
+\max\left\{0,\frac{\alpha_k(x)-\delta_k}
+{\alpha_k(x)(1-\delta_k)}\right\}P_{k-1}(x,y),
+&(x,y)\in B_k,\\[1.1em]
+\displaystyle
+\min\left\{\frac1{1-\alpha_k(x)},\frac1{1-\delta_k}\right\}
+P_{k-1}(x,y),
+&(x,y)\notin B_k.
+\end{cases}
+\tag{3}
+\]
+The source assumes (0\le\delta_k\le1/2). The formula must be represented with its branch conditions intact; do not silently replace the max/min by one selected branch.
+
+Lemma 2.1 states, for every (Q_{k-1})-measurable set (S),
+\[
+P_k(S)=P_{k-1}(S),
+\tag{4}
+\]
+for every set (S\subseteq Q),
+\[
+P_k(S)\le\frac1{1-\delta_k}P_{k-1}(S),
+\tag{5}
+\]
+and for (S\subseteq B_k),
+\[
+P_k(S)\le P_{k-1}(S).
+\tag{6}
+\]
+Consequently, if \(\sum_{k=a+1}^nP_k(B_k)<1\), the cover is impossible.
+
+### Scalar identity behind (4)
+
+For (0\le a\le1), (0\le d\le1/2), define
+\[
+u(a,d)=\max\left(0,\frac{a-d}{a(1-d)}\right),\qquad
+v(a,d)=\min\left(\frac1{1-a},\frac1{1-d}\right).
+\]
+With rational division's totalized convention, the endpoint values are (u(0,d)=0), (v(0,d)=1), and (u(1,d)=1); the value of (v(1,d)) is irrelevant because the uncovered part of a fibre is empty when (a=1). For (0<a<1), a two-case split (a\le d) / (d<a) gives
+\[
+a\,u(a,d)+(1-a)\,v(a,d)=1.
+\]
+At (a=0) and (a=1), the same weighted normalization holds with the empty branch omitted. This is the exact finite-fibre calculation needed for marginal preservation.
+
+The two pointwise bounds needed for (5)–(6) are
+\[
+0\le u(a,d)\le1,\qquad
+0\le v(a,d)\le\frac1{1-d}.
+\]
+The first is used only on (B_k); the second applies off (B_k). Combined with uniform extension (P_{k-1}(x,y)=P_{k-1}(x)/|S_k|), these yield the three setwise conclusions of Lemma 2.1 by finite summation.
+
+### Implementation warning
+
+A Lean definition should use the finite counting ratio for \(\alpha_k(x)\), not divide by the marginal mass (P_{k-1}(x)\). The proof that it equals the quotient is a separate theorem under positive marginal mass. This makes zero-mass fibres well-defined from the start. The scalar normalization lemma should explicitly split (a=0), (a=1), (0<a<1\), and then (a\le d) versus (d<a). Only after this scalar lemma is kernel-checked should it be lifted to finite point weights and set masses.
