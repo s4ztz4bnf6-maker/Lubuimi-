@@ -45,6 +45,15 @@ def run():
         trace_upper = Fraction(tau * n) - Fraction(lam + 2, 2) * (n - 1)
         assert trace_upper <= 10 * n
 
+    # Adversarial arbitrary-U test on the first eight odd primes.
+    M8 = 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23
+    g = M8 // (3 * 5 * 11)
+    n8 = M8 // g
+    assert M8 == 111546435 and g == 676039 and n8 == 165
+    assert len([d for d in range(1, g + 1) if g % d == 0]) == 32
+    assert 32 * n8 == 5280 and 28 * n8 == 4620
+    assert Fraction(1, g) > Fraction(1, 1002375)
+
     for q in (11, 13, 17, 19, 23, 29, 31, 101):
         for A in range(1, 30):
             covered_upper_bound = 10 * sum(q ** (A - j) for j in range(1, A + 1))
