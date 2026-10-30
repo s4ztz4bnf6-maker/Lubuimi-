@@ -1,17 +1,14 @@
-# Prime-extension exclusion above the 315 divisor block
+# Exact exclusion of every one-prime extension of the 315 divisor block
 
 Date: 2026-10-30
 
-## Theorem (complete one-prime divisor block, with one residual case)
+## Theorem
 
-Let D = {3, 5, 7, 9, 15, 21, 35, 45, 63, 105, 315}. Let q be a prime with q not dividing 315. Consider a covering system whose pairwise distinct moduli all divide 315*q and are greater than one.
+Let D = {3, 5, 7, 9, 15, 21, 35, 45, 63, 105, 315}. Let q be a prime not dividing 315. There is no covering system with pairwise distinct moduli greater than one whose moduli all divide 315*q.
 
-Then:
-- If q >= 13, no such covering system exists.
-- If q = 11 and the modulus 11 is absent, no such covering system exists.
-- The only case not excluded by this argument is q = 11 with the modulus 11 present.
+Equivalently, no odd distinct covering system can have least common multiple exactly 315*q for any prime q >= 11.
 
-Thus every possible covering with LCM exactly 315*q is excluded except for the single residual configuration with q=11 and modulus 11 included. This is still a finite-LCM special case, not the general odd distinct covering conjecture.
+This closes the entire one-new-prime extension of the exact-315 block, including the possible modulus q itself.
 
 ## Proof
 
@@ -24,32 +21,43 @@ Let U be the residues modulo 315 missed by all old classes. Since the old moduli
           = 2/105
           = 6/315.
 
-Thus U is nonempty (indeed |U| >= 6).
+Thus |U| >= 6.
 
 Fix x in U. For each t modulo q, the CRT residue (x,t) must be covered by a new class. Each new class has one fixed q-coordinate. Hence at least q distinct new classes are required to cover the q different fibres above x.
 
 If q >= 13, there are at most twelve new classes, so coverage is impossible.
 
-Now let q=11. If the modulus 11 is absent, all new classes have moduli 11*d with d in D, so there are at most eleven of them. Each x in U must lie in all eleven projected classes. Their common intersection is either empty or a single residue modulo lcm(D)=315. Hence |U| <= 1, contradicting |U| >= 6.
+It remains to consider q=11. If the modulus 11 is absent, all new classes have moduli 11*d with d in D. There are at most eleven such classes, and each x in U must lie in all eleven projected classes.
 
-If q=11 and modulus 11 is present, this argument only forces at least ten of the eleven projected classes with moduli 11*d (d in D) to contain each x in U. The full-intersection argument no longer applies. This is the one residual case and is not claimed solved here.
+If the modulus 11 is present, it covers one fixed q-fibre for every base residue. The other ten q-fibres must be covered by classes with moduli 11*d, d in D. Thus each x in U must lie in at least ten of the at most eleven projected classes with d in D.
 
-Therefore the stated exclusions hold. QED.
+In either case, every x in U lies in at least ten of the eleven possible projected classes indexed by D. Suppose x and y are two distinct elements of U. Their sets of containing projected classes each have size at least ten among eleven indices, so they have at least nine common indices. Choose nine of these common classes. Their nine moduli are distinct members of D.
 
-## Relation to the second-moment route
+A direct finite divisor check gives
 
-For q=11 with modulus 11 present, each x in U must lie in at least ten of the eleven projected classes. The pair-counting identity gives the necessary condition
+  lcm(S) = 315 for every 9-element subset S of D.
 
-  sum_{j<k} |U intersect C_j intersect C_k| >= binom(10,2) * |U|.
+Therefore the intersection of those nine congruence classes modulo 315 contains at most one residue. But both x and y lie in that intersection, contradicting x != y.
 
-This is the appropriate next finite arithmetic subproblem. A universal upper bound for the left side, taking the residue compatibility and the eleven distinct projected moduli into account, could eliminate the remaining q=11 case. The generic second-moment identity in BBMSTMomentBridge.lean supplies the algebraic counting identity, but not this arithmetic upper bound.
+Hence |U| <= 1, contradicting |U| >= 6. No cover exists. QED.
+
+## Exact finite arithmetic certificate
+
+The two finite facts used above are:
+- sum_{d in D} 1/d = 103/105;
+- for each of the binomial(11,9)=55 subsets S of D, lcm(S)=315.
+
+Both can be checked by exact integer arithmetic. The lcm assertion is a finite exhaustive check over 55 subsets, not a Lean kernel theorem in this note.
+
+## Why the pair-moment route remains useful
+
+For this 315 block, the fact that every 9-element subset of D has full lcm 315 makes a direct two-point intersection argument stronger and simpler than the second-moment bound. For larger base divisor blocks, the analogous minimum-lcm property may fail; the general pair-moment identity in BBMSTMomentBridge.lean remains a possible route, provided one proves a suitable arithmetic upper bound.
 
 ## Scope limitations
 
-- The theorem covers systems whose entire LCM is 315*q, with q prime and coprime to 315.
-- The only remaining case is q=11 with modulus 11 present.
-- No higher prime-power exponents, additional prime factors, or arbitrary LCMs are covered.
-- This is an elementary mathematical proof of the stated finite-LCM exclusions, not a Lean kernel-checked formalization. No compilation or CI success is claimed for the new note.
+- This proves impossibility only when the full LCM is exactly 315*q for one prime q coprime to 315.
+- It does not cover LCMs with two or more new prime factors, higher powers q^2, or arbitrary prime support.
+- This is an elementary mathematical proof of the stated finite-LCM theorem, not a Lean kernel-checked formalization. No compilation or CI success is claimed for the new note.
 
 ## Five-source audit
 
