@@ -53,27 +53,29 @@ def stage_fiber_equiv (D : SieveStage) (k : ℕ) (x : D.Q k) :
     {y : D.Q (k + 1) // y ∈ fiber D k x} ≃
       {s : D.S k // D.admissible k x s} where
   toFun := fun y => by
-    refine ⟨(D.encode k y.1).2.1, ?_⟩
-    have hy : (D.encode k y.1).1 = x := by
-      simpa [fiber, project] using y.2
-    rw [← hy]
-    exact (D.encode k y.1).2.2
+    rcases y with ⟨y, hy⟩
+    change (D.encode k y).1 = x at hy
+    cases hy
+    exact (D.encode k y).2
   invFun := fun s => by
     refine ⟨(D.encode k).symm ⟨x, s⟩, ?_⟩
-    change project D k ((D.encode k).symm ⟨x, s⟩) = x
-    simp [project]
+    change (D.encode k ((D.encode k).symm ⟨x, s⟩)).1 = x
+    exact congrArg Sigma.fst ((D.encode k).apply_symm_apply ⟨x, s⟩)
   left_inv := by
     intro y
+    rcases y with ⟨y, hy⟩
+    have h : (D.encode k y).1 = x := hy
+    cases h
     apply Subtype.ext
-    have hy : (D.encode k y.1).1 = x := by
-      simpa [fiber, project] using y.2
-    change (D.encode k).symm ⟨x, (D.encode k y.1).2⟩ = y.1
-    rw [← hy]
-    exact (D.encode k).symm_apply_apply y.1
+    change (D.encode k).symm
+      ⟨(D.encode k y).1, (D.encode k y).2⟩ = y
+    exact (D.encode k).symm_apply_apply y
   right_inv := by
     intro s
     apply Subtype.ext
-    simp
+    exact congrArg
+      (fun z : Σ a : D.Q k, {b : D.S k // D.admissible k a b} => z.2.1)
+      ((D.encode k).apply_symm_apply ⟨x, s⟩)
 
 #print axioms project_extension_compat
 #print axioms stage_fiber_equiv
