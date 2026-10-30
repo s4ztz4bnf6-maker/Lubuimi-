@@ -412,6 +412,7 @@ theorem incidence_card_eq_sum_of_class_supports
         Fintype.card {x : OldUncovered oldData //
           newBaseContains hMq (newData j) x.1} := by
   rw [incidence_card_reindex]
+  -- In this Mathlib version card_sigma is a theorem, not a function taking β.
   simpa only [NewClassUncoveredFibres] using
     (Fintype.card_sigma :
       Fintype.card
