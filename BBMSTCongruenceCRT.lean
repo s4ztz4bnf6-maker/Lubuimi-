@@ -3,10 +3,9 @@ import BBMSTArithmeticCRT
 /-!
 # Congruence-class representation for the one-prime CRT extension
 
-This module replaces the arbitrary predicates in the arithmetic CRT bridge
-with actual congruence classes modulo divisors d | M and q*d | q*M.
-Every new class carries its own CRT residue modulo d*q, so its base residue
-and q-fibre are derived rather than postulated independently.
+Old classes are actual residues modulo d | M. New classes are actual residues
+modulo d*q, again with d | M. Coprimality of d and q is derived from
+d | M and M.Coprime q; it is not an independent hypothesis.
 -/
 
 namespace BBMSTCongruenceCRT
@@ -18,29 +17,38 @@ structure OldClass (M : ℕ) where
   d_dvd_M : d ∣ M
   residue : ZMod d
 
-/-- A new congruence class modulo q*d, with d | M and gcd(d,q)=1. -/
+/-- A new congruence class modulo d*q, with d | M. -/
 structure NewClass (M q : ℕ) where
   d : ℕ
   d_pos : 0 < d
   d_dvd_M : d ∣ M
-  coprime_d_q : Nat.Coprime d q
   residue : ZMod (d * q)
+
+/-- Every divisor of M is coprime to q when M is coprime to q. -/
+theorem divisor_coprime_of_base {M q d : ℕ}
+    (hMq : M.Coprime q) (hd : d ∣ M) : Nat.Coprime d q :=
+  Nat.Coprime.of_dvd_left hd hMq
 
 /-- Membership in an old class, tested by the canonical reduction map. -/
 def oldContains {M : ℕ} (C : OldClass M) (x : ZMod M) : Prop :=
   ZMod.castHom C.d_dvd_M (ZMod C.d) x = C.residue
 
-/-- The base residue of a new class modulo q*d, extracted by CRT. -/
-def newBaseResidue {M q : ℕ} (C : NewClass M q) : ZMod C.d :=
-  (ZMod.chineseRemainder C.coprime_d_q C.residue).1
+/-- The base residue of a new class modulo d*q, extracted by CRT. -/
+def newBaseResidue {M q : ℕ} (hMq : M.Coprime q)
+    (C : NewClass M q) : ZMod C.d :=
+  (ZMod.chineseRemainder (divisor_coprime_of_base hMq C.d_dvd_M)
+    C.residue).1
 
-/-- The q-coordinate of a new class modulo q*d, extracted by CRT. -/
-def newFibreResidue {M q : ℕ} (C : NewClass M q) : ZMod q :=
-  (ZMod.chineseRemainder C.coprime_d_q C.residue).2
+/-- The q-coordinate of a new class modulo d*q, extracted by CRT. -/
+def newFibreResidue {M q : ℕ} (hMq : M.Coprime q)
+    (C : NewClass M q) : ZMod q :=
+  (ZMod.chineseRemainder (divisor_coprime_of_base hMq C.d_dvd_M)
+    C.residue).2
 
 /-- The projection of a new congruence class to the base ring ZMod M. -/
-def newBaseContains {M q : ℕ} (C : NewClass M q) (x : ZMod M) : Prop :=
-  ZMod.castHom C.d_dvd_M (ZMod C.d) x = newBaseResidue C
+def newBaseContains {M q : ℕ} (hMq : M.Coprime q)
+    (C : NewClass M q) (x : ZMod M) : Prop :=
+  ZMod.castHom C.d_dvd_M (ZMod C.d) x = newBaseResidue hMq C
 
 /-- For indexed old and new congruence classes, the full system modulo M*q
 covers exactly when each q-fibre is covered by the old classes and the new
@@ -51,18 +59,18 @@ theorem congruence_cover_iff_every_fibre
     (hMq : M.Coprime q) :
     (∀ z : ZMod (M * q),
       (∃ i, oldContains (oldData i) (BBMSTArithmeticCRT.crtEquiv M q hMq z).1) ∨
-      (∃ j, newBaseContains (newData j)
+      (∃ j, newBaseContains hMq (newData j)
           (BBMSTArithmeticCRT.crtEquiv M q hMq z).1 ∧
-          newFibreResidue (newData j) =
+          newFibreResidue hMq (newData j) =
             (BBMSTArithmeticCRT.crtEquiv M q hMq z).2)) ↔
     ∀ x : ZMod M, ∀ t : ZMod q,
       (∃ i, oldContains (oldData i) x) ∨
-      (∃ j, newBaseContains (newData j) x ∧
-        newFibreResidue (newData j) = t) := by
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t) := by
   let oldPred : ZMod M → Prop := fun x => ∃ i, oldContains (oldData i) x
   let newPred : N → ZMod M → Prop := fun j x =>
-    newBaseContains (newData j) x
-  let fibre : N → ZMod q := fun j => newFibreResidue (newData j)
+    newBaseContains hMq (newData j) x
+  let fibre : N → ZMod q := fun j => newFibreResidue hMq (newData j)
   simpa [oldPred, newPred, fibre,
     BBMSTArithmeticCRT.coveredModuloProduct,
     BBMSTArithmeticCRT.coveredInProduct] using
@@ -77,18 +85,20 @@ theorem uncovered_residue_of_uncovered_fibre
     (hMq : M.Coprime q)
     (x : ZMod M) (t : ZMod q)
     (hx : ¬ ((∃ i, oldContains (oldData i) x) ∨
-      (∃ j, newBaseContains (newData j) x ∧
-        newFibreResidue (newData j) = t))) :
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t))) :
     ∃ z : ZMod (M * q),
       ¬ ((∃ i, oldContains (oldData i)
           (BBMSTArithmeticCRT.crtEquiv M q hMq z).1) ∨
-        (∃ j, newBaseContains (newData j)
+        (∃ j, newBaseContains hMq (newData j)
           (BBMSTArithmeticCRT.crtEquiv M q hMq z).1 ∧
-          newFibreResidue (newData j) =
+          newFibreResidue hMq (newData j) =
             (BBMSTArithmeticCRT.crtEquiv M q hMq z).2)) := by
   refine ⟨(BBMSTArithmeticCRT.crtEquiv M q hMq).symm (x, t), ?_⟩
   simpa [BBMSTArithmeticCRT.crtEquiv] using hx
 
+#print axioms divisor_coprime_of_base
 #print axioms congruence_cover_iff_every_fibre
+#print axioms uncovered_residue_of_uncovered_fibre
 
 end BBMSTCongruenceCRT
