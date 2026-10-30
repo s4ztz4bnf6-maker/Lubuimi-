@@ -83,7 +83,7 @@ Prove:
 
 Then add the arithmetic CRT equivalence for the actual congruence classes. Keep the index of every class: do not quotient away multiplicity in the projected base family.
 
-The module `BBMSTArithmeticCRT.lean` now instantiates this statement on `ZMod (M*q)` using Mathlib's `ZMod.chineseRemainder`. Its theorem `crt_cover_iff_every_fibre` proves the exact equivalence for an indexed family of new base predicates assigned to individual q-residues. This is the arithmetic CRT transport layer, not yet a representation theorem for every congruence class modulo every divisor of `M*q`.
+The module `BBMSTArithmeticCRT.lean` instantiates this statement on `ZMod (M*q)` using Mathlib's `ZMod.chineseRemainder`. Its theorem `crt_cover_iff_every_fibre` proves the exact equivalence for an indexed family of new base predicates assigned to individual q-residues. `BBMSTCongruenceCRT.lean` now takes the next step: it represents old classes by residues modulo d | M, new classes by residues modulo d*q with d | M and gcd(d,q)=1, derives each new class's base residue and q-fibre through its own CRT map, and states the resulting indexed covering equivalence. This is still not an allocation theorem; it formalizes the exact arithmetic input to one.
 
 Only after this theorem is kernel-checked should a separate allocation lemma be attempted. Its hypotheses must explicitly bound the additional projected copies, and its conclusion must be strong enough to imply that at least one fibre remains uncovered.
 
@@ -97,7 +97,7 @@ The regular job in workflow run 41044063859 completed successfully on commit b91
 
 1. Independently reproduce the rank-9 package from a clean extraction: verify all published hashes, pinned dependencies, generated source reconstruction, Lean build, and transitive axiom output.
 2. Formalize the finite fibre decomposition above without quotienting away class indices. The abstract finite interface is in `BBMSTPrimeExtension.lean`.
-3. Formalize the CRT map and prove both directions. The first arithmetic transport theorem is now in `BBMSTArithmeticCRT.lean`; next is the representation of actual divisor congruence classes of shapes d and qd, followed by q-adic depth.
+3. Formalize the CRT map and prove both directions. The arithmetic transport theorem is in `BBMSTArithmeticCRT.lean`; actual divisor congruence classes of shapes d and qd are represented in `BBMSTCongruenceCRT.lean`. Next is deriving gcd(d,q) from d|M and gcd(M,q), then q-adic depth.
 4. Audit any proposed distinctness-allocation lemma against the projected-copy phenomenon.
 5. Independently replay the new arithmetic module in CI and inspect its transitive axiom output.
 6. Keep the rank-9 theorem, BBMST square-free theorem, and unrestricted Erdős–Selfridge target as three distinct statements until a proved implication connects them.
