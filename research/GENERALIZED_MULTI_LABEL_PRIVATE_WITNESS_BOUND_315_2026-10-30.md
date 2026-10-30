@@ -422,6 +422,9 @@ This is a finite exclusion for the explicit sharpness configuration only. It doe
 
 ## Scope and verification status
 
+Independent replay on 30 October 2026: a separate execution of the committed standard-library checker reproduced all four global assertions exactly: 173,052 nonempty assignments, 64 pairwise-filtered cases, pairwise maximum 184, and multi-label maximum 164, with precisely the two stated maximizing orientations. A separate exact residue enumeration reproduced |U|=76, |U^c|=239, the eleven allowed-class counts (0,0,0,0,3,6,0,17,30,57,239), the 52-point union upper bound, and the 49-point witness. The branch-and-bound certificate reproduced the stated (8,3,5) node/leaf/branch counts. This independently confirms the finite arithmetic recorded here; it does not turn the computation into a Lean theorem or close the universal conjecture.
+
+
 - The multi-label crossing lemma is an ordinary mathematical argument from CRT compatibility, divisibility, and private witnesses.
 - The finite maximum 164 is an exact integer computation with a complete recursive search over all splits. The code is reproducible and uses no solver or floating-point arithmetic.
 - The sharpness witness verifies that the finite maximum is attainable in the two-fibre model.
