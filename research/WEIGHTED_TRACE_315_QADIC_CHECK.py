@@ -33,8 +33,17 @@ def run():
     assert old_union_bound == 309
     assert M - old_union_bound == 6
 
+    exponents = [2, 1, 1]  # 315 = 3^2 * 5 * 7
+    tau = 1
+    for a in exponents:
+        tau *= a + 1
+    lam = min(tau // (a + 1) - 1 for a in exponents)
+    assert tau == 12 and lam == 3
+
     for n in range(5, 10000):
         assert 5 * (n - 1) >= 4 * n
+        trace_upper = Fraction(tau * n) - Fraction(lam + 2, 2) * (n - 1)
+        assert trace_upper <= 10 * n
 
     for q in (11, 13, 17, 19, 23, 29, 31, 101):
         for A in range(1, 30):
