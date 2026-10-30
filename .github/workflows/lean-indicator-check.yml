@@ -9,6 +9,7 @@ on:
       - "BBMSTFiniteSieveStage.lean"
       - "BBMSTCoordinateStage.lean"
       - "BBMSTWeightUpdate.lean"
+      - "BBMSTIteratedWeight.lean"
       - "BBMSTFiniteProjection.lean"
       - "BBMSTFiniteProjectionAudit.lean"
       - ".github/workflows/lean-indicator-check.yml"
@@ -59,3 +60,5 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTCoordinateStage.olean BBMSTCoordinateStage.lean
       - name: Compile source-faithful BBMST weight update and print axioms
         run: lake env lean BBMSTWeightUpdate.lean
+      - name: Compile abstract iterated weight bound and print axioms
+        run: lake env lean BBMSTIteratedWeight.lean
