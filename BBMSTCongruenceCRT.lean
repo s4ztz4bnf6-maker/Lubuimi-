@@ -188,7 +188,7 @@ class indices whose projected base class contains x. This is the exact
 local allocation bound: the number of available new classes over x must
 be at least the number of q-fibres. -/
 theorem fibre_capacity_at_base
-    {M q : ℕ} {N : Type*} [Fintype N]
+    {M q : ℕ} {N : Type*} [Fintype N] [NeZero q]
     (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (x : ZMod M)
@@ -215,7 +215,7 @@ theorem fibre_capacity_at_base
 /-- If no old class covers x, a complete cover forces the local allocation
 bound above. -/
 theorem full_fibre_cover_forces_capacity
-    {M q : ℕ} {O N : Type*} [Fintype N]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
@@ -232,7 +232,7 @@ theorem full_fibre_cover_forces_capacity
 /-- If fewer than q new classes project over an old-uncovered base residue,
 at least one q-fibre is necessarily uncovered. -/
 theorem some_fibre_uncovered_of_small_local_family
-    {M q : ℕ} {O N : Type*} [Fintype N]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
@@ -258,7 +258,7 @@ theorem some_fibre_uncovered_of_small_local_family
 /-- The local allocation obstruction gives an explicit uncovered residue
 modulo M*q through the inverse Chinese remainder equivalence. -/
 theorem uncovered_residue_of_small_local_family
-    {M q : ℕ} {O N : Type*} [Fintype N]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
