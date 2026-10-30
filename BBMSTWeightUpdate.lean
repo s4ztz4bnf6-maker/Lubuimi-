@@ -174,6 +174,29 @@ theorem updatedWeight_nonneg
 
 #print axioms updatedWeight_nonneg
 
+
+/-- Pointwise upper bound for the updated weight, obtained from the
+uniform multiplier bound and nonnegativity of the incoming weight. -/
+theorem updatedWeight_le_two_bound
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ)
+    (x : X) (s : S)
+    (hdelta : ValidDelta delta) (hw : 0 ≤ w x) :
+    updatedWeight C w delta x s
+      ≤ 2 * w x / (Fintype.card S : ℚ) := by
+  have hcard : 0 < (Fintype.card S : ℚ) := by
+    exact_mod_cast (coordinate_card_pos C)
+  have hfactor : 0 ≤ w x / (Fintype.card S : ℚ) :=
+    div_nonneg hw (le_of_lt hcard)
+  unfold updatedWeight
+  calc
+    (w x / (Fintype.card S : ℚ)) * multiplier C delta x s
+        ≤ (w x / (Fintype.card S : ℚ)) * 2 :=
+          mul_le_mul_of_nonneg_left
+            (multiplier_le_two C delta x s hdelta) hfactor
+    _ = 2 * w x / (Fintype.card S : ℚ) := by ring
+
+#print axioms updatedWeight_le_two_bound
+
 /-- The exceptional-fiber count is exactly alpha times the coordinate
 cardinality. This is the counting identity needed to turn the source's
 fractional update into finite-sum algebra. -/
