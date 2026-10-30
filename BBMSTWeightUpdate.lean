@@ -141,6 +141,23 @@ theorem multiplier_le_inv_one_sub_delta
 
 #print axioms multiplier_le_inv_one_sub_delta
 
+/-- The BBMST multiplier is at most two for every valid delta. -/
+theorem multiplier_le_two
+    (C : CoordinateStage X S) (delta : ℚ) (x : X) (s : S)
+    (hdelta : ValidDelta delta) :
+    multiplier C delta x s ≤ 2 := by
+  have hbound :=
+    multiplier_le_inv_one_sub_delta C delta x s hdelta
+  have hden : 0 < 1 - delta :=
+    one_sub_delta_pos delta hdelta
+  have hinv : 1 / (1 - delta) ≤ 2 := by
+    rw [div_le_iff₀ hden]
+    nlinarith [hdelta.2]
+  exact le_trans hbound hinv
+
+#print axioms multiplier_le_two
+
+
 /-- Pointwise nonnegativity of the updated weight, assuming the incoming
 coordinate weight is nonnegative. -/
 theorem updatedWeight_nonneg
