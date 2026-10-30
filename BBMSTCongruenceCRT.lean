@@ -311,6 +311,34 @@ def NewClassUncoveredFibres {M q : ℕ} {O N : Type*}
   Σ j : N, {x : OldUncovered oldData //
     newBaseContains hMq (newData j) x.1}
 
+
+/-- Explicit finite instance for the old-uncovered subtype. -/
+local instance instOldUncoveredFintype {M : ℕ} [NeZero M] {O : Type*}
+    (oldData : O → OldClass M) : Fintype (OldUncovered oldData) := by
+  classical
+  unfold OldUncovered
+  exact Fintype.ofFinite _
+
+/-- Explicit finite instance for the incidence subtype. -/
+local instance instUncoveredNewIncidenceFintype
+    {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    Fintype (UncoveredNewIncidence oldData newData hMq) := by
+  classical
+  unfold UncoveredNewIncidence
+  exact Fintype.ofFinite _
+
+/-- Explicit finite instance for the re-indexed incidence sigma type. -/
+local instance instNewClassUncoveredFibresFintype
+    {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    Fintype (NewClassUncoveredFibres oldData newData hMq) := by
+  classical
+  unfold NewClassUncoveredFibres
+  exact Fintype.ofFinite _
+
 /-- Re-indexing incidences by their new-class coordinate is an equivalence.
 This is the exact finite double-counting interface: the left side counts
 incidences by base residue; the right side counts them by new class. -/
