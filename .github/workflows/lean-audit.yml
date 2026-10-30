@@ -46,3 +46,31 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTSieveStage.olean BBMSTSieveStage.lean
+
+  fiber-paranoid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.35.0 and prepare isolated package
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          cp BBMSTSieveStage.lean fiber-audit/BBMSTSieveStage.lean
+          cd fiber-audit
+          lake update
+      - name: Install bubblewrap sandbox
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bubblewrap
+      - name: Restore Mathlib cache for isolated fiber package
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: fiber-audit
+          build: false
+          use-mathlib-cache: true
+      - name: Check isolated fiber interface with Lean and all paranoid checkers
+        working-directory: fiber-audit
+        run: lake check --paranoid
