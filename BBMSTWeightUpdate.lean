@@ -106,6 +106,41 @@ theorem multiplier_nonneg
       positivity)
 
 
+/-- The source multiplier is bounded by the reciprocal of the
+remaining mass parameter. -/
+theorem multiplier_le_inv_one_sub_delta
+    (C : CoordinateStage X S) (delta : ℚ) (x : X) (s : S)
+    (hdelta : ValidDelta delta) :
+    multiplier C delta x s ≤ 1 / (1 - delta) := by
+  classical
+  unfold multiplier
+  split_ifs with hbranch hex
+  · have hden : 0 < 1 - delta :=
+      one_sub_delta_pos delta hdelta
+    positivity
+  · have hden : 0 < 1 - alpha C x :=
+      one_sub_alpha_pos_of_alpha_le_delta
+        C delta x hdelta hbranch
+    have hδ : 0 < 1 - delta :=
+      one_sub_delta_pos delta hdelta
+    rw [div_le_div_iff₀ hden hδ]
+    nlinarith
+  · have hαδ : delta < alpha C x :=
+      lt_of_not_ge hbranch
+    have hα : 0 < alpha C x :=
+      alpha_pos_of_delta_lt_alpha C delta x hdelta hαδ
+    have hδ : 0 < 1 - delta :=
+      one_sub_delta_pos delta hdelta
+    have hden : 0 < alpha C x * (1 - delta) :=
+      mul_pos hα hδ
+    rw [div_le_div_iff₀ hden hδ]
+    have hprod : 0 ≤ delta * (1 - delta) :=
+      mul_nonneg hdelta.1 (le_of_lt hδ)
+    nlinarith
+  · exact le_rfl
+
+#print axioms multiplier_le_inv_one_sub_delta
+
 /-- Pointwise nonnegativity of the updated weight, assuming the incoming
 coordinate weight is nonnegative. -/
 theorem updatedWeight_nonneg
