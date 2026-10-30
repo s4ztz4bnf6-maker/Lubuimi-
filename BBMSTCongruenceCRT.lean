@@ -276,6 +276,116 @@ theorem uncovered_residue_of_small_local_family
     oldData newData hMq x hOld hsmall
   exact uncovered_residue_of_uncovered_fibre oldData newData hMq x t ht
 
+/-- The base residues not hit by any old class. -/
+def OldUncovered {M : ℕ} {O : Type*}
+    (oldData : O → OldClass M) :=
+  {x : ZMod M // ¬ ∃ i, oldContains (oldData i) x}
+
+/-- Incidences between old-uncovered base residues and new classes whose
+base projections hit them. -/
+def UncoveredNewIncidence {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :=
+  {p : OldUncovered oldData × N //
+    newBaseContains hMq (newData p.2) p.1.1}
+
+/-- The same incidence relation, indexed first by the new class. -/
+def NewClassUncoveredFibres {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :=
+  Σ j : N, {x : OldUncovered oldData //
+    newBaseContains hMq (newData j) x.1}
+
+/-- Re-indexing incidences by their new-class coordinate is an equivalence.
+This is the exact finite double-counting interface: the left side counts
+incidences by base residue; the right side counts them by new class. -/
+def incidence_reindex_equiv
+    {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    UncoveredNewIncidence oldData newData hMq ≃
+      NewClassUncoveredFibres oldData newData hMq where
+  toFun p := ⟨p.1.2, ⟨p.1.1, p.2⟩⟩
+  invFun p := ⟨(p.2.1, p.1), p.2.2⟩
+  left_inv p := by
+    cases p
+    rfl
+  right_inv p := by
+    cases p
+    rfl
+
+/-- Global allocation inequality. If every q-fibre above every old-uncovered
+base residue is assigned a new class, then the total number of
+(uncovered-residue, new-class) incidences is at least
+|old-uncovered residues| * |ZMod q|. -/
+theorem global_allocation_lower_bound
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (alloc : OldUncovered oldData → ZMod q → N)
+    (hmem : ∀ x t, newBaseContains hMq (newData (alloc x t)) x.1)
+    (hfibre : ∀ x t,
+      newFibreResidue hMq (newData (alloc x t)) = t) :
+    Fintype.card (OldUncovered oldData × ZMod q) ≤
+      Fintype.card (UncoveredNewIncidence oldData newData hMq) := by
+  classical
+  let embed : OldUncovered oldData × ZMod q →
+      UncoveredNewIncidence oldData newData hMq :=
+    fun xt => ⟨(xt.1, alloc xt.1 xt.2), hmem xt.1 xt.2⟩
+  have hinj : Function.Injective embed := by
+    intro a b hab
+    have hpair := congrArg Subtype.val hab
+    have hx : a.1 = b.1 := congrArg Prod.fst hpair
+    have hj : alloc a.1 a.2 = alloc b.1 b.2 :=
+      congrArg Prod.snd hpair
+    have ht : a.2 = b.2 := by
+      calc
+        a.2 = newFibreResidue hMq (newData (alloc a.1 a.2)) :=
+          (hfibre a.1 a.2).symm
+        _ = newFibreResidue hMq (newData (alloc b.1 b.2)) := by rw [hj]
+        _ = b.2 := hfibre b.1 b.2
+    exact Prod.ext hx ht
+  exact Fintype.card_le_of_injective embed hinj
+
+/-- Double-counting identity for the same incidence set. This makes the
+global lower bound comparable with per-class support sizes without assuming
+that projected moduli form a distinct family. -/
+theorem incidence_card_reindex
+    {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    Fintype.card (UncoveredNewIncidence oldData newData hMq) =
+      Fintype.card (NewClassUncoveredFibres oldData newData hMq) :=
+  Fintype.card_congr (incidence_reindex_equiv oldData newData hMq)
+
+/-- A nonempty old-uncovered set forces at least q new classes in total.
+This is weaker than the pointwise theorem only when the uncovered set is
+empty; it is useful as the coarsest global consequence. -/
+theorem global_new_class_count_lower_bound
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (hne : Nonempty (OldUncovered oldData))
+    (alloc : OldUncovered oldData → ZMod q → N)
+    (hmem : ∀ x t, newBaseContains hMq (newData (alloc x t)) x.1)
+    (hfibre : ∀ x t,
+      newFibreResidue hMq (newData (alloc x t)) = t) :
+    Fintype.card (ZMod q) ≤ Fintype.card N := by
+  classical
+  obtain ⟨x⟩ := hne
+  let pick : ZMod q → N := fun t => alloc x t
+  have hinj : Function.Injective pick := by
+    intro t₁ t₂ h
+    calc
+      t₁ = newFibreResidue hMq (newData (pick t₁)) := (hfibre x t₁).symm
+      _ = newFibreResidue hMq (newData (pick t₂)) := by rw [h]
+      _ = t₂ := hfibre x t₂
+  exact Fintype.card_le_of_injective pick hinj
+
+#print axioms global_allocation_lower_bound
+#print axioms incidence_card_reindex
+#print axioms global_new_class_count_lower_bound
+
 #print axioms divisor_coprime_of_base
 #print axioms new_class_realizes_any_base_fibre
 #print axioms congruence_cover_iff_every_fibre
