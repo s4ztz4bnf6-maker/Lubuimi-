@@ -103,3 +103,12 @@ The regular job in workflow run 41044063859 completed successfully on commit b91
 6. Keep the rank-9 theorem, BBMST square-free theorem, and unrestricted Erdős–Selfridge target as three distinct statements until a proved implication connects them.
 
 No code theorem is claimed by this note. No existing PR is merged or modified.
+
+
+## Local allocation pigeonhole layer (candidate pending CI)
+
+`BBMSTCongruenceCRT.lean` now contains a sharper pointwise allocation statement. Fix a base residue x not covered by any old class. Every q-fibre over x must then be covered by a new class whose projected base class contains x. Since each indexed new class has exactly one q-coordinate, choosing one covering class per fibre defines an injective map
+
+`ZMod q → {j : N // newBaseContains ... x}`.
+
+The module formalizes the resulting cardinality inequality: the number of new classes projecting over x is at least `Fintype.card (ZMod q)`. If the local class count is smaller, it constructs a missing fibre and, via inverse CRT, an explicit uncovered residue modulo M*q. This is a genuine local allocation obstruction and is stronger than the earlier total-family bound. It does not yet prove that the local count is always below q for arbitrary odd covering systems; that global arithmetic estimate remains the central unresolved step. The code was added after the last confirmed CI head and is not yet claimed compiled.
