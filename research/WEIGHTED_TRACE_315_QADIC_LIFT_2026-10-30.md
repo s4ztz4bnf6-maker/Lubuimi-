@@ -126,3 +126,26 @@ The general template is:
     then no finite q-adic lift over M can cover all fibres above U.
 
 The unresolved task is to prove a source-faithful analogue of this trace inequality for every admissible full-p placement (or produce an exact placement violating it). That is the precise bridge to the root-recursive full-p H=2 minimax problem.
+
+## 6. General pair-separation bound and its limitation
+
+The pair-count argument has a useful general form. Write M = product_i p_i^(a_i), let tau = number of divisors of M, and set
+
+    lambda(M) = min_i (tau/(a_i+1) - 1).
+
+For any nonzero difference t modulo M, choose i with p_i^(a_i) not dividing t. Every divisor d whose p_i-exponent is exactly a_i then fails to divide t. There are tau/(a_i+1) such divisors, including M, so at least lambda(M) proper divisors 1<d<M separate the pair. Equality in this minimum is attained by t=M/p_i for an index i attaining the minimum.
+
+For U subset Z/MZ with n elements, define c_d(U) as above and delta_d=n-c_d(U). Pair counting gives
+
+    sum_{d|M, 1<d<M} delta_d >= lambda(M)(n-1)/2,
+
+while delta_M=n-1. Therefore
+
+    sum_{d|M} c_d(U)
+      <= tau*n - ((lambda(M)+2)/2)*(n-1).          (GT)
+
+Consequently (GT) is sufficient for a q-adic lift exclusion whenever
+
+    2*(tau-q+1)*n <= (lambda(M)+2)*(n-1).
+
+For M=315, tau=12 and lambda=3, so this condition reduces to n>=5 when q=11, and the old-layer bound gives n>=6. For M the product of the first eight odd primes, tau=256 and lambda=127; with q=29 the condition fails badly. Thus pair separation alone does not close the high-rank full-p problem. A stronger multi-point/profile inequality, retaining the placement correlations, is still required.
