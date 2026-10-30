@@ -105,6 +105,23 @@ theorem multiplier_nonneg
       have hden : 0 < 1 - delta := one_sub_delta_pos delta hdelta
       positivity)
 
+
+/-- Pointwise nonnegativity of the updated weight, assuming the incoming
+coordinate weight is nonnegative. -/
+theorem updatedWeight_nonneg
+    (C : CoordinateStage X S) (w : X → ℚ) (delta : ℚ)
+    (x : X) (s : S)
+    (hdelta : ValidDelta delta) (hw : 0 ≤ w x) :
+    0 ≤ updatedWeight C w delta x s := by
+  have hcard : 0 < (Fintype.card S : ℚ) := by
+    exact_mod_cast (coordinate_card_pos C)
+  unfold updatedWeight
+  exact mul_nonneg
+    (div_nonneg hw (le_of_lt hcard))
+    (multiplier_nonneg C delta x s hdelta)
+
+#print axioms updatedWeight_nonneg
+
 /-- The exceptional-fiber count is exactly alpha times the coordinate
 cardinality. This is the counting identity needed to turn the source's
 fractional update into finite-sum algebra. -/
