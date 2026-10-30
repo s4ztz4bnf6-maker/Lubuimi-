@@ -149,3 +149,18 @@ Consequently (GT) is sufficient for a q-adic lift exclusion whenever
     2*(tau-q+1)*n <= (lambda(M)+2)*(n-1).
 
 For M=315, tau=12 and lambda=3, so this condition reduces to n>=5 when q=11, and the old-layer bound gives n>=6. For M the product of the first eight odd primes, tau=256 and lambda=127; with q=29 the condition fails badly. Thus pair separation alone does not close the high-rank full-p problem. A stronger multi-point/profile inequality, retaining the placement correlations, is still required.
+
+## 7. Exact high-rank adversarial subset: cardinality alone is insufficient
+
+Let M be the product of the first eight odd primes,
+
+    M = 111546435 = 3*5*7*11*13*17*19*23,
+
+and let g=M/(3*5*11)=676039. Take U to be one residue class modulo g inside Z/MZ. Then |U|=165, and every divisor d of g has c_d(U)=165. Since g has five distinct prime factors, it has 2^5=32 divisors. Therefore
+
+    sum_{d|M} c_d(U) >= 32*165 = 5280
+    > 28*165 = (29-1)|U|.
+
+The density of this set is 1/676039, which is greater than 1/1002375, the density floor claimed in the rank-nine preprint for families supported on at most eight primes. Thus even that density floor, by itself, cannot force the desired q=29 trace inequality for arbitrary subsets U.
+
+This U is an adversarial set-theoretic example, **not** a demonstrated old-uncovered set arising from one chosen class for every divisor d>1. It does not refute the covering conjecture or the full-p minimax theorem. It shows exactly why the next argument must use the geometry and correlations imposed by the old residue placements, not merely |U| or a density lower bound.
