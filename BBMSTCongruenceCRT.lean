@@ -183,6 +183,99 @@ theorem new_class_realizes_any_base_fibre
     newBaseResidue hMq C = a ∧ newFibreResidue hMq C = t := by
   simp [newBaseResidue, newFibreResidue, divisor_coprime_of_base]
 
+/-- At a base residue x, distinct q-fibres require distinct new
+class indices whose projected base class contains x. This is the exact
+local allocation bound: the number of available new classes over x must
+be at least the number of q-fibres. -/
+theorem fibre_capacity_at_base
+    {M q : ℕ} {N : Type*} [Fintype N]
+    (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (x : ZMod M)
+    (hcover : ∀ t : ZMod q,
+      ∃ j : N, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t) :
+    Fintype.card (ZMod q) ≤
+      Fintype.card {j : N // newBaseContains hMq (newData j) x} := by
+  classical
+  let pick : ZMod q → {j : N // newBaseContains hMq (newData j) x} :=
+    fun t => ⟨Classical.choose (hcover t), (Classical.choose_spec (hcover t)).1⟩
+  have hpick (t : ZMod q) :
+      newFibreResidue hMq (newData (pick t).val) = t :=
+    (Classical.choose_spec (hcover t)).2
+  have hinj : Function.Injective pick := by
+    intro t₁ t₂ h
+    have hval : (pick t₁).val = (pick t₂).val := congrArg Subtype.val h
+    calc
+      t₁ = newFibreResidue hMq (newData (pick t₁).val) := (hpick t₁).symm
+      _ = newFibreResidue hMq (newData (pick t₂).val) := by rw [hval]
+      _ = t₂ := hpick t₂
+  exact Fintype.card_le_of_injective pick hinj
+
+/-- If no old class covers x, a complete cover forces the local allocation
+bound above. -/
+theorem full_fibre_cover_forces_capacity
+    {M q : ℕ} {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) (x : ZMod M)
+    (hOld : ¬ ∃ i, oldContains (oldData i) x)
+    (hcover : ∀ t : ZMod q,
+      (∃ i, oldContains (oldData i) x) ∨
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t)) :
+    Fintype.card (ZMod q) ≤
+      Fintype.card {j : N // newBaseContains hMq (newData j) x} := by
+  apply fibre_capacity_at_base newData hMq x
+  intro t
+  exact (hcover t).resolve_left hOld
+
+/-- If fewer than q new classes project over an old-uncovered base residue,
+at least one q-fibre is necessarily uncovered. -/
+theorem some_fibre_uncovered_of_small_local_family
+    {M q : ℕ} {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) (x : ZMod M)
+    (hOld : ¬ ∃ i, oldContains (oldData i) x)
+    (hsmall :
+      Fintype.card {j : N // newBaseContains hMq (newData j) x} <
+        Fintype.card (ZMod q)) :
+    ∃ t : ZMod q,
+      ¬ ((∃ i, oldContains (oldData i) x) ∨
+        (∃ j, newBaseContains hMq (newData j) x ∧
+          newFibreResidue hMq (newData j) = t)) := by
+  classical
+  have hnot : ¬ ∀ t : ZMod q,
+      (∃ i, oldContains (oldData i) x) ∨
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t) := by
+    intro hall
+    have hle := full_fibre_cover_forces_capacity
+      oldData newData hMq x hOld hall
+    exact (not_le_of_gt hsmall) hle
+  obtain ⟨t, ht⟩ := Classical.not_forall.mp hnot
+  exact ⟨t, ht⟩
+
+/-- The local allocation obstruction gives an explicit uncovered residue
+modulo M*q through the inverse Chinese remainder equivalence. -/
+theorem uncovered_residue_of_small_local_family
+    {M q : ℕ} {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) (x : ZMod M)
+    (hOld : ¬ ∃ i, oldContains (oldData i) x)
+    (hsmall :
+      Fintype.card {j : N // newBaseContains hMq (newData j) x} <
+        Fintype.card (ZMod q)) :
+    ∃ z : ZMod (M * q),
+      ¬ ((∃ i, oldContains (oldData i)
+          (BBMSTArithmeticCRT.crtEquiv M q hMq z).1) ∨
+        (∃ j, newBaseContains hMq (newData j)
+          (BBMSTArithmeticCRT.crtEquiv M q hMq z).1 ∧
+          newFibreResidue hMq (newData j) =
+            (BBMSTArithmeticCRT.crtEquiv M q hMq z).2)) := by
+  obtain ⟨t, ht⟩ := some_fibre_uncovered_of_small_local_family
+    oldData newData hMq x hOld hsmall
+  exact uncovered_residue_of_uncovered_fibre oldData newData hMq x t ht
+
 #print axioms divisor_coprime_of_base
 #print axioms new_class_realizes_any_base_fibre
 #print axioms congruence_cover_iff_every_fibre
@@ -192,5 +285,9 @@ theorem new_class_realizes_any_base_fibre
 #print axioms old_projection_unique
 #print axioms new_projection_unique
 #print axioms projected_modulus_has_at_most_two_sources
+#print axioms fibre_capacity_at_base
+#print axioms full_fibre_cover_forces_capacity
+#print axioms some_fibre_uncovered_of_small_local_family
+#print axioms uncovered_residue_of_small_local_family
 
 end BBMSTCongruenceCRT
