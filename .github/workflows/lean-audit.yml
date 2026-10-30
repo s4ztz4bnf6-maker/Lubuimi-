@@ -1,4 +1,4 @@
-name: Lean degenerate-witness audit
+name: Lean degenerate-witness audit (patched toolchain)
 
 on:
   push:
@@ -11,10 +11,10 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lean and generate lake manifest
+      - name: Install Lean 4.35.0 and generate lake manifest
         run: |
           curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
-          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.elan/bin:$PATH"
           lake update
