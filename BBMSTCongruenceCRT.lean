@@ -10,6 +10,15 @@ d | M and M.Coprime q; it is not an independent hypothesis.
 
 namespace BBMSTCongruenceCRT
 
+noncomputable section
+
+/-- Classical finite instances for subtypes of finite types used by the
+incidence-counting interface. -/
+local instance classicalFintypeSubtype {α : Type*} [Finite α] (p : α → Prop) :
+    Fintype {x : α // p x} := by
+  classical
+  exact Fintype.ofFinite _
+
 /-- An old congruence class modulo a positive divisor of M. -/
 structure OldClass (M : ℕ) where
   d : ℕ
@@ -117,8 +126,10 @@ theorem old_modulus_ne_new_modulus
     refine ⟨D.d, ?_⟩
     simpa [Nat.mul_comm] using heq
   have hq_M : q ∣ M := hq_d.trans C.d_dvd_M
-  have hq_one : q = 1 :=
-    Nat.Coprime.eq_one_of_dvd_coprimes hMq hq_M (dvd_refl q)
+  have hq_gcd : q ∣ Nat.gcd M q := Nat.dvd_gcd hq_M (dvd_refl q)
+  have hgcd : Nat.gcd M q = 1 := hMq.gcd_eq_one
+  rw [hgcd] at hq_gcd
+  have hq_one : q = 1 := Nat.dvd_one.mp hq_gcd
   exact (ne_of_gt hq) hq_one
 
 /-- Injectivity in each layer plus q > 1 makes the represented actual
@@ -192,6 +203,7 @@ theorem fibre_capacity_at_base
     (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (x : ZMod M)
+    [Fintype {j : N // newBaseContains hMq (newData j) x}]
     (hcover : ∀ t : ZMod q,
       ∃ j : N, newBaseContains hMq (newData j) x ∧
         newFibreResidue hMq (newData j) = t) :
@@ -218,6 +230,7 @@ theorem full_fibre_cover_forces_capacity
     {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
+    [Fintype {j : N // newBaseContains hMq (newData j) x}]
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
     (hcover : ∀ t : ZMod q,
       (∃ i, oldContains (oldData i) x) ∨
@@ -235,6 +248,7 @@ theorem some_fibre_uncovered_of_small_local_family
     {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
+    [Fintype {j : N // newBaseContains hMq (newData j) x}]
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
     (hsmall :
       Fintype.card {j : N // newBaseContains hMq (newData j) x} <
@@ -261,6 +275,7 @@ theorem uncovered_residue_of_small_local_family
     {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) (x : ZMod M)
+    [Fintype {j : N // newBaseContains hMq (newData j) x}]
     (hOld : ¬ ∃ i, oldContains (oldData i) x)
     (hsmall :
       Fintype.card {j : N // newBaseContains hMq (newData j) x} <
@@ -319,7 +334,7 @@ base residue is assigned a new class, then the total number of
 (uncovered-residue, new-class) incidences is at least
 |old-uncovered residues| * |ZMod q|. -/
 theorem global_allocation_lower_bound
-    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (alloc : OldUncovered oldData → ZMod q → N)
@@ -335,9 +350,9 @@ theorem global_allocation_lower_bound
   have hinj : Function.Injective embed := by
     intro a b hab
     have hpair := congrArg Subtype.val hab
-    have hx : a.1 = b.1 := congrArg Prod.fst hpair
+    have hx : a.1 = b.1 := congrArg (fun z : OldUncovered oldData × N => z.1) hpair
     have hj : alloc a.1 a.2 = alloc b.1 b.2 :=
-      congrArg Prod.snd hpair
+      congrArg (fun z : OldUncovered oldData × N => z.2) hpair
     have ht : a.2 = b.2 := by
       calc
         a.2 = newFibreResidue hMq (newData (alloc a.1 a.2)) :=
@@ -351,7 +366,7 @@ theorem global_allocation_lower_bound
 global lower bound comparable with per-class support sizes without assuming
 that projected moduli form a distinct family. -/
 theorem incidence_card_reindex
-    {M q : ℕ} {O N : Type*}
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) :
     Fintype.card (UncoveredNewIncidence oldData newData hMq) =
@@ -361,7 +376,7 @@ theorem incidence_card_reindex
 /-- Exact double-counting formula: count each new class by the number
 of old-uncovered base residues in its projected congruence class. -/
 theorem incidence_card_eq_sum_of_class_supports
-    {M q : ℕ} {O N : Type*}
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q) :
     Fintype.card (UncoveredNewIncidence oldData newData hMq) =
@@ -376,7 +391,7 @@ of all projected new classes is smaller than |U|*q, then no assignment
 of new classes can cover every q-fibre above every old-uncovered base
 residue. This is the aggregate form of the local pigeonhole lemma. -/
 theorem no_full_allocation_of_global_support_budget
-    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (hbudget :
@@ -401,7 +416,7 @@ budget inequality. The hypothesis is precisely the fibrewise cover
 condition; on old-uncovered x the old branch is impossible, so every
 (x,t) incidence must be supplied by a new class. -/
 theorem complete_cover_implies_global_support_inequality
-    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (hcover : ∀ x : ZMod M, ∀ t : ZMod q,
@@ -431,7 +446,7 @@ theorem complete_cover_implies_global_support_inequality
 /-- A support budget strictly below |U|*q rules out a complete
 odd-covering-style one-prime CRT extension. -/
 theorem no_complete_cover_of_global_support_budget
-    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (hbudget :
@@ -494,3 +509,5 @@ theorem global_new_class_count_lower_bound
 #print axioms uncovered_residue_of_small_local_family
 
 end BBMSTCongruenceCRT
+
+end
