@@ -11,7 +11,7 @@ P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe and M. Tiba,
 Algebra & Number Theory 15 (2021), no. 3, 609–626,
 DOI: 10.2140/ant.2021.15.609.
 
-The published theorem proves that a finite covering system with pairwise distinct square-free moduli greater than one contains an even modulus. It does **not** solve the unrestricted Erdős–Selfridge odd-covering problem.
+The published Theorem 1.1 proves that a finite covering system with pairwise distinct square-free moduli greater than one contains an even modulus. It does **not** solve the unrestricted Erdős–Selfridge odd-covering problem.
 
 Canonical source records:
 - Published paper / Oxford repository: https://ora.ox.ac.uk/objects/uuid:3c55267c-60be-4652-89a7-db3db5f62c25
@@ -19,27 +19,64 @@ Canonical source records:
 - arXiv preprint: https://arxiv.org/abs/1901.11465
 - Authors' supplementary material: https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html
 
-## Correction to the preceding research narrative
+## Precise relation between the two BBMST papers
 
-Do not identify the square-free paper's Theorem 3.1 with the general prime-stage distortion criterion from the separate paper "On the Erdős Covering Problem: the density of the uncovered set" (Invent. Math. 228 (2022), 377–414; DOI 10.1007/s00222-021-01087-5).
-
-For the **square-free 2021 paper**, the proof chain is:
-
-1. Lemma 2.1: finite-fibre sieve / measure transition, including its zero-mass convention.
-2. Theorem 3.1: bound the mass removed at a stage using first and second fibre moments.
-3. Lemma 3.3: propagate initial hyperplane weights through later sieve coordinates.
-4. Lemma 3.4: bound positive integer moments by compatible hyperplane intersections.
-5. Theorem 3.2: count unions of fixed sets and obtain the sharper second-moment bound when the new singleton is absent.
-6. Section 5: the finite initial configuration and parameter certificates (Lemmas 5.3 and 5.4, Corollary 5.2).
-7. Theorem 5.1: tail interface, whose complete termination proof is imported from the 2018 density paper (Lemma 6.2 and Theorem 6.1 there).
-8. Theorem 1.2: combine the initial box result and tail estimate.
-9. Theorem 1.1: transfer between integer covering systems and the geometric box problem by CRT.
-
-The formula
+The square-free paper's **Theorem 3.1 does state** the first/second-moment noncoverage criterion:
 \[
-\sum_k \min\{M_k^{(1)},M_k^{(2)}/(4\delta_k(1-\delta_k))\}<1
+\sum_{k=a+1}^{n}
+\min\left\{
+M_k^{(1)},
+\frac{M_k^{(2)}}{4\delta_k(1-\delta_k)}
+\right\}<1
+\quad\Longrightarrow\quad
+\mathcal A\text{ does not cover }Q.
 \]
-belongs to the general distortion/noncoverage framework in the separate density paper; it must not be presented as the statement of Theorem 3.1 of the square-free paper. The square-free paper's Theorem 3.1 is a stage removed-mass estimate. Any Lean development must state the exact source theorem and its hypotheses, not borrow a theorem label or an unproved strengthening from the related paper.
+Here \(M_k^{(1)}=\mathbb E_{k-1}[\alpha_k]\) and
+\(M_k^{(2)}=\mathbb E_{k-1}[\alpha_k^2]\), with the measures and
+\(\alpha_k\) defined by the square-free paper's equations (2) and (3).
+The paper explicitly says this theorem essentially follows from Theorem 3.1
+of the earlier density paper. Thus the statement is correctly attributed
+to Theorem 3.1 of the 2021 square-free paper; its proof lineage is inherited
+from the 2018 preprint / 2022 Inventiones density paper. Do not conflate
+the two papers, but do not erase the theorem from the square-free paper either.
+
+The square-free paper's **Theorem 3.2** supplies the source-specific moment
+bounds. For a family of nontrivial, pairwise nonparallel hyperplanes:
+\[
+M_k^{(1)}\le \frac{c_{k-1}(1)}{|S_k|},
+\qquad
+M_k^{(2)}\le \frac{c_{k-1}(3)}{|S_k|^2}.
+\]
+The definitions used there are:
+\[
+c(I)=\max\{P_a(H): H\text{ a hyperplane in }Q_a,
+\ F(H)=I\},
+\qquad
+\nu(J)=\prod_{j\in J}\frac1{(1-\delta_j)|S_j|},
+\]
+and
+\[
+c_k(x)=\sum_{I\subseteq[a]}c(I)x^{|I|}
+\prod_{j=a+1}^{k}\left(1+\frac{x}{(1-\delta_j)|S_j|}\right).
+\]
+The paper then obtains a sharper second-moment estimate under its exact
+geometric condition that the new singleton is absent. That condition must
+be derived from the paper's setup, not supplied as a free hypothesis.
+
+## Source proof chain
+
+For the **square-free 2021 paper**, the relevant chain is:
+
+1. Lemma 2.1: finite-fibre sieve / measure transition, including the zero-mass convention.
+2. Theorem 3.1: convert first and second fibre moments into a noncoverage criterion.
+3. Theorem 3.2: bound those moments through the fixed-coordinate geometry and the functions \(c_k\); derive the improved estimate when the new singleton is absent.
+4. Lemmas 3.3–3.4: propagate initial hyperplane weights and bound positive integer moments by compatible hyperplane intersections.
+5. Section 5: finite initial configuration and parameter certificates (Lemmas 5.3 and 5.4, Corollary 5.2).
+6. Theorem 5.1: tail interface, with the termination proof imported from the earlier density paper (Lemma 6.2 and Theorem 6.1 there).
+7. Theorem 1.2: combine the initial box result and tail estimate.
+8. Theorem 1.1: transfer between integer covering systems and the geometric box problem by CRT.
+
+The 2021 paper's own Section 3 introduces the moment criterion and then the new geometric moment bound; the criterion is not merely an unrelated theorem from the density paper.
 
 ## Geometric and arithmetic target
 
@@ -62,7 +99,7 @@ Existing modules on the PR #50 head:
 - `BBMSTSieveStage.lean`: abstract dependent stage-space interface.
 - `BBMSTMomentBridge.lean`: finite pair-indicator and fibre second-moment identity, plus guarded rational moment contribution.
 
-These modules establish useful finite bookkeeping interfaces. They do **not** yet encode the paper's actual hyperplane family, the canonical (P_k) transition, its exact zero-mass convention, the source-specific distortion bounds, the initial rational certificate, or the complete tail induction.
+These modules establish useful finite bookkeeping interfaces. They do **not** yet encode the paper's actual hyperplane family, the canonical \(P_k\) transition, its exact zero-mass convention, the source-specific distortion bounds, the initial rational certificate, or the complete tail induction.
 
 The abstract `SieveStage` is not itself a proof that the paper's geometric stage is a dependent product. The caller must construct the concrete equivalence and prove its admissibility relation from the actual source definitions.
 
@@ -74,22 +111,22 @@ Define the finite coordinate box, its coordinate restriction maps, hyperplanes, 
 
 ### B. Lemma 2.1: exact stage measure
 
-Represent each stage measure by exact rational point weights on the finite state space. Define the paper's (P_k) recursively from the actual fibre covered proportions and the parameter δ_k. Prove:
+Represent each stage measure by exact rational point weights on the finite state space. Define the paper's \(P_k\) recursively from the actual fibre covered proportions and the parameter \(\delta_k\). Prove:
 - normalization and nonnegativity;
 - preservation of the previous-stage marginal on the designated measurable sets;
 - the source's pointwise / setwise distortion bound;
 - the bound on mass of the newly removed fibre set;
 - the zero-mass fibre branch separately, so no division by zero is used.
 
-A generic probability record with a freely supplied normalized weight function is only a data interface, not the construction of (P_k).
+A generic probability record with a freely supplied normalized weight function is only a data interface, not the construction of \(P_k\).
 
-### C. Theorem 3.1 and moment interface
+### C. Theorem 3.1 and Theorem 3.2
 
-Define the actual α_k function from the new hyperplanes and the actual fibres. Prove the removed-mass estimate exactly as printed in the 2021 paper, preserving its first- and second-moment terms and all parameter hypotheses. Do not replace it by a stronger or differently numbered statement from the 2018 paper.
+Define the actual \(\alpha_k\) function from the new hyperplanes and the actual fibres. Prove Theorem 3.1 with its exact \(\min\) of first- and second-moment terms and all hypotheses. Then define \(c(I)\), \(\nu(J)\), and \(c_k(x)\) from the source and prove Theorem 3.2's first- and second-moment bounds. Preserve the improved second-moment condition exactly.
 
-### D. Lemmas 3.3–3.4 and Theorem 3.2
+### D. Lemmas 3.3–3.4
 
-Encode the fixed-coordinate geometry and compatibility of hyperplanes. Derive moment bounds by counting compatible intersections. The second-moment improvement requires the exact source condition excluding the new singleton; this condition must be derived in the source's reduction, not supplied as an unconstrained assumption. Keep ordered-pair multiplicities and all residue choices explicit.
+Encode the fixed-coordinate geometry and compatibility of hyperplanes. Derive moment bounds by counting compatible intersections. Keep ordered-pair multiplicities and all residue choices explicit.
 
 ### E. Initial finite certificate
 
@@ -115,11 +152,11 @@ The GitHub combined commit status returned an empty status list. No Lean compila
 
 ## Immediate implementation order
 
-1. Inspect and pin the exact published definitions/equations of Lemma 2.1 and Theorem 3.1.
+1. Pin the exact published definitions/equations (2) and (3), Lemma 2.1, Theorems 3.1–3.2.
 2. Replace the abstract-only stage interface with a concrete finite box/hyperplane stage and prove its fibre equivalence.
-3. Implement (P_k) with explicit zero-mass handling and prove Lemma 2.1.
-4. Prove the source's Theorem 3.1 from that construction.
-5. Add source-faithful fixed-coordinate intersection counting (Lemmas 3.3–3.4, Theorem 3.2).
+3. Implement \(P_k\) with explicit zero-mass handling and prove Lemma 2.1.
+4. Prove Theorem 3.1 from the exact stage transition and the pointwise inequality used in the paper.
+5. Prove Theorem 3.2 and then Lemmas 3.3–3.4.
 6. Only then connect the finite initial certificates and tail theorem.
 
 No conclusion about the unrestricted Erdős–Selfridge problem follows until the published square-free theorem is formalized and, separately, the non-square-free cases are addressed.
