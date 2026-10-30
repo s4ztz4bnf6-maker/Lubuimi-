@@ -244,6 +244,16 @@ maximizers: [((3, 5, 7), (9, 15, 21, 35, 45, 63, 105, 315)),
              ((9, 15, 21, 35, 45, 63, 105, 315), (3, 5, 7))]
 ```
 
+
+### The restricted 5+6 split
+
+Restricting to partitions with \(|J_1|=5\) and \(|J_2|=6\) gives 462 splits. The same exact recurrence has maximum 162, attained (up to reversal) by
+\[
+J_1=\{3,5,35,63,315\},\qquad
+J_2=\{7,9,15,21,45,105\}.
+\]
+Thus the earlier pairwise-only 5+6 maximum 172/315 is reduced to 162/315 by the multi-label constraints. This restricted maximum is a corollary of the same exact finite checker; it is not a separate analytic inequality.
+
 ## Sharpness witness
 
 The bound 164 is attained by actual residue classes with both fibre families inclusion-minimal on their common covered set.
