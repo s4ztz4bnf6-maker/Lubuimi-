@@ -185,5 +185,10 @@ theorem new_class_realizes_any_base_fibre
 #print axioms new_class_realizes_any_base_fibre
 #print axioms congruence_cover_iff_every_fibre
 #print axioms uncovered_residue_of_uncovered_fibre
+#print axioms old_modulus_ne_new_modulus
+#print axioms actual_cross_layer_moduli_disjoint
+#print axioms old_projection_unique
+#print axioms new_projection_unique
+#print axioms projected_modulus_has_at_most_two_sources
 
 end BBMSTCongruenceCRT
