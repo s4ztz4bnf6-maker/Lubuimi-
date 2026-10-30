@@ -58,6 +58,10 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTCongruenceCRT.olean BBMSTCongruenceCRT.lean
+      - name: Compile exact BBMST scalar fibre normalization and audit axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiniteDistortion.olean BBMSTFiniteDistortion.lean
 
   fiber-paranoid:
     runs-on: ubuntu-latest
