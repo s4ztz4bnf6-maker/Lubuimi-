@@ -1,57 +1,62 @@
-# Exact exclusion of the one-prime extension above the 315 divisor block
+# Prime-extension exclusion above the 315 divisor block
 
 Date: 2026-10-30
 
-## Theorem (specified CRT extension model)
+## Theorem (complete one-prime divisor block, with one residual case)
 
-Let D = {3, 5, 7, 9, 15, 21, 35, 45, 63, 105, 315}. Consider old congruence classes with pairwise distinct moduli in D, and new congruence classes whose actual moduli are q*d with d in D, with no repeated actual modulus. Let q be a prime at least 11. Then the old and new classes cannot cover every residue modulo 315*q.
+Let D = {3, 5, 7, 9, 15, 21, 35, 45, 63, 105, 315}. Let q be a prime with q not dividing 315. Consider a covering system whose pairwise distinct moduli all divide 315*q and are greater than one.
 
-This theorem concerns exactly this one-prime extension model. It is not a theorem about arbitrary odd distinct covering systems.
+Then:
+- If q >= 13, no such covering system exists.
+- If q = 11 and the modulus 11 is absent, no such covering system exists.
+- The only case not excluded by this argument is q = 11 with the modulus 11 present.
+
+Thus every possible covering with LCM exactly 315*q is excluded except for the single residual configuration with q=11 and modulus 11 included. This is still a finite-LCM special case, not the general odd distinct covering conjecture.
 
 ## Proof
 
-Let U be the residues modulo 315 missed by every old class. Since the old moduli are distinct members of D, the union bound gives
+Every divisor greater than one of 315*q is either d for d in D, or q*d for d in E = {1} union D. Pairwise distinctness allows at most eleven old classes with moduli in D and at most twelve new classes with moduli q*d, including the possible modulus q itself.
+
+Let U be the residues modulo 315 missed by all old classes. Since the old moduli are distinct members of D, the union bound gives
 
   |U|/315 >= 1 - sum_{d in D} 1/d
           = 1 - 103/105
           = 2/105
           = 6/315.
 
-Thus |U| >= 6.
+Thus U is nonempty (indeed |U| >= 6).
 
-Every new modulus is q*d for some d in D. Distinctness of the actual new moduli implies distinctness of their projected divisors d, so there are at most eleven new classes.
+Fix x in U. For each t modulo q, the CRT residue (x,t) must be covered by a new class. Each new class has one fixed q-coordinate. Hence at least q distinct new classes are required to cover the q different fibres above x.
 
-Fix x in U. For every t modulo q, the CRT residue (x,t) must be covered by a new class, since no old class covers x. A new congruence class has one fixed q-coordinate, so at least one new class is required for each of the q different values of t. Thus at least q distinct new classes project to classes containing x.
+If q >= 13, there are at most twelve new classes, so coverage is impossible.
 
-If q > 11, this is impossible because there are at most eleven new classes.
+Now let q=11. If the modulus 11 is absent, all new classes have moduli 11*d with d in D, so there are at most eleven of them. Each x in U must lie in all eleven projected classes. Their common intersection is either empty or a single residue modulo lcm(D)=315. Hence |U| <= 1, contradicting |U| >= 6.
 
-If q = 11, there must be exactly eleven new classes, and every x in U must lie in every one of their projected classes. The intersection of congruence classes with moduli in D is either empty or a single residue class modulo lcm(D) = 315. Therefore their common intersection in the base ring has size at most one. Hence |U| <= 1, contradicting |U| >= 6.
+If q=11 and modulus 11 is present, this argument only forces at least ten of the eleven projected classes with moduli 11*d (d in D) to contain each x in U. The full-intersection argument no longer applies. This is the one residual case and is not claimed solved here.
 
-Therefore no cover exists in this model for any prime q >= 11. QED.
+Therefore the stated exclusions hold. QED.
 
 ## Relation to the second-moment route
 
-The generic second-moment identity records
+For q=11 with modulus 11 present, each x in U must lie in at least ten of the eleven projected classes. The pair-counting identity gives the necessary condition
 
-  sum_{j<k} |U intersect C_j intersect C_k| >= binom(q,2) * |U|.
+  sum_{j<k} |U intersect C_j intersect C_k| >= binom(10,2) * |U|.
 
-For this particular block, the cardinality argument is sharper: when q = 11, the number of available projected classes is exactly eleven, forcing every old-uncovered residue into their full intersection. That intersection has at most one point. For q > 11, the first-moment allocation already fails.
-
-The formal identity in BBMSTMomentBridge.lean remains useful for larger blocks, where the number of projected classes can exceed q.
+This is the appropriate next finite arithmetic subproblem. A universal upper bound for the left side, taking the residue compatibility and the eleven distinct projected moduli into account, could eliminate the remaining q=11 case. The generic second-moment identity in BBMSTMomentBridge.lean supplies the algebraic counting identity, but not this arithmetic upper bound.
 
 ## Scope limitations
 
-- The base LCM is exactly 315 and the old moduli are restricted to D.
-- Every new modulus is exactly q*d with d in D, for one prime q >= 11.
-- No higher q-adic exponents, mixed new prime supports, or arbitrary moduli are covered.
-- This note is an elementary mathematical proof, not a Lean kernel-checked formalization. No compilation or CI success is claimed for it.
+- The theorem covers systems whose entire LCM is 315*q, with q prime and coprime to 315.
+- The only remaining case is q=11 with modulus 11 present.
+- No higher prime-power exponents, additional prime factors, or arbitrary LCMs are covered.
+- This is an elementary mathematical proof of the stated finite-LCM exclusions, not a Lean kernel-checked formalization. No compilation or CI success is claimed for the new note.
 
 ## Five-source audit
 
 The five standing sources are methodological/contextual and do not prove this theorem:
 1. Quanta's 3 August 2026 article concerns AI-assisted progress on other Erdős problems.
 2. Tao/Hales (9 October 2026) motivates separate kernel and statement-fidelity verification.
-3. ProofAtlas continues to mark the full odd distinct covering conjecture as a research problem; its status snapshot is dated 28 August 2026 and is stale relative to September 2026 rank-nine preprints.
+3. ProofAtlas marks the full odd distinct covering conjecture as a research problem; its visible status snapshot is dated 28 August 2026 and predates the September 2026 rank-nine preprint.
 4. MAA's 1 June 2026 article concerns the unit-distance Erdős problem.
 5. OpenAI's 6 October 2026 mathematics release describes general research-release practice.
 
