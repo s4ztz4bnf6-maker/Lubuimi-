@@ -80,8 +80,7 @@ G_{ij}=0
 \]
 and otherwise
 \[
-G_{ij}=\frac{\gcd(m_i,m_j)}{\operatorname{lcm}(m_i,m_j)}
-=\frac1{\operatorname{lcm}(m_i,m_j)}
+G_{ij}=\frac1{\operatorname{lcm}(m_i,m_j)}
 \]
 when residues are compatible, since the ambient period is N and the intersection has density 1/lcm. (Equivalently, its cardinality in \(\Omega\) is \(N/\operatorname{lcm}(m_i,m_j)\).)
 
