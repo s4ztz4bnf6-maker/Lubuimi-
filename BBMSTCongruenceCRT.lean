@@ -97,7 +97,21 @@ theorem uncovered_residue_of_uncovered_fibre
   refine ⟨(BBMSTArithmeticCRT.crtEquiv M q hMq).symm (x, t), ?_⟩
   simpa [BBMSTArithmeticCRT.crtEquiv] using hx
 
+/-- Every prescribed pair of a base residue modulo d and a q-fibre
+is realized by an actual congruence class modulo d*q. In particular, the
+projection to the base divisor d can coincide with an old class modulo d. -/
+theorem new_class_realizes_any_base_fibre
+    {M q d : ℕ} (hMq : M.Coprime q)
+    (hd_pos : 0 < d) (hd_dvd_M : d ∣ M)
+    (a : ZMod d) (t : ZMod q) :
+    let C : NewClass M q :=
+      ⟨d, hd_pos, hd_dvd_M,
+        (ZMod.chineseRemainder (divisor_coprime_of_base hMq hd_dvd_M)).symm (a, t)⟩
+    newBaseResidue hMq C = a ∧ newFibreResidue hMq C = t := by
+  simp [newBaseResidue, newFibreResidue, divisor_coprime_of_base]
+
 #print axioms divisor_coprime_of_base
+#print axioms new_class_realizes_any_base_fibre
 #print axioms congruence_cover_iff_every_fibre
 #print axioms uncovered_residue_of_uncovered_fibre
 
