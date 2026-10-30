@@ -358,6 +358,44 @@ theorem incidence_card_reindex
       Fintype.card (NewClassUncoveredFibres oldData newData hMq) :=
   Fintype.card_congr (incidence_reindex_equiv oldData newData hMq)
 
+/-- Exact double-counting formula: count each new class by the number
+of old-uncovered base residues in its projected congruence class. -/
+theorem incidence_card_eq_sum_of_class_supports
+    {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    Fintype.card (UncoveredNewIncidence oldData newData hMq) =
+      ∑ j : N,
+        Fintype.card {x : OldUncovered oldData //
+          newBaseContains hMq (newData j) x.1} := by
+  rw [incidence_card_reindex]
+  simp [NewClassUncoveredFibres]
+
+/-- Global obstruction criterion. If the sum of the actual support sizes
+of all projected new classes is smaller than |U|*q, then no assignment
+of new classes can cover every q-fibre above every old-uncovered base
+residue. This is the aggregate form of the local pigeonhole lemma. -/
+theorem no_full_allocation_of_global_support_budget
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (hbudget :
+      (∑ j : N,
+        Fintype.card {x : OldUncovered oldData //
+          newBaseContains hMq (newData j) x.1}) <
+        Fintype.card (OldUncovered oldData × ZMod q)) :
+    ¬ ∃ alloc : OldUncovered oldData → ZMod q → N,
+      (∀ x t, newBaseContains hMq (newData (alloc x t)) x.1) ∧
+      (∀ x t, newFibreResidue hMq (newData (alloc x t)) = t) := by
+  rintro ⟨alloc, hmem, hfibre⟩
+  have hle := global_allocation_lower_bound
+    oldData newData hMq alloc hmem hfibre
+  rw [incidence_card_eq_sum_of_class_supports] at hle
+  exact (not_le_of_gt hbudget) hle
+
+#print axioms incidence_card_eq_sum_of_class_supports
+#print axioms no_full_allocation_of_global_support_budget
+
 /-- A nonempty old-uncovered set forces at least q new classes in total.
 This is weaker than the pointwise theorem only when the uncovered set is
 empty; it is useful as the coarsest global consequence. -/
