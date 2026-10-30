@@ -32,40 +32,41 @@ def project (D : SieveStage) (k : ℕ) :
 
 /-- The extension coordinate is induced by the second component of the encoding. -/
 def extension (D : SieveStage) (k : ℕ) (y : D.Q (k + 1)) :
-    {s : D.S k // D.admissible k (D.project k y) s} :=
-  D.encode k y |>.2
+    {s : D.S k // D.admissible k (project D k y) s} :=
+  (D.encode k y).2
 
 /-- The fiber over a predecessor, defined by the induced projection. -/
 def fiber (D : SieveStage) (k : ℕ) (x : D.Q k) :
     Set (D.Q (k + 1)) :=
-  {y | D.project k y = x}
+  {y | project D k y = x}
 
 /-- The extension extracted from a next-stage state is admissible over
     precisely the predecessor extracted from that same state. -/
 theorem project_extension_compat (D : SieveStage) (k : ℕ)
     (y : D.Q (k + 1)) :
-    D.admissible k (D.project k y) (D.extension k y).1 :=
-  (D.extension k y).2
+    D.admissible k (project D k y) (extension D k y).1 :=
+  (extension D k y).2
 
 /-- The fiber over x is equivalent to the subtype of admissible
     extension coordinates over x. This is the key geometric interface. -/
 def stage_fiber_equiv (D : SieveStage) (k : ℕ) (x : D.Q k) :
-    {y : D.Q (k + 1) // y ∈ D.fiber k x} ≃
+    {y : D.Q (k + 1) // y ∈ fiber D k x} ≃
       {s : D.S k // D.admissible k x s} where
   toFun := fun y => by
     refine ⟨(D.encode k y.1).2.1, ?_⟩
     have hy : (D.encode k y.1).1 = x := by
-      simpa [project, fiber] using y.2
+      simpa [fiber, project] using y.2
     rw [← hy]
     exact (D.encode k y.1).2.2
-  invFun := fun s =>
-    ⟨(D.encode k).symm ⟨x, s⟩, by
-      simp [fiber, project]⟩
+  invFun := fun s => by
+    refine ⟨(D.encode k).symm ⟨x, s⟩, ?_⟩
+    change project D k ((D.encode k).symm ⟨x, s⟩) = x
+    simp [project]
   left_inv := by
     intro y
     apply Subtype.ext
     have hy : (D.encode k y.1).1 = x := by
-      simpa [project, fiber] using y.2
+      simpa [fiber, project] using y.2
     change (D.encode k).symm ⟨x, (D.encode k y.1).2⟩ = y.1
     rw [← hy]
     exact (D.encode k).symm_apply_apply y.1
