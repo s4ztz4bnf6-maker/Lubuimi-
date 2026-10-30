@@ -301,6 +301,112 @@ Their integer weights sum to
 \]
 Thus the finite relaxation's maximum is attained by a genuine two-fibre private-witness configuration; it is not merely an unattainable graph bound.
 
+## Three-layer test for the sharpness configuration
+
+The two-fibre sharpness witness above is not by itself extendable to a complete three-layer cover by an old family whose moduli are divisors of 315.
+
+Fix those two fibre families and their common set \(U\), with \(|U|=76\). There are 239 residues outside \(U\). An old family with pairwise-distinct moduli dividing 315 can be enlarged, without decreasing its coverage, to one class for every \(d\in D\). An exact branch-and-bound search over these 11 old residue choices gives
+\[
+\boxed{\max_{(r_d)_{d\in D}}
+\left| (\mathbb Z/315\mathbb Z\setminus U)
+\cap \bigcup_{d\in D}\{x:x\equiv r_d\pmod d\}\right|=206.}
+\]
+Thus at least 33 residues outside \(U\) remain uncovered, so the sharp 164/315 two-fibre configuration cannot be completed by any such historical layer.
+
+The upper-bound certificate uses only bitsets and an elementary optimistic bound. At a partial assignment with covered set \(C\), each remaining modulus \(d\) can add at most
+\[
+\max_{0\le r<d}|(\mathbb Z/315\mathbb Z\setminus U\setminus C)\cap(r\bmod d)|
+\]
+new points. Summing these independent maxima over the remaining moduli is an upper bound, since overlaps between future classes can only reduce the union. If this bound is at most 206, the entire branch is closed. Otherwise, branch over every residue \(r\bmod d\) for the next modulus. Since adding a class never decreases coverage, it is enough to choose one class for every divisor; omitted old moduli can be filled arbitrarily.
+
+The search tree has 3,059 nodes, 2,855 closed leaves, and 204 branching nodes (depth at most 6). A witness old assignment attaining 206 covered outside points is
+\[
+\begin{array}{c|rrrrrrrrrrr}
+d&3&5&7&9&15&21&35&45&63&105&315\\
+r_d&2&1&1&3&4&4&2&13&6&52&24.
+\end{array}
+\]
+For this assignment, the 33 uncovered points outside \(U\) are
+\[
+\begin{gathered}
+28,33,40,73,82,87,97,114,115,118,123,159,160,163,178,187,202,205,208,213,\\
+220,222,223,249,250,265,268,292,303,307,310,312,313.
+\end{gathered}
+\]
+This is a finite exclusion for the explicit sharpness configuration only. It does not yet handle the other admissible two-fibre configurations.
+
+### Reproducible exact three-layer checker
+
+Append the following after constructing the two fibre residue maps from the sharpness witness above:
+
+```python
+from math import lcm
+
+D = (3, 5, 7, 9, 15, 21, 35, 45, 63, 105, 315)
+fibre_A = {3: 0, 5: 0, 7: 0}
+fibre_B = {9: 0, 15: 0, 21: 0, 35: 0,
+           45: 10, 63: 7, 105: 7, 315: 14}
+
+def union_of_classes(classes):
+    return {
+        x for x in range(315)
+        if any(x % d == r for d, r in classes.items())
+    }
+
+U = union_of_classes(fibre_A) & union_of_classes(fibre_B)
+outside = sorted(set(range(315)) - U)
+assert len(U) == 76 and len(outside) == 239
+
+outside_index = {x: i for i, x in enumerate(outside)}
+class_masks = {}
+for d in D:
+    class_masks[d] = []
+    for r in range(d):
+        mask = 0
+        for x in outside:
+            if x % d == r:
+                mask |= 1 << outside_index[x]
+        class_masks[d].append((r, mask))
+
+def upper_bound(i, covered):
+    return covered.bit_count() + sum(
+        max((mask & ~covered).bit_count()
+            for r, mask in class_masks[d])
+        for d in D[i:]
+    )
+
+nodes = leaves = branches = 0
+def certify(i, covered):
+    global nodes, leaves, branches
+    nodes += 1
+    if upper_bound(i, covered) <= 206:
+        leaves += 1
+        return True
+    if i == len(D):
+        leaves += 1
+        return covered.bit_count() <= 206
+    branches += 1
+    d = D[i]
+    return all(
+        certify(i + 1, covered | mask)
+        for r, mask in class_masks[d]
+    )
+
+assert certify(0, 0)
+assert (nodes, leaves, branches) == (3059, 2855, 204)
+
+witness = {3: 2, 5: 1, 7: 1, 9: 3, 15: 4, 21: 4,
+           35: 2, 45: 13, 63: 6, 105: 52, 315: 24}
+covered = union_of_classes(witness) & set(outside)
+assert len(covered) == 206
+assert len(set(outside) - covered) == 33
+print("exact maximum outside U: 206 of 239")
+print("uncovered outside points:", sorted(set(outside) - covered))
+print("search tree:", nodes, "nodes;", leaves, "leaves;", branches, "branches")
+```
+
+This three-layer check is still a finite exact computation, not a Lean kernel theorem. It identifies the next missing ingredient: the old layer and the two new fibres must be optimized jointly, rather than bounding the two-fibre trace in isolation.
+
 ## Scope and verification status
 
 - The multi-label crossing lemma is an ordinary mathematical argument from CRT compatibility, divisibility, and private witnesses.
