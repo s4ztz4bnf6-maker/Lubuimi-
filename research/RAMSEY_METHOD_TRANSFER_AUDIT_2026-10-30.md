@@ -39,7 +39,9 @@ This does **not** justify the blanket statement that “verification of the uppe
 3. **Structural state enrichment rather than a failed scalar potential.** The later Ramsey proof uses structured objects (reservoirs and books) and a geometric lemma, rather than relying only on a one-dimensional global count. The analogy suggests testing a richer state for residue-fibre allocation, but it supplies no covering-system inequality by itself.
 4. **Density concentration as a diagnostic, not a theorem.** In our CRT setting, let $U$ be the residues missed by old classes and $C_j$ the projections of new classes. Complete coverage of all $q$-fibres above every $x\in U$ forces
 $$q|U|\leq \sum_j |U\cap C_j|.$$
-A useful next search is to partition $U$ into strata by the incidence multiplicity $m(x)=|\{j:x\in C_j\}|$, and ask whether a high-multiplicity stratum forces a stronger overlap cost. This is a candidate route only; no universal reverse inequality has been proved.
+A useful next search is to partition $U$ into strata by the incidence multiplicity $m(x)=|\{j:x\in C_j\}|$. Since full fibre coverage forces $m(x)\geq q$ for every $x\in U$, the exact pair-overlap identity gives
+$\sum_{j<\ell}|U\cap C_j\cap C_\ell|=\sum_{x\in U}{m(x)\choose 2}\geq {q\choose 2}|U|.$
+This is a necessary condition, not a contradiction. The unresolved step is a universal arithmetic upper bound on the compatible pair overlaps for pairwise-distinct odd moduli. No such bound has been proved.
 
 ### Non-transferable without a new theorem
 - The Ramsey density/book arguments are graph-specific. No direct substitution turns a red/blue edge-colouring argument into a congruence-cover argument.
