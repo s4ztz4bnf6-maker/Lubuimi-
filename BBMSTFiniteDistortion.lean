@@ -62,3 +62,30 @@ theorem fibre_normalization_interior
 #print axioms fibre_normalization_interior
 
 end BBMSTFiniteDistortion
+
+
+/-- Endpoint normalization when the removed part of a fibre is empty. -/
+theorem fibre_normalization_zero
+    (d : ℚ) (hd0 : 0 ≤ d) (hd1 : d ≤ 1 / 2) :
+    (0 : ℚ) * removedMultiplier 0 d +
+      (1 - 0) * retainedMultiplier 0 d = 1 := by
+  have h1d : 0 < 1 - d := by linarith
+  have hbound : 1 ≤ 1 / (1 - d) := by
+    rw [le_div_iff₀ h1d]
+    nlinarith
+  have hfirst : (1 : ℚ) / (1 - 0) = 1 := by norm_num
+  have hmin :
+      min (1 / (1 - 0)) (1 / (1 - d)) = 1 := by
+    rw [hfirst, min_eq_left hbound]
+  simp [removedMultiplier, retainedMultiplier, hmin]
+
+/-- Endpoint normalization when the retained part of a fibre is empty.
+The retained multiplier's totalized value is immaterial because its weight is zero. -/
+theorem fibre_normalization_one
+    (d : ℚ) (hd0 : 0 ≤ d) (hd1 : d ≤ 1 / 2) :
+    (1 : ℚ) * removedMultiplier 1 d +
+      (1 - 1) * retainedMultiplier 1 d = 1 := by
+  have h1d : 1 - d ≠ 0 := ne_of_gt (by linarith)
+  have hratio : (1 - d) / (1 * (1 - d)) = 1 := by
+    field_simp
+  simp [removedMultiplier, retainedMultiplier, hratio]
