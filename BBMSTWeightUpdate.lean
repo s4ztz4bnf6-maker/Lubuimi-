@@ -352,4 +352,40 @@ theorem localMass_eq_of_exceptionalMass_le_delta
 #print axioms sum_split_exceptional
 #print axioms multiplier_eq_first_branch
 
+
+/-- Local conservation without an explicit branch condition. -/
+theorem localMass_eq
+    (C : CoordinateStage X S)
+    (w : X → ℚ)
+    (delta : ℚ)
+    (x : X)
+    (hdelta : ValidDelta delta) :
+    localMass C w delta x = w x := by
+  by_cases h : alpha C x ≤ delta
+  · exact localMass_eq_of_alpha_le_delta C w delta x hdelta h
+  · exact localMass_eq_of_delta_lt_alpha C w delta x hdelta
+      (lt_of_not_ge h)
+
+/-- Global conservation of the updated mass. -/
+theorem totalMass_updated_eq
+    (C : CoordinateStage X S)
+    (w : X → ℚ)
+    (delta : ℚ)
+    (hdelta : ValidDelta delta) :
+    (∑ x : X, ∑ s : S, updatedWeight C w delta x s)
+      = ∑ x : X, w x := by
+  calc
+    (∑ x : X, ∑ s : S, updatedWeight C w delta x s)
+        = ∑ x : X, localMass C w delta x := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          rfl
+    _ = ∑ x : X, w x := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact localMass_eq C w delta x hdelta
+
+#print axioms localMass_eq
+#print axioms totalMass_updated_eq
+
 end BBMSTWeightUpdate
