@@ -106,6 +106,29 @@ structure DistinctLayers {M q : ℕ} {O N : Type*}
   old_injective : Function.Injective (fun i => (oldData i).d)
   new_injective : Function.Injective (fun j => (newData j).d)
 
+/-- For q > 1, an old modulus d and a new modulus q*d are
+different as actual moduli, even though both project to the base divisor d. -/
+theorem old_modulus_ne_new_modulus
+    {M q : ℕ} (hq : 1 < q)
+    (C : OldClass M) (D : NewClass M q) :
+    C.d ≠ D.d * q := by
+  have hlt : C.d < C.d * q := by
+    have h := Nat.mul_lt_mul_of_pos_left hq C.d_pos
+    simpa using h
+  intro heq
+  rw [heq] at hlt
+  exact (Nat.lt_irrefl _ hlt)
+
+/-- Injectivity in each layer plus q > 1 makes the represented actual
+moduli pairwise distinct across the old/new split. The base projections may
+still collide, once per layer. -/
+theorem actual_cross_layer_moduli_disjoint
+    {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hq : 1 < q) (i : O) (j : N) :
+    (oldData i).d ≠ (newData j).d * q :=
+  old_modulus_ne_new_modulus hq (oldData i) (newData j)
+
 /-- In a pairwise-distinct old layer, at most one old class projects to
 any fixed base divisor. -/
 theorem old_projection_unique
