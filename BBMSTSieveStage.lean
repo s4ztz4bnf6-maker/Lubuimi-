@@ -5,8 +5,7 @@ import Mathlib
 
 This module records a stage-dependent family of finite state spaces and
 coordinates. A next-stage state is represented by its predecessor together
-with an admissible extension. No product assumption is made: the admissible
-subtype may depend on the predecessor.
+with an admissible extension. No unrestricted product assumption is made.
 
 This is an interface and finite set-theoretic bookkeeping only. It does not
 identify these abstract objects with the geometric objects in the BBMST paper.
@@ -47,37 +46,38 @@ theorem project_extension_compat (D : SieveStage) (k : ℕ)
     D.admissible k (project D k y) (extension D k y).1 :=
   (extension D k y).2
 
-/-- The fiber over x is equivalent to the subtype of admissible
-    extension coordinates over x. This is the key geometric interface. -/
+/-- Generic fiber identification for an equivalence into a dependent sum.
+
+The proof factors through Mathlib's subtypeEquiv and sigmaSubtype constructions.
+It does not eliminate the equality in the fiber by cases or perform a
+hand-written dependent transport. -/
+def sigma_fiber_equiv
+    {α β : Type*} {γ : β → Type*}
+    (e : α ≃ Σ b : β, γ b) (b : β) :
+    {a : α // (e a).1 = b} ≃ γ b :=
+  (e.subtypeEquiv (fun _ => Iff.rfl)).trans (Equiv.sigmaSubtype b)
+
+/-- The raw projection fiber is equivalent to the admissible extension
+    coordinate. The fiber is stated using only equality of the first
+    projection; the set-membership wrapper is deliberately absent. -/
+def stage_fiber_raw_equiv (D : SieveStage) (k : ℕ) (x : D.Q k) :
+    {y : D.Q (k + 1) // (D.encode k y).1 = x} ≃
+      {s : D.S k // D.admissible k x s} :=
+  sigma_fiber_equiv (D.encode k) x
+
+/-- The original set-membership formulation is a thin wrapper around the
+    raw projection-fiber equivalence. -/
 def stage_fiber_equiv (D : SieveStage) (k : ℕ) (x : D.Q k) :
     {y : D.Q (k + 1) // y ∈ fiber D k x} ≃
-      {s : D.S k // D.admissible k x s} where
-  toFun := fun y => by
-    refine ⟨(D.encode k y.1).2.1, ?_⟩
-    have hy : (D.encode k y.1).1 = x := y.2
-    cases hy
-    exact (D.encode k y.1).2.2
-  invFun := fun s => by
-    refine ⟨(D.encode k).symm ⟨x, s⟩, ?_⟩
-    change (D.encode k ((D.encode k).symm ⟨x, s⟩)).1 = x
-    exact congrArg Sigma.fst ((D.encode k).apply_symm_apply ⟨x, s⟩)
-  left_inv := by
-    intro y
-    have h : (D.encode k y.1).1 = x := y.2
-    cases h
-    apply Subtype.ext
-    change (D.encode k).symm
-      ⟨(D.encode k y.1).1, (D.encode k y.1).2⟩ = y.1
-    exact (D.encode k).symm_apply_apply y.1
-  right_inv := by
-    intro s
-    apply Subtype.ext
-    change (D.encode k ((D.encode k).symm ⟨x, s⟩)).2.1 = s.1
-    exact congrArg
-      (fun z : Σ a : D.Q k, {b : D.S k // D.admissible k a b} => z.2.1)
-      ((D.encode k).apply_symm_apply ⟨x, s⟩)
+      {s : D.S k // D.admissible k x s} := by
+  change
+    {y : D.Q (k + 1) // (D.encode k y).1 = x} ≃
+      {s : D.S k // D.admissible k x s}
+  exact stage_fiber_raw_equiv D k x
 
 #print axioms project_extension_compat
+#print axioms sigma_fiber_equiv
+#print axioms stage_fiber_raw_equiv
 #print axioms stage_fiber_equiv
 
 end BBMSTSieveStage
