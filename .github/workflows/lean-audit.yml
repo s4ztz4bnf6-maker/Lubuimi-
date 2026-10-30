@@ -42,3 +42,7 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTFiniteSieveStage.olean BBMSTFiniteSieveStage.lean
+      - name: Compile dependent finite sieve-stage interface and audit axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTSieveStage.olean BBMSTSieveStage.lean
