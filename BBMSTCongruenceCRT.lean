@@ -97,6 +97,54 @@ theorem uncovered_residue_of_uncovered_fibre
   refine ⟨(BBMSTArithmeticCRT.crtEquiv M q hMq).symm (x, t), ?_⟩
   simpa [BBMSTArithmeticCRT.crtEquiv] using hx
 
+
+/-- Pairwise distinctness of actual moduli within the old and new layers.
+The old modulus is d; the new modulus is d*q. For q > 1, these layers
+cannot collide as actual moduli, while their projections to d may coincide. -/
+structure DistinctLayers {M q : ℕ} {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q) where
+  old_injective : Function.Injective (fun i => (oldData i).d)
+  new_injective : Function.Injective (fun j => (newData j).d)
+
+/-- In a pairwise-distinct old layer, at most one old class projects to
+any fixed base divisor. -/
+theorem old_projection_unique
+    {M q : ℕ} {O N : Type*}
+    {oldData : O → OldClass M} {newData : N → NewClass M q}
+    (D : DistinctLayers oldData newData)
+    (i₁ i₂ : O) (h : (oldData i₁).d = (oldData i₂).d) :
+    i₁ = i₂ :=
+  D.old_injective h
+
+/-- In a pairwise-distinct new layer, at most one new class projects to
+any fixed base divisor. -/
+theorem new_projection_unique
+    {M q : ℕ} {O N : Type*}
+    {oldData : O → OldClass M} {newData : N → NewClass M q}
+    (D : DistinctLayers oldData newData)
+    (j₁ j₂ : N) (h : (newData j₁).d = (newData j₂).d) :
+    j₁ = j₂ :=
+  D.new_injective h
+
+/-- The only possible collision of projected moduli is cross-layer:
+there is at most one old provenance and at most one new provenance for
+each base divisor. This is the exact multiplicity bound lost by naive
+projection; it is not a claim that the projected family is distinct. -/
+theorem projected_modulus_has_at_most_two_sources
+    {M q : ℕ} {O N : Type*}
+    {oldData : O → OldClass M} {newData : N → NewClass M q}
+    (D : DistinctLayers oldData newData)
+    (d : ℕ) :
+    (∀ i₁ i₂ : O, (oldData i₁).d = d →
+      (oldData i₂).d = d → i₁ = i₂) ∧
+    (∀ j₁ j₂ : N, (newData j₁).d = d →
+      (newData j₂).d = d → j₁ = j₂) := by
+  constructor
+  · intro i₁ i₂ h₁ h₂
+    exact D.old_injective (h₁.trans h₂.symm)
+  · intro j₁ j₂ h₁ h₂
+    exact D.new_injective (h₁.trans h₂.symm)
+
 /-- Every prescribed pair of a base residue modulo d and a q-fibre
 is realized by an actual congruence class modulo d*q. In particular, the
 projection to the base divisor d can coincide with an old class modulo d. -/
