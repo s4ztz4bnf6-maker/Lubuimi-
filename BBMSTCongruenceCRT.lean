@@ -396,6 +396,61 @@ theorem no_full_allocation_of_global_support_budget
 #print axioms incidence_card_eq_sum_of_class_supports
 #print axioms no_full_allocation_of_global_support_budget
 
+/-- Any complete CRT-fibre cover satisfies the global incidence
+budget inequality. The hypothesis is precisely the fibrewise cover
+condition; on old-uncovered x the old branch is impossible, so every
+(x,t) incidence must be supplied by a new class. -/
+theorem complete_cover_implies_global_support_inequality
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (hcover : ∀ x : ZMod M, ∀ t : ZMod q,
+      (∃ i, oldContains (oldData i) x) ∨
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t)) :
+    Fintype.card (OldUncovered oldData × ZMod q) ≤
+      ∑ j : N,
+        Fintype.card {x : OldUncovered oldData //
+          newBaseContains hMq (newData j) x.1} := by
+  classical
+  let alloc : OldUncovered oldData → ZMod q → N :=
+    fun x t => Classical.choose ((hcover x.1 t).resolve_left x.2)
+  have hmem : ∀ x t,
+      newBaseContains hMq (newData (alloc x t)) x.1 := by
+    intro x t
+    exact (Classical.choose_spec ((hcover x.1 t).resolve_left x.2)).1
+  have hfibre : ∀ x t,
+      newFibreResidue hMq (newData (alloc x t)) = t := by
+    intro x t
+    exact (Classical.choose_spec ((hcover x.1 t).resolve_left x.2)).2
+  have hle := global_allocation_lower_bound
+    oldData newData hMq alloc hmem hfibre
+  rw [incidence_card_eq_sum_of_class_supports] at hle
+  exact hle
+
+/-- A support budget strictly below |U|*q rules out a complete
+odd-covering-style one-prime CRT extension. -/
+theorem no_complete_cover_of_global_support_budget
+    {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q)
+    (hbudget :
+      (∑ j : N,
+        Fintype.card {x : OldUncovered oldData //
+          newBaseContains hMq (newData j) x.1}) <
+        Fintype.card (OldUncovered oldData × ZMod q)) :
+    ¬ ∀ x : ZMod M, ∀ t : ZMod q,
+      (∃ i, oldContains (oldData i) x) ∨
+      (∃ j, newBaseContains hMq (newData j) x ∧
+        newFibreResidue hMq (newData j) = t) := by
+  intro hcover
+  have hle := complete_cover_implies_global_support_inequality
+    oldData newData hMq hcover
+  exact (not_le_of_gt hbudget) hle
+
+#print axioms complete_cover_implies_global_support_inequality
+#print axioms no_complete_cover_of_global_support_budget
+
 /-- A nonempty old-uncovered set forces at least q new classes in total.
 This is weaker than the pointwise theorem only when the uncovered set is
 empty; it is useful as the coarsest global consequence. -/
