@@ -127,7 +127,7 @@ theorem old_modulus_ne_new_modulus
     simpa [Nat.mul_comm] using heq
   have hq_M : q ∣ M := hq_d.trans C.d_dvd_M
   have hq_gcd : q ∣ Nat.gcd M q := Nat.dvd_gcd hq_M (dvd_refl q)
-  have hgcd : Nat.gcd M q = 1 := hMq.gcd_eq_one
+  have hgcd : Nat.gcd M q = 1 := hMq
   rw [hgcd] at hq_gcd
   have hq_one : q = 1 := Nat.dvd_one.mp hq_gcd
   exact (ne_of_gt hq) hq_one
@@ -508,6 +508,6 @@ theorem global_new_class_count_lower_bound
 #print axioms some_fibre_uncovered_of_small_local_family
 #print axioms uncovered_residue_of_small_local_family
 
-end BBMSTCongruenceCRT
-
 end
+
+end BBMSTCongruenceCRT
