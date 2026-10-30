@@ -112,3 +112,26 @@ No code theorem is claimed by this note. No existing PR is merged or modified.
 `ZMod q → {j : N // newBaseContains ... x}`.
 
 The module formalizes the resulting cardinality inequality: the number of new classes projecting over x is at least `Fintype.card (ZMod q)`. If the local class count is smaller, it constructs a missing fibre and, via inverse CRT, an explicit uncovered residue modulo M*q. This is a genuine local allocation obstruction and is stronger than the earlier total-family bound. It does not yet prove that the local count is always below q for arbitrary odd covering systems; that global arithmetic estimate remains the central unresolved step. The code was added after the last confirmed CI head and is not yet claimed compiled.
+
+## Global incidence double count (candidate pending CI)
+
+The local allocation statement has now been aggregated over *all* base residues left uncovered by the old layer. Define
+`U = {x : ZMod M // no old class contains x}`.
+For each new class j, count the members of U hit by its projected base congruence. The incidence set
+`{(x,j) : x ∈ U and newBaseContains j x}`
+has two exact enumerations:
+
+- by base residue x: complete fibre coverage injects `U × ZMod q` into the incidence set, hence its cardinality is at least `|U| * q`;
+- by new class j: its cardinality is exactly the sum over j of the number of old-uncovered base residues in that class's projected support.
+
+The Lean file now contains `incidence_reindex_equiv`, `incidence_card_eq_sum_of_class_supports`, and `complete_cover_implies_global_support_inequality`. The latter states the global necessary inequality
+[
+|U|,q \\leq \\sum_j |U \\cap C_j|,
+]
+where C_j is the base congruence class projected from new class j. `no_complete_cover_of_global_support_budget` turns any strict reverse estimate into an actual no-cover theorem for this one-prime CRT extension.
+
+This is the exact global double-counting step; it does not assume that projected moduli are distinct. The unresolved arithmetic estimate is now sharply isolated: prove
+[
+\\sum_j |U \\cap C_j| < |U|,q
+]
+for every admissible distinct-odd-modulus system (or derive a stronger weighted inequality). No universal proof of this estimate has been obtained. In particular, simply bounding each `|C_j|` by `M/d_j` and applying the union bound to U does not presently give a contradiction for arbitrary M. The new Lean additions have not yet been compiled by CI.
