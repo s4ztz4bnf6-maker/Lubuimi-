@@ -120,7 +120,7 @@ The case k_y < k_x is symmetric.
 For every common label d at the compared depth j, both minimal covers use the original class with the same actual modulus d 11^j. Pairwise distinctness makes that class unique. Therefore x and y have the same residue modulo d.
 
 It remains to note that every subset of E of size at least nine has lcm 315:
-- exactly four elements of E are not divisible by 9;
+- exactly four elements of E are divisible by 9;
 - exactly six elements are not divisible by 5;
 - exactly six elements are not divisible by 7.
 
