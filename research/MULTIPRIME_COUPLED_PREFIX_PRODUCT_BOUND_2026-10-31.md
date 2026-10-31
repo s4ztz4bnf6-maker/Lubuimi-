@@ -238,7 +238,13 @@ This is exactly the earlier anchored square-free bound.
 
 The new theorem therefore extends that bound to arbitrary prime-power exponents by replacing a single excluded anchor residue with the full coordinate survivor set \(H_i\) after all pure-prime-power classes are removed.
 
-## 7. Scope and remaining gap
+## 7. Relation to existing preprint and novelty boundary
+
+Idan Hackmon's April 2026 preprint *On Odd Covering Systems with Few Prime Factors* contains the same four-prime weight-region argument and the same extremal constant (R=41/45), with the conclusion that at least (L/40) residues remain uncovered. It also gives a five-prime refinement covering 98.2% of exponent configurations, while leaving the remaining cases conditional on its CRT Coverage Maximality Conjecture. Thus the four-prime theorem above is an independent reconstruction/notation bridge to the project's prefix-product framework, not a novelty claim.
+
+The preprint's remaining five-prime obligation is especially relevant to the next phase: prove (NC(L)le0) for every residue assignment, where (NC) is the non-coprime inclusion-exclusion correction. Its analytical proof is given for at most three prime coordinates; for four and five coordinates it reports finite computational checks, not a universal proof. The 1.8% residual is therefore not closed by those computations.
+
+## 8. Scope and remaining gap
 
 This is a universal theorem for every finite exponent profile satisfying (MP), not a proof for every possible number of prime divisors. The exponent-free worst-case estimate (3) is insufficient once enough small prime directions are present. For example, with the first five odd primes and unbounded exponents, the worst-case mixed-support sum exceeds one.
 
@@ -249,6 +255,7 @@ No Lean build or kernel verification is claimed for this note.
 ## References and orientation
 
 ### Mathematical sources
+- I. Hackmon, “On Odd Covering Systems with Few Prime Factors,” preprint, April 2026, arXiv/rxiv identifier 2604.0035; Four-Prime Theorem and five-prime CRT Coverage Maximality conjecture.
 - P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe, M. Tiba, “The Erdős–Selfridge Problem with Square-Free Moduli,” Algebra & Number Theory 15 (2021), 609–626, DOI 10.2140/ant.2021.15.609.
 - P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe, M. Tiba, “On the Erdős Covering Problem: the Density of the Uncovered Set,” Invent. Math. 228 (2022), 377–414, DOI 10.1007/s00222-021-01087-5.
 - M. Schroeder, “Nine Prime Divisors in Odd Distinct Covering Systems,” preprint, version 1.0.1, September 2026; author-supplied Lean companion and exact certificates. This is an external preprint claim, not independently replayed in this project.
