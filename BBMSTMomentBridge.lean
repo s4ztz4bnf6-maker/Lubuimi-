@@ -229,7 +229,7 @@ theorem sum_weighted_quad_indicator (a b c d : Y) (u v w z : ℚ) :
           (if c = y then w else 0) *
           (if d = y then z else 0)) = 0 := by
       apply Finset.sum_eq_zero
-      intro y
+      intro y hy
       exact hterm y
     rw [hsum, if_neg h]
 
