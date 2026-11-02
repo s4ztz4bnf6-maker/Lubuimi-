@@ -93,3 +93,26 @@ assert B_MULTI * H_DEN**4 == 32_229_363_021_189_084_961_341_546_699_738_316_800_
 
 print("multi-prime moment:", M_MULTI, B_MULTI, T4_MULTI, H_NUM, H_DEN)
 print("multi-prime exact inequality passed; tau*H > 1")
+
+
+# Conditional rank-nine largest-prime cutoff from the published 8-prime density.
+P8_REFERENCE = (3, 5, 7, 11, 13, 17, 19, 23)
+C4_NUMERATORS = [
+    p * (p**3 + 11*p*p + 11*p + 1) for p in P8_REFERENCE
+]
+C4_DENOMINATORS = [(p - 1)**4 for p in P8_REFERENCE]
+C4_NUM = prod(C4_NUMERATORS)
+C4_DEN = prod(C4_DENOMINATORS)
+DENSITY_DEN = 1_002_375
+
+assert Fraction(C4_NUM, C4_DEN) == Fraction(16_379_878_645_983_125, 190_768_545_792)
+assert DENSITY_DEN * C4_NUM == 16_418_780_857_767_334_921_875
+assert 540**4 * C4_DEN == 16_221_156_279_079_403_520_000
+assert 546**4 * C4_DEN == 16_954_201_481_676_195_889_152
+assert 540**4 * C4_DEN < DENSITY_DEN * C4_NUM
+assert DENSITY_DEN * C4_NUM < 546**4 * C4_DEN
+assert is_prime(541) and is_prime(547)
+assert all(not is_prime(n) for n in (543, 545))
+
+print("rank-nine density/moment cutoff: q >= 547")
+print("C4:", C4_NUM, "/", C4_DEN)
