@@ -149,6 +149,169 @@ theorem safeStageContribution_nonneg
     exact le_min hm1 hquot
   · simpa [safeStageContribution, hδ] using hm1
 
+
+/-- Expand the cube of a finite sum into ordered triples. -/
+theorem sum_cube_expand {X : Type*} [Fintype X] (g : X → ℚ) :
+    (∑ x : X, g x) ^ 3 =
+      ∑ x : X, ∑ x' : X, ∑ x'' : X,
+        (g x * g x') * g x'' := by
+  classical
+  calc
+    (∑ x : X, g x) ^ 3 =
+        ((∑ x : X, g x) ^ 2) * (∑ x : X, g x) := by
+          rw [pow_succ]
+    _ = (∑ x : X, ∑ x' : X, g x * g x') *
+          (∑ x : X, g x) := by
+          rw [pow_two, Finset.sum_mul]
+          simp_rw [Finset.mul_sum]
+    _ = ∑ x : X, ∑ x' : X, ∑ x'' : X,
+          (g x * g x') * g x'' := by
+          rw [Finset.sum_mul]
+          simp_rw [Finset.sum_mul]
+          simp_rw [Finset.mul_sum]
+
+/-- Expand the fourth power of a finite sum into ordered quadruples. -/
+theorem sum_fourth_expand {X : Type*} [Fintype X] (g : X → ℚ) :
+    (∑ x : X, g x) ^ 4 =
+      ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+        ((g x * g x') * g x'') * g x''' := by
+  classical
+  calc
+    (∑ x : X, g x) ^ 4 =
+        ((∑ x : X, g x) ^ 3) * (∑ x : X, g x) := by
+          rw [pow_succ]
+    _ = (∑ x : X, ∑ x' : X, ∑ x'' : X,
+          (g x * g x') * g x'') * (∑ x : X, g x) := by
+          rw [sum_cube_expand]
+    _ = ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+          ((g x * g x') * g x'') * g x''' := by
+          rw [Finset.sum_mul]
+          simp_rw [Finset.sum_mul]
+          simp_rw [Finset.mul_sum]
+
+/-- Four weighted point indicators have a common nonzero term exactly
+when all four points agree. -/
+theorem sum_weighted_quad_indicator (a b c d : Y) (u v w z : ℚ) :
+    (∑ y : Y,
+      (if a = y then u else 0) *
+      (if b = y then v else 0) *
+      (if c = y then w else 0) *
+      (if d = y then z else 0)) =
+      (if a = b ∧ b = c ∧ c = d then
+        ((u * v) * w) * z else 0) := by
+  classical
+  by_cases h : a = b ∧ b = c ∧ c = d
+  · rcases h with ⟨hab, hbc, hcd⟩
+    subst b
+    subst c
+    subst d
+    simp
+  · have hterm (y : Y) :
+        (if a = y then u else 0) *
+        (if b = y then v else 0) *
+        (if c = y then w else 0) *
+        (if d = y then z else 0) = 0 := by
+      by_cases hay : a = y
+      · subst y
+        by_cases hba : b = a
+        · by_cases hca : c = a
+          · by_cases hda : d = a
+            · exact (h ⟨hba.symm, hba.trans hca.symm,
+                hca.trans hda.symm⟩).elim
+            · simp [hda]
+          · simp [hca]
+        · simp [hba]
+      · simp [hay]
+    have hsum :
+        (∑ y : Y,
+          (if a = y then u else 0) *
+          (if b = y then v else 0) *
+          (if c = y then w else 0) *
+          (if d = y then z else 0)) = 0 := by
+      apply Finset.sum_eq_zero
+      intro y hy
+      exact hterm y
+    rw [hsum, if_neg h]
+
+/-- Fourth fibre moment identity. The fourth moment of fibre masses is
+exactly the weighted count of ordered quadruples lying in one common fibre.
+This is an identity only; geometric or CRT bounds must still control the
+compatible quadruple intersections. -/
+theorem fiber_fourth_moment
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (f : X → Y) (w : X → ℚ) :
+    (∑ y : Y, (∑ x : X, if f x = y then w x else 0) ^ 4) =
+      ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+        (if f x = f x' ∧ f x' = f x'' ∧ f x'' = f x''' then
+          ((w x * w x') * w x'') * w x''' else 0) := by
+  classical
+  calc
+    (∑ y : Y, (∑ x : X, if f x = y then w x else 0) ^ 4)
+        = ∑ y : Y, ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+            (((if f x = y then w x else 0) *
+              (if f x' = y then w x' else 0)) *
+              (if f x'' = y then w x'' else 0)) *
+              (if f x''' = y then w x''' else 0) := by
+          congr 1
+          funext y
+          exact sum_fourth_expand
+            (fun x : X => if f x = y then w x else 0)
+    _ = ∑ x : X, ∑ y : Y, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+            (((if f x = y then w x else 0) *
+              (if f x' = y then w x' else 0)) *
+              (if f x'' = y then w x'' else 0)) *
+              (if f x''' = y then w x''' else 0) := by
+          rw [Finset.sum_comm]
+    _ = ∑ x : X, ∑ x' : X, ∑ y : Y, ∑ x'' : X, ∑ x''' : X,
+            (((if f x = y then w x else 0) *
+              (if f x' = y then w x' else 0)) *
+              (if f x'' = y then w x'' else 0)) *
+              (if f x''' = y then w x''' else 0) := by
+          congr 1
+          funext x
+          rw [Finset.sum_comm]
+    _ = ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ y : Y, ∑ x''' : X,
+            (((if f x = y then w x else 0) *
+              (if f x' = y then w x' else 0)) *
+              (if f x'' = y then w x'' else 0)) *
+              (if f x''' = y then w x''' else 0) := by
+          congr 1
+          funext x
+          congr 1
+          funext x'
+          rw [Finset.sum_comm]
+    _ = ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X, ∑ y : Y,
+            (((if f x = y then w x else 0) *
+              (if f x' = y then w x' else 0)) *
+              (if f x'' = y then w x'' else 0)) *
+              (if f x''' = y then w x''' else 0) := by
+          congr 1
+          funext x
+          congr 1
+          funext x'
+          congr 1
+          funext x''
+          rw [Finset.sum_comm]
+    _ = ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
+          (if f x = f x' ∧ f x' = f x'' ∧ f x'' = f x''' then
+            ((w x * w x') * w x'') * w x''' else 0) := by
+          congr 1
+          funext x
+          congr 1
+          funext x'
+          congr 1
+          funext x''
+          congr 1
+          funext x'''
+          exact sum_weighted_quad_indicator
+            (f x) (f x') (f x'') (f x''')
+            (w x) (w x') (w x'') (w x''')
+
+#print axioms sum_cube_expand
+#print axioms sum_fourth_expand
+#print axioms sum_weighted_quad_indicator
+#print axioms fiber_fourth_moment
+
 #print axioms secondMomentDenominator_pos
 #print axioms safeStageContribution_zero
 #print axioms safeStageContribution_positive
