@@ -167,6 +167,7 @@ theorem sum_cube_expand {X : Type*} [Fintype X] (g : X → ℚ) :
     _ = ∑ x : X, ∑ x' : X, ∑ x'' : X,
           (g x * g x') * g x'' := by
           rw [Finset.sum_mul]
+          simp_rw [Finset.sum_mul]
           simp_rw [Finset.mul_sum]
 
 /-- Expand the fourth power of a finite sum into ordered quadruples. -/
@@ -185,6 +186,7 @@ theorem sum_fourth_expand {X : Type*} [Fintype X] (g : X → ℚ) :
     _ = ∑ x : X, ∑ x' : X, ∑ x'' : X, ∑ x''' : X,
           ((g x * g x') * g x'') * g x''' := by
           rw [Finset.sum_mul]
+          simp_rw [Finset.sum_mul]
           simp_rw [Finset.mul_sum]
 
 /-- Four weighted point indicators have a common nonzero term exactly
@@ -220,7 +222,16 @@ theorem sum_weighted_quad_indicator (a b c d : Y) (u v w z : ℚ) :
           · simp [hca]
         · simp [hba]
       · simp [hay]
-    simp [hterm, h]
+    have hsum :
+        (∑ y : Y,
+          (if a = y then u else 0) *
+          (if b = y then v else 0) *
+          (if c = y then w else 0) *
+          (if d = y then z else 0)) = 0 := by
+      apply Finset.sum_eq_zero
+      intro y
+      exact hterm y
+    rw [hsum, if_neg h]
 
 /-- Fourth fibre moment identity. The fourth moment of fibre masses is
 exactly the weighted count of ordered quadruples lying in one common fibre.
