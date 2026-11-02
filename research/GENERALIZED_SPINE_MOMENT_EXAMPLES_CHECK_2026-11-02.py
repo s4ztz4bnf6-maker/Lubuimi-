@@ -66,3 +66,30 @@ print("spine:", M_SPINE, TAU_SPINE, SIGMA_SPINE, DEFICIT_SPINE, Q0)
 print("fourth moment:", M_MOMENT, B_MOMENT, T4_MOMENT, DENOM)
 print("exact inequality:", T4_MOMENT, "<", B_MOMENT * DENOM)
 print("all exact arithmetic checks passed")
+
+
+# Multi-prime fourth-moment example: three old primes and six new primes.
+P_MULTI = (101, 103, 107)
+Q_MULTI = (29, 31, 37, 41, 43, 47)
+M_MULTI = prod(P_MULTI)
+SIGMA_MULTI = prod(p + 1 for p in P_MULTI)
+B_MULTI = 2 * M_MULTI - SIGMA_MULTI
+T4_MULTI = prod(p + 15 for p in P_MULTI)
+H_NUM = prod(Q_MULTI) - prod(q - 1 for q in Q_MULTI)
+H_DEN = prod(q - 1 for q in Q_MULTI)
+
+assert all(is_prime(p) for p in P_MULTI + Q_MULTI)
+assert len(set(P_MULTI + Q_MULTI)) == 9
+assert M_MULTI == 1_113_121
+assert SIGMA_MULTI == 1_145_664
+assert B_MULTI == 1_080_578
+assert T4_MULTI == 1_669_936
+assert H_NUM == 419_258_243
+assert H_DEN == 2_336_947_200
+assert 8 * H_NUM > H_DEN  # the simple first-moment tau*H < 1 test fails
+assert T4_MULTI * H_NUM**4 < B_MULTI * H_DEN**4
+assert T4_MULTI * H_NUM**4 == 51_597_215_746_704_554_690_723_783_743_857_593_932_336
+assert B_MULTI * H_DEN**4 == 32_229_363_021_189_084_961_341_546_699_738_316_800_000_000
+
+print("multi-prime moment:", M_MULTI, B_MULTI, T4_MULTI, H_NUM, H_DEN)
+print("multi-prime exact inequality passed; tau*H > 1")
