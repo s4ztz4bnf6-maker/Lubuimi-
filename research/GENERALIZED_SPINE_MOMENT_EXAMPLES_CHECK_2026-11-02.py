@@ -119,3 +119,15 @@ assert all(not is_prime(n) for n in (543, 545))
 
 print("rank-nine density/moment cutoff: q >= 547")
 print("C4:", C4_NUM, "/", C4_DEN)
+
+
+# Multi-prime density-moment tail thresholds for t new prime coordinates.
+TAIL_THRESHOLDS = {1: 543, 2: 1085, 3: 1627, 4: 2170, 5: 2712}
+C4_BOUND = Fraction(C4_NUM, C4_DEN)
+DELTA = Fraction(1, DENSITY_DEN)
+for t, R in TAIL_THRESHOLDS.items():
+    h_R = Fraction(R, R - 1) ** t - 1
+    h_prev = Fraction(R - 1, R - 2) ** t - 1
+    assert C4_BOUND * h_R**4 < DELTA
+    assert C4_BOUND * h_prev**4 > DELTA
+print("multi-prime tail thresholds:", TAIL_THRESHOLDS)
