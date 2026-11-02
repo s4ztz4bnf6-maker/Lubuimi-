@@ -201,3 +201,12 @@ They do not rule out a cover satisfying both conditions. Our new CRT results exc
 **Single most important remaining gap:** prove noncoverage uniformly for every admissible LCM with at least nine prime divisors, while retaining the joint residue/prime-coordinate geometry. The local fibre-capacity and moment criteria are not automatic for arbitrary bases; the rank-nine paper's current method also identifies a rank-ten obstruction for its particular comparison architecture, not an impossibility theorem for all methods.
 
 The original Erdős–Selfridge conjecture remains open. No complete proof or explicit counterexample is known in this project.
+
+
+### Public OpenAI mathematics release: catalogue check
+
+OpenAI's 6 October 2026 release describes 721 manuscripts in 373 families, with approximately 42% of top-line results formalized at the time of the README snapshot. The public repository's CONTENTS.md has no entry matching "Erdos"; a direct search of the catalogue did not identify an Erdős–Selfridge family. This is a bounded catalogue check, not a claim that the internal model never investigated the problem or that no related technique appears elsewhere.
+
+Sources: [OpenAI release](https://openai.com/index/sharing-ai-progress-in-mathematics/), [public mathematics repository](https://github.com/openai/math), [catalogue](https://github.com/openai/math/blob/main/CONTENTS.md).
+
+The public Erdős Problem 7 history page still lists the square-free BBMST result and earlier restrictions, but does not yet incorporate the September 2026 rank-seven/eight/nine preprints. It should therefore be treated as a problem-definition and classical-history source, not as a complete current literature survey: https://www.erdosproblems.com/history/7.
