@@ -57,7 +57,8 @@ theorem local_profile_mass_identity
     rw [Finset.sum_eq_single (pi x p)]
     · simp
     · intro S hS hne
-      simp [hne]
+      have hne' : pi x p ≠ S := fun h => hne h.symm
+      simp [hne']
     · intro h
       exact (h (Finset.mem_univ _)).elim
   calc
@@ -124,20 +125,26 @@ theorem global_bib_majorization
   change (∑ S : Finset I, ∑ x : G,
       canonicalWeight A x * profileMass W rho pi x S)
       ≤ ∑ x : G, canonicalWeight A x
-  rw [Finset.sum_comm]
-  apply Finset.sum_le_sum
-  intro x hx
-  have hlocal := local_profile_mass_le_one W rho pi hNorm x
-  have hw : 0 ≤ canonicalWeight A x := by
-    unfold canonicalWeight
-    positivity
-  rw [← Finset.mul_sum]
   calc
-    canonicalWeight A x *
-        (∑ S : Finset I, profileMass W rho pi x S)
-        ≤ canonicalWeight A x * 1 :=
-          mul_le_mul_of_nonneg_left hlocal hw
-    _ = canonicalWeight A x := by ring
+    (∑ S : Finset I, ∑ x : G,
+        canonicalWeight A x * profileMass W rho pi x S)
+        = ∑ x : G, ∑ S : Finset I,
+            canonicalWeight A x * profileMass W rho pi x S := by
+              exact Finset.sum_comm
+    _ ≤ ∑ x : G, canonicalWeight A x := by
+          apply Finset.sum_le_sum
+          intro x hx
+          rw [← Finset.mul_sum]
+          have hlocal := local_profile_mass_le_one W rho pi hNorm x
+          have hw : 0 ≤ canonicalWeight A x := by
+            unfold canonicalWeight
+            positivity
+          calc
+            canonicalWeight A x *
+                (∑ S : Finset I, profileMass W rho pi x S)
+                ≤ canonicalWeight A x * 1 :=
+                  mul_le_mul_of_nonneg_left hlocal hw
+            _ = canonicalWeight A x := by ring
 
 /-- Ordered pair count inside a finite support, expressed by deleting
 the first coordinate. -/
@@ -163,10 +170,9 @@ theorem bib_collision_identity
       ∑ x : G,
         (((∑ i ∈ activeSupport A x,
             ((activeSupport A x).erase i).card : ℕ)) : ℝ) := by
-  unfold bibReserve
+  unfold bibReserve canonicalWeight
   apply Finset.sum_congr rfl
   intro x hx
-  unfold canonicalWeight
   exact_mod_cast (support_ordered_collision_count (activeSupport A x))
 
 #print axioms local_profile_mass_identity
