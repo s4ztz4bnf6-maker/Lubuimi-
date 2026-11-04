@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "APW4CanonicalMajorization.lean"
+      - "APW4HistoricalCRTCore.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - "lake-manifest.json"
@@ -35,3 +36,4 @@ jobs:
       - name: Compile the entire canonical file and emit all four axiom lists
         run: |
           lake env lean APW4CanonicalMajorization.lean
+          lake env lean APW4HistoricalCRTCore.lean
