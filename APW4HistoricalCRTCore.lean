@@ -29,7 +29,7 @@ def congruenceSet (i : I) : Finset (ZMod N) :=
 
 /-- The exact set of congruence indices hit by a point. -/
 def supportAt (x : ZMod N) : Finset I :=
-  Finset.univ.filter (fun i => x ∈ congruenceSet N m a hm hdiv i)
+  Finset.univ.filter (fun i => x ∈ congruenceSet N m a i)
 
 /-- The pointwise ordered BIB collision count. -/
 def pointBIBCount (x : ZMod N) : ℕ :=
@@ -48,7 +48,7 @@ def orderedBIBPairs : ℕ :=
 
 /-- Membership in the historical CRT set is exactly its congruence predicate. -/
 theorem mem_congruenceSet_iff (i : I) (x : ZMod N) :
-    x ∈ congruenceSet N m a hm hdiv i ↔
+    x ∈ congruenceSet N m a i ↔
       x.val % m i = a i % m i := by
   simp [congruenceSet]
 
