@@ -31,45 +31,45 @@ def congruenceSet (i : I) : Finset (ZMod N) :=
 
 /-- The exact set of congruence indices hit by a point. -/
 def supportAt (x : ZMod N) : Finset I :=
-  Finset.univ.filter (fun i => x ∈ congruenceSet N m a hm hdiv i)
+  Finset.univ.filter (fun i => x ∈ congruenceSet N m a i)
 
 /-- The pointwise ordered BIB collision count. -/
 def pointBIBCount (x : ZMod N) : ℕ :=
-  (supportAt N m a hm hdiv x).card *
-    ((supportAt N m a hm hdiv x).card - 1)
+  (supportAt N m a x).card *
+    ((supportAt N m a x).card - 1)
 
 /-- The total BIB reserve on the actual CRT congruence family. -/
 def bibReserve : ℕ :=
-  ∑ x : ZMod N, pointBIBCount N m a hm hdiv x
+  ∑ x : ZMod N, pointBIBCount N m a x
 
 /-- Ordered distinct-index collisions, counted directly from the support. -/
 def orderedBIBPairs : ℕ :=
   ∑ x : ZMod N,
-    ∑ i ∈ supportAt N m a hm hdiv x,
-      ((supportAt N m a hm hdiv x).erase i).card
+    ∑ i ∈ supportAt N m a x,
+      ((supportAt N m a x).erase i).card
 
 /-- Membership in the historical CRT set is exactly its congruence predicate. -/
 theorem mem_congruenceSet_iff (i : I) (x : ZMod N) :
-    x ∈ congruenceSet N m a hm hdiv i ↔
+    x ∈ congruenceSet N m a i ↔
       x.val % m i = a i % m i := by
   simp [congruenceSet]
 
 /-- The exact support records precisely which original congruences contain x. -/
 theorem mem_supportAt_iff (i : I) (x : ZMod N) :
-    i ∈ supportAt N m a hm hdiv x ↔
+    i ∈ supportAt N m a x ↔
       x.val % m i = a i % m i := by
   simp [supportAt, congruenceSet]
 
 /-- The historical BIB reserve equals the number of ordered distinct-index
 collisions in the CRT incidence family. -/
 theorem historical_bib_collision_identity :
-    bibReserve N m a hm hdiv =
-      orderedBIBPairs N m a hm hdiv := by
+    bibReserve N m a =
+      orderedBIBPairs N m a := by
   classical
   unfold bibReserve orderedBIBPairs pointBIBCount
   apply Finset.sum_congr rfl
   intro x hx
-  let S := supportAt N m a hm hdiv x
+  let S := supportAt N m a x
   change S.card * (S.card - 1) =
     (∑ i ∈ S, (S.erase i).card)
   symm
