@@ -46,8 +46,33 @@ theorem local_profile_mass_identity
       (∑ u : U, fibreWeight W rho x u) *
       (∑ u : U, fibreWeight W rho x u) := by
   classical
-  simp [profileMass, Finset.sum_comm, Fintype.sum_prod_type,
-    fibreWeight, Finset.mul_sum, Finset.sum_mul]
+  unfold profileMass
+  rw [Finset.sum_comm]
+  have hcollapse (p : U × U) :
+      (∑ S : Finset I,
+        if pi x p = S then
+          fibreWeight W rho x p.1 * fibreWeight W rho x p.2
+        else 0) =
+        fibreWeight W rho x p.1 * fibreWeight W rho x p.2 := by
+    rw [Finset.sum_eq_single (pi x p)]
+    · simp
+    · intro S hS hne
+      simp [hne]
+    · intro h
+      exact (h (Finset.mem_univ _)).elim
+  simp_rw [hcollapse]
+  rw [Fintype.sum_prod_type]
+  calc
+    (∑ u : U, ∑ v : U,
+        fibreWeight W rho x u * fibreWeight W rho x v)
+        = ∑ u : U, fibreWeight W rho x u *
+            (∑ v : U, fibreWeight W rho x v) := by
+              apply Finset.sum_congr rfl
+              intro u hu
+              rw [Finset.mul_sum]
+    _ = (∑ u : U, fibreWeight W rho x u) *
+          (∑ v : U, fibreWeight W rho x v) := by
+            rw [Finset.sum_mul]
 
 /-- The normalization hypothesis on each finite fibre. -/
 def Normalized
@@ -88,7 +113,9 @@ theorem global_bib_majorization
     (∑ S : Finset I, globalProfileMass A W rho pi S)
       ≤ bibReserve A := by
   classical
-  unfold globalProfileMass bibReserve
+  change (∑ S : Finset I, ∑ x : G,
+      canonicalWeight A x * profileMass W rho pi x S)
+      ≤ ∑ x : G, canonicalWeight A x
   rw [Finset.sum_comm]
   apply Finset.sum_le_sum
   intro x hx
