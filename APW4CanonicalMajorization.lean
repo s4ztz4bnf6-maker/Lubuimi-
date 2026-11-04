@@ -39,7 +39,6 @@ def profileMass
     else 0
 
 /-- The local profile masses sum to the square of the total fibre weight. -/
-omit [Fintype G] [DecidableEq G] in
 theorem local_profile_mass_identity
     (W : G → Finset U) (rho : G → U → ℝ)
     (pi : G → U × U → Finset I) (x : G) :
@@ -149,7 +148,6 @@ theorem global_bib_majorization
 
 /-- Ordered pair count inside a finite support, expressed by deleting
 the first coordinate. -/
-omit [Fintype I] in
 theorem support_ordered_collision_count
     (S : Finset I) :
     (∑ i ∈ S, ((S.erase i).card : ℕ)) =
