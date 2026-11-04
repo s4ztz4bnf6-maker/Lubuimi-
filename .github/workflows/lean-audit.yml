@@ -36,3 +36,6 @@ jobs:
         run: lake env lean AuditCheck.lean
       - name: Kernel-check APW4 diagonal majorization
         run: lake env lean APW4DiagonalAudit.lean
+
+      - name: Kernel-check canonical APW4 majorization
+        run: lake env lean APW4CanonicalMajorization.lean
