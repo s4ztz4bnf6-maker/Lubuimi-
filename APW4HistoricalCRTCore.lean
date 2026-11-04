@@ -31,7 +31,7 @@ def congruenceSet (i : I) : Finset (ZMod N) :=
 
 /-- The exact set of congruence indices hit by a point. -/
 def supportAt (x : ZMod N) : Finset I :=
-  Finset.univ.filter (fun i => x ∈ congruenceSet N m a i)
+  Finset.univ.filter (fun i => x ∈ congruenceSet N m a hm hdiv i)
 
 /-- The pointwise ordered BIB collision count. -/
 def pointBIBCount (x : ZMod N) : ℕ :=
