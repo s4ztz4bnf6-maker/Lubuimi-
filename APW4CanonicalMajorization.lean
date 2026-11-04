@@ -60,7 +60,9 @@ theorem local_profile_mass_identity
       simp [hne]
     · intro h
       exact (h (Finset.mem_univ _)).elim
-  simp_rw [hcollapse]
+  apply Finset.sum_congr rfl
+  intro p hp
+  rw [hcollapse]
   rw [Fintype.sum_prod_type]
   calc
     (∑ u : U, ∑ v : U,
@@ -123,6 +125,7 @@ theorem global_bib_majorization
   have hw : 0 ≤ canonicalWeight A x := by
     unfold canonicalWeight
     positivity
+  rw [← Finset.mul_sum]
   calc
     canonicalWeight A x *
         (∑ S : Finset I, profileMass W rho pi x S)
@@ -157,7 +160,8 @@ theorem bib_collision_identity
   unfold bibReserve
   apply Finset.sum_congr rfl
   intro x hx
-  rw [support_ordered_collision_count]
+  unfold canonicalWeight
+  exact_mod_cast (support_ordered_collision_count (activeSupport A x))
 
 #print axioms local_profile_mass_identity
 #print axioms local_profile_mass_le_one
