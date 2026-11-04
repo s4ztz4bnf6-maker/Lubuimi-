@@ -173,7 +173,7 @@ theorem bib_collision_identity
   unfold bibReserve canonicalWeight
   apply Finset.sum_congr rfl
   intro x hx
-  exact_mod_cast (support_ordered_collision_count (activeSupport A x))
+  exact_mod_cast (support_ordered_collision_count (activeSupport A x)).symm
 
 #print axioms local_profile_mass_identity
 #print axioms local_profile_mass_le_one
