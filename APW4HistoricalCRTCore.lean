@@ -22,6 +22,8 @@ variable (m a : I → ℕ)
 variable (hm : ∀ i, 0 < m i)
 variable (hdiv : ∀ i, m i ∣ N)
 
+include hm hdiv
+
 /-- The historical congruence class indexed by i, represented in ZMod N. -/
 def congruenceSet (i : I) : Finset (ZMod N) :=
   Finset.univ.filter
