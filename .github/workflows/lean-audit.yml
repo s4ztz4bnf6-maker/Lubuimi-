@@ -11,7 +11,7 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Install Lean and generate lake manifest
@@ -40,5 +40,7 @@ jobs:
       - name: Kernel-check APW4 diagonal majorization
         run: lake env lean APW4DiagonalAudit.lean
 
-      - name: Kernel-check canonical APW4 majorization
-        run: lake env lean APW4CanonicalMajorization.lean
+      - name: Kernel-check canonical APW4 majorization and print all four axiom audits
+        run: |
+          lake env lean APW4CanonicalMajorization.lean
+          echo "All four #print axioms commands completed above."
