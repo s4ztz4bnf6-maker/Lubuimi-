@@ -1,6 +1,16 @@
 name: APW4 canonical majorization kernel check
 
 on:
+  push:
+    branches:
+      - "audit/apw4-diagonal-majorization-2026-11-04"
+    paths:
+      - "APW4CanonicalMajorization.lean"
+      - "APW4HistoricalCRTCore.lean"
+      - "lakefile.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/apw4-canonical.yml"
   pull_request:
     paths:
       - "APW4CanonicalMajorization.lean"
