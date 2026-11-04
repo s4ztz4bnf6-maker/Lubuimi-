@@ -50,7 +50,7 @@ def orderedBIBPairs : ℕ :=
 
 /-- Membership in the historical CRT set is exactly its congruence predicate. -/
 theorem mem_congruenceSet_iff (i : I) (x : ZMod N) :
-    x ∈ congruenceSet N m a i ↔
+    x ∈ congruenceSet N m a hm hdiv i ↔
       x.val % m i = a i % m i := by
   simp [congruenceSet]
 
