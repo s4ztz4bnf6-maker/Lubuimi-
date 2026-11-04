@@ -52,7 +52,9 @@ theorem local_profile_mass_identity
 /-- The normalization hypothesis on each finite fibre. -/
 def Normalized
     (W : G → Finset U) (rho : G → U → ℝ) : Prop :=
-  ∀ x, (∑ u : U, fibreWeight W rho x u) ≤ 1
+  ∀ x,
+    (∀ u, 0 ≤ fibreWeight W rho x u) ∧
+    (∑ u : U, fibreWeight W rho x u) ≤ 1
 
 /-- Global mass of a profile, weighted by the canonical collision capacity. -/
 def globalProfileMass
@@ -74,9 +76,8 @@ theorem local_profile_mass_le_one
   have h0 : 0 ≤ ∑ u : U, fibreWeight W rho x u := by
     apply Finset.sum_nonneg
     intro u hu
-    simp [fibreWeight]
-    split_ifs <;> positivity
-  nlinarith [hNorm x]
+    exact (hNorm x).1 u
+  nlinarith [(hNorm x).2]
 
 /-- Global canonical BIB majorization. -/
 theorem global_bib_majorization
