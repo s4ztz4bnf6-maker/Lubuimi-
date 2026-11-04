@@ -39,6 +39,7 @@ def profileMass
     else 0
 
 /-- The local profile masses sum to the square of the total fibre weight. -/
+omit [Fintype G] [DecidableEq G] in
 theorem local_profile_mass_identity
     (W : G → Finset U) (rho : G → U → ℝ)
     (pi : G → U × U → Finset I) (x : G) :
@@ -148,6 +149,7 @@ theorem global_bib_majorization
 
 /-- Ordered pair count inside a finite support, expressed by deleting
 the first coordinate. -/
+omit [Fintype I] in
 theorem support_ordered_collision_count
     (S : Finset I) :
     (∑ i ∈ S, ((S.erase i).card : ℕ)) =
@@ -160,7 +162,7 @@ theorem support_ordered_collision_count
             intro i hi
             rw [Finset.card_erase_of_mem hi]
     _ = S.card * (S.card - 1) := by
-          simp [Finset.sum_const, nsmul_eq_mul]
+          simp [Finset.sum_const]
 
 /-- The pointwise BIB reserve is exactly the number of ordered distinct
 index pairs meeting at each point, summed over all points. -/
