@@ -1,9 +1,12 @@
 name: Lean degenerate-witness audit
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: apw4-canonical-lean-audit-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:
