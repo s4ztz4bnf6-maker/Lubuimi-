@@ -1,0 +1,49 @@
+name: APW4 canonical majorization kernel check
+
+on:
+  push:
+    branches:
+      - "audit/apw4-diagonal-majorization-2026-11-04"
+    paths:
+      - "APW4CanonicalMajorization.lean"
+      - "APW4HistoricalCRTCore.lean"
+      - "lakefile.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/apw4-canonical.yml"
+  pull_request:
+    paths:
+      - "APW4CanonicalMajorization.lean"
+      - "APW4HistoricalCRTCore.lean"
+      - "lakefile.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/apw4-canonical.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: apw4-canonical-only-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.28.0
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile the entire canonical file and emit all four axiom lists
+        run: |
+          lake env lean APW4CanonicalMajorization.lean
+          lake env lean APW4HistoricalCRTCore.lean
