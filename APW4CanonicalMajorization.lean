@@ -125,9 +125,12 @@ theorem bib_collision_identity
     (A : I → Finset G) :
     bibReserve A =
       ∑ x : G,
-        (((activeSupport A x).card *
-          ((activeSupport A x).card - 1) : ℕ) : ℝ) := by
-  rfl
+        (((∑ i ∈ activeSupport A x,
+            ((activeSupport A x).erase i).card : ℕ)) : ℝ) := by
+  unfold bibReserve
+  apply Finset.sum_congr rfl
+  intro x hx
+  rw [support_ordered_collision_count]
 
 #print axioms local_profile_mass_identity
 #print axioms local_profile_mass_le_one
