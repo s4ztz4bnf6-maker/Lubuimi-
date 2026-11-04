@@ -60,18 +60,24 @@ theorem local_profile_mass_identity
       simp [hne]
     · intro h
       exact (h (Finset.mem_univ _)).elim
-  apply Finset.sum_congr rfl
-  intro p hp
-  rw [hcollapse]
-  rw [Fintype.sum_prod_type]
   calc
-    (∑ u : U, ∑ v : U,
-        fibreWeight W rho x u * fibreWeight W rho x v)
-        = ∑ u : U, fibreWeight W rho x u *
-            (∑ v : U, fibreWeight W rho x v) := by
+    (∑ p : U × U, ∑ S : Finset I,
+        if pi x p = S then
+          fibreWeight W rho x p.1 * fibreWeight W rho x p.2
+        else 0)
+        = ∑ p : U × U,
+            fibreWeight W rho x p.1 * fibreWeight W rho x p.2 := by
               apply Finset.sum_congr rfl
-              intro u hu
-              rw [Finset.mul_sum]
+              intro p hp
+              exact hcollapse p
+    _ = ∑ u : U, ∑ v : U,
+          fibreWeight W rho x u * fibreWeight W rho x v := by
+            rw [Fintype.sum_prod_type]
+    _ = ∑ u : U, fibreWeight W rho x u *
+          (∑ v : U, fibreWeight W rho x v) := by
+            apply Finset.sum_congr rfl
+            intro u hu
+            rw [Finset.mul_sum]
     _ = (∑ u : U, fibreWeight W rho x u) *
           (∑ v : U, fibreWeight W rho x v) := by
             rw [Finset.sum_mul]
