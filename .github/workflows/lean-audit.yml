@@ -1,4 +1,5 @@
 name: Lean degenerate-witness audit
+# Trigger a fresh run for the isolated BBMST geometry checkpoint.
 
 on:
   push:
