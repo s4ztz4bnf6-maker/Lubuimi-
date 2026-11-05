@@ -52,7 +52,7 @@ def Hyperplane.Contains {n : ℕ} {C : CoordinateSystem n}
     | some s => x i = s
 
 /-- Every fixed coordinate of H lies inside the first k coordinates. -/
-def Hyperplane.FixedInsidePrefix {n k : ℕ} {C : CoordinateSystem n}
+def Hyperplane.FixedInsidePrefix {n : ℕ} {C : CoordinateSystem n}
     (H : Hyperplane C) (k : ℕ) : Prop :=
   ∀ i ∈ fixedCoords H, i.val < k
 
