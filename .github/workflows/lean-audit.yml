@@ -1,4 +1,5 @@
 name: Lean degenerate-witness audit
+# Trigger a fresh run for the isolated BBMST geometry checkpoint.
 
 on:
   push:
@@ -34,3 +35,5 @@ jobs:
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+      - name: Kernel-check BBMST geometric stage core
+        run: lake env lean BBMSTGeometryStageCore.lean
