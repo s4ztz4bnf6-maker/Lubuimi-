@@ -7,13 +7,16 @@ import BBMSTGeometryStageCore
 This module formalizes the local geometric operation described immediately
 before equation (13) in BBMST (2021): after choosing one deleted value in
 each coordinate, restrict the coordinate sets to the values that remain.
-A hyperplane that meets the reduced box retains exactly its original fixed
-coordinates. Hyperplanes that do not meet the reduced box are discarded.
+A hyperplane is restricted only under an explicit coordinatewise survival
+predicate: every fixed value must remain in its reduced coordinate set. Under
+that predicate, its fixed-coordinate set is unchanged. The separate proof
+that survival is equivalent to meeting the reduced box requires nonemptiness
+of every reduced coordinate set and is not claimed here.
 
 The choice of deleted values and the proof that they arise uniquely from
-codimension-one members of a non-parallel family are separate obligations;
-this file does not assume those choices have already been constructed from
-the source family.
+codimension-one members of a non-parallel family are also separate
+obligations; this file does not assume those choices have already been
+constructed from the source family.
 -/
 
 namespace BBMSTCodimOneReduction
