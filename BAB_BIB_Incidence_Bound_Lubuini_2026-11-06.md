@@ -145,7 +145,51 @@ None of these bridges is supplied by (4)–(6), by the CRT pair identity alone, 
 \mathcal E_{\rm APW4}\le D_k^{\rm BBMST}+\mathcal R_{\rm BIB}.
 \]
 
-## 5. Audit status
+## 5. Recovered q-fibre incidence interface (31 October working record)
+
+A targeted recovery of the 31 October derivation supplies a more concrete fibre-level interface than the initial summary in this note. The definitions below are recorded as recovered working definitions; their full historical source derivation and the claimed minimal-cover consequences still require verification against the original construction.
+
+Let \(q^a\parallel N\) and put
+\[
+B_q=N/q^a.
+\]
+Let \(U_q\) be the base residues modulo \(B_q\) not covered by the old classes. For a class indexed by \(h\), with residue \(b_h\) and modulus \(m_h\), the raw fibre-incidence indicator is
+\[
+I_q(x,h)=1
+\quad\Longleftrightarrow\quad
+b_h\equiv x\pmod{\gcd(m_h,B_q)}.
+\]
+Choose an inclusion-minimal fibre cover and write its indicator as
+\[
+A_q(x,h)\in\{0,1\},\qquad A_q(x,h)\le I_q(x,h).
+\]
+The redundancy indicator is
+\[
+Z_q(x,h)=I_q(x,h)-A_q(x,h)\ge0,
+\qquad I_q=A_q+Z_q.
+\]
+This last identity is exact. It gives no quantitative bound on the redundancy \(Z_q\), and minimality alone has not yet been shown to imply the required global weighted estimate.
+
+For two distinct prime directions \(q,r\), with \(q^a\parallel N\) and \(r^b\parallel N\), the recovered record uses
+\[
+D_{q,r}=N/(q^ar^b),\qquad
+W_{q,r}(x,y)=1_{\{x\equiv y\pmod{D_{q,r}}\}}.
+\]
+The raw cross-incidence matrix has the exact decomposition
+\[
+I_qW_{q,r}I_r^{\mathsf T}
+=A_qW_{q,r}A_r^{\mathsf T}
++A_qW_{q,r}Z_r^{\mathsf T}
++Z_qW_{q,r}A_r^{\mathsf T}
++Z_qW_{q,r}Z_r^{\mathsf T}.
+\]
+This is an algebraic expansion, not a bound: no estimate controlling the three terms containing \(Z\), nor a conservation law for their weighted mass, is presently established.
+
+The earlier depth-one label formulation is compatible with this interface only after a precise extraction map from selected entries \(A_q(x,h)\) to divisor labels \(d\mid B\) is specified. The recovered record states that the selected depth-one label family has size \(q\) when the terminal fibre depth is one and \(q-1\) otherwise, and that common labels for distinct base residues have proper lcm in \(B\). Those two claims are retained as **unverified construction claims** here: the minimality argument and the divisibility-to-proper-lcm argument have not been reconstructed line by line from a primary source. In particular, the assertion \(|U|\ge\Delta(B)\) appeared in the recovered record without a complete derivation and is not used in the proof of (6).
+
+This recovered interface identifies the missing quantitative step more sharply: control the mixed and redundant terms in the displayed four-term expansion, and prove that the selected depth-one divisor labels are genuinely the rows of the incidence system used in Sections 1–3. It still does not define an APW4 collision-to-incidence map.
+
+## 6. Audit status
 
 | Claim | Status |
 |---|---|
