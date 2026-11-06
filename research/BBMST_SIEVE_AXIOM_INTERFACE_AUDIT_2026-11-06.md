@@ -151,3 +151,54 @@ definitions.
 - This note itself is not a Lean proof.
 - No replacement theorem for `sieve_criterion` or `sf_sieve_lt_one`
   is claimed here.
+
+## 8. Exact stage split in the published square-free application
+
+A closer reading of the published Section 5 fixes an important point that a
+generic "improved-or-general" stage flag would miss.
+
+The published proof does **not** use the improved estimate at every stage.
+It first removes codimension-one hyperplanes for the primes at most
+\(p_{21}=73\). For each such coordinate, the corresponding singleton value
+is deleted from the coordinate set. The resulting box has
+\(|S_k|=p_k-1\) for \(2\le k\le21\), and \(|S_k|=p_k\) for \(k\ge22\).
+The residual family has no singleton fixed set with index below 22; singleton
+fixed sets may still occur at indices \(i\ge22\).
+
+Consequently the proof uses two genuinely different estimates:
+
+- For stages \(6\le k\le21\), the new family \(N_k\) contains no
+  singleton fixed set. Equation (13) gives
+  \[
+  M_k^{(2)}\le
+  \frac{c_{k-1}(3)-2c_{k-1}(1)+1}{|S_k|^2}.
+  \]
+  This is the numerator used in the finite recurrence (18).
+- For stages \(k>21\), the paper explicitly reverts to the general
+  estimate (12):
+  \[
+  M_k^{(2)}\le\frac{c_{k-1}(3)}{|S_k|^2}.
+  \]
+  This is the bound propagated in (17) and then passed to the large-prime
+  termination criterion.
+
+Thus a source-faithful replacement for the current global `M2bound` must
+be a **hybrid indexed bound**, not simply a stronger branch guarded by an
+unproved proposition. The stage index and the preprocessed coordinate
+system determine which theorem is applicable. For the square-free application
+the switch occurs at index 21/22, and the two branches feed different later
+arguments (finite optimized recurrence versus large-prime tail).
+
+The geometric pre-processing itself must be formalized: identify the unique
+codimension-one hyperplane for each early coordinate (uniqueness follows
+from the no-parallel condition), remove its fixed value from that coordinate
+set, restrict the remaining hyperplanes to the reduced product, and prove
+that the residual family has no singleton fixed sets on the early coordinates.
+Only then is the improved branch justified for those stages.
+
+This does not make the general theorem stronger than its source. The general
+bound (12) remains valid at every stage; the improved bound (13) is a
+separate consequence of the singleton-free stage geometry. In particular,
+the current Lean `M2bound` cannot remain the sole bound used uniformly
+through all stages.
+
