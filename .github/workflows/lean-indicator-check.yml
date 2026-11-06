@@ -1,0 +1,61 @@
+name: BBMST indicator lemma check
+
+on:
+  push:
+    branches:
+      - "audit/bbmst-sum-pair-indicator-2026-10-28"
+    paths:
+      - "BBMSTMomentBridge.lean"
+      - "BBMSTFiniteSieveStage.lean"
+      - "BBMSTCoordinateStage.lean"
+      - "BBMSTWeightUpdate.lean"
+      - "BBMSTFiniteProjection.lean"
+      - "BBMSTFiniteProjectionAudit.lean"
+      - ".github/workflows/lean-indicator-check.yml"
+      - "lakefile.lean"
+      - "lean-toolchain"
+  pull_request:
+    paths:
+      - "BBMSTMomentBridge.lean"
+      - "BBMSTFiniteSieveStage.lean"
+      - "BBMSTCoordinateStage.lean"
+      - "BBMSTWeightUpdate.lean"
+      - "BBMSTFiniteProjection.lean"
+      - "BBMSTFiniteProjectionAudit.lean"
+      - ".github/workflows/lean-indicator-check.yml"
+      - "lakefile.lean"
+      - "lean-toolchain"
+  workflow_dispatch:
+
+jobs:
+  indicator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and create manifest
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile isolated lemma and print axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTMomentBridge.olean BBMSTMomentBridge.lean
+      - name: Compile finite projection foundation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteProjection.olean BBMSTFiniteProjection.lean
+      - name: Audit finite projection theorem axioms
+        run: lake env lean BBMSTFiniteProjectionAudit.lean
+      - name: Compile finite sieve-stage module and print axioms
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteSieveStage.olean BBMSTFiniteSieveStage.lean
+      - name: Compile concrete coordinate-stage model and print axioms
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCoordinateStage.olean BBMSTCoordinateStage.lean
+      - name: Compile source-faithful BBMST weight update and print axioms
+        run: lake env lean BBMSTWeightUpdate.lean
