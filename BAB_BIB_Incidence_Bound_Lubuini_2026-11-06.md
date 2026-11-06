@@ -7,7 +7,7 @@
 
 Let \(U\) and \(D\) be finite sets, with
 \[
-M=|U|,\qquad \tau=|D|.
+m_0=|U|,\qquad \tau=|D|.
 \]
 For each \(x\in U\), let \(S_x\subseteq D\). Define the incidence degrees
 \[
@@ -22,7 +22,7 @@ Assume that for some integers \(r,\mu\ge0\),
 \]
 Then
 \[
-T\ge rM.
+T\ge rm_0.
 \tag{1}
 \]
 
@@ -34,14 +34,14 @@ Count pairs \((x,y,d)\) with \(x\ne y\) and \(d\in S_x\cap S_y\). Counting first
 \[
 \sum_{d\in D}\binom{n_d}{2}
 =\sum_{\{x,y\}\in\binom U2}|S_x\cap S_y|
-\le\mu\binom M2.
+\le\mu\binom {m_0}2.
 \tag{2}
 \]
 Since \(n_d^2=n_d+2\binom{n_d}{2}\), summing (2) yields
 \[
 \sum_{d\in D}n_d^2
 =T+2\sum_d\binom{n_d}{2}
-\le T+\mu M(M-1).
+\le T+\mu m_0(m_0-1).
 \tag{3}
 \]
 Cauchy–Schwarz on the \(\tau\) column degrees gives
@@ -51,12 +51,12 @@ T^2=\left(\sum_{d\in D}n_d\right)^2
 \]
 Combining with (3):
 \[
-\boxed{T^2\le\tau\bigl(T+\mu M(M-1)\bigr).}
+\boxed{T^2\le\tau\bigl(T+\mu m_0(m_0-1)\bigr).}
 \tag{4}
 \]
 Equivalently,
 \[
-\boxed{\frac{T^2}{\tau}-T\le\mu M(M-1)}
+\boxed{\frac{T^2}{\tau}-T\le\mu m_0(m_0-1)}
 \]
 when \(\tau>0\).
 
@@ -66,31 +66,31 @@ No APW4 weights or historical APW4 atoms occur in this argument. It is a finite 
 
 Assume additionally
 \[
-M>0,\qquad \tau\le2r,\qquad \mu<r,\qquad \tau\mu<r^2.
+m_0>0,\qquad \tau\le2r,\qquad \mu<r,\qquad \tau\mu<r^2.
 \tag{H2}
 \]
-From (1), \(T\ge rM\). Moreover, \(\tau\le2r\) and \(M\ge1\) imply \(2rM\ge\tau\). Hence
+From (1), \(T\ge rm_0\). Moreover, \(\tau\le2r\) and \(m_0\ge1\) imply \(2rm_0\ge\tau\). Hence
 \[
-(T-rM)(T+rM-\tau)\ge0,
+(T-rm_0)(T+rm_0-\tau)\ge0,
 \]
 so
 \[
-T^2-\tau T\ge r^2M^2-\tau rM.
+T^2-\tau T\ge r^2M^2-\tau rm_0.
 \tag{5}
 \]
 By (4),
 \[
-r^2M^2-\tau rM
-\le\tau\mu M(M-1).
+r^2M^2-\tau rm_0
+\le\tau\mu m_0(m_0-1).
 \]
-Divide by \(M>0\) and rearrange:
+Divide by \(m_0>0\) and rearrange:
 \[
-(r^2-\tau\mu)M\le\tau(r-\mu).
+(r^2-\tau\mu)m_0\le\tau(r-\mu).
 \]
 The denominator is positive by (H2), therefore
 \[
 \boxed{
-M\le
+m_0\le
 \frac{\tau(r-\mu)}{r^2-\tau\mu}.
 }
 \tag{6}
@@ -107,22 +107,36 @@ provided all three numerical hypotheses in (H2) and both incidence hypotheses in
 
 This proves the algebraic consequence of the incidence assumptions. It does not prove that a given covering system supplies such sets \(S_x\).
 
+### Notational and formula discrepancy in earlier notes
+
+The symbol \(M\) was previously used both for the uncovered-residue count and for the squarefree arithmetic integer in \(B(M)=2M-\sigma(M)\). This note now separates them: \(m_0=|U|\) is the incidence-row count, while \(m\) is the arithmetic integer.
+
+An earlier shorthand in the 1 November record was
+\[
+T^2\le A\tau(B)\bigl[T+A\mu(B)M(M-1)\bigr].
+\]
+The recovered incidence derivation, as stated with \(T=\sum_dn_d\), instead yields exactly
+\[
+T^2\le\tau(B)\bigl[T+\mu(B)m_0(m_0-1)\bigr].
+\]
+No factor \(A\) appears in this direct double count. Unless a separate normalization or a different definition of \(T\) and the incidence multiplicities is supplied, the earlier shorthand is **not interchangeable** with (4) and is not used in this proof.
+
 ## 4. Exact boundary of the density-transfer claim
 
 The accessible 31 October derivation and the 6 November APW4 dossier do **not** establish any identity or inequality connecting
 \[
-B(M)=2M-\sigma(M),\qquad
+B(m)=2m-\sigma(m),\qquad
 \mathcal E_{\rm APW4},\qquad
 \mathcal R_{\rm BIB}.
 \]
-For squarefree \(M\), the arithmetic identity
+For squarefree arithmetic integer \(m\), the arithmetic identity
 \[
-\frac{\sigma(M)}M=\prod_{p\mid M}\left(1+\frac1p\right)
+\frac{\sigma(m)}m=\prod_{p\mid M}\left(1+\frac1p\right)
 \]
-is independent of (4)–(6). In particular, the sign condition \(B(M)\le0\) does not by itself imply (H1), (H2), a lower bound for \(M=|U|\), or a violation of an APW4/BIB capacity inequality.
+is independent of (4)–(6). In particular, the sign condition \(B(M)\le0\) does not by itself imply (H1), (H2), a lower bound for \(m_0=|U|\), or a violation of an APW4/BIB capacity inequality.
 
 To close a genuine density transfer, one still needs a source-derived bridge of a precise form, for example:
-- a proved lower bound \(M\ge L(B,q,\ldots)\) from the covering-density hypothesis, to compare with (6); or
+- a proved lower bound \(m_0\ge L(B,q,\ldots)\) from the covering-density hypothesis, to compare with (6); or
 - a proved map from the APW4 collision events to the depth-one incidences \((x,d)\), with exact weights and multiplicity bounds; or
 - an independent inequality linking the divisor-product deficit to a lower bound on APW4 energy and an upper bound on the actual BIB reserve.
 
@@ -140,7 +154,7 @@ None of these bridges is supplied by (4)–(6), by the CRT pair identity alone, 
 | Explicit bound (6) | Proved from (H1), (H2) |
 | Historical construction of every \(S_x\) | Not independently reconstructed from the accessible source |
 | Application to a covering system | Conditional on verifying (H1), (H2) |
-| Transfer from \(B(M)=2M-\sigma(M)\) | Open |
+| Transfer from \(B(m)=2m-\sigma(m)\) | Open |
 | Transfer to APW4 energy / historical HT | Open |
 | Unconditional Erdős–Selfridge conclusion | Not established by this note |
 
