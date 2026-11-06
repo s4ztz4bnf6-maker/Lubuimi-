@@ -90,8 +90,9 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
+        cases hidx
         have hj := hPrefix j
-        simpa [Hyperplane.ContainsPrefix, projectPrefix, hidx, hassign] using hj
+        simpa [Hyperplane.ContainsPrefix, projectPrefix, hassign] using hj
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
