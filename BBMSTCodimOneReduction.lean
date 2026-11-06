@@ -34,12 +34,13 @@ abbrev ReducedValue (removed : ∀ i : Fin n, Option (C.S i))
     (i : Fin n) := {s : C.S i // Retained removed i s}
 
 /-- The restriction of one optional coordinate assignment to the reduced set. -/
-def restrictOption (removed : ∀ i : Fin n, Option (C.S i))
-    (i : Fin n) (v : Option (C.S i)) : Option (ReducedValue removed i) :=
-  match v with
-  | none => none
+noncomputable def restrictOption (removed : ∀ i : Fin n, Option (C.S i))
+    (i : Fin n) (v : Option (C.S i)) : Option (ReducedValue removed i) := by
+  classical
+  cases v with
+  | none => exact none
   | some s =>
-      if h : Retained removed i s then some ⟨s, h⟩ else none
+      exact if h : Retained removed i s then some ⟨s, h⟩ else none
 
 /-- A hyperplane survives if none of its fixed values was deleted. -/
 def Survives (removed : ∀ i : Fin n, Option (C.S i))
@@ -52,7 +53,7 @@ structure RestrictedHyperplane
   assignment : ∀ i : Fin n, Option (ReducedValue removed i)
 
 /-- Restrict a hyperplane coordinatewise. -/
-def restrictHyperplane (removed : ∀ i : Fin n, Option (C.S i))
+noncomputable def restrictHyperplane (removed : ∀ i : Fin n, Option (C.S i))
     (H : Hyperplane C) : RestrictedHyperplane removed where
   assignment i := restrictOption removed i (H.assignment i)
 
