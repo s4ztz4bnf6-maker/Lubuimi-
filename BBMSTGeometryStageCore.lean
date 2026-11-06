@@ -90,12 +90,8 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
-        have hassign' : H.assignment (prefixIndex hk j) = some s := by
-          rw [hidx]
-          exact hassign
         have hj := hPrefix j
-        rw [hassign'] at hj
-        exact hj
+        simpa [Hyperplane.ContainsPrefix, projectPrefix, hidx, hassign] using hj
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
@@ -114,7 +110,7 @@ def stageFamily {n : ℕ} {C : CoordinateSystem n}
   exact A.filter fun H => ∀ i ∈ fixedCoords H, i.val < k
 
 /-- The hyperplanes first entering the stage family at stage k. -/
-def newAtStage {n : ℕ} {C : CoordinateSystem n}
+noncomputable def newAtStage {n : ℕ} {C : CoordinateSystem n}
     (A : Finset (Hyperplane C)) (k : ℕ) : Finset (Hyperplane C) := by
   classical
   exact stageFamily A k \ stageFamily A (k - 1)
