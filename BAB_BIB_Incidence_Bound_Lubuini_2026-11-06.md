@@ -75,12 +75,12 @@ From (1), \(T\ge rm_0\). Moreover, \(\tau\le2r\) and \(m_0\ge1\) imply \(2rm_0\g
 \]
 so
 \[
-T^2-\tau T\ge r^2M^2-\tau rm_0.
+T^2-\tau T\ge r^2m_0^2-\tau rm_0.
 \tag{5}
 \]
 By (4),
 \[
-r^2M^2-\tau rm_0
+r^2m_0^2-\tau rm_0
 \le\tau\mu m_0(m_0-1).
 \]
 Divide by \(m_0>0\) and rearrange:
@@ -109,7 +109,7 @@ This proves the algebraic consequence of the incidence assumptions. It does not 
 
 ### Notational and formula discrepancy in earlier notes
 
-The symbol \(M\) was previously used both for the uncovered-residue count and for the squarefree arithmetic integer in \(B(M)=2M-\sigma(M)\). This note now separates them: \(m_0=|U|\) is the incidence-row count, while \(m\) is the arithmetic integer.
+The symbol \(M\) was previously used both for the uncovered-residue count and for the squarefree arithmetic integer in \(B(m)=2m-\sigma(m)\). This note now separates them: \(m_0=|U|\) is the incidence-row count, while \(m\) is the arithmetic integer.
 
 An earlier shorthand in the 1 November record was
 \[
@@ -131,9 +131,9 @@ B(m)=2m-\sigma(m),\qquad
 \]
 For squarefree arithmetic integer \(m\), the arithmetic identity
 \[
-\frac{\sigma(m)}m=\prod_{p\mid M}\left(1+\frac1p\right)
+\frac{\sigma(m)}m=\prod_{p\mid m}\left(1+\frac1p\right)
 \]
-is independent of (4)–(6). In particular, the sign condition \(B(M)\le0\) does not by itself imply (H1), (H2), a lower bound for \(m_0=|U|\), or a violation of an APW4/BIB capacity inequality.
+is independent of (4)–(6). In particular, the sign condition \(B(m)\le0\) does not by itself imply (H1), (H2), a lower bound for \(m_0=|U|\), or a violation of an APW4/BIB capacity inequality.
 
 To close a genuine density transfer, one still needs a source-derived bridge of a precise form, for example:
 - a proved lower bound \(m_0\ge L(B,q,\ldots)\) from the covering-density hypothesis, to compare with (6); or
