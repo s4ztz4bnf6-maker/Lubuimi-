@@ -118,24 +118,31 @@ theorem contains_iff_restricted
         | some s => (restrictPoint removed x hx i).val = s.val) := by
   constructor
   · intro h i
+    change (∀ j, match H.assignment j with
+      | none => True
+      | some s => x j = s) at h
     cases hA : H.assignment i with
     | none =>
         simp [restrictHyperplane, restrictOption, hA]
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
         have hxi : x i = s := by
-          simpa [Hyperplane.Contains, hA] using h i
-        simp [restrictHyperplane, restrictOption, hA, hs, restrictPoint, hxi]
+          simpa [hA] using h i
+        simp [restrictHyperplane, restrictOption, hA, hs,
+          restrictPoint, hxi]
   · intro h i
     cases hA : H.assignment i with
     | none =>
-        simp [Hyperplane.Contains, hA]
+        simp [hA]
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
+        have hred :
+            (restrictHyperplane removed H).assignment i =
+              some ⟨s, hs⟩ := by
+          simp [restrictHyperplane, restrictOption, hA, hs]
         have hi := h i
-        simp [restrictHyperplane, restrictOption, hA, hs,
-          restrictPoint] at hi
-        simpa [Hyperplane.Contains, hA] using hi
+        rw [hred] at hi
+        simpa [restrictPoint] using hi
 
 #print axioms restrictOption_isSome_iff
 #print axioms fixedCoords_restrict_eq
