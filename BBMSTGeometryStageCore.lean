@@ -96,8 +96,6 @@ theorem containsPrefix_iff_full
         have hj := hPrefix j
         rw [hassign'] at hj
         exact hj
-        change x i = s
-        simpa [hidx] using hj
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
