@@ -87,7 +87,7 @@ The following source distinctions matter:
   codimension-one removal described immediately before it).
 
 The current `sieve_criterion` receives no hyperplane family, no probability
-measure `P_a), no actual moments, and no stagewise codimension-one
+measure `P_a`, no actual moments, and no stagewise codimension-one
 hypothesis. The current `M2bound` always uses the stronger numerator.
 Therefore it is not yet a source-faithful formal statement of Theorems 3.1
 and 3.2.
