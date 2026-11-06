@@ -1,4 +1,4 @@
-# Lubuini — Exact BIB incidence second-moment bound and transfer audit
+# Lubuimi — Exact BIB incidence second-moment bound and transfer audit
 
 **Date:** 6 November 2026  
 **Status:** The finite incidence inequality below is proved from its stated hypotheses. Its application to the historical covering construction requires verification of those hypotheses from the original depth-one fibre definitions. It is **not** yet a BAB/BIB-to-APW4 transfer theorem.
