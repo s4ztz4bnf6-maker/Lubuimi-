@@ -94,8 +94,8 @@ theorem containsPrefix_iff_full
           rw [hidx]
           exact hassign
         have hj := hPrefix j
-        have hj' : x (prefixIndex hk j) = s := by
-          simpa [Hyperplane.ContainsPrefix, projectPrefix, hassign'] using hj
+        rw [hassign'] at hj
+        have hj' : x (prefixIndex hk j) = s := hj
         simpa [hidx] using hj'
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
