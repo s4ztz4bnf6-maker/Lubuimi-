@@ -108,3 +108,66 @@ example : sieveSum 1 1 [1, 1] [] = 0 := by
 #print axioms erdos_selfridge
 #print axioms sieve_criterion
 #print axioms sf_sieve_lt_one
+
+
+/-!
+Additional source-level scalar core: this is deliberately separate from the
+axiomatic sieve interface above. It proves the two pointwise inequalities
+needed for the removed-fiber estimate, but does not assert that the evolving
+measure or geometric hypotheses have been formalized.
+-/
+namespace BBMSTScalarAudit
+
+def normalizedRemovedMass (α δ : ℚ) : ℚ :=
+  max 0 ((α - δ) / (1 - δ))
+
+theorem normalizedRemovedMass_le_alpha
+    (α δ : ℚ)
+    (hα_nonneg : 0 ≤ α) (hα_le_one : α ≤ 1)
+    (hδ_pos : 0 < δ) (hδ_lt_one : δ < 1) :
+    normalizedRemovedMass α δ ≤ α := by
+  unfold normalizedRemovedMass
+  have hden : 0 < 1 - δ := by linarith
+  by_cases h : α ≤ δ
+  · have hquot : (α - δ) / (1 - δ) ≤ 0 := by
+      apply div_nonpos_of_nonpos_of_nonneg
+      · linarith
+      · linarith
+    rw [max_eq_left hquot]
+    exact hα_nonneg
+  · have hδα : δ < α := lt_of_not_ge h
+    have hquot : 0 ≤ (α - δ) / (1 - δ) :=
+      le_of_lt (div_pos (by linarith) hden)
+    rw [max_eq_right hquot]
+    apply (div_le_iff₀ hden).2
+    nlinarith [mul_nonneg (le_of_lt hδ_pos) (sub_nonneg.mpr hα_le_one)]
+
+theorem normalizedRemovedMass_le_secondMoment
+    (α δ : ℚ)
+    (hα_nonneg : 0 ≤ α) (hα_le_one : α ≤ 1)
+    (hδ_pos : 0 < δ) (hδ_lt_one : δ < 1) :
+    normalizedRemovedMass α δ ≤ α ^ 2 / (4 * δ * (1 - δ)) := by
+  unfold normalizedRemovedMass
+  have hden₁ : 0 < 1 - δ := by linarith
+  have hden₂ : 0 < 4 * δ * (1 - δ) := by positivity
+  by_cases h : α ≤ δ
+  · have hquot : (α - δ) / (1 - δ) ≤ 0 := by
+      apply div_nonpos_of_nonpos_of_nonneg
+      · linarith
+      · linarith
+    rw [max_eq_left hquot]
+    exact div_nonneg (sq_nonneg α) (le_of_lt hden₂)
+  · have hδα : δ < α := lt_of_not_ge h
+    have hquot : 0 ≤ (α - δ) / (1 - δ) :=
+      le_of_lt (div_pos (by linarith) hden₁)
+    rw [max_eq_right hquot]
+    have hcore : 4 * δ * (α - δ) ≤ α ^ 2 := by
+      nlinarith [sq_nonneg (α - 2 * δ)]
+    apply (div_le_div_iff₀ hden₁ hden₂).2
+    have hmul := mul_le_mul_of_nonneg_right hcore (le_of_lt hden₁)
+    nlinarith
+
+#print axioms BBMSTScalarAudit.normalizedRemovedMass_le_alpha
+#print axioms BBMSTScalarAudit.normalizedRemovedMass_le_secondMoment
+
+end BBMSTScalarAudit
