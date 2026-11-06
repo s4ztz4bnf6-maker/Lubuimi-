@@ -39,6 +39,10 @@ def projectPrefix {n k : ℕ} {C : CoordinateSystem n}
 structure Hyperplane {n : ℕ} (C : CoordinateSystem n) where
   assignment : ∀ i : Fin n, Option (C.S i)
 
+noncomputable instance instDecidableEqHyperplane {n : ℕ}
+    (C : CoordinateSystem n) : DecidableEq (Hyperplane C) :=
+  Classical.decEq _
+
 /-- The coordinates fixed by a hyperplane. -/
 def fixedCoords {n : ℕ} {C : CoordinateSystem n}
     (H : Hyperplane C) : Finset (Fin n) :=
@@ -52,7 +56,7 @@ def Hyperplane.Contains {n : ℕ} {C : CoordinateSystem n}
     | some s => x i = s
 
 /-- Every fixed coordinate of H lies inside the first k coordinates. -/
-def Hyperplane.FixedInsidePrefix {n k : ℕ} {C : CoordinateSystem n}
+def Hyperplane.FixedInsidePrefix {n : ℕ} {C : CoordinateSystem n}
     (H : Hyperplane C) (k : ℕ) : Prop :=
   ∀ i ∈ fixedCoords H, i.val < k
 
@@ -86,9 +90,12 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
-        have hj : x (prefixIndex hk j) = s := by
-          simpa [Hyperplane.ContainsPrefix, hidx, hassign,
-            projectPrefix] using hPrefix j
+        have hassign' : H.assignment (prefixIndex hk j) = some s := by
+          rw [hidx]
+          exact hassign
+        have hj := hPrefix j
+        rw [hassign'] at hj
+        exact hj
         change x i = s
         simpa [hidx] using hj
   · intro hFull j
@@ -110,14 +117,16 @@ def stageFamily {n : ℕ} {C : CoordinateSystem n}
 
 /-- The hyperplanes first entering the stage family at stage k. -/
 def newAtStage {n : ℕ} {C : CoordinateSystem n}
-    (A : Finset (Hyperplane C)) (k : ℕ) : Finset (Hyperplane C) :=
-  stageFamily A k \ stageFamily A (k - 1)
+    (A : Finset (Hyperplane C)) (k : ℕ) : Finset (Hyperplane C) := by
+  classical
+  exact stageFamily A k \ stageFamily A (k - 1)
 
 /-- Every newly entering hyperplane belongs to the current stage family. -/
 theorem newAtStage_subset_stageFamily
     {n : ℕ} {C : CoordinateSystem n}
     (A : Finset (Hyperplane C)) (k : ℕ) :
     newAtStage A k ⊆ stageFamily A k := by
+  classical
   intro H hH
   exact (Finset.mem_sdiff.mp hH).1
 
