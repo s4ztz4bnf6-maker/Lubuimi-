@@ -71,4 +71,11 @@ theorem stage_denominator_pos {n : ℕ}
     0 < secondMomentDenominator (P.distortion i) :=
   secondMomentDenominator_pos hδ (P.distortion_le_half i)
 
+/-! Axiom audit for the foundational declarations in this module. -/
+#print axioms secondMomentDenominator_pos
+#print axioms secondMomentDenominator_zero
+#print axioms safeStageContribution_zero
+#print axioms safeStageContribution_le_first
+#print axioms stage_denominator_pos
+
 end BBMSTSieveAlignedCore
