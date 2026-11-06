@@ -90,12 +90,10 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
-        have hassign' : H.assignment (prefixIndex hk j) = some s := by
-          simpa [hassign] using (congrArg H.assignment hidx)
+        cases hidx
         have hj := hPrefix j
-        rw [hassign'] at hj
-        have hj' : x (prefixIndex hk j) = s := hj
-        simpa [hidx] using hj'
+        rw [hassign] at hj
+        simpa [projectPrefix] using hj
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
