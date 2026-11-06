@@ -40,4 +40,8 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile BBMST geometric stage core
-        run: lake env lean BBMSTGeometryStageCore.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+      - name: Compile codimension-one restriction core
+        run: lake env lean BBMSTCodimOneReduction.lean
