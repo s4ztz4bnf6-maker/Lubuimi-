@@ -444,9 +444,14 @@ theorem updatedCoveredEventMass_le_old
   have hxCovered : x ∈ F.covered := hE hx
   have hxPoints : x ∈ F.points := F.covered_subset hxCovered
   simp [updatedWeight, hxCovered]
-  exact mul_le_of_le_one_right (F.weight_nonneg x hxPoints)
-    (coveredMultiplier_le_one F.proportion_nonneg
-      F.proportion_le_one hδ hδhalf)
+  calc
+    F.weight x * coveredMultiplier F.proportion δ
+        ≤ F.weight x * 1 :=
+          mul_le_mul_of_nonneg_left
+            (coveredMultiplier_le_one F.proportion_nonneg
+              F.proportion_le_one hδ hδhalf)
+            (F.weight_nonneg x hxPoints)
+    _ = F.weight x := by ring
 
 
 #print axioms coveredMultiplier_le_one
