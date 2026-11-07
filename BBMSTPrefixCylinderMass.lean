@@ -523,3 +523,11 @@ theorem prefixCylinder_fixed_mass_le
   rw [prefixCylinder_fixed_mass_reindex C a ha P0 δ j hj H s hfixed]
   exact prefixCylinder_fixedExtension_mass_le C a ha P0 δ
     hP0_nonneg hδ hδhalf j hj H s
+
+
+#print axioms prefixCylinderExtensionEquivFree
+#print axioms prefixCylinder_free_mass_reindex
+#print axioms prefixCylinderExtensionEquivFixed
+#print axioms prefixCylinder_fixed_mass_reindex
+#print axioms prefixCylinder_free_mass_eq
+#print axioms prefixCylinder_fixed_mass_le
