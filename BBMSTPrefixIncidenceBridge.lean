@@ -95,7 +95,7 @@ theorem prefixAlpha_eq_stageCoveredValues_density
           (BBMSTHyperplaneFibreIncidence.stageCoordinate
             (k + 1) (by omega) (by omega))) : ℚ) := by
   classical
-  have hcoord := prefixStageCoordinate_eq_incidence (C := C) hk
+  have hcoord := prefixStageCoordinate_eq_incidence hk
   change (prefixCoveredValues C (A := A) hk x).card /
       (Fintype.card (C.S (stageCoordinate hk)) : ℚ) = _
   rw [prefixCoveredValues_eq_stageCoveredValues (C := C) (A := A) hk x]
