@@ -121,6 +121,7 @@ noncomputable def PAt
       PrefixPoint C (a + j) hj → ℚ
   | 0, hj, x => P0 x
   | j + 1, hj, x => by
+      classical
       let k := a + j
       have hk : k + 1 ≤ n := by
         simpa only [k, Nat.add_succ] using hj
@@ -132,7 +133,7 @@ noncomputable def PAt
         (Fintype.card (C.S (stageCoordinate hk)) : ℚ)
       let covered : Prop := x (Fin.last k) ∈ values
       exact
-        (PAt C A a ha P0 δ j hprev xprev /
+        (PAt (A := A) a ha P0 δ j hprev xprev /
           (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) *
           (if covered then coveredMultiplier α (δ (stageCoordinate hk))
             else uncoveredMultiplier α (δ (stageCoordinate hk)))
