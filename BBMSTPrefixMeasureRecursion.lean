@@ -149,4 +149,15 @@ theorem extendPrefix_last
     Function.update]
 
 
+/-- Restricting an appended prefix recovers the original prefix. -/
+theorem restrictPrefix_extendPrefix
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (s : C.S (stageCoordinate hk)) :
+    restrictPrefix C hk (extendPrefix C hk x s) = x := by
+  funext i
+  simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
+    prefixIndex, stageCoordinate, Function.update, i.isLt]
+
+
 end BBMSTPrefixMeasure
