@@ -217,6 +217,58 @@ theorem actualStageFirstMoment_eq
   simp [stageUniformFibre, coveredProportion, uniformWeight,
     stageCoordinate]
 
+/-- A coarse but fully geometric first-moment estimate: under any
+normalized nonnegative base distribution, the mean fraction of covered
+next-coordinate values is at most |N_k| / |S_k|. This is the direct
+incidence-counting consequence of the fact that each new hyperplane fixes
+the new coordinate to at most one value. -/
+theorem actualStageFirstMoment_le_newHyperplaneRatio
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    {hk : k ≤ n} {hk0 : 0 < k}
+    (D : HyperplaneStageData (C := C) A k hk hk0) :
+    uniformStageFirstMoment (toUniformFiniteStageData D) ≤
+      ((newAtStage A k).card : ℚ) /
+        (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+  classical
+  let i := stageCoordinate (C := C) k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  have hdenNat : 0 < Fintype.card (C.S i) := by
+    have := C.card_ge_two i
+    omega
+  have hden : 0 < (Fintype.card (C.S i) : ℚ) := by
+    exact_mod_cast hdenNat
+  rw [actualStageFirstMoment_eq]
+  calc
+    (∑ x ∈ D.basePoints,
+      D.baseWeight x *
+        (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ)))
+      ≤ ∑ x ∈ D.basePoints,
+        D.baseWeight x *
+          (((newAtStage A k).card : ℚ) /
+            (Fintype.card (C.S i) : ℚ)) := by
+          apply Finset.sum_le_sum
+          intro x hx
+          have hcard :=
+            stageCoveredValues_card_le_newAtStage_card
+              (C := C) A k hk hk0 x
+          have hcardQ :
+              (stageCoveredValues (C := C) A k hk hk0 x).card
+                ≤ (newAtStage A k).card := hcard
+          have hfrac :
+              ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+                  (Fintype.card (C.S i) : ℚ)
+                ≤ ((newAtStage A k).card : ℚ) /
+                  (Fintype.card (C.S i) : ℚ) := by
+            apply (div_le_div_iff_of_pos_right hden).2
+            exact_mod_cast hcardQ
+          exact mul_le_mul_of_nonneg_left hfrac
+            (D.baseWeight_nonneg x hx)
+    _ = ((newAtStage A k).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) := by
+          rw [← Finset.sum_mul, D.baseWeight_sum_one]
+          ring
+
 /-- The analogous exact second-moment incidence identity. -/
 theorem actualStageSecondMoment_eq
     {A : Finset (Hyperplane C)} {k : ℕ}
@@ -243,6 +295,7 @@ theorem actualStageSecondMoment_eq
 #print axioms stageCoveredValues_card_le_newAtStage_card
 #print axioms toUniformFiniteStageData
 #print axioms actualStageFirstMoment_eq
+#print axioms actualStageFirstMoment_le_newHyperplaneRatio
 #print axioms actualStageSecondMoment_eq
 
 end BBMSTHyperplaneFibreIncidence
