@@ -137,4 +137,16 @@ noncomputable def PAt
           (if covered then coveredMultiplier α (δ (stageCoordinate hk))
             else uncoveredMultiplier α (δ (stageCoordinate hk)))
 
+
+/-- Appending a coordinate writes exactly that value at the new
+boundary coordinate. -/
+theorem extendPrefix_last
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (s : C.S (stageCoordinate hk)) :
+    (extendPrefix C hk x s) (Fin.last k) = s := by
+  simp [extendPrefix, projectPrefix, prefixIndex, stageCoordinate,
+    Function.update]
+
+
 end BBMSTPrefixMeasure
