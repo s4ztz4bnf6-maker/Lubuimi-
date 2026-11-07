@@ -49,6 +49,8 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
       - name: Compile finite-coordinate geometry core for incidence bridge
         run: lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+      - name: Compile source-indexed BBMST prefix measure recursion
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureRecursion.olean BBMSTPrefixMeasureRecursion.lean
       - name: Compile uniform-stage source moment instantiation
         run: lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
       - name: Compile hyperplane-induced finite fibre incidence bridge
