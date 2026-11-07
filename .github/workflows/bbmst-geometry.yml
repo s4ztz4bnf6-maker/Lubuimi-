@@ -6,6 +6,7 @@ on:
       - "audit/bbmst-geometry-core-2026-11-05"
     paths:
       - "BBMSTGeometryStageCore.lean"
+      - "BBMSTCodimOneReduction.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
