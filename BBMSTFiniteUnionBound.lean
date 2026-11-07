@@ -115,8 +115,35 @@ theorem complement_union_has_positive_mass
   rw [htotal] at hsplit
   linarith
 
+/-- A positive-mass complement contains an actual point outside every
+event in the finite family. -/
+theorem exists_point_outside_union
+    (Ω : Finset α) (w : α → ℚ)
+    (hw : ∀ x ∈ Ω, 0 ≤ w x)
+    (htotal : (∑ x ∈ Ω, w x) = 1)
+    (events : Fin n → Finset α)
+    (hEvents : ∀ i, events i ⊆ Ω)
+    (bounds : Fin n → ℚ)
+    (hBounds : ∀ i, eventMass Ω (events i) w ≤ bounds i)
+    (hSmall : (∑ i : Fin n, bounds i) < 1) :
+    ∃ x ∈ Ω, x ∉ eventUnion events := by
+  classical
+  have hpositive :=
+    complement_union_has_positive_mass
+      Ω w hw htotal events hEvents bounds hBounds hSmall
+  have hnonempty : (Ω \\ eventUnion events).Nonempty := by
+    by_contra h
+    have hempty : Ω \\ eventUnion events = ∅ :=
+      Finset.not_nonempty_iff_eq_empty.mp h
+    rw [hempty] at hpositive
+    simp [eventMass] at hpositive
+  rcases hnonempty with ⟨x, hx⟩
+  exact ⟨x, (Finset.mem_sdiff.mp hx).1,
+    (Finset.mem_sdiff.mp hx).2⟩
+
 #print axioms eventUnion_mass_le_sum
 #print axioms eventMass_compl_add
 #print axioms complement_union_has_positive_mass
+#print axioms exists_point_outside_union
 
 end BBMSTFiniteUnionBound
