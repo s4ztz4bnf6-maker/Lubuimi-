@@ -54,7 +54,7 @@ theorem reducedValue_card
   letI : Fintype {s : C.S i // p s} :=
     Fintype.subtype (Finset.univ.erase r) (by
       intro s
-      simp)
+      simp [p])
   let e : ReducedValue removed i ≃ {s : C.S i // p s} := {
     toFun := fun s =>
       ⟨s.val, by
