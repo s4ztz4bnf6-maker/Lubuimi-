@@ -119,3 +119,37 @@ Lemma 3.4, the strict sieve inequality, or the replacement of
 audit remains
 `#print axioms erdos_selfridge` with exactly
 `[propext, Classical.choice, Quot.sound]`.
+
+
+## 8. Prefix event-mass layer (2026-11-07)
+
+At source commit `4445a988f4ffc91d9a73b3d80260a5c25fa1cfe0`,
+a separate module `BBMSTPrefixCylinderMass.lean` was added. It states two
+finite-prefix results for an arbitrary finite set E of old prefixes:
+
+- `sum_extensions_eq_old_event_mass`: summing the next-stage `PAt)
+  weights over every value of the newly exposed coordinate preserves the
+  mass of E;
+- `fixed_extension_event_mass_le`: retaining one prescribed next-coordinate
+  value bounds the event mass by the old event mass divided by
+  `|S_k|(1-δ_k)).
+
+The free-coordinate statement is stronger than global normalization:
+it is an event-level identity for each finite E. The fixed-coordinate
+statement is the corresponding event-level inequality. Both are written
+against the actual `PAt` recursion and its concrete uniform-fibre bridge,
+not an independently selected fibre law.
+
+At source commit
+`2a0cdcab038f2bc601bf2950788d6e5e79f0c34f`, the Lean audit workflow was
+extended to compile `BBMSTPrefixCylinderMass.lean` immediately after
+`BBMSTPrefixMeasureRecursion.lean`.
+
+**Verification status:** these two new proof terms are source-level only.
+The workflow edit merely schedules compilation; it is not evidence that
+compilation has occurred. No CI result or kernel output is claimed here.
+The two lemmas also do not yet prove Lemma 3.3: the remaining work is to
+instantiate E as the successive sections of the actual hyperplane shadow,
+prove the fixed/free classification from its assignment map, and connect
+the initial section to the source-defined coefficient c(I). The main
+theorem and the final axiom audit remain open.
