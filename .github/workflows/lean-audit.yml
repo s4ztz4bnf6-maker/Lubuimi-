@@ -1,4 +1,5 @@
 name: Lean degenerate-witness audit
+# Keep the aligned parameter and fibre-measure scalar cores in the same audit run.
 
 on:
   push:
@@ -34,3 +35,13 @@ jobs:
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+      - name: Compile aligned zero-safe sieve parameter core
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTSieveAlignedCore.olean BBMSTSieveAlignedCore.lean
+      - name: Compile zero-safe BBMST fibre measure core
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
+      - name: Compile finite weighted fibre update
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
+      - name: Compile finite-stage first and second moment bounds
+        run: lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
