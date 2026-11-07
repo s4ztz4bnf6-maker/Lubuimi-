@@ -137,17 +137,15 @@ theorem contains_iff_restricted
           simpa [hA] using h i
         simp [restrictOption, hs, restrictPoint, hxi]
   · intro h i
-    change (match restrictOption removed i (H.assignment i) with
-      | none => True
-      | some t => (restrictPoint removed x hx i).val = t.val) at h
+    have hi := h i
     cases hA : H.assignment i with
     | none =>
-        simp [restrictOption] at h
+        simp [restrictOption, hA] at hi
+        simp [Hyperplane.Contains, hA]
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
         have hred : restrictOption removed i (some s) = some ⟨s, hs⟩ := by
           simp [restrictOption, hs]
-        have hi := h i
         rw [hA] at hi
         rw [hred] at hi
         simpa [restrictPoint] using hi
