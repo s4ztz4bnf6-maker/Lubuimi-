@@ -444,7 +444,8 @@ theorem PAt_sum_eq_one
                 ∑ t ∈ F.points,
                   BBMSTFiniteFibreUpdate.updatedWeight F
                     (δ (stageCoordinate hk)) t := by
-                  simp [F, prefixFibreData, prefixUniformFibre]
+                  simp [F, prefixFibreData, prefixUniformFibre,
+                    BBMSTUniformFibreInstantiation.toFibreData]
               _ = F.total :=
                 BBMSTFiniteFibreUpdate.sum_updatedWeight_eq_total F
                   (δ (stageCoordinate hk))
@@ -468,8 +469,9 @@ theorem PAt_sum_eq_one
                 have hlocal := prefixFibre_updatedWeight_eq_PAt
                   (C := C) (A := A) a ha P0 δ j (by omega)
                   (extendPrefix C hk x t) hbase'
-                simpa [F, baseMass, restrictPrefix_extendPrefix,
-                  extendPrefix_last] using hlocal.symm
+                simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
+                  BBMSTUniformFibreInstantiation.toFibreData,
+                  restrictPrefix_extendPrefix, extendPrefix_last] using hlocal.symm
             _ = baseMass := hlocalSum
         _ = 1 := ih hprev
 
