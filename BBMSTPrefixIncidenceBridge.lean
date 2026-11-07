@@ -344,9 +344,6 @@ theorem prefixPairReserve_eq_weightedPairCount
       stageCompatibleHyperplanes, N, F, Finset.mem_product,
       Finset.mem_filter]
   unfold prefixPairReserve prefixPairShadowMass
-  dsimp [N]
-  rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_irrel]
   calc
     (∑ p ∈ (newAtStage A (a + j + 1)).product
         (newAtStage A (a + j + 1)),
@@ -361,12 +358,20 @@ theorem prefixPairReserve_eq_weightedPairCount
             PAt C (A := A) a ha P0 δ j (by omega) x else 0 := by
         rw [Finset.sum_comm]
     _ = ∑ x : PrefixPoint C (a + j) (by omega),
+        ∑ p ∈ ((newAtStage A (a + j + 1)).product
+          (newAtStage A (a + j + 1))).filter
+            (fun p => p.1 ∈ F x ∧ p.2 ∈ F x),
+          PAt C (A := A) a ha P0 δ j (by omega) x := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        rw [← Finset.sum_filter]
+    _ = ∑ x : PrefixPoint C (a + j) (by omega),
         PAt C (A := A) a ha P0 δ j (by omega) x *
           (prefixCompatiblePairs (C := C) (A := A) (by omega) x).card := by
         apply Finset.sum_congr rfl
         intro x hx
         rw [← hfilter x]
-        simp [Finset.sum_filter, mul_comm]
+        simp [Finset.sum_const, nsmul_eq_mul, mul_comm]
 
 #print axioms prefixPAt_firstMoment_eq_stageIncidence
 #print axioms prefixPAt_secondMoment_eq_stageIncidence
