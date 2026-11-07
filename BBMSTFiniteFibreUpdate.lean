@@ -193,6 +193,97 @@ theorem updatedWeight_nonneg
         (uncoveredMultiplier_pos F.proportion_nonneg
           F.proportion_le_one hδ hδhalf))
 
+/-- The old weighted k-th moment of an observable on a finite fibre. -/
+def fibreMoment (F : FibreData α) (X : α → ℚ) (k : ℕ) : ℚ :=
+  ∑ x ∈ F.points, F.weight x * (X x) ^ k
+
+/-- The old weighted k-th moment restricted to the covered part. -/
+def coveredMoment (F : FibreData α) (X : α → ℚ) (k : ℕ) : ℚ :=
+  ∑ x ∈ F.covered, F.weight x * (X x) ^ k
+
+/-- The old weighted k-th moment restricted to the uncovered part. -/
+def uncoveredMoment (F : FibreData α) (X : α → ℚ) (k : ℕ) : ℚ :=
+  ∑ x ∈ F.points \ F.covered, F.weight x * (X x) ^ k
+
+/-- The updated weighted k-th moment of an observable. -/
+def updatedMoment (F : FibreData α) (δ : ℚ)
+    (X : α → ℚ) (k : ℕ) : ℚ :=
+  ∑ x ∈ F.points, updatedWeight F δ x * (X x) ^ k
+
+/-- Exact moment propagation under the finite fibre update. The update
+rescales the covered and uncovered contributions separately; this theorem
+is an identity, not yet a BBMST numerical upper bound. -/
+theorem updatedMoment_eq_parts
+    (F : FibreData α) (δ : ℚ) (X : α → ℚ) (k : ℕ) :
+    updatedMoment F δ X k =
+      coveredMoment F X k * coveredMultiplier F.proportion δ +
+        uncoveredMoment F X k * uncoveredMultiplier F.proportion δ := by
+  classical
+  have hdisj : Disjoint F.covered (F.points \ F.covered) := by
+    apply Finset.disjoint_left.mpr
+    intro x hxCovered hxUncovered
+    exact (Finset.mem_sdiff.mp hxUncovered).2 hxCovered
+  have hunion : F.covered ∪ (F.points \ F.covered) = F.points := by
+    ext x
+    constructor
+    · intro hx
+      rcases Finset.mem_union.mp hx with hxCovered | hxUncovered
+      · exact F.covered_subset hxCovered
+      · exact (Finset.mem_sdiff.mp hxUncovered).1
+    · intro hxPoints
+      by_cases hxCovered : x ∈ F.covered
+      · exact Finset.mem_union.mpr (Or.inl hxCovered)
+      · exact Finset.mem_union.mpr
+          (Or.inr (Finset.mem_sdiff.mpr ⟨hxPoints, hxCovered⟩))
+  have hcovered :
+      (∑ x ∈ F.covered, updatedWeight F δ x * (X x) ^ k) =
+        coveredMoment F X k * coveredMultiplier F.proportion δ := by
+    unfold coveredMoment
+    calc
+      (∑ x ∈ F.covered, updatedWeight F δ x * (X x) ^ k) =
+          (∑ x ∈ F.covered,
+            (F.weight x * (X x) ^ k) *
+              coveredMultiplier F.proportion δ) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            simp [updatedWeight, hx]
+            ring
+      _ = (∑ x ∈ F.covered, F.weight x * (X x) ^ k) *
+          coveredMultiplier F.proportion δ := by rw [Finset.sum_mul]
+  have huncovered :
+      (∑ x ∈ F.points \ F.covered,
+        updatedWeight F δ x * (X x) ^ k) =
+        uncoveredMoment F X k * uncoveredMultiplier F.proportion δ := by
+    unfold uncoveredMoment
+    calc
+      (∑ x ∈ F.points \ F.covered,
+        updatedWeight F δ x * (X x) ^ k) =
+          (∑ x ∈ F.points \ F.covered,
+            (F.weight x * (X x) ^ k) *
+              uncoveredMultiplier F.proportion δ) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            have hxPoints := (Finset.mem_sdiff.mp hx).1
+            have hxNotCovered := (Finset.mem_sdiff.mp hx).2
+            simp [updatedWeight, hxNotCovered, hxPoints]
+            ring
+      _ = (∑ x ∈ F.points \ F.covered,
+          F.weight x * (X x) ^ k) *
+          uncoveredMultiplier F.proportion δ := by rw [Finset.sum_mul]
+  unfold updatedMoment
+  calc
+    (∑ x ∈ F.points, updatedWeight F δ x * (X x) ^ k) =
+        (∑ x ∈ F.covered ∪ (F.points \ F.covered),
+          updatedWeight F δ x * (X x) ^ k) := by rw [hunion]
+    _ = (∑ x ∈ F.covered,
+          updatedWeight F δ x * (X x) ^ k) +
+        (∑ x ∈ F.points \ F.covered,
+          updatedWeight F δ x * (X x) ^ k) :=
+          Finset.sum_union hdisj
+    _ = coveredMoment F X k * coveredMultiplier F.proportion δ +
+        uncoveredMoment F X k * uncoveredMultiplier F.proportion δ := by
+          rw [hcovered, huncovered]
+
 /-- The sum of the pointwise updated weight is exactly the two-part
 definition of updatedMass. This identifies the update as a genuine finite
 weight function, rather than only an aggregate formula. -/
@@ -299,6 +390,11 @@ theorem finiteFamily_updatedWeight_eq_total
 #print axioms updatedCoveredMass_eq
 #print axioms updatedUncoveredMass_eq
 #print axioms updatedWeight_nonneg
+#print axioms fibreMoment
+#print axioms coveredMoment
+#print axioms uncoveredMoment
+#print axioms updatedMoment
+#print axioms updatedMoment_eq_parts
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
 #print axioms finiteFamily_updatedWeight_eq_total
