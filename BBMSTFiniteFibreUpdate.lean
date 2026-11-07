@@ -26,12 +26,47 @@ structure FibreData (α : Type*) [DecidableEq α] where
   total : ℚ
   proportion : ℚ
   covered_subset : covered ⊆ points
+  weight_nonneg : ∀ x ∈ points, 0 ≤ weight x
+  total_mass : (∑ x ∈ points, weight x) = total
   proportion_nonneg : 0 ≤ proportion
   proportion_le_one : proportion ≤ 1
   covered_mass :
     (∑ x ∈ covered, weight x) = total * proportion
-  uncovered_mass :
-    (∑ x ∈ points \ covered, weight x) = total * (1 - proportion)
+
+/-- The uncovered mass is forced by the total-mass identity and the
+covered-mass identity; it is not an independent input to the structure. -/
+theorem uncovered_mass_eq (F : FibreData α) :
+    (∑ x ∈ F.points  F.covered, F.weight x) =
+      F.total * (1 - F.proportion) := by
+  have hdisj : Disjoint F.covered (F.points \ F.covered) := by
+    apply Finset.disjoint_left.mpr
+    intro x hxCovered hxUncovered
+    exact (Finset.mem_sdiff.mp hxUncovered).2 hxCovered
+  have hunion : F.covered ∪ (F.points \ F.covered) = F.points := by
+    ext x
+    constructor
+    · intro hx
+      rcases Finset.mem_union.mp hx with hxCovered | hxUncovered
+      · exact F.covered_subset hxCovered
+      · exact (Finset.mem_sdiff.mp hxUncovered).1
+    · intro hxPoints
+      by_cases hxCovered : x ∈ F.covered
+      · exact Finset.mem_union.mpr (Or.inl hxCovered)
+      · exact Finset.mem_union.mpr
+          (Or.inr (Finset.mem_sdiff.mpr ⟨hxPoints, hxCovered⟩))
+  have hsplit :
+      (∑ x ∈ F.covered, F.weight x) +
+        (∑ x ∈ F.points  F.covered, F.weight x) = F.total := by
+    calc
+      (∑ x ∈ F.covered, F.weight x) +
+          (∑ x ∈ F.points \ F.covered, F.weight x)
+        = (∑ x ∈ F.covered ∪ (F.points \ F.covered), F.weight x) := by
+            symm
+            exact Finset.sum_union hdisj
+      _ = (∑ x ∈ F.points, F.weight x) := by rw [hunion]
+      _ = F.total := F.total_mass
+  rw [F.covered_mass] at hsplit
+  linarith
 
 /-- The updated finite fibre mass, summing covered and uncovered parts
 separately so the two source multipliers are applied pointwise. -/
@@ -51,7 +86,7 @@ theorem updatedMass_eq_total
     (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
     updatedMass F δ = F.total := by
   unfold updatedMass
-  rw [sum_weight_mul, sum_weight_mul, F.covered_mass, F.uncovered_mass]
+  rw [sum_weight_mul, sum_weight_mul, F.covered_mass, uncovered_mass_eq F]
   have hmass :=
     fibreMultiplier_mass_one
       F.proportion_nonneg F.proportion_le_one hδ hδhalf
