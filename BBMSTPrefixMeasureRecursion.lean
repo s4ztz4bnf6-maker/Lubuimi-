@@ -522,13 +522,13 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
       BBMSTUniformFibreInstantiation.toFibreData]
   have hlocal := prefixFibre_updatedWeight_eq_PAt
     (C := C) (A := A) a ha P0 δ j
-    (by simpa [Nat.add_succ] using hk) y (by
+    (by simpa only [Nat.add_succ] using hk) y (by
       simpa [k, xprev, baseMass] using hbase)
   have hlocal' :
       BBMSTFiniteFibreUpdate.updatedWeight F
         (δ (stageCoordinate hk)) (y (Fin.last k)) =
       PAt C (A := A) a ha P0 δ (j + 1)
-        (by simpa [Nat.add_succ] using hk) y := by
+        (by simpa only [Nat.add_succ] using hk) y := by
     simpa [F, k, hk', xprev, baseMass] using hlocal
   have hbound :=
     BBMSTFiniteFibreUpdate.updatedWeight_le_old_div F
@@ -548,7 +548,8 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     have := hδhalf (stageCoordinate hk)
     linarith
   calc
-    PAt C (A := A) a ha P0 δ (j + 1) hj y =
+    PAt C (A := A) a ha P0 δ (j + 1)
+        (by simpa only [Nat.add_succ] using hk) y =
         BBMSTFiniteFibreUpdate.updatedWeight F
           (δ (stageCoordinate hk)) (y (Fin.last k)) :=
       hlocal'.symm
