@@ -250,7 +250,7 @@ theorem stageCoveredValues_subset_candidates
       stageAssignedValue (C := C) A k hk hk0 H = s := by
     unfold stageAssignedValue
     rw [if_pos hex]
-    exact hchoose.symm
+    exact hchoose
   have hCompatible :
       H ∈ stageCompatibleHyperplanes (C := C) A k hk hk0 x := by
     apply Finset.mem_filter.mpr
