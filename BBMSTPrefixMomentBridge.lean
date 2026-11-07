@@ -14,6 +14,7 @@ it supplies their correct probability-measure input.
 namespace BBMSTPrefixMomentBridge
 
 open BBMSTPrefixMeasure
+open BBMSTGeometry
 open BBMSTUniformFibreInstantiation
 open BBMSTUniformStageMoment
 open BBMSTStageMomentCore
