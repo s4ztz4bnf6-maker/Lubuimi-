@@ -19,7 +19,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-- One old base-point mass, uniformly extended over a nonempty finite
 next-coordinate set, with a specified covered subset. -/
-structure UniformFibre where
+structure UniformFibre (α : Type*) where
   points : Finset α
   covered : Finset α
   total : ℚ
