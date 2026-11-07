@@ -131,9 +131,9 @@ theorem exists_point_outside_union
   have hpositive :=
     complement_union_has_positive_mass
       Ω w hw htotal events hEvents bounds hBounds hSmall
-  have hnonempty : (Ω \\ eventUnion events).Nonempty := by
+  have hnonempty : (Ω \ eventUnion events).Nonempty := by
     by_contra h
-    have hempty : Ω \\ eventUnion events = ∅ :=
+    have hempty : Ω \ eventUnion events = ∅ :=
       Finset.not_nonempty_iff_eq_empty.mp h
     rw [hempty] at hpositive
     simp [eventMass] at hpositive
