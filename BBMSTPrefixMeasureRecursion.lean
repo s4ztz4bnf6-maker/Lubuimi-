@@ -1,6 +1,7 @@
 import Mathlib
 import BBMSTGeometryStageCore
 import BBMSTFiberMeasureCore
+import BBMSTUniformFibreInstantiation
 
 /-!
 # Source-indexed BBMST prefix measure recursion
@@ -190,6 +191,56 @@ theorem prefixPointCovered_iff
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
+
+
+/-- The concrete geometric prefix fibre, with all next-coordinate values
+as points and the actual newly covered values as its covered subset. -/
+noncomputable def prefixUniformFibre
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (baseMass : ℚ) (hbase : 0 ≤ baseMass) :
+    BBMSTUniformFibreInstantiation.UniformFibre
+      (C.S (stageCoordinate hk)) := by
+  classical
+  letI := C.fintypeS (stageCoordinate hk)
+  have hcard : 0 < Fintype.card (C.S (stageCoordinate hk)) := by
+    have h := C.card_ge_two (stageCoordinate hk)
+    omega
+  refine
+    { points := Finset.univ
+      covered := prefixCoveredValues C (A := A) hk x
+      total := baseMass
+      points_nonempty := ?_
+      covered_subset := Finset.subset_univ _
+      total_nonneg := hbase }
+  exact ⟨Classical.choice (Fintype.card_pos_iff.mp hcard), Finset.mem_univ _⟩
+
+/-- The concrete prefix fibre converted to the weighted update interface.
+Its covered set is the actual geometric prefixCoveredValues set. -/
+noncomputable def prefixFibreData
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (baseMass : ℚ) (hbase : 0 ≤ baseMass) :
+    BBMSTFiniteFibreUpdate.FibreData
+      (C.S (stageCoordinate hk)) :=
+  BBMSTUniformFibreInstantiation.toFibreData
+    (prefixUniformFibre C (A := A) hk x baseMass hbase)
+
+/-- The abstract fibre proportion is definitionally the geometric
+cardinality fraction prefixAlpha. -/
+theorem prefixFibreData_proportion
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (baseMass : ℚ) (hbase : 0 ≤ baseMass) :
+    (prefixFibreData C (A := A) hk x baseMass hbase).proportion =
+      prefixAlpha C (A := A) hk x := by
+  simp [prefixFibreData, prefixUniformFibre,
+    BBMSTUniformFibreInstantiation.toFibreData,
+    BBMSTUniformFibreInstantiation.coveredProportion,
+    prefixAlpha]
 
 
 end BBMSTPrefixMeasure
