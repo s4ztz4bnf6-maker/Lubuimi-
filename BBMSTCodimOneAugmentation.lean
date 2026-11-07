@@ -135,6 +135,51 @@ noncomputable def augmentedSelection
   chooseEarlySelection (augmentedFamily A early default) early
     (fun i hi => augmentedFamily_has_codimOne A early default i hi)
 
+/-- Membership of a reduced point in a hyperplane, using the original
+partial assignment and the retained coordinate values. -/
+def ContainsReducedPoint
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C) (x : ReducedPoint removed) : Prop :=
+  ∀ i, match H.assignment i with
+    | none => True
+    | some s => (x i).val = s
+
+/-- If the augmented family covers the original product, its surviving
+members cover the product after the selected coordinate values are deleted.
+A covering hyperplane that contains a reduced point necessarily fixes only
+retained values, so it belongs to the surviving family. -/
+theorem augmentedReducedBox_covered
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hCover : ∀ y : ProductPoint C,
+      ∃ H, H ∈ augmentedFamily A early default ∧ H.Contains y)
+    (x : ReducedPoint
+      (selectedDeletedValues (augmentedSelection A early default))) :
+    ∃ H, H ∈ survivingFamily (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default)) ∧
+      ContainsReducedPoint
+        (selectedDeletedValues (augmentedSelection A early default)) H x := by
+  classical
+  let removed := selectedDeletedValues (augmentedSelection A early default)
+  let y : ProductPoint C := fun i => (x i).val
+  obtain ⟨H, hH, hContains⟩ := hCover y
+  have hSurvives : Survives removed H := by
+    intro i s hAssign
+    have hEq : (x i).val = s := by
+      simpa [y, hAssign] using hContains i
+    simpa [hEq] using (x i).property
+  have hMem : H ∈ survivingFamily (augmentedFamily A early default) removed := by
+    simp [survivingFamily, hH, hSurvives]
+  refine ⟨H, ?_, ?_⟩
+  · simpa [removed] using hMem
+  · intro i
+    cases hA : H.assignment i with
+    | none => trivial
+    | some s =>
+        have hEq : (x i).val = s := by
+          simpa [y, hA] using hContains i
+        exact hEq
+
 /-- The augmented family's surviving part has no singleton fixed-coordinate
 sets on the early coordinates. -/
 theorem augmentedChosenSurviving_no_singleton
@@ -157,6 +202,7 @@ theorem augmentedChosenSurviving_no_singleton
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
+#print axioms augmentedReducedBox_covered
 
 /-- Canonical augmentation using only the coordinate system's nonemptiness. -/
 noncomputable def canonicalAugmentedFamily
