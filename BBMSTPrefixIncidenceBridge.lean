@@ -205,7 +205,7 @@ theorem prefixCompatiblePairs_card
     (prefixCompatiblePairs (C := C) (A := A) hk x).card =
       (prefixCompatibleHyperplanes (C := C) (A := A) hk x).card ^ 2 := by
   classical
-  simp [prefixCompatiblePairs, Finset.card_product]
+  simp [prefixCompatiblePairs, Finset.card_product, pow_two]
 
 /-- The concrete PAt-weighted second moment is bounded by the exact
 ordered-pair count of compatible new hyperplanes. The right-hand side
@@ -267,18 +267,21 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
       ((compatible.card : ℚ) / d) ^ 2 =
         ((prefixCompatiblePairs (C := C) (A := A)
           (by omega) x).card : ℚ) / d ^ 2 := by
+    have hcardNat :
+        (prefixCompatiblePairs (C := C) (A := A)
+          (by omega) x).card = compatible.card * compatible.card := by
+      simpa [compatible, pow_two] using
+        (prefixCompatiblePairs_card (C := C) (A := A) (by omega) x)
     have hcardCast :
         ((prefixCompatiblePairs (C := C) (A := A)
           (by omega) x).card : ℚ) =
           (compatible.card : ℚ) ^ 2 := by
-      dsimp [compatible]
-      exact_mod_cast
-        (prefixCompatiblePairs_card (C := C) (A := A) (by omega) x)
-    rw [div_pow, ← hcardCast]
+      rw [hcardNat, Nat.cast_mul, pow_two]
+    rw [div_pow, pow_two, hcardCast]
   have hweight :
       0 ≤ PAt C (A := A) a ha P0 δ j (by omega) x :=
     PAt_nonneg (C := C) (A := A) a ha P0 δ
-      hP0_nonneg hP0_sum hδ hδhalf j (by omega) x
+      hP0_nonneg hδ hδhalf j (by omega) x
   calc
     PAt C (A := A) a ha P0 δ j (by omega) x *
         ((covered.card : ℚ) / d) ^ 2
