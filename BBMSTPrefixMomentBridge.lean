@@ -64,7 +64,7 @@ theorem prefixUniformStageFirstMoment_eq
         hP0_nonneg hP0_sum hδ hδhalf j hj) =
       ∑ x : PrefixPoint C (a + j) (by omega),
         PAt C (A := A) a ha P0 δ j (by omega) x *
-          prefixAlpha C (A := A) (by omega) x := by
+          prefixAlpha C (A := A) (k := a + j) (by omega) x := by
   classical
   simp [uniformStageFirstMoment, prefixUniformStageData,
     toFiniteStageData, stageFirstMoment,
