@@ -381,7 +381,7 @@ theorem uncoveredMultiplier_le_inv_one_sub_delta
     field_simp [ne_of_gt hδDen]
     nlinarith
   · simp only [uncoveredMultiplier, if_neg h]
-    rfl
+    exact le_rfl
 
 /-- Every updated point weight is bounded by its old weight times the
 global distortion factor. -/
@@ -400,15 +400,20 @@ theorem updatedWeight_le_old_div
       exact le_trans
         (coveredMultiplier_le_one F.proportion_nonneg
           F.proportion_le_one hδ hδhalf) hOne
-    simpa [div_eq_mul_inv, one_div] using
-      (mul_le_mul_of_nonneg_left hmult (F.weight_nonneg x hx))
+    have hmult' :
+        coveredMultiplier F.proportion δ ≤ (1 - δ)⁻¹ := by
+      simpa [one_div] using hmult
+    simpa [div_eq_mul_inv] using
+      (mul_le_mul_of_nonneg_left hmult' (F.weight_nonneg x hx))
   · have hxNotCovered : x ∉ F.covered := hc
     simp [updatedWeight, hxNotCovered, hx]
-    simpa [div_eq_mul_inv, one_div] using
-      (mul_le_mul_of_nonneg_left
+    have hmult :
+        uncoveredMultiplier F.proportion δ ≤ (1 - δ)⁻¹ := by
+      simpa [one_div] using
         (uncoveredMultiplier_le_inv_one_sub_delta
           F.proportion_nonneg F.proportion_le_one hδ hδhalf)
-        (F.weight_nonneg x hx))
+    simpa [div_eq_mul_inv] using
+      (mul_le_mul_of_nonneg_left hmult (F.weight_nonneg x hx))
 
 /-- Updated mass of an event in one fibre. -/
 def updatedEventMass (F : FibreData α) (δ : ℚ) (E : Finset α) : ℚ :=
