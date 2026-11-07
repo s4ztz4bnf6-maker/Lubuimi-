@@ -39,6 +39,10 @@ noncomputable instance instFintypePrefixPoint {k : ℕ} (hk : k ≤ n) :
     fun i => C.fintypeS (prefixIndex hk i)
   infer_instance
 
+/-- Classical equality on finite prefix products, for their finite sums. -/
+noncomputable instance instDecidableEqPrefixPoint {k : ℕ} (hk : k ≤ n) :
+    DecidableEq (PrefixPoint C k hk) := Classical.decEq _
+
 /-- A fixed default value in each coordinate, used only to lift a prefix
 to the full product. The cardinality hypothesis guarantees it exists. -/
 noncomputable def coordinateDefault (i : Fin n) : C.S i := by
