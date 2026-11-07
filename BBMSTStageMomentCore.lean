@@ -15,7 +15,7 @@ namespace BBMSTStageMomentCore
 
 open BBMSTFiniteFibreUpdate
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*} [DecidableEq α] {ι : Type*} [DecidableEq ι]
 
 /-- First weighted moment of a bounded observable on a finite fibre. -/
 def firstMoment (F : FibreData α) (X : α → ℚ) : ℚ :=
@@ -33,7 +33,7 @@ theorem firstMoment_nonneg
   unfold firstMoment fibreFirstMoment fibreMoment
   apply Finset.sum_nonneg
   intro x hx
-  exact mul_nonneg (F.weight_nonneg x hx) (hX x hx)
+  exact mul_nonneg (F.weight_nonneg x hx) (by simpa [pow_one] using hX x hx)
 
 /-- The second weighted moment is nonnegative without a sign assumption
 on the observable. -/
@@ -74,8 +74,8 @@ theorem firstMoment_le_total
   have hweight := F.weight_nonneg x hx
   have hbound := (hX x hx).2
   calc
-    F.weight x * X x ≤ F.weight x * 1 :=
-      mul_le_mul_of_nonneg_left hbound hweight
+    F.weight x * X x ^ 1 ≤ F.weight x * 1 :=
+      mul_le_mul_of_nonneg_left (by simpa [pow_one] using hbound) hweight
     _ = F.weight x := by ring
 
 /-- Combining the preceding inequalities bounds both first and second
