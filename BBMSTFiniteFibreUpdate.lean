@@ -53,7 +53,7 @@ theorem updatedMass_eq_total
   unfold updatedMass
   rw [sum_weight_mul, sum_weight_mul, F.covered_mass, F.uncovered_mass]
   have hmass :=
-    fibreMultiplier_mass_one F.proportion δ
+    fibreMultiplier_mass_one
       F.proportion_nonneg F.proportion_le_one hδ hδhalf
   calc
     F.total * F.proportion * coveredMultiplier F.proportion δ +
