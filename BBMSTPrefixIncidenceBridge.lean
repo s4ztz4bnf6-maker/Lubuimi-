@@ -266,9 +266,14 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
       ((compatible.card : ℚ) / d) ^ 2 =
         ((prefixCompatiblePairs (C := C) (A := A)
           (by omega) x).card : ℚ) / d ^ 2 := by
-    dsimp [compatible, d]
-    rw [← prefixCompatiblePairs_card (C := C) (A := A) (by omega) x]
-    ring
+    have hcardCast :
+        ((prefixCompatiblePairs (C := C) (A := A)
+          (by omega) x).card : ℚ) =
+          (compatible.card : ℚ) ^ 2 := by
+      dsimp [compatible]
+      exact_mod_cast
+        (prefixCompatiblePairs_card (C := C) (A := A) (by omega) x)
+    rw [div_pow, ← hcardCast]
   have hweight :
       0 ≤ PAt C (A := A) a ha P0 δ j (by omega) x :=
     PAt_nonneg (C := C) (A := A) a ha P0 δ
