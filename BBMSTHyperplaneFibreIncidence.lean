@@ -98,7 +98,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
   rw [mem_stageCoveredValues_iff, mem_stageCoveredValues_iff]
   constructor
   · rintro ⟨H, hH, hContains⟩
-    refine ⟨H, hH, ?_⟩
+    refine ⟨H, hCompatible, ?_⟩
     intro j
     cases hassign : H.assignment j with
     | none => simp [hassign]
@@ -335,7 +335,7 @@ theorem actualStageFirstMoment_le_compatibleRatio
     uniformStageFirstMoment (toUniformFiniteStageData D) ≤
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
-          ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
   classical
   let i := stageCoordinate (C := C) k hk hk0
@@ -392,12 +392,12 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
     uniformStageFirstMoment (toUniformFiniteStageData D)
       ≤ ∑ x ∈ D.basePoints,
           D.baseWeight x *
-            ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+            (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
               (Fintype.card (C.S i) : ℚ) :=
         actualStageFirstMoment_le_compatibleRatio D
     _ ≤ ∑ x ∈ D.basePoints,
           D.baseWeight x *
-            ((newAtStage A k).card : ℚ) /
+            (((newAtStage A k).card : ℚ) /
               (Fintype.card (C.S i) : ℚ) := by
         apply Finset.sum_le_sum
         intro x hx
@@ -442,9 +442,11 @@ theorem actualStageSecondMoment_eq
 #print axioms stageAssignedValue
 #print axioms stageCandidateValues
 #print axioms stageCoveredValues_subset_candidates
-#print axioms stageCoveredValues_card_le_newAtStage_card
+#print axioms stageCoveredValues_card_le_compatible_card
+#print axioms stageCompatibleHyperplanes_card_le_newAtStage_card
 #print axioms toUniformFiniteStageData
 #print axioms actualStageFirstMoment_eq
+#print axioms actualStageFirstMoment_le_compatibleRatio
 #print axioms actualStageFirstMoment_le_newHyperplaneRatio
 #print axioms actualStageSecondMoment_eq
 
