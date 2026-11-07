@@ -22,6 +22,7 @@ namespace BBMSTHyperplaneFibreIncidence
 open BBMSTGeometry
 open BBMSTUniformFibreInstantiation
 open BBMSTUniformStageMoment
+open BBMSTStageMomentCore
 
 variable {n : ℕ} {C : CoordinateSystem n}
 
@@ -42,9 +43,9 @@ hyperplane entering at stage k, above the old base point x. -/
 noncomputable def stageCoveredValues
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
-    (x : ProductPoint C) : Finset (C.S (stageCoordinate (C := C) k hk hk0)) := by
+    (x : ProductPoint C) : Finset (C.S (stageCoordinate k hk hk0)) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   exact Finset.univ.filter fun t =>
     ∃ H ∈ newAtStage A k,
@@ -56,11 +57,11 @@ theorem mem_stageCoveredValues_iff
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C)
-    (t : C.S (stageCoordinate (C := C) k hk hk0)) :
+    (t : C.S (stageCoordinate k hk hk0)) :
     t ∈ stageCoveredValues (C := C) A k hk hk0 x ↔
       ∃ H ∈ newAtStage A k,
         H.Contains (Function.update x
-          (stageCoordinate (C := C) k hk hk0) t) := by
+          (stageCoordinate k hk hk0) t) := by
   classical
   simp [stageCoveredValues]
 
@@ -71,9 +72,9 @@ noncomputable def stageUniformFibre
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) (baseMass : ℚ) (hbase : 0 ≤ baseMass) :
-    UniformFibre (C.S (stageCoordinate (C := C) k hk hk0)) := by
+    UniformFibre (C.S (stageCoordinate k hk hk0)) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   refine
     { points := Finset.univ
@@ -118,7 +119,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
           (fun H => ∀ q ∈ fixedCoords H, q.val < k) at hstageMem
         have hjlt : j.val < k :=
           (Finset.mem_filter.mp hstageMem).2 j hjfixed
-        let i := stageCoordinate (C := C) k hk hk0
+        let i := stageCoordinate k hk hk0
         have hsame : Function.update x i t j =
             Function.update y i t j := by
           by_cases hji : j = i
@@ -147,7 +148,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
           (fun H => ∀ q ∈ fixedCoords H, q.val < k) at hstageMem
         have hjlt : j.val < k :=
           (Finset.mem_filter.mp hstageMem).2 j hjfixed
-        let i := stageCoordinate (C := C) k hk hk0
+        let i := stageCoordinate k hk hk0
         have hsame : Function.update y i t j =
             Function.update x i t j := by
           by_cases hji : j = i
@@ -169,9 +170,9 @@ noncomputable def stageAssignedValue
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (H : Hyperplane C) :
-    C.S (stageCoordinate (C := C) k hk hk0) := by
+    C.S (stageCoordinate k hk hk0) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   have hne : Nonempty (C.S i) := by
     have hcard : 0 < Fintype.card (C.S i) := by
@@ -189,7 +190,7 @@ def stageCompatibleHyperplanes
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) : Finset (Hyperplane C) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   exact (newAtStage A k).filter fun H =>
     ∃ t, H.Contains (Function.update x i t)
 
@@ -199,7 +200,7 @@ noncomputable def stageCandidateValues
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) :
-    Finset (C.S (stageCoordinate (C := C) k hk hk0)) := by
+    Finset (C.S (stageCoordinate k hk hk0)) := by
   classical
   exact (stageCompatibleHyperplanes (C := C) A k hk hk0 x).image
     (stageAssignedValue (C := C) A k hk hk0)
@@ -217,7 +218,7 @@ theorem stageCoveredValues_subset_candidates
   intro t ht
   rcases (mem_stageCoveredValues_iff (C := C) A k hk hk0 x t).mp ht with
     ⟨H, hH, hContains⟩
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   have hboundary := newAtStage_has_last_coordinate
     (C := C) A hk hk0 H hH
   rcases hboundary with ⟨j, hjval, hjfixed⟩
@@ -274,8 +275,10 @@ theorem stageCompatibleHyperplanes_card_le_newAtStage_card
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) :
     (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card ≤
-      (newAtStage A k).card :=
-  Finset.card_le_card (Finset.filter_subset _ _)
+      (newAtStage A k).card := by
+  classical
+  unfold stageCompatibleHyperplanes
+  exact Finset.card_le_card (Finset.filter_subset _ _)
 
 /-- The fibre's covered proportion is the exact incidence density of
 new stage-k hyperplanes above x. -/
@@ -286,7 +289,7 @@ theorem stageUniformFibre_proportion
     coveredProportion
       (stageUniformFibre (C := C) A k hk hk0 x baseMass hbase) =
       ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-        (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+        (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ) := by
   rfl
 
 /-- A finite base distribution together with the actual hyperplane-induced
@@ -307,10 +310,10 @@ noncomputable def toUniformFiniteStageData
     (D : HyperplaneStageData (C := C) A k hk hk0) :
     UniformFiniteStageData
       (ι := ProductPoint C)
-      (α := C.S (stageCoordinate (C := C) k hk hk0)) := by
+      (α := C.S (stageCoordinate k hk hk0)) := by
   classical
   let F : ProductPoint C →
-      UniformFibre (C.S (stageCoordinate (C := C) k hk hk0)) :=
+      UniformFibre (C.S (stageCoordinate k hk hk0)) :=
     fun x =>
       let w := if x ∈ D.basePoints then D.baseWeight x else 0
       stageUniformFibre (C := C) A k hk hk0 x w (by
@@ -340,7 +343,7 @@ theorem actualStageFirstMoment_eq
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) := by
+            (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
   unfold uniformStageFirstMoment stageFirstMoment toFiniteStageData
     stageFirstMoment toFibreData
@@ -359,9 +362,9 @@ theorem actualStageFirstMoment_le_compatibleRatio
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
           (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) := by
+            (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   have hdenNat : 0 < Fintype.card (C.S i) := by
     have := C.card_ge_two i
@@ -392,9 +395,9 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
     (D : HyperplaneStageData (C := C) A k hk hk0) :
     uniformStageFirstMoment (toUniformFiniteStageData D) ≤
       ((newAtStage A k).card : ℚ) /
-        (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+        (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   have hdenNat : 0 < Fintype.card (C.S i) := by
     have := C.card_ge_two i
@@ -440,7 +443,7 @@ theorem actualStageSecondMoment_eq
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
           ((((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) ^ 2) := by
+            (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
   unfold uniformStageSecondMoment stageSecondMoment toFiniteStageData
     stageSecondMoment toFibreData
@@ -459,9 +462,9 @@ theorem actualStageSecondMoment_le_compatibleSquareAverage
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
           ((((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) ^ 2) := by
+            (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
-  let i := stageCoordinate (C := C) k hk hk0
+  let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
   have hdenNat : 0 < Fintype.card (C.S i) := by
     have := C.card_ge_two i
