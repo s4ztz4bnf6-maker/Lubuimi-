@@ -260,4 +260,32 @@ noncomputable def prefixExtensionEquiv
 #print axioms prefixExtensionEquiv
 
 
+/-- Reindexing the sum over length-(k+1) prefixes by the exact
+restriction/final-coordinate equivalence. -/
+theorem sum_prefix_eq_sum_extensions
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (f : PrefixPoint C (k + 1) hk → ℚ) :
+    (∑ y : PrefixPoint C (k + 1) hk, f y) =
+      ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+        ∑ t : C.S (stageCoordinate hk),
+          f (extendPrefix C hk x t) := by
+  classical
+  letI := C.fintypeS (stageCoordinate hk)
+  let e := prefixExtensionEquiv C hk
+  calc
+    (∑ y : PrefixPoint C (k + 1) hk, f y) =
+        ∑ p : Σ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+            C.S (stageCoordinate hk),
+          f (extendPrefix C hk p.1 p.2) := by
+            apply Fintype.sum_equiv e
+            intro y
+            simp [e, extendPrefix_restrictPrefix]
+    _ = ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+          ∑ t : C.S (stageCoordinate hk),
+            f (extendPrefix C hk x t) := by
+          exact Fintype.sum_sigma (fun x t => f (extendPrefix C hk x t))
+
+#print axioms sum_prefix_eq_sum_extensions
+
+
 end BBMSTPrefixMeasure
