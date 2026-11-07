@@ -68,3 +68,54 @@ prefix module after the six upstream helper modules. A successful run on a
 commit is evidence for compilation of that module, not for the full theorem:
 the project-specific `sieve_criterion` and `sf_sieve_lt_one` axioms remain
 unreplaced, and the source-level BBMST theorem obligations above remain open.
+
+
+## 7. Iterated prefix distortion and the remaining marginal issue (2026-11-07)
+
+At commit `a2a9963dd93409e4b9bb26fbed574c252a980c33`, the source-indexed
+recursion module added
+`PAt_succ_le_prev_div_card_mul_one_sub_delta`. Its intended estimate is
+the one-step pointwise bound
+[
+ P_{k+1}(y)\le
+ \frac{P_k(\operatorname{restrictPrefix}(y))}
+ {|S_{k+1}|(1-\delta_{k+1})}.
+]
+This is derived in source from the actual `PAt` recursion and the concrete
+uniform-fibre update, but has not yet been compiled or kernel-checked.
+
+At commit `c396190b595e6d04b0dfbc042653e0d364c81858`, the same module
+adds `initialPrefixOf`, `distortionFactor`, `distortionProduct`,
+`initialPrefixOf_restrictPrefix`, and
+`PAt_le_initial_mul_distortionProduct`. The intended theorem iterates
+the one-step pointwise estimate over every coordinate between the initial
+prefix and the current prefix. It uses the actual initial marginal obtained
+by lifting and projecting the given prefix. These are source-level proof
+terms only; no Lean compiler, CI run, or kernel verification has yet
+confirmed them.
+
+**Important mathematical limitation:** the pointwise product bound over
+*all* intervening coordinates is not itself Lemma 3.3. It introduces
+distortion factors even at coordinates that are free in the hyperplane
+shadow. Those factors cannot simply be discarded. The correct next
+measure-theoretic interface is a cylinder/event-mass induction:
+- when the newly exposed coordinate is free in the hyperplane, sum over
+  all its values and use exact fibre mass conservation;
+- when it is fixed, retain the single prescribed value and apply the
+  one-step distortion bound;
+- iterate only over the coordinates in the hyperplane's suffix fixed set
+  (J), yielding exactly the product ν(J), not a product over every
+  intervening coordinate.
+
+The remaining initial-prefix step is to bound the mass of the initial
+cylinder by the coefficient (c(I)) defined as the maximum of the actual
+initial measure (P_a) over initial hyperplanes with fixed-coordinate set
+(I). No arbitrary coefficient family may replace this construction.
+
+The main theorem remains open. In particular, neither the new pointwise
+product estimate nor the earlier old-shadow identities establish Lemma 3.3,
+Lemma 3.4, the strict sieve inequality, or the replacement of
+`sieve_criterion` and `sf_sieve_lt_one`. The required final transitive
+audit remains
+`#print axioms erdos_selfridge` with exactly
+`[propext, Classical.choice, Quot.sound]`.
