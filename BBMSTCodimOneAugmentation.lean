@@ -37,7 +37,7 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     fixedCoords (singletonAt i s) = {i} := by
   classical
   ext j
-  simp [fixedCoords, singletonAt, eq_comm]
+  simp [fixedCoords, singletonAt, eq_comm] <;> constructor <;> intro h <;> exact h.symm
 
 theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
     (fixedCoords (singletonAt i s)).Nonempty := by
@@ -48,15 +48,18 @@ theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
 fixed-coordinate hyperplane. -/
 noncomputable def missingCoordinates
     (A : Finset (Hyperplane C)) (early : Finset (Fin n)) :
-    Finset (Fin n) :=
-  early.filter fun i => ¬ ∃ H, H ∈ A ∧ CodimOneAt H i
+    Finset (Fin n) := by
+  classical
+  exact early.filter fun i =>
+    ¬ ∃ H : Hyperplane C, H ∈ A ∧ CodimOneAt H i
 
 /-- Add one canonical singleton hyperplane at each missing early coordinate. -/
 noncomputable def addedFamily
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
     (default : ∀ i : Fin n, C.S i) :
-    Finset (Hyperplane C) :=
-  (missingCoordinates A early).image
+    Finset (Hyperplane C) := by
+  classical
+  exact (missingCoordinates A early).image
     (fun i => singletonAt i (default i))
 
 /-- The augmented family contains the original family and all added
@@ -64,8 +67,9 @@ singleton hyperplanes. -/
 noncomputable def augmentedFamily
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
     (default : ∀ i : Fin n, C.S i) :
-    Finset (Hyperplane C) :=
-  A ∪ addedFamily A early default
+    Finset (Hyperplane C) := by
+  classical
+  exact A ∪ addedFamily A early default
 
 /-- Adding hyperplanes cannot destroy an existing covering witness. -/
 theorem augmentedFamily_preserves_cover
@@ -87,9 +91,10 @@ theorem augmentedFamily_has_codimOne
   · rcases hExists with ⟨H, hH, hFix⟩
     exact ⟨H, Finset.mem_union_left _ hH, hFix⟩
   · have hMissing : i ∈ missingCoordinates A early := by
-      change i ∈ early.filter
-        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j)
-      exact Finset.mem_filter.mpr ⟨hi, hExists⟩
+      have hm : i ∈ early.filter
+        (fun j => ¬ ∃ H : Hyperplane C, H ∈ A ∧ CodimOneAt H j) :=
+      Finset.mem_filter.mpr ⟨hi, hExists⟩
+    simpa [missingCoordinates] using hm
     refine ⟨singletonAt i (default i), ?_, ?_⟩
     · apply Finset.mem_union_right
       apply Finset.mem_image.mpr
@@ -111,18 +116,18 @@ theorem augmentedFamily_noParallel
         ⟨i, hi, rfl⟩
       have hCodim : CodimOneAt H i := by
         simpa [CodimOneAt, singletonAt_fixedCoords] using hFix
-      change i ∈ early.filter
-        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j) at hi
-      have hMissing := (Finset.mem_filter.mp hi).2
+      have hMissing : ¬ ∃ H : Hyperplane C, H ∈ A ∧ CodimOneAt H i := by
+        have hm := Finset.mem_filter.mp (by simpa [missingCoordinates] using hi)
+        exact hm.2
       exact (hMissing ⟨H, hHA, hCodim⟩).elim
   · rcases Finset.mem_image.mp (by simpa [addedFamily] using hHadd) with
       ⟨i, hi, rfl⟩
     rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH') with hH'A | hH'add
     · have hCodim : CodimOneAt H' i := by
         simpa [CodimOneAt, singletonAt_fixedCoords] using hFix.symm
-      change i ∈ early.filter
-        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j) at hi
-      have hMissing := (Finset.mem_filter.mp hi).2
+      have hMissing : ¬ ∃ H : Hyperplane C, H ∈ A ∧ CodimOneAt H i := by
+        have hm := Finset.mem_filter.mp (by simpa [missingCoordinates] using hi)
+        exact hm.2
       exact (hMissing ⟨H', hH'A, hCodim⟩).elim
     · rcases Finset.mem_image.mp (by simpa [addedFamily] using hH'add) with
         ⟨j, hj, rfl⟩
