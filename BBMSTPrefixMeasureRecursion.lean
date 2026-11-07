@@ -216,7 +216,9 @@ noncomputable def prefixUniformFibre
     { points := Finset.univ
       covered := prefixCoveredValues C (A := A) hk x
       total := baseMass
-      points_nonempty := ?_
+      points_nonempty := by
+        obtain ⟨s⟩ := Fintype.card_pos_iff.mp hcard
+        exact ⟨s, Finset.mem_univ s⟩
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
 
