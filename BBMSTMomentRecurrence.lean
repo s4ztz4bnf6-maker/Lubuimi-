@@ -1,0 +1,144 @@
+import Mathlib
+
+/-!
+# BBMST moment-polynomial recurrence
+
+This module formalizes the exact finite product recurrence for c_k(z)
+from Lemma 3.3 / Theorem 3.2. The initial coefficients c(I) remain explicit
+inputs; deriving them as maxima of the actual initial measure P_a on
+hyperplanes is a separate, still-open source-instantiation obligation.
+-/
+
+namespace BBMSTMomentRecurrence
+
+/-- One multiplicative factor contributed by a later coordinate. -/
+def stageFactor (δ size : ℕ → ℚ) (z : ℚ) (j : ℕ) : ℚ :=
+  1 + z / ((1 - δ j) * size j)
+
+/-- Product of the coordinate factors from stages a+1 through a+m. -/
+def stageFactorProduct (a m : ℕ) (δ size : ℕ → ℚ) (z : ℚ) : ℚ :=
+  ∏ j ∈ Finset.range m, stageFactor δ size z (a + 1 + j)
+
+/-- Initial polynomial Σ_I c(I) z^|I|. -/
+def initialPolynomial (a : ℕ)
+    (c : Finset (Fin a) → ℚ) (z : ℚ) : ℚ :=
+  ∑ I ∈ Finset.univ.powerset, c I * z ^ I.card
+
+/-- The source polynomial c_{a+m}(z), with the initial coefficients kept
+as explicit data and the later-coordinate factors exactly aligned. -/
+def cK (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) (z : ℚ) : ℚ :=
+  initialPolynomial a c z * stageFactorProduct a m δ size z
+
+/-- The finite product gains exactly the next coordinate factor. -/
+theorem stageFactorProduct_succ
+    (a m : ℕ) (δ size : ℕ → ℚ) (z : ℚ) :
+    stageFactorProduct a (m + 1) δ size z =
+      stageFactorProduct a m δ size z *
+        stageFactor δ size z (a + m + 1) := by
+  unfold stageFactorProduct
+  rw [Finset.prod_range_succ]
+  congr 1
+  congr 1
+  omega
+
+/-- Exact recurrence c_{k+1}(z) = c_k(z) times the next-coordinate factor. -/
+theorem cK_succ
+    (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) (z : ℚ) :
+    cK a (m + 1) c δ size z =
+      cK a m c δ size z *
+        stageFactor δ size z (a + m + 1) := by
+  unfold cK
+  rw [stageFactorProduct_succ]
+  ring
+
+/-- At the initial stage the later-coordinate product is empty. -/
+theorem cK_initial
+    (a : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) (z : ℚ) :
+    cK a 0 c δ size z = initialPolynomial a c z := by
+  simp [cK, stageFactorProduct]
+
+/-- The coordinate factor is positive on the source parameter range. -/
+theorem stageFactor_pos
+    (δ size : ℕ → ℚ) (z : ℚ) (j : ℕ)
+    (hz : 0 ≤ z)
+    (hδ : 0 ≤ δ j) (hδhalf : δ j ≤ (1 / 2 : ℚ))
+    (hsize : 0 < size j) :
+    0 < stageFactor δ size z j := by
+  unfold stageFactor
+  have hden : 0 < (1 - δ j) * size j := by
+    apply mul_pos
+    · linarith
+    · exact hsize
+  have hquot : 0 ≤ z / ((1 - δ j) * size j) :=
+    div_nonneg hz (le_of_lt hden)
+  linarith
+
+/-- The initial polynomial is nonnegative for nonnegative coefficients
+and nonnegative z. -/
+theorem initialPolynomial_nonneg
+    (a : ℕ) (c : Finset (Fin a) → ℚ) (z : ℚ)
+    (hc : ∀ I, 0 ≤ c I) (hz : 0 ≤ z) :
+    0 ≤ initialPolynomial a c z := by
+  unfold initialPolynomial
+  apply Finset.sum_nonneg
+  intro I hI
+  exact mul_nonneg (hc I) (pow_nonneg hz I.card)
+
+/-- The c_k(z) polynomial is nonnegative when the initial coefficients
+are nonnegative and all coordinate factors are source-valid. -/
+theorem cK_nonneg
+    (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) (z : ℚ)
+    (hc : ∀ I, 0 ≤ c I) (hz : 0 ≤ z)
+    (hδ : ∀ j, 0 ≤ δ (a + 1 + j))
+    (hδhalf : ∀ j, δ (a + 1 + j) ≤ (1 / 2 : ℚ))
+    (hsize : ∀ j, 0 < size (a + 1 + j)) :
+    0 ≤ cK a m c δ size z := by
+  unfold cK stageFactorProduct
+  apply mul_nonneg
+  · exact initialPolynomial_nonneg a c z hc hz
+  · apply Finset.prod_nonneg
+    intro j hj
+    exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
+      (hδ j) (hδhalf j) (hsize j))
+
+/-- The first- and third-evaluation sequences used by Theorem 3.2. -/
+def cKOne (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) : ℚ :=
+  cK a m c δ size 1
+
+def cKThree (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) : ℚ :=
+  cK a m c δ size 3
+
+theorem cKOne_succ
+    (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) :
+    cKOne a (m + 1) c δ size =
+      cKOne a m c δ size *
+        (1 + 1 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+  simpa [cKOne, stageFactor] using
+    cK_succ a m c δ size (1 : ℚ)
+
+theorem cKThree_succ
+    (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) :
+    cKThree a (m + 1) c δ size =
+      cKThree a m c δ size *
+        (1 + 3 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+  simpa [cKThree, stageFactor] using
+    cK_succ a m c δ size (3 : ℚ)
+
+#print axioms stageFactorProduct_succ
+#print axioms cK_succ
+#print axioms cK_initial
+#print axioms stageFactor_pos
+#print axioms initialPolynomial_nonneg
+#print axioms cK_nonneg
+#print axioms cKOne_succ
+#print axioms cKThree_succ
+
+end BBMSTMomentRecurrence
