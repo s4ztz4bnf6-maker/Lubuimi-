@@ -73,7 +73,8 @@ theorem reduced_coordinate_card_ge_two
     (i : Fin n) :
     2 ≤ Fintype.card (ReducedValue removed i) := by
   by_cases hRemoved : removed i = none
-  · have hcard := primeCoordinateSystem_card_ge_three p hp hodd i
+  · have hcard : 3 ≤ p i := by
+      simpa using primeCoordinateSystem_card_ge_three p hp hodd i
     have e : ReducedValue removed i ≃ (primeCoordinateSystem p hp).S i := by
       refine
         { toFun := Subtype.val
@@ -87,13 +88,14 @@ theorem reduced_coordinate_card_ge_two
       · intro s
         rfl
     rw [Fintype.card_congr e, primeCoordinateSystem_card]
-    exact hcard
+    omega
   · cases hopt : removed i with
     | none => exact False.elim (hRemoved hopt)
     | some r =>
-        have hcard := primeCoordinateSystem_card_ge_three p hp hodd i
+        have hcard : 3 ≤ p i := by
+          simpa using primeCoordinateSystem_card_ge_three p hp hodd i
         rw [reducedValue_card removed i r hopt]
-        rw [primeCoordinateSystem_card] at hcard
+        rw [primeCoordinateSystem_card]
         omega
 
 #print axioms primeCoordinateSystem
