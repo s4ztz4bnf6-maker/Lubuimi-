@@ -531,4 +531,126 @@ theorem prefixCylinder_fixed_mass_le
 #print axioms prefixCylinder_fixed_mass_le
 
 
+/-- The mass of every finite hyperplane cylinder is nonnegative, by
+nonnegativity of the actual recursively defined prefix weights. -/
+theorem prefixCylinderMass_nonneg
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + j ≤ n)
+    (H : Hyperplane C) :
+    0 ≤ prefixCylinderMass C (A := A) a ha P0 δ j hj H := by
+  unfold prefixCylinderMass
+  apply Finset.sum_nonneg
+  intro x hx
+  exact PAt_nonneg (C := C) (A := A) a ha P0 δ
+    hP0_nonneg hδ hδhalf j hj x
+
+/-- Product of the distortion factors only at coordinates fixed by H in
+the suffix [a,a+j). Free coordinates contribute the neutral factor 1. -/
+noncomputable def hyperplaneSuffixFactor
+    (a : ℕ) (δ : Fin n → ℚ) (H : Hyperplane C) :
+    (j : ℕ) → (hj : a + j ≤ n) → ℚ
+  | 0, _ => 1
+  | j + 1, hj =>
+      hyperplaneSuffixFactor a δ H j (by omega) *
+        (if (H.assignment (stageCoordinate (by omega))).isSome
+         then distortionFactor C δ (stageCoordinate (by omega))
+         else 1)
+
+/-- Cylinder-mass induction with the exact BBMST suffix factor: each
+coordinate free in H preserves mass, and each coordinate fixed by H
+contributes exactly 1/(|S_i|(1-δ_i)). No factor is charged to a free
+coordinate. This is the central multi-stage measure estimate needed for
+Lemma 3.3. -/
+theorem prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (H : Hyperplane C) :
+    ∀ (j : ℕ) (hj : a + j ≤ n),
+      prefixCylinderMass C (A := A) a ha P0 δ j hj H ≤
+        prefixCylinderMass C (A := A) a ha P0 δ 0 ha H *
+          hyperplaneSuffixFactor C a δ H j hj := by
+  intro j
+  induction j with
+  | zero =>
+      intro hj
+      simp [hyperplaneSuffixFactor]
+  | succ j ih =>
+      intro hj
+      let k := a + j
+      have hk : k + 1 ≤ n := by omega
+      have hprev : k ≤ n := by omega
+      let i := stageCoordinate hk
+      have hmass_nonneg :
+          0 ≤ prefixCylinderMass C (A := A) a ha P0 δ j hprev H :=
+        prefixCylinderMass_nonneg C a ha P0 δ
+          hP0_nonneg hδ hδhalf j hprev H
+      have hcardpos :
+          0 < (Fintype.card (C.S i) : ℚ) := by
+        have hcard := C.card_ge_two i
+        exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) hcard)
+      have hdenpos : 0 < 1 - δ i := by
+        linarith [hδhalf i]
+      have hfactorpos : 0 < distortionFactor C δ i := by
+        unfold distortionFactor
+        exact one_div_pos.mpr (mul_pos hcardpos hdenpos)
+      cases hassign : H.assignment i with
+      | none =>
+          have hstep :
+              prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
+                prefixCylinderMass C (A := A) a ha P0 δ j hprev H :=
+            prefixCylinder_free_mass_eq C a ha P0 δ
+              hP0_nonneg hδ hδhalf j hj H (by simpa [i, hassign])
+          rw [hstep]
+          simpa [hyperplaneSuffixFactor, k, hk, i, hassign] using
+            (ih hprev)
+      | some s =>
+          have hstep :
+              prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
+                ((prefixCylinderMass C (A := A) a ha P0 δ j hprev H /
+                  (Fintype.card (C.S i) : ℚ)) / (1 - δ i)) :=
+            prefixCylinder_fixed_mass_le C a ha P0 δ
+              hP0_nonneg hδ hδhalf j hj H s (by simpa [i, hassign])
+          have hstep' :
+              prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
+                prefixCylinderMass C (A := A) a ha P0 δ j hprev H *
+                  distortionFactor C δ i := by
+            calc
+              prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
+                  (prefixCylinderMass C (A := A) a ha P0 δ j hprev H /
+                    (Fintype.card (C.S i) : ℚ)) / (1 - δ i) := hstep
+              _ = prefixCylinderMass C (A := A) a ha P0 δ j hprev H *
+                    distortionFactor C δ i := by
+                      unfold distortionFactor
+                      field_simp [ne_of_gt hcardpos, ne_of_gt hdenpos]
+                      <;> ring
+          calc
+            prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
+                prefixCylinderMass C (A := A) a ha P0 δ j hprev H *
+                  distortionFactor C δ i := hstep'
+            _ ≤
+                (prefixCylinderMass C (A := A) a ha P0 δ 0 ha H *
+                  hyperplaneSuffixFactor C a δ H j hprev) *
+                    distortionFactor C δ i := by
+                      exact mul_le_mul_of_nonneg_right (ih hprev)
+                        (le_of_lt hfactorpos)
+            _ =
+                prefixCylinderMass C (A := A) a ha P0 δ 0 ha H *
+                  hyperplaneSuffixFactor C a δ H (j + 1) hj := by
+                    simp [hyperplaneSuffixFactor, k, hk, i, hassign]
+                    <;> ring
+
+#print axioms prefixCylinderMass_nonneg
+#print axioms hyperplaneSuffixFactor
+#print axioms prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor
+
+
 end BBMSTPrefixCylinderMass
