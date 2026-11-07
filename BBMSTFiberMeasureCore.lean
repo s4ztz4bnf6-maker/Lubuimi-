@@ -61,7 +61,7 @@ theorem fibreMultiplier_mass_one {a δ : ℚ}
     simp [coveredMultiplier, uncoveredMultiplier, h]
     field_simp
   · have hlt : δ < a := lt_of_not_ge h
-    have ha0 : a ≠ 0 := ne_of_gt (lt_of_le_of_lt ha hlt)
+    have ha0 : a ≠ 0 := ne_of_gt (lt_of_le_of_lt hδ hlt)
     have hδden : 1 - δ ≠ 0 := by linarith
     simp [coveredMultiplier, uncoveredMultiplier, h]
     field_simp [ha0, hδden]
@@ -100,7 +100,7 @@ theorem coveredMultiplier_zero_distortion {a : ℚ}
   have hnot : ¬ a ≤ 0 := not_le.mpr ha
   have ha0 : a ≠ 0 := ne_of_gt ha
   simp only [coveredMultiplier, if_neg hnot]
-  field_simp
+  field_simp [ha0]
 
 #print axioms coveredMultiplier_nonneg
 #print axioms uncoveredMultiplier_pos
