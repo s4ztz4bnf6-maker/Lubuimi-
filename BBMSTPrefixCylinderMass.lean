@@ -86,7 +86,7 @@ theorem sum_extensions_eq_old_event_mass
             extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
-            restrictPrefix_extendPrefix, hlast] using hlocal.symm
+            restrictPrefix_extendPrefix, hlast] using hlocal
     _ = baseMass := hlocalSum
 
 /-- For a prescribed value of the newly exposed coordinate, the mass of
@@ -334,7 +334,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · exact HEq.of_eq (extendPrefix_last C hk x t)
+    · exact HEq.rfl
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
