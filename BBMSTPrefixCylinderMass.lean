@@ -30,15 +30,20 @@ theorem sum_extensions_eq_old_event_mass
     (hδ : ∀ i, 0 ≤ δ i)
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
-    (E : Finset (PrefixPoint C (a + j) (by omega))) :
-    (∑ x ∈ E, ∑ t : C.S (stageCoordinate (by omega)),
+    (E : Finset (PrefixPoint C (a + j)
+      (Nat.le_trans (Nat.le_succ (a + j))
+        (by simpa [Nat.add_assoc] using hj)))) :
+    (∑ x ∈ E, ∑ t : C.S (stageCoordinate (by
+      simpa [Nat.add_assoc] using hj)),
       PAt C (A := A) a ha P0 δ (j + 1) hj
-        (extendPrefix C (by omega) x t)) =
-    ∑ x ∈ E, PAt C (A := A) a ha P0 δ j (by omega) x := by
+        (extendPrefix (by simpa [Nat.add_assoc] using hj) x t)) =
+    ∑ x ∈ E, PAt C (A := A) a ha P0 δ j
+      (Nat.le_trans (Nat.le_succ (a + j))
+        (by simpa [Nat.add_assoc] using hj)) x := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
-  have hprev : k ≤ n := by omega
+  have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
   have hnonneg := PAt_nonneg (C := C) (A := A) a ha P0 δ
     hP0_nonneg hδ hδhalf
   apply Finset.sum_congr rfl
@@ -81,7 +86,7 @@ theorem sum_extensions_eq_old_event_mass
             extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
-            restrictPrefix_extendPrefix, hlast] using hlocal.symm
+            restrictPrefix_extendPrefix, hlast] using hlocal
     _ = baseMass := hlocalSum
 
 /-- For a prescribed value of the newly exposed coordinate, the mass of
@@ -95,17 +100,24 @@ theorem fixed_extension_event_mass_le
     (hδ : ∀ i, 0 ≤ δ i)
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
-    (E : Finset (PrefixPoint C (a + j) (by omega)))
-    (t : C.S (stageCoordinate (by omega))) :
+    (E : Finset (PrefixPoint C (a + j)
+      (Nat.le_trans (Nat.le_succ (a + j))
+        (by simpa [Nat.add_assoc] using hj))))
+    (t : C.S (stageCoordinate (by
+      simpa [Nat.add_assoc] using hj))) :
     (∑ x ∈ E, PAt C (A := A) a ha P0 δ (j + 1) hj
-      (extendPrefix C (by omega) x t)) ≤
-    ((∑ x ∈ E, PAt C (A := A) a ha P0 δ j (by omega) x) /
-      (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
-      (1 - δ (stageCoordinate (by omega))) := by
+      (extendPrefix (by simpa [Nat.add_assoc] using hj) x t)) ≤
+    ((∑ x ∈ E, PAt C (A := A) a ha P0 δ j
+      (Nat.le_trans (Nat.le_succ (a + j))
+        (by simpa [Nat.add_assoc] using hj)) x) /
+      (Fintype.card (C.S (stageCoordinate (by
+        simpa [Nat.add_assoc] using hj)) : ℚ)) /
+      (1 - δ (stageCoordinate (by
+        simpa [Nat.add_assoc] using hj))) := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
-  have hprev : k ≤ n := by omega
+  have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
   calc
     (∑ x ∈ E, PAt C (A := A) a ha P0 δ (j + 1) hj
         (extendPrefix C hk x t)) ≤
