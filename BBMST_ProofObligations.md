@@ -161,7 +161,7 @@ At source commit `2dfde335eafa1f4f64c691ac6a2770f5db224e22`,
 `BBMSTPrefixCylinderMass.lean` was extended with the finite cylinder
 `prefixCylinder` and its actual `PAt)-mass `prefixCylinderMass`.
 The membership theorem `mem_prefixCylinder` identifies the finite filter
-with `Hyperplane.ContainsPrefix).
+with `Hyperplane.ContainsPrefix`.
 
 The geometric one-coordinate decomposition is stated as
 `containsPrefix_extend_iff`: membership after appending a coordinate is
@@ -185,3 +185,17 @@ needs that explicit identification with the next-stage cylinder. The
 multi-stage induction, initial-cylinder coefficient construction, Lemma 3.3,
 Lemma 3.4, numerical strict inequality, and final axiom elimination remain
 open. The project axioms are not removed.
+
+
+## 10. Cylinder-restricted extension equivalences and one-step recursion (2026-11-07)
+
+At source commits 1e7c4f4be6e5f037c852ce7562286dc9cce93cc4, db166b7237320612afa741bb3aa5bbd53b64ea2b, and 51ebe1483a66ad54e93544cb55599f20bbeb74a1, the cylinder layer was extended with two restricted equivalences:
+
+- prefixCylinderExtensionEquivFree: the next-stage cylinder with a free boundary coordinate is equivalent to the old cylinder paired with the full new-coordinate type;
+- prefixCylinderExtensionEquivFixed: the next-stage cylinder with a prescribed boundary value is equivalent to the old cylinder by the unique section that appends that value.
+
+The corresponding finite-sum statements are prefixCylinder_free_mass_reindex and prefixCylinder_fixed_mass_reindex. They identify the next-stage cylinder mass with, respectively, the sum over every extension of the old cylinder and the sum over its prescribed section. This supplies the cylinder-level finite reindexing missing from section 9.
+
+The one-step consequences are stated as prefixCylinder_free_mass_eq and prefixCylinder_fixed_mass_le. The free case preserves cylinder mass exactly; the fixed case incurs only the factor 1/(|S_k|(1-delta_k)). This is the precise local dichotomy required for the intended Lemma 3.3 suffix induction.
+
+Verification status: source-only. The GitHub contents API accepted the edits, but no Lean compiler output, GitHub workflow run, status check, or kernel result has been obtained for this head. The equivalence and reindexing proofs may still contain elaboration errors. The result does not yet constitute the multi-coordinate induction or Lemma 3.3. The initial cylinder-to-c(I) comparison, Lemma 3.4, the numerical strict inequality, replacement of sieve_criterion and sf_sieve_lt_one, and the final transitive axiom audit remain open.
