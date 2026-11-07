@@ -34,3 +34,37 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+
+## 6. Prefix-recursion implementation status (2026-11-07)
+
+The source-indexed prefix module is present as
+`BBMSTPrefixMeasureRecursion.lean`. At commit
+`e3e705c9566414d425cfc904cd2347e6d0c303cb`, it defines
+`restrictPrefix`, `extendPrefix`, and the concrete set
+`prefixCoveredValues` by filtering the next-coordinate finite type using
+`newAtStage` and `ContainsPrefix`. Its proportion `prefixAlpha` is the
+cardinality fraction of that exact set. The recursion `PAt` uses the same
+set and the last coordinate of the extended prefix.
+
+The commit adds `extendPrefix_last`, asserting that the appended value is
+read at `Fin.last k`. This is a source-level addition only until the
+workflow compiles the module on this commit. The following are still
+unproved in the prefix module: restriction after extension, extension after
+restriction, the fibre-indexing equivalence, a concrete `UniformFibre`
+instantiation over the actual coordinate type, and a pointwise identity
+between the recursion `PAt` and `updatedWeight`.
+
+The finite-fibre lemmas do not by themselves establish these links. In
+particular, `FibreData.covered_mass` requires the exact weighted sum over
+the concrete covered set; a cardinality fraction is sufficient only after
+the uniform weight function and the concrete set are connected by a proved
+construction. Global normalization additionally requires explicit
+nonnegativity and normalization hypotheses on the initial distribution
+`P0`.
+
+The workflow `.github/workflows/lean-audit.yml` explicitly compiles the
+prefix module after the six upstream helper modules. A successful run on a
+commit is evidence for compilation of that module, not for the full theorem:
+the project-specific `sieve_criterion` and `sf_sieve_lt_one` axioms remain
+unreplaced, and the source-level BBMST theorem obligations above remain open.
