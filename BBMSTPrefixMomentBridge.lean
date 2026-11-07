@@ -16,6 +16,7 @@ namespace BBMSTPrefixMomentBridge
 open BBMSTPrefixMeasure
 open BBMSTUniformFibreInstantiation
 open BBMSTUniformStageMoment
+open BBMSTStageMomentCore
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
