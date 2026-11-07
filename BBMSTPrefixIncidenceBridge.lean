@@ -636,6 +636,9 @@ theorem prefixPairReserve_eq_weightedPairCount
 #print axioms prefixCompatiblePairs_card
 #print axioms prefixPAt_secondMoment_le_pairIncidenceCount
 #print axioms prefixPairReserve_eq_weightedPairCount
+#print axioms prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
+#print axioms prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
+#print axioms prefixPairShadowMass_eq_prefixMergedOldShadowMass
 
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
