@@ -12,6 +12,7 @@ on:
       - "BBMSTCodimOneReduction.lean"
       - "BBMSTCodimOneFamily.lean"
       - "BBMSTCodimOneAugmentation.lean"
+      - "BBMSTPrimeCoordinateInstantiation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
@@ -58,3 +59,5 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneFamily.olean BBMSTCodimOneFamily.lean
       - name: Compile codimension-one augmentation
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneAugmentation.olean BBMSTCodimOneAugmentation.lean
+      - name: Compile prime-sized coordinate instantiation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrimeCoordinateInstantiation.olean BBMSTPrimeCoordinateInstantiation.lean
