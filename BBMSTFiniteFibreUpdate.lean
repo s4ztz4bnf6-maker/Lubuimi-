@@ -524,7 +524,6 @@ theorem updatedFamilyCoveredEventMass_le_old
     (F i) δ hδ hδhalf (E i) (hE i hi)
 
 
-#print axioms updatedBaseEventMass_eq_old
 #print axioms updatedFamilyEventMass_le_distorted_old
 #print axioms updatedFamilyCoveredEventMass_le_old
 /-- The sum of the pointwise updated weight is exactly the two-part
@@ -661,5 +660,6 @@ theorem updatedBaseEventMass_eq_old
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
 #print axioms finiteFamily_updatedWeight_eq_total
+#print axioms updatedBaseEventMass_eq_old
 
 end BBMSTFiniteFibreUpdate
