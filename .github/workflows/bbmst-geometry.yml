@@ -1,4 +1,5 @@
 name: BBMST geometry core kernel check
+# Keep the restriction, family, and augmentation modules in the PR kernel check.
 
 on:
   push:
