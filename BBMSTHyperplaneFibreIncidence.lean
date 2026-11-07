@@ -117,9 +117,12 @@ theorem stageCoveredValues_eq_of_agree_before_stage
           by_cases hji : j = i
           · subst j
             simp
-          · have hjlt' : j.val < k - 1 := by
-              simp [i, stageCoordinate] at hji
-              omega
+          · have hjne : j.val ≠ k - 1 := by
+              intro hval
+              apply hji
+              apply Fin.ext
+              simpa [i, stageCoordinate] using hval
+            have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
         simpa [hassign, hsame] using hvalue
@@ -143,10 +146,13 @@ theorem stageCoveredValues_eq_of_agree_before_stage
           by_cases hji : j = i
           · subst j
             simp
-          · have hjlt' : j.val < k - 1 := by
-              simp [i, stageCoordinate] at hji
-              omega
-            simp [Function.update_of_ne hji, hxy j hjlt']
+          · have hjne : j.val ≠ k - 1 := by
+              intro hval
+              apply hji
+              apply Fin.ext
+              simpa [i, stageCoordinate] using hval
+            have hjlt' : j.val < k - 1 := by omega
+            simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
         simpa [hassign, hsame] using hvalue
 
