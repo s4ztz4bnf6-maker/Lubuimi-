@@ -415,6 +415,71 @@ noncomputable def prefixPairShadowMass
         H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
     then P x else 0
 
+
+/-- The mass of the common old-shadow intersection, evaluated directly
+on genuine length-k prefixes. -/
+noncomputable def prefixOldShadowIntersectionMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C) : ℚ :=
+  ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+    if
+      (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x ∧
+      (BBMSTOldShadow.oldShadow (stageCoordinate hk) H').ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x
+    then P x else 0
+
+/-- The pair-shadow mass is exactly the P-mass of the intersection of the
+two old shadows, provided both hyperplanes really enter at this stage.
+This removes the existential boundary-extension witness from the mass
+expression and makes the geometric intersection available for Lemma 3.3. -/
+theorem prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C)
+    (hH : H ∈ newAtStage A (k + 1))
+    (hH' : H' ∈ newAtStage A (k + 1)) :
+    prefixPairShadowMass (C := C) (A := A) hk P H H' =
+      prefixOldShadowIntersectionMass (C := C) (A := A) hk P H H' := by
+  classical
+  unfold prefixPairShadowMass prefixOldShadowIntersectionMass
+  apply Finset.sum_congr rfl
+  intro x hx
+  have hHiff :
+      H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+        (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
+          (Nat.le_trans (Nat.le_succ k) hk) x := by
+    rw [prefixCompatibleHyperplanes_iff_oldShadow
+      (C := C) (A := A) hk x H]
+    simp [hH]
+  have hH'iff :
+      H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+        (BBMSTOldShadow.oldShadow (stageCoordinate hk) H').ContainsPrefix
+          (Nat.le_trans (Nat.le_succ k) hk) x := by
+    rw [prefixCompatibleHyperplanes_iff_oldShadow
+      (C := C) (A := A) hk x H']
+    simp [hH']
+  by_cases hleft :
+      H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+  · by_cases hright :
+        H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+    · have hsleft := hHiff.mp hleft
+      have hsright := hH'iff.mp hright
+      simp [hleft, hright, hsleft, hsright]
+    · have hsright :
+        ¬ (BBMSTOldShadow.oldShadow (stageCoordinate hk) H').ContainsPrefix
+          (Nat.le_trans (Nat.le_succ k) hk) x :=
+          fun hs => hright (hH'iff.mpr hs)
+      simp [hleft, hright, hsright]
+  · have hsleft :
+      ¬ (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x :=
+        fun hs => hleft (hHiff.mpr hs)
+    simp [hleft, hsleft]
+
 /-- Sum of the actual PAt-masses of all pairwise intersections of new
 hyperplane shadows. This is the finite pair-reserve expression in
 BBMST Lemma 3.4 for t = 2. -/
