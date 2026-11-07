@@ -76,6 +76,7 @@ theorem uniformStageRemovedMass_le_zeroSafeMomentBound
       (toFiniteStageData S) δ hδ hδhalf
 
 #print axioms toFiniteStageData
+#print axioms uniformStageTotalMass_eq_one
 #print axioms uniformStageFirstMoment
 #print axioms uniformStageSecondMoment
 #print axioms uniformStageRemovedMass
