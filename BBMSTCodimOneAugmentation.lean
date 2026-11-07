@@ -1,0 +1,133 @@
+import Mathlib
+import BBMSTCodimOneFamily
+
+/-!
+# Codimension-one augmentation for the BBMST early-coordinate reduction
+
+For each early coordinate with no codimension-one member in the original
+family, add one canonical singleton hyperplane. The added family remains
+nonparallel: a collision with an old member would contradict the definition
+of a missing coordinate, and two added members at different coordinates
+have different fixed-coordinate sets.
+-/
+
+namespace BBMSTCodimOneAugmentation
+
+open BBMSTGeometry
+open BBMSTCodimOneReduction
+open BBMSTCodimOneFamily
+
+variable {n : ℕ} {C : CoordinateSystem n}
+
+/-- The hyperplane fixing exactly coordinate i to s. -/
+def singletonAt (i : Fin n) (s : C.S i) : Hyperplane C where
+  assignment j := if h : i = j then some (h ▸ s) else none
+
+theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
+    fixedCoords (singletonAt i s) = {i} := by
+  classical
+  ext j
+  simp [fixedCoords, singletonAt]
+
+/-- Early coordinates for which the original family has no singleton
+fixed-coordinate hyperplane. -/
+def missingCoordinates
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n)) :
+    Finset (Fin n) :=
+  early.filter fun i => ¬ ∃ H, H ∈ A ∧ CodimOneAt H i
+
+/-- Add one canonical singleton hyperplane at each missing early coordinate. -/
+def addedFamily
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i) :
+    Finset (Hyperplane C) :=
+  (missingCoordinates A early).image
+    (fun i => singletonAt i (default i))
+
+/-- The augmented family contains the original family and all added
+singleton hyperplanes. -/
+def augmentedFamily
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i) :
+    Finset (Hyperplane C) :=
+  A ∪ addedFamily A early default
+
+theorem augmentedFamily_has_codimOne
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (i : Fin n) (hi : i ∈ early) :
+    ∃ H, H ∈ augmentedFamily A early default ∧ CodimOneAt H i := by
+  classical
+  by_cases hExists : ∃ H, H ∈ A ∧ CodimOneAt H i
+  · rcases hExists with ⟨H, hH, hFix⟩
+    exact ⟨H, Finset.mem_union_left _ hH, hFix⟩
+  · have hMissing : i ∈ missingCoordinates A early := by
+      exact Finset.mem_filter.mpr ⟨hi, hExists⟩
+    refine ⟨singletonAt i (default i), ?_, ?_⟩
+    · apply Finset.mem_union_right
+      apply Finset.mem_image.mpr
+      exact ⟨i, hMissing, rfl⟩
+    · simpa [CodimOneAt] using singletonAt_fixedCoords i (default i)
+
+/-- Adding the missing singleton hyperplanes preserves nonparallelism. -/
+theorem augmentedFamily_noParallel
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hNP : NoParallel A) :
+    NoParallel (augmentedFamily A early default) := by
+  classical
+  intro H hH H' hH' hFix
+  rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH) with hHA | hHadd
+  · rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH') with hH'A | hH'add
+    · exact hNP hHA hH'A hFix
+    · rcases Finset.mem_image.mp (by simpa [addedFamily] using hH'add) with
+        ⟨i, hi, rfl⟩
+      have hCodim : CodimOneAt H i := by
+        simpa [CodimOneAt, singletonAt_fixedCoords] using hFix
+      have hMissing := (Finset.mem_filter.mp hi).2
+      exact (hMissing ⟨H, hHA, hCodim⟩).elim
+  · rcases Finset.mem_image.mp (by simpa [addedFamily] using hHadd) with
+      ⟨i, hi, rfl⟩
+    rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH') with hH'A | hH'add
+    · have hCodim : CodimOneAt H' i := by
+        simpa [CodimOneAt, singletonAt_fixedCoords] using hFix.symm
+      have hMissing := (Finset.mem_filter.mp hi).2
+      exact (hMissing ⟨H', hH'A, hCodim⟩).elim
+    · rcases Finset.mem_image.mp (by simpa [addedFamily] using hH'add) with
+        ⟨j, hj, rfl⟩
+      have hSingleton : ({i} : Finset (Fin n)) = {j} := by
+        simpa [singletonAt_fixedCoords] using hFix
+      have hij : i = j := Finset.singleton_inj.mp hSingleton
+      subst j
+      rfl
+
+/-- The augmentation removes the existence hypothesis from the early
+selection construction: every early coordinate now has a singleton member. -/
+noncomputable def augmentedSelection
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i) :
+    EarlySelection (augmentedFamily A early default) early :=
+  chooseEarlySelection (augmentedFamily A early default) early
+    (fun i hi => augmentedFamily_has_codimOne A early default i hi)
+
+/-- The augmented family's surviving part has no singleton fixed-coordinate
+sets on the early coordinates. -/
+theorem augmentedChosenSurviving_no_singleton
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    {H : Hyperplane C}
+    (hH : H ∈ survivingFamily (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default))) :
+    ∀ i ∈ early, fixedCoords H ≠ {i} := by
+  exact chosenSurviving_no_singleton
+    (augmentedFamily A early default) early
+    (augmentedFamily_noParallel A early default)
+    (fun i hi => augmentedFamily_has_codimOne A early default i hi)
+    hH
+
+#print axioms singletonAt_fixedCoords
+#print axioms augmentedFamily_has_codimOne
+#print axioms augmentedFamily_noParallel
+#print axioms augmentedChosenSurviving_no_singleton
+
+end BBMSTCodimOneAugmentation
