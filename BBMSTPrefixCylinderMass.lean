@@ -190,8 +190,7 @@ theorem containsPrefix_extend_iff
       | some s =>
           simp [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
             hassign, extendPrefix_last, hboundary]
-    · intro i
-      have hi := hold i
+    · have hi := hold i
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
         projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
 
