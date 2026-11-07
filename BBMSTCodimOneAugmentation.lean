@@ -100,7 +100,9 @@ theorem augmentedFamily_has_codimOne
   · rcases hExists with ⟨H, hH, hFix⟩
     exact ⟨H, Finset.mem_union_left _ hH, hFix⟩
   · have hMissing : i ∈ missingCoordinates A early := by
-      simp [missingCoordinates, hi, hExists]
+      change i ∈ early.filter
+        (fun j => ¬ ∃ H : Hyperplane C, H ∈ A ∧ CodimOneAt H j)
+      exact Finset.mem_filter.mpr ⟨hi, hExists⟩
     refine ⟨singletonAt i (default i), ?_, ?_⟩
     · apply Finset.mem_union_right
       apply Finset.mem_image.mpr
