@@ -21,7 +21,7 @@ open BBMSTStageMomentCore
 variable {ι α : Type*} [DecidableEq ι] [DecidableEq α]
 
 /-- A finite family of uniformly extended coordinate fibres. -/
-structure UniformFiniteStageData (ι α : Type*) [DecidableEq ι] [DecidableEq α] where
+structure UniformFiniteStageData (ι α : Type*) where
   indices : Finset ι
   fibre : ι → UniformFibre α
   /-- The old measure on the stage base is a probability measure. -/
