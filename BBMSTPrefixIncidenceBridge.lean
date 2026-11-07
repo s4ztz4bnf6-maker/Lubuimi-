@@ -25,9 +25,8 @@ variable {n : ℕ} (C : CoordinateSystem n)
 coordinate are the same coordinate. -/
 theorem prefixStageCoordinate_eq_incidence
     {k : ℕ} (hk : k + 1 ≤ n) :
-    BBMSTPrefixMeasure.stageCoordinate (C := C) hk =
-      BBMSTHyperplaneFibreIncidence.stageCoordinate
-        (C := C) (k + 1) (by omega) (by omega) := by
+    BBMSTPrefixMeasure.stageCoordinate hk =
+      BBMSTHyperplaneFibreIncidence.stageCoordinate (k + 1) (by omega) (by omega) := by
   apply Fin.ext
   simp [BBMSTPrefixMeasure.stageCoordinate,
     BBMSTHyperplaneFibreIncidence.stageCoordinate]
@@ -44,7 +43,7 @@ theorem prefixCoveredValues_eq_stageCoveredValues
       stageCoveredValues (C := C) A (k + 1) (by omega) (by omega)
         (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x) := by
   classical
-  have hcoord := prefixStageCoordinate_eq_incidence (C := C) hk
+  have hcoord := prefixStageCoordinate_eq_incidence hk
   cases hcoord
   apply Finset.ext
   intro t
@@ -53,7 +52,7 @@ theorem prefixCoveredValues_eq_stageCoveredValues
   let z : ProductPoint C :=
     Function.update
       (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
-      (BBMSTPrefixMeasure.stageCoordinate (C := C) hk) t
+      (BBMSTPrefixMeasure.stageCoordinate hk) t
   have hz :
       projectPrefix hk z = extendPrefix C hk x t := by
     rfl
