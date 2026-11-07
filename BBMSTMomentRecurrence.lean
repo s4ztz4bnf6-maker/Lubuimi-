@@ -123,6 +123,17 @@ theorem stageFactorProduct_le_two_over_size_product
     exact stageFactor_le_two_over_size δ size z (a + 1 + j) hz
       (hδ j) (hδhalf j) (hsize j)
 
+/-- The initial polynomial is nonnegative for nonnegative coefficients
+and nonnegative z. -/
+theorem initialPolynomial_nonneg
+    (a : ℕ) (c : Finset (Fin a) → ℚ) (z : ℚ)
+    (hc : ∀ I, 0 ≤ c I) (hz : 0 ≤ z) :
+    0 ≤ initialPolynomial a c z := by
+  unfold initialPolynomial
+  apply Finset.sum_nonneg
+  intro I hI
+  exact mul_nonneg (hc I) (pow_nonneg hz I.card)
+
 /-- The full moment polynomial inherits the coarse finite product bound
 from its nonnegative initial coefficient polynomial. -/
 theorem cK_le_initial_mul_two_over_size_product
@@ -141,17 +152,6 @@ theorem cK_le_initial_mul_two_over_size_product
   · exact stageFactorProduct_le_two_over_size_product
       a m δ size z hz hδ hδhalf hsize
   · exact initialPolynomial_nonneg a c z hc hz
-
-/-- The initial polynomial is nonnegative for nonnegative coefficients
-and nonnegative z. -/
-theorem initialPolynomial_nonneg
-    (a : ℕ) (c : Finset (Fin a) → ℚ) (z : ℚ)
-    (hc : ∀ I, 0 ≤ c I) (hz : 0 ≤ z) :
-    0 ≤ initialPolynomial a c z := by
-  unfold initialPolynomial
-  apply Finset.sum_nonneg
-  intro I hI
-  exact mul_nonneg (hc I) (pow_nonneg hz I.card)
 
 /-- The c_k(z) polynomial is nonnegative when the initial coefficients
 are nonnegative and all coordinate factors are source-valid. -/
