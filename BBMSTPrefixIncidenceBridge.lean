@@ -431,6 +431,78 @@ noncomputable def prefixOldShadowIntersectionMass
         (Nat.le_trans (Nat.le_succ k) hk) x
     then P x else 0
 
+
+/-- The P-mass of the single merged old shadow on the genuine prefix
+space. -/
+noncomputable def prefixMergedOldShadowMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C) : ℚ :=
+  ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+    if
+      (BBMSTOldShadow.mergeOldShadows (stageCoordinate hk) H H').ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x
+    then P x else 0
+
+/-- Under old-coordinate compatibility, the common shadow intersection
+is represented by one merged hyperplane on the actual prefix space. -/
+theorem prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C)
+    (hcompat :
+      BBMSTOldShadow.OldCompatible (stageCoordinate hk) H H') :
+    prefixOldShadowIntersectionMass (C := C) (A := A) hk P H H' =
+      prefixMergedOldShadowMass (C := C) (A := A) hk P H H' := by
+  classical
+  unfold prefixOldShadowIntersectionMass prefixMergedOldShadowMass
+  apply Finset.sum_congr rfl
+  intro x hx
+  have hiff := BBMSTOldShadow.mergeOldShadows_containsPrefix_iff
+    (C := C) (k := k)
+    (Nat.le_trans (Nat.le_succ k) hk)
+    (stageCoordinate hk) (by simp [stageCoordinate])
+    H H' hcompat
+    (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
+  have hproject :
+      projectPrefix (Nat.le_trans (Nat.le_succ k) hk)
+        (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x) = x :=
+    projectPrefix_liftPrefix
+      (Nat.le_trans (Nat.le_succ k) hk) x
+  rw [hproject] at hiff
+  by_cases hmerge :
+      (BBMSTOldShadow.mergeOldShadows (stageCoordinate hk) H H').ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x
+  · have hboth := hiff.mp hmerge
+    simp [hmerge, hboth]
+  · have hnot :
+      ¬ ((BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
+            (Nat.le_trans (Nat.le_succ k) hk) x ∧
+          (BBMSTOldShadow.oldShadow (stageCoordinate hk) H').ContainsPrefix
+            (Nat.le_trans (Nat.le_succ k) hk) x) :=
+      fun hboth => hmerge (hiff.mpr hboth)
+    simp [hmerge, hnot]
+
+/-- For a compatible pair of genuine new-stage hyperplanes, its pair
+shadow mass is exactly the P-mass of their single merged old shadow. -/
+theorem prefixPairShadowMass_eq_prefixMergedOldShadowMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C)
+    (hH : H ∈ newAtStage A (k + 1))
+    (hH' : H' ∈ newAtStage A (k + 1))
+    (hcompat :
+      BBMSTOldShadow.OldCompatible (stageCoordinate hk) H H') :
+    prefixPairShadowMass (C := C) (A := A) hk P H H' =
+      prefixMergedOldShadowMass (C := C) (A := A) hk P H H' := by
+  rw [prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
+    (C := C) (A := A) hk P H H' hH hH']
+  exact prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
+    (C := C) (A := A) hk P H H' hcompat
+
 /-- The pair-shadow mass is exactly the P-mass of the intersection of the
 two old shadows, provided both hyperplanes really enter at this stage.
 This removes the existential boundary-extension witness from the mass
