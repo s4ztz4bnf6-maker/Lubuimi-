@@ -307,16 +307,15 @@ theorem prefixFibre_updatedWeight_eq_PAt
     (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (y : PrefixPoint C (a + (j + 1)) hj)
-    (hP : ∀ (m : ℕ) (hm : a + m ≤ n)
-      (x : PrefixPoint C (a + m) hm),
-      0 ≤ PAt C (A := A) a ha P0 δ m hm x) :
+    (hbase : 0 ≤ PAt C (A := A) a ha P0 δ j (by omega)
+      (restrictPrefix C (k := a + j) (by omega) y)) :
     BBMSTFiniteFibreUpdate.updatedWeight
       (prefixFibreData C (A := A) (k := a + j)
         (by omega)
         (restrictPrefix C (k := a + j) (by omega) y)
         (PAt C (A := A) a ha P0 δ j (by omega)
           (restrictPrefix C (k := a + j) (by omega) y))
-        (hP j (by omega) (restrictPrefix C (k := a + j) (by omega) y)))
+        hbase)
       (δ (stageCoordinate (k := a + j) (by omega)))
       (y (Fin.last (a + j))) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y := by
@@ -327,7 +326,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
-    exact hP j (by simpa [k] using hprev) xprev
+    simpa [xprev, k] using hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
