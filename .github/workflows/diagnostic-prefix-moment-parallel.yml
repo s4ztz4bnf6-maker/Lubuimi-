@@ -28,7 +28,9 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile BBMST fibre measure core
-        run: lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+           lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
       - name: Compile finite weighted fibre update
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
       - name: Compile uniform-coordinate fibre instantiation
