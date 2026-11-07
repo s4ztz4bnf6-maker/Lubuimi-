@@ -51,3 +51,5 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
       - name: Compile finite weighted union and noncoverage bound
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
+      - name: Compile BBMST c_k(z) moment recurrence
+        run: lake env lean -o .lake/build/lib/lean/BBMSTMomentRecurrence.olean BBMSTMomentRecurrence.lean
