@@ -126,6 +126,51 @@ theorem fixed_extension_event_mass_le
         (1 - δ (stageCoordinate hk)) := by
           rw [← Finset.sum_div, ← Finset.sum_div]
 
+
+
+/-- Exact geometric decomposition of a hyperplane cylinder when one
+coordinate is appended: all old-coordinate constraints are inherited by
+the restriction, and the boundary constraint is precisely the assignment
+at the newly exposed coordinate. -/
+theorem containsPrefix_extend_iff
+    {A : Finset (Hyperplane C)}
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (t : C.S (stageCoordinate hk)) :
+    H.ContainsPrefix hk (extendPrefix C hk x t) ↔
+      H.ContainsPrefix (Nat.le_trans (Nat.le_succ k) hk) x ∧
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
+         | some s => t = s) := by
+  constructor
+  · intro h
+    constructor
+    · intro i
+      have hi := h i.castSucc
+      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
+        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
+    · cases hassign : H.assignment (stageCoordinate hk) with
+      | none => trivial
+      | some s =>
+          have hlast := h (Fin.last k)
+          simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
+            hassign, extendPrefix_last] using hlast
+  · rintro ⟨hold, hboundary⟩
+    intro i
+    refine Fin.lastCases ?_ (fun i => ?_) i
+    · cases hassign : H.assignment (stageCoordinate hk) with
+      | none => simp [Hyperplane.ContainsPrefix, hassign]
+      | some s =>
+          simp [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
+            hassign, extendPrefix_last, hboundary]
+    · intro i
+      have hi := hold i
+      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
+        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
+
+#print axioms containsPrefix_extend_iff
+
 #print axioms sum_extensions_eq_old_event_mass
 #print axioms fixed_extension_event_mass_le
 
