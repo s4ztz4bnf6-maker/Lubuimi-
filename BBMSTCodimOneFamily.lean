@@ -51,7 +51,7 @@ theorem reducedValue_card
       Fintype.card (C.S i) - 1 := by
   classical
   let e : ReducedValue removed i ≃
-      {s : C.S i // s ∈ (Finset.univ.erase r)} where
+      {s : C.S i // s ∈ (Finset.univ.erase r)} := {
     toFun := fun s =>
       (⟨s.val, by
         have hne : s.val ≠ r := by
@@ -67,6 +67,7 @@ theorem reducedValue_card
     right_inv := by
       intro s
       rfl
+  }
   calc
     Fintype.card (ReducedValue removed i) =
         Fintype.card {s : C.S i // s ∈ (Finset.univ.erase r)} :=
@@ -94,11 +95,12 @@ theorem reducedValue_nonempty_of_card_ge_three
   have hpos : 0 < Fintype.card (ReducedValue removed i) := by
     cases hRemoved : removed i with
     | none =>
-        let e : ReducedValue removed i ≃ C.S i where
+        let e : ReducedValue removed i ≃ C.S i := {
           toFun := Subtype.val
           invFun := fun s => ⟨s, by simp [Retained, hRemoved]⟩
           left_inv := by intro x; cases x; rfl
           right_inv := by intro s; rfl
+        }
         rw [Fintype.card_congr e]
         omega
     | some r =>
