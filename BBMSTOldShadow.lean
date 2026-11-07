@@ -149,17 +149,13 @@ theorem oldShadow_contains_iff_exists_boundary_extension
     · by_cases heq : i = boundary
       · subst i
         simp [Hyperplane.Contains, hs, Function.update]
-      · have hfixed : i ∈ fixedCoords H := by
-          cases ha : H.assignment i with
-          | none => simp [fixedCoords, ha]
-          | some v => simp [fixedCoords, ha]
-        have hi := hInside i hfixed
-        have hnone : H.assignment i = none := by
+      · have hnone : H.assignment i = none := by
           cases ha : H.assignment i with
           | none => exact ha
           | some v =>
-            have hval : i.val < boundary.val + 1 := hi
-            have hnotlt : ¬ i.val < boundary.val := hlt
+            have hfixed : i ∈ fixedCoords H := by
+              simp [fixedCoords, ha]
+            have hi := hInside i hfixed
             have hneq : i.val ≠ boundary.val := by
               intro he
               exact heq (Fin.ext he)
