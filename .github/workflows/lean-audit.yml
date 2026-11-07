@@ -1,4 +1,5 @@
 name: Lean degenerate-witness audit
+# Keep the aligned parameter and fibre-measure scalar cores in the same audit run.
 
 on:
   push:
