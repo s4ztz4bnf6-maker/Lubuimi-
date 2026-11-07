@@ -106,7 +106,7 @@ theorem fixed_extension_event_mass_le
     (t : C.S (stageCoordinate (by
       simpa [Nat.add_assoc] using hj))) :
     (∑ x ∈ E, PAt C (A := A) a ha P0 δ (j + 1) hj
-      (extendPrefix (by simpa [Nat.add_assoc] using hj) x t)) ≤
+      (extendPrefix C (by simpa [Nat.add_assoc] using hj) x t)) ≤
     ((∑ x ∈ E, PAt C (A := A) a ha P0 δ j
       (Nat.le_trans (Nat.le_succ (a + j))
         (by simpa [Nat.add_assoc] using hj)) x) /
