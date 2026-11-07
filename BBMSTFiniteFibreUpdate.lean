@@ -459,6 +459,87 @@ theorem updatedCoveredEventMass_le_old
 #print axioms updatedWeight_le_old_div
 #print axioms updatedEventMass_le_distorted_old
 #print axioms updatedCoveredEventMass_le_old
+/-- Updated mass of a base event, viewed as a union of complete fibres. -/
+def updatedBaseEventMass
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ) : ℚ :=
+  ∑ i ∈ indices, ∑ x ∈ (F i).points, updatedWeight (F i) δ x
+
+/-- Old mass of a base event, represented by the masses of its fibres. -/
+def oldBaseEventMass
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) : ℚ :=
+  ∑ i ∈ indices, (F i).total
+
+/-- The update preserves every event that is a union of complete fibres.
+This is the finite analogue of preservation of Q_{k-1}-measurable events
+in Lemma 2.1. -/
+theorem updatedBaseEventMass_eq_old
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    updatedBaseEventMass indices F δ = oldBaseEventMass indices F := by
+  unfold updatedBaseEventMass oldBaseEventMass
+  apply Finset.sum_congr rfl
+  intro i hi
+  exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
+
+/-- Updated mass of an arbitrary event, decomposed into its section in
+each fibre. -/
+def updatedFamilyEventMass
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ) (E : ι → Finset α) : ℚ :=
+  ∑ i ∈ indices, updatedEventMass (F i) δ (E i)
+
+/-- Old mass of an arbitrary event, decomposed into its fibre sections. -/
+def oldFamilyEventMass
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (E : ι → Finset α) : ℚ :=
+  ∑ i ∈ indices, oldEventMass (F i) (E i)
+
+/-- The arbitrary-event distortion estimate from Lemma 2.1 holds after
+summing over any finite family of fibres. -/
+theorem updatedFamilyEventMass_le_distorted_old
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (E : ι → Finset α)
+    (hE : ∀ i ∈ indices, E i ⊆ (F i).points) :
+    updatedFamilyEventMass indices F δ E ≤
+      oldFamilyEventMass indices F E / (1 - δ) := by
+  unfold updatedFamilyEventMass oldFamilyEventMass
+  calc
+    (∑ i ∈ indices, updatedEventMass (F i) δ (E i))
+      ≤ ∑ i ∈ indices,
+          oldEventMass (F i) (E i) / (1 - δ) := by
+            apply Finset.sum_le_sum
+            intro i hi
+            exact updatedEventMass_le_distorted_old
+              (F i) δ hδ hδhalf (E i) (hE i hi)
+    _ = (∑ i ∈ indices, oldEventMass (F i) (E i)) /
+          (1 - δ) := by
+            rw [← Finset.sum_div]
+
+/-- The covered-event monotonicity from Lemma 2.1 also sums over a finite
+family of fibres. -/
+theorem updatedFamilyCoveredEventMass_le_old
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (E : ι → Finset α)
+    (hE : ∀ i ∈ indices, E i ⊆ (F i).covered) :
+    updatedFamilyEventMass indices F δ E ≤
+      oldFamilyEventMass indices F E := by
+  unfold updatedFamilyEventMass oldFamilyEventMass
+  apply Finset.sum_le_sum
+  intro i hi
+  exact updatedCoveredEventMass_le_old
+    (F i) δ hδ hδhalf (E i) (hE i hi)
+
+
+#print axioms updatedBaseEventMass_eq_old
+#print axioms updatedFamilyEventMass_le_distorted_old
+#print axioms updatedFamilyCoveredEventMass_le_old
 /-- The sum of the pointwise updated weight is exactly the two-part
 definition of updatedMass. This identifies the update as a genuine finite
 weight function, rather than only an aggregate formula. -/
