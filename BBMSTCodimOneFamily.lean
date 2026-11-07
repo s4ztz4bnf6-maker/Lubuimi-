@@ -286,6 +286,10 @@ theorem chosenSurviving_no_singleton
 #print axioms codimOneAt_has_value
 #print axioms reducedValue_card
 #print axioms reducedValue_card_ge_two
+#print axioms reducedValue_nonempty_of_card_ge_three
+#print axioms chooseReducedPoint
+#print axioms reducedProduct_nonempty
+#print axioms survives_iff_meets_reduced_box_of_card_ge_three
 #print axioms survivingFamily_noParallel
 #print axioms survivingFamily_no_singleton
 #print axioms chooseEarlySelection
