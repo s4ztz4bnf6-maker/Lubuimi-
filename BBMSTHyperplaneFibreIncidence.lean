@@ -336,7 +336,7 @@ theorem actualStageFirstMoment_le_compatibleRatio
       ∑ x ∈ D.basePoints,
         D.baseWeight x *
           (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) := by
   classical
   let i := stageCoordinate (C := C) k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
@@ -351,25 +351,15 @@ theorem actualStageFirstMoment_le_compatibleRatio
   have hcard :=
     stageCoveredValues_card_le_compatible_card
       (C := C) A k hk hk0 x
-  have hcardQ :
-      (stageCoveredValues (C := C) A k hk hk0 x).card
-        ≤ (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card :=
-    hcard
   have hfrac :
       ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
           (Fintype.card (C.S i) : ℚ)
         ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
           (Fintype.card (C.S i) : ℚ) := by
     apply (div_le_div_iff_of_pos_right hden).2
-    exact_mod_cast hcardQ
-  have hw := D.baseWeight_nonneg x hx
-  change D.baseWeight x *
-      (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-        (Fintype.card (C.S i) : ℚ)) ≤
-    D.baseWeight x *
-      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-        (Fintype.card (C.S i) : ℚ))
-  exact mul_le_mul_of_nonneg_left hfrac hw
+    exact_mod_cast hcard
+  exact mul_le_mul_of_nonneg_left hfrac
+    (D.baseWeight_nonneg x hx)
 
 /-- The classical coarse consequence follows by bounding every compatible
 subfamily by all of N_k and using that the base weights sum to one. -/
@@ -393,12 +383,12 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
       ≤ ∑ x ∈ D.basePoints,
           D.baseWeight x *
             (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-              (Fintype.card (C.S i) : ℚ) :=
+              (Fintype.card (C.S i) : ℚ)) :=
         actualStageFirstMoment_le_compatibleRatio D
     _ ≤ ∑ x ∈ D.basePoints,
           D.baseWeight x *
             (((newAtStage A k).card : ℚ) /
-              (Fintype.card (C.S i) : ℚ) := by
+              (Fintype.card (C.S i) : ℚ)) := by
         apply Finset.sum_le_sum
         intro x hx
         have hcard :=
