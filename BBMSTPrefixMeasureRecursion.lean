@@ -342,11 +342,13 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  dsimp [F, prefixFibreData, prefixUniformFibre,
+  simp only [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt, k, xprev]
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
+    Finset.mem_univ, if_true]
+  split_ifs <;> ring
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
@@ -437,6 +439,8 @@ theorem PAt_sum_eq_one
           let baseMass := PAt C (A := A) a ha P0 δ j hprev x
           have hbase : 0 ≤ baseMass := hnonneg j hprev x
           let F := prefixFibreData C (A := A) (k := k) hk x baseMass hbase
+          have hpoints : F.points = Finset.univ := by
+            rfl
           have hlocalSum :
               (∑ t : C.S (stageCoordinate hk),
                 BBMSTFiniteFibreUpdate.updatedWeight F
@@ -448,8 +452,7 @@ theorem PAt_sum_eq_one
                 ∑ t ∈ F.points,
                   BBMSTFiniteFibreUpdate.updatedWeight F
                     (δ (stageCoordinate hk)) t := by
-                  simp [F, prefixFibreData, prefixUniformFibre,
-                    BBMSTUniformFibreInstantiation.toFibreData]
+                  simpa [hpoints]
               _ = F.total :=
                 BBMSTFiniteFibreUpdate.sum_updatedWeight_eq_total F
                   (δ (stageCoordinate hk))
@@ -473,9 +476,12 @@ theorem PAt_sum_eq_one
                 have hlocal := prefixFibre_updatedWeight_eq_PAt
                   (C := C) (A := A) a ha P0 δ j (by omega)
                   (extendPrefix C hk x t) hbase'
+                have hlast :
+                    (extendPrefix C hk x t) (Fin.last (a + j)) = t := by
+                  simpa [k] using extendPrefix_last C hk x t
                 simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
                   BBMSTUniformFibreInstantiation.toFibreData,
-                  restrictPrefix_extendPrefix, extendPrefix_last] using hlocal.symm
+                  restrictPrefix_extendPrefix, hlast] using hlocal.symm
             _ = baseMass := hlocalSum
         _ = 1 := ih hprev
 
