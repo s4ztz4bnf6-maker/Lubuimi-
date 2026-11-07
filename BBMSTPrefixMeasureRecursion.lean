@@ -581,8 +581,10 @@ theorem initialPrefixOf_restrictPrefix
   funext i
   have hi : i.val < a + j :=
     Nat.lt_of_lt_of_le i.isLt (Nat.le_add_right a j)
-  simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex, hi]
+  have hi' : i.val < a + j + 1 :=
+    Nat.lt_trans hi (Nat.lt_succ_self (a + j))
+  simp only [initialPrefixOf, restrictPrefix, projectPrefix,
+    liftPrefix, prefixIndex, dif_pos, hi, hi']
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
@@ -594,7 +596,7 @@ noncomputable def distortionProduct (a : ℕ) (δ : Fin n → ℚ) :
     (j : ℕ) → (hj : a + j ≤ n) → ℚ
   | 0, _ => 1
   | j + 1, hj =>
-      let hk : a + j + 1 ≤ n := by simpa [Nat.add_succ] using hj
+      let hk : a + j + 1 ≤ n := by simpa only [Nat.add_succ] using hj
       let hprev : a + j ≤ n := Nat.le_trans (Nat.le_succ (a + j)) hk
       distortionProduct a δ j hprev *
         distortionFactor C δ (stageCoordinate (k := a + j) hk)
