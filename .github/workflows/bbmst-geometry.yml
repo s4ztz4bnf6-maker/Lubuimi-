@@ -1,4 +1,7 @@
 name: BBMST geometry core kernel check
+# Keep the restriction, family, and augmentation modules in the PR kernel check.
+# The augmentation step also verifies coverage preservation and no-parallel closure.
+# Axiom traces cover reduced-product nonemptiness and the canonical augmentation.
 
 on:
   push:
@@ -6,12 +9,20 @@ on:
       - "audit/bbmst-geometry-core-2026-11-05"
     paths:
       - "BBMSTGeometryStageCore.lean"
+      - "BBMSTCodimOneReduction.lean"
+      - "BBMSTCodimOneFamily.lean"
+      - "BBMSTCodimOneAugmentation.lean"
+      - "BBMSTPrimeCoordinateInstantiation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
   pull_request:
     paths:
       - "BBMSTGeometryStageCore.lean"
+      - "BBMSTCodimOneReduction.lean"
+      - "BBMSTCodimOneFamily.lean"
+      - "BBMSTCodimOneAugmentation.lean"
+      - "BBMSTPrimeCoordinateInstantiation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
@@ -40,4 +51,14 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile BBMST geometric stage core
-        run: lake env lean BBMSTGeometryStageCore.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+      - name: Compile codimension-one restriction core
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneReduction.olean BBMSTCodimOneReduction.lean
+      - name: Compile codimension-one family consequences
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneFamily.olean BBMSTCodimOneFamily.lean
+      - name: Compile codimension-one augmentation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneAugmentation.olean BBMSTCodimOneAugmentation.lean
+      - name: Compile prime-sized coordinate instantiation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrimeCoordinateInstantiation.olean BBMSTPrimeCoordinateInstantiation.lean

@@ -90,14 +90,18 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
-        have hassign' : H.assignment (prefixIndex hk j) = some s := by
-          rw [hidx]
+        have hassign' :
+            H.assignment (prefixIndex hk j) =
+              some (Eq.mpr (congrArg C.S hidx) s) := by
+          cases hidx
           exact hassign
         have hj := hPrefix j
-        rw [hassign'] at hj
-        exact hj
-        change x i = s
-        simpa [hidx] using hj
+        simp [hassign'] at hj
+        have hj' :
+            x (prefixIndex hk j) =
+              Eq.mpr (congrArg C.S hidx) s := by
+          simpa [projectPrefix] using hj
+        simpa [hidx] using hj'
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
@@ -116,7 +120,7 @@ def stageFamily {n : ℕ} {C : CoordinateSystem n}
   exact A.filter fun H => ∀ i ∈ fixedCoords H, i.val < k
 
 /-- The hyperplanes first entering the stage family at stage k. -/
-def newAtStage {n : ℕ} {C : CoordinateSystem n}
+noncomputable def newAtStage {n : ℕ} {C : CoordinateSystem n}
     (A : Finset (Hyperplane C)) (k : ℕ) : Finset (Hyperplane C) := by
   classical
   exact stageFamily A k \ stageFamily A (k - 1)
@@ -152,8 +156,11 @@ theorem newAtStage_has_last_coordinate
       intro heq
       exact hNoBoundary ⟨i, heq, hi⟩
     omega
-  exact hPrevious
-    (Finset.mem_filter.mpr ⟨hA, hPreviousStage⟩)
+  have hPrevMem : H ∈ stageFamily A (k - 1) := by
+    change H ∈ A.filter (fun H =>
+      ∀ i ∈ fixedCoords H, i.val < k - 1)
+    exact Finset.mem_filter.mpr ⟨hA, hPreviousStage⟩
+  exact hPrevious hPrevMem
 
 #print axioms containsPrefix_iff_full
 #print axioms newAtStage_subset_stageFamily
