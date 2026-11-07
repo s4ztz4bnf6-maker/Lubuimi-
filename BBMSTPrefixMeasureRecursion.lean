@@ -23,6 +23,10 @@ open BBMSTFiberMeasureCore
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
+/-- The coordinate system supplies finite coordinate types. -/
+noncomputable instance instFintypeCoordinate (i : Fin n) : Fintype (C.S i) :=
+  C.fintypeS i
+
 /-- Classical equality on each finite coordinate type, needed for its Finset fibre. -/
 noncomputable instance instDecidableEqCoordinate (i : Fin n) :
     DecidableEq (C.S i) := Classical.decEq _
@@ -174,8 +178,9 @@ theorem extendPrefix_restrictPrefix
   funext i
   by_cases hi : i.val < k
   · have hne : i.val ≠ k := by omega
+    have hle : i.val ≤ k := Nat.le_of_lt hi
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne] <;> omega
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hle] <;> omega
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
@@ -261,7 +266,7 @@ noncomputable def prefixExtensionEquiv
   left_inv y := extendPrefix_restrictPrefix C hk y
   right_inv p := by
     rcases p with ⟨x, s⟩
-    simp [restrictPrefix_extendPrefix]
+    simp [restrictPrefix_extendPrefix, extendPrefix_last]
 
 #print axioms prefixExtensionEquiv
 
@@ -289,7 +294,7 @@ theorem sum_prefix_eq_sum_extensions
     _ = ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
           ∑ t : C.S (stageCoordinate hk),
             f (extendPrefix C hk x t) := by
-          exact Fintype.sum_sigma (fun x t => f (extendPrefix C hk x t))
+          exact Fintype.sum_sigma (fun p => f (extendPrefix C hk p.1 p.2))
 
 #print axioms sum_prefix_eq_sum_extensions
 
@@ -302,16 +307,17 @@ theorem prefixFibre_updatedWeight_eq_PAt
     (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (y : PrefixPoint C (a + (j + 1)) hj)
-    (hbase : 0 ≤ PAt C (A := A) a ha P0 δ j
-      (by omega) (restrictPrefix C (by omega) y)) :
+    (hP : ∀ (m : ℕ) (hm : a + m ≤ n)
+      (x : PrefixPoint C (a + m) hm),
+      0 ≤ PAt C (A := A) a ha P0 δ m hm x) :
     BBMSTFiniteFibreUpdate.updatedWeight
-      (prefixFibreData C (A := A)
+      (prefixFibreData C (A := A) (k := a + j)
         (by omega)
-        (restrictPrefix C (by omega) y)
-        (PAt C (A := A) a ha P0 δ j
-          (by omega) (restrictPrefix C (by omega) y))
-        hbase)
-      (δ (stageCoordinate (by omega)))
+        (restrictPrefix C (k := a + j) (by omega) y)
+        (PAt C (A := A) a ha P0 δ j (by omega)
+          (restrictPrefix C (k := a + j) (by omega) y))
+        (hP j (by omega) (restrictPrefix C (k := a + j) (by omega) y)))
+      (δ (stageCoordinate (k := a + j) (by omega)))
       (y (Fin.last (a + j))) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y := by
   classical
@@ -321,8 +327,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
-    simpa [xprev, k] using hbase
-  let F := prefixFibreData C (A := A) hk xprev
+    exact hP j (by simpa [k] using hprev) xprev
+  let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
