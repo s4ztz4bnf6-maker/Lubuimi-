@@ -79,7 +79,27 @@ theorem prefixCoveredValues_eq_stageCoveredValues
       (containsPrefix_iff_full hk H hinside z).mpr hfull
     simpa [hz] using hprefix
 
+/-- The set-theoretic incidence bridge induces the exact density
+identity: the recursively defined prefix alpha is the cardinality fraction
+of the actual new-stage hyperplane incidence values. -/
+theorem prefixAlpha_eq_stageCoveredValues_density
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
+    prefixAlpha C (A := A) hk x =
+      ((stageCoveredValues (C := C) A (k + 1) (by omega) (by omega)
+        (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)).card : ℚ) /
+        (Fintype.card (C.S
+          (BBMSTHyperplaneFibreIncidence.stageCoordinate
+            (k + 1) (by omega) (by omega))) : ℚ) := by
+  classical
+  have hcoord := prefixStageCoordinate_eq_incidence (C := C) (k := k) hk
+  cases hcoord
+  simp [BBMSTPrefixMeasure.prefixAlpha,
+    prefixCoveredValues_eq_stageCoveredValues (C := C) (A := A) hk x]
+
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
+#print axioms prefixAlpha_eq_stageCoveredValues_density
 
 end BBMSTPrefixIncidenceBridge
