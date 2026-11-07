@@ -501,7 +501,7 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     (j : ℕ) (hk : a + j + 1 ≤ n)
     (y : PrefixPoint C (a + j + 1) hk) :
     PAt C (A := A) a ha P0 δ (j + 1)
-        (by simpa [Nat.add_succ] using hk) y ≤
+        hk y ≤
       (PAt C (A := A) a ha P0 δ j
         (Nat.le_trans (Nat.le_succ (a + j)) hk)
         (restrictPrefix C (k := a + j) hk y) /
@@ -522,13 +522,13 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
       BBMSTUniformFibreInstantiation.toFibreData]
   have hlocal := prefixFibre_updatedWeight_eq_PAt
     (C := C) (A := A) a ha P0 δ j
-    (by simpa only [Nat.add_succ] using hk) y (by
+    hk y (by
       simpa [k, xprev, baseMass] using hbase)
   have hlocal' :
       BBMSTFiniteFibreUpdate.updatedWeight F
         (δ (stageCoordinate hk)) (y (Fin.last k)) =
       PAt C (A := A) a ha P0 δ (j + 1)
-        (by simpa only [Nat.add_succ] using hk) y := by
+        hk y := by
     simpa [F, k, hk', xprev, baseMass] using hlocal
   have hbound :=
     BBMSTFiniteFibreUpdate.updatedWeight_le_old_div F
@@ -549,7 +549,7 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     linarith
   calc
     PAt C (A := A) a ha P0 δ (j + 1)
-        (by simpa only [Nat.add_succ] using hk) y =
+        hk y =
         BBMSTFiniteFibreUpdate.updatedWeight F
           (δ (stageCoordinate hk)) (y (Fin.last k)) :=
       hlocal'.symm
@@ -575,10 +575,10 @@ theorem initialPrefixOf_restrictPrefix
     {a j : ℕ} (ha : a ≤ n)
     (hk : a + j + 1 ≤ n)
     (y : PrefixPoint C (a + j + 1) hk) :
-    initialPrefixOf C ha
+    initialPrefixOf C (a := a) (j := j) ha
         (Nat.le_trans (Nat.le_succ (a + j)) hk)
         (restrictPrefix C (k := a + j) hk y) =
-      initialPrefixOf C ha hk y := by
+      initialPrefixOf C (a := a) (j := j + 1) ha hk y := by
   funext i
   have hi : i.val < a + j :=
     Nat.lt_of_lt_of_le i.isLt (Nat.le_add_right a j)
@@ -597,7 +597,7 @@ noncomputable def distortionProduct (a : ℕ) (δ : Fin n → ℚ) :
     (j : ℕ) → (hj : a + j ≤ n) → ℚ
   | 0, _ => 1
   | j + 1, hj =>
-      let hk : a + j + 1 ≤ n := by simpa only [Nat.add_succ] using hj
+      let hk : a + j + 1 ≤ n := hj
       let hprev : a + j ≤ n := Nat.le_trans (Nat.le_succ (a + j)) hk
       distortionProduct a δ j hprev *
         distortionFactor C δ (stageCoordinate (k := a + j) hk)
