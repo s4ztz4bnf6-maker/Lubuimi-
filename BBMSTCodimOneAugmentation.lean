@@ -180,6 +180,57 @@ theorem augmentedReducedBox_covered
           simpa [y, hA] using hContains i
         exact hEq
 
+/-- Augmentation preserves a covering family: every original
+covering witness remains a member of the union. -/
+theorem augmentedFamily_covers_of_original_cover
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hCover : ∀ y : ProductPoint C,
+      ∃ H, H ∈ A ∧ H.Contains y) :
+    ∀ y : ProductPoint C,
+      ∃ H, H ∈ augmentedFamily A early default ∧ H.Contains y := by
+  intro y
+  exact augmentedFamily_preserves_cover A early default y (hCover y)
+
+/-- The selected deleted values always leave a nonempty reduced product:
+the base coordinate system supplies at least two values, and at most one
+is deleted from each coordinate. -/
+theorem augmentedReducedProduct_nonempty
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i) :
+    Nonempty (ReducedPoint
+      (selectedDeletedValues (augmentedSelection A early default))) :=
+  reducedProduct_nonempty
+    (selectedDeletedValues (augmentedSelection A early default))
+    (fun i => reducedValue_nonempty_of_card_ge_two
+      (selectedDeletedValues (augmentedSelection A early default)) i
+      (C.card_ge_two i))
+
+/-- The source reduction as a single statement: starting from an original
+cover of the full product and a nonparallel family, augment missing
+codimension-one members, delete their selected values, and obtain a cover
+of the reduced product by a surviving family with no early singleton
+fixed-coordinate sets. -/
+theorem canonicalReduction_result
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hCover : ∀ y : ProductPoint C,
+      ∃ H, H ∈ A ∧ H.Contains y)
+    (hNP : NoParallel A) :
+    ∀ x : ReducedPoint
+      (selectedDeletedValues (augmentedSelection A early default)),
+      ∃ H, H ∈ survivingFamily (augmentedFamily A early default)
+        (selectedDeletedValues (augmentedSelection A early default)) ∧
+        ContainsReducedPoint
+          (selectedDeletedValues (augmentedSelection A early default)) H x ∧
+        (∀ i ∈ early, fixedCoords H ≠ {i}) := by
+  intro x
+  obtain ⟨H, hH, hContains⟩ :=
+    augmentedReducedBox_covered A early default
+      (augmentedFamily_covers_of_original_cover A early default hCover) x
+  exact ⟨H, hH, hContains,
+    augmentedChosenSurviving_no_singleton A early default hNP hH⟩
+
 /-- The augmented family's surviving part has no singleton fixed-coordinate
 sets on the early coordinates. -/
 theorem augmentedChosenSurviving_no_singleton
@@ -199,6 +250,9 @@ theorem augmentedChosenSurviving_no_singleton
 #print axioms singletonAt_fixedCoords
 #print axioms singletonAt_nontrivial
 #print axioms augmentedFamily_preserves_cover
+#print axioms augmentedFamily_covers_of_original_cover
+#print axioms augmentedReducedProduct_nonempty
+#print axioms canonicalReduction_result
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
