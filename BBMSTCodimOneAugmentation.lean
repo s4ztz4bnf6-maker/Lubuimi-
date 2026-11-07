@@ -19,6 +19,16 @@ open BBMSTCodimOneFamily
 
 variable {n : ℕ} {C : CoordinateSystem n}
 
+/-- Choose a canonical default value in each coordinate. The coordinate
+cardinality lower bound guarantees that every choice type is nonempty. -/
+noncomputable def canonicalDefault : ∀ i : Fin n, C.S i := by
+  intro i
+  letI : Fintype (C.S i) := C.fintypeS i
+  have hpos : 0 < Fintype.card (C.S i) := by
+    have h := C.card_ge_two i
+    omega
+  exact Classical.choice (Fintype.card_pos_iff.mp hpos)
+
 /-- The hyperplane fixing exactly coordinate i to s. -/
 def singletonAt (i : Fin n) (s : C.S i) : Hyperplane C where
   assignment j := if h : i = j then some (h ▸ s) else none
@@ -129,5 +139,37 @@ theorem augmentedChosenSurviving_no_singleton
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
+
+/-- Canonical augmentation using only the coordinate system's nonemptiness. -/
+noncomputable def canonicalAugmentedFamily
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n)) :
+    Finset (Hyperplane C) :=
+  augmentedFamily A early canonicalDefault
+
+theorem canonicalAugmentedFamily_noParallel
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (hNP : NoParallel A) :
+    NoParallel (canonicalAugmentedFamily A early) := by
+  exact augmentedFamily_noParallel A early canonicalDefault hNP
+
+theorem canonicalAugmentedFamily_has_codimOne
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (i : Fin n) (hi : i ∈ early) :
+    ∃ H, H ∈ canonicalAugmentedFamily A early ∧ CodimOneAt H i :=
+  augmentedFamily_has_codimOne A early canonicalDefault i hi
+
+noncomputable def canonicalAugmentedSelection
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n)) :
+    EarlySelection (canonicalAugmentedFamily A early) early :=
+  augmentedSelection A early canonicalDefault
+
+theorem canonicalAugmentedChosenSurviving_no_singleton
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (hNP : NoParallel A)
+    {H : Hyperplane C}
+    (hH : H ∈ survivingFamily (canonicalAugmentedFamily A early)
+      (selectedDeletedValues (canonicalAugmentedSelection A early))) :
+    ∀ i ∈ early, fixedCoords H ≠ {i} := by
+  exact augmentedChosenSurviving_no_singleton A early canonicalDefault hNP hH
 
 end BBMSTCodimOneAugmentation
