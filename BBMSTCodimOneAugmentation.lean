@@ -156,6 +156,10 @@ theorem augmentedChosenSurviving_no_singleton
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
+#print axioms canonicalDefault
+#print axioms canonicalAugmentedFamily_noParallel
+#print axioms canonicalAugmentedFamily_has_codimOne
+#print axioms canonicalAugmentedChosenSurviving_no_singleton
 
 /-- Canonical augmentation using only the coordinate system's nonemptiness. -/
 noncomputable def canonicalAugmentedFamily
