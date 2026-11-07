@@ -277,8 +277,6 @@ theorem prefixCylinder_fixedExtension_mass_le
 #print axioms sum_extensions_eq_old_event_mass
 #print axioms fixed_extension_event_mass_le
 
-end BBMSTPrefixCylinderMass
-
 
 /-- Restricting the next cylinder to a free boundary coordinate gives
 exactly the old cylinder times the new coordinate. This is the cylinder-
@@ -531,3 +529,6 @@ theorem prefixCylinder_fixed_mass_le
 #print axioms prefixCylinder_fixed_mass_reindex
 #print axioms prefixCylinder_free_mass_eq
 #print axioms prefixCylinder_fixed_mass_le
+
+
+end BBMSTPrefixCylinderMass
