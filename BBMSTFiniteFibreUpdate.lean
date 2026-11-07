@@ -66,7 +66,10 @@ theorem uncovered_mass_eq (F : FibreData α) :
       _ = (∑ x ∈ F.points, F.weight x) := by rw [hunion]
       _ = F.total := F.total_mass
   rw [F.covered_mass] at hsplit
-  linarith
+  calc
+    (∑ x ∈ F.points \ F.covered, F.weight x) =
+        F.total - F.total * F.proportion := by linarith
+    _ = F.total * (1 - F.proportion) := by ring
 
 /-- The updated finite fibre mass, summing covered and uncovered parts
 separately so the two source multipliers are applied pointwise. -/
