@@ -383,4 +383,91 @@ theorem PAt_nonneg
 #print axioms PAt_nonneg
 
 
+/-- The recursively updated prefix weights remain a probability measure.
+The proof uses the actual finite prefix-fibre bijection and the concrete
+pointwise update, not an abstract replacement fibre. -/
+theorem PAt_sum_eq_one
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hP0_sum : (∑ x : PrefixPoint C a ha, P0 x) = 1)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ)) :
+    ∀ (j : ℕ) (hj : a + j ≤ n),
+      (∑ x : PrefixPoint C (a + j) hj,
+        PAt C (A := A) a ha P0 δ j hj x) = 1 := by
+  intro j
+  induction j with
+  | zero =>
+      intro hj
+      simpa [PAt] using hP0_sum
+  | succ j ih =>
+      intro hj
+      let k := a + j
+      have hk : k + 1 ≤ n := by
+        simpa [k, Nat.add_succ] using hj
+      have hprev : k ≤ n := by omega
+      have hnonneg := PAt_nonneg (C := C) (A := A) a ha P0 δ
+        hP0_nonneg hδ hδhalf
+      calc
+        (∑ y : PrefixPoint C (k + 1) hk,
+            PAt C (A := A) a ha P0 δ (j + 1) hj y) =
+          ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+            ∑ t : C.S (stageCoordinate hk),
+              PAt C (A := A) a ha P0 δ (j + 1) hj
+                (extendPrefix C hk x t) := by
+          exact sum_prefix_eq_sum_extensions C hk
+            (fun y => PAt C (A := A) a ha P0 δ (j + 1) hj y)
+        _ =
+          ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+            PAt C (A := A) a ha P0 δ j hprev x := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          let baseMass := PAt C (A := A) a ha P0 δ j hprev x
+          have hbase : 0 ≤ baseMass := hnonneg j hprev x
+          let F := prefixFibreData C (A := A) (k := k) hk x baseMass hbase
+          have hlocalSum :
+              (∑ t : C.S (stageCoordinate hk),
+                BBMSTFiniteFibreUpdate.updatedWeight F
+                  (δ (stageCoordinate hk)) t) = baseMass := by
+            calc
+              (∑ t : C.S (stageCoordinate hk),
+                  BBMSTFiniteFibreUpdate.updatedWeight F
+                    (δ (stageCoordinate hk)) t) =
+                ∑ t ∈ F.points,
+                  BBMSTFiniteFibreUpdate.updatedWeight F
+                    (δ (stageCoordinate hk)) t := by
+                  simp [F, prefixFibreData, prefixUniformFibre]
+              _ = F.total :=
+                BBMSTFiniteFibreUpdate.sum_updatedWeight_eq_total F
+                  (δ (stageCoordinate hk))
+                  (hδ (stageCoordinate hk)) (hδhalf (stageCoordinate hk))
+              _ = baseMass := by rfl
+          calc
+            (∑ t : C.S (stageCoordinate hk),
+                PAt C (A := A) a ha P0 δ (j + 1) hj
+                  (extendPrefix C hk x t)) =
+              ∑ t : C.S (stageCoordinate hk),
+                BBMSTFiniteFibreUpdate.updatedWeight F
+                  (δ (stageCoordinate hk)) t := by
+                apply Finset.sum_congr rfl
+                intro t ht
+                have hbase' :
+                    0 ≤ PAt C (A := A) a ha P0 δ j
+                      (by omega)
+                      (restrictPrefix C (k := k) (by omega)
+                        (extendPrefix C hk x t)) := by
+                  simpa [restrictPrefix_extendPrefix] using hbase
+                have hlocal := prefixFibre_updatedWeight_eq_PAt
+                  (C := C) (A := A) a ha P0 δ j (by omega)
+                  (extendPrefix C hk x t) hbase'
+                simpa [F, baseMass, restrictPrefix_extendPrefix,
+                  extendPrefix_last] using hlocal.symm
+            _ = baseMass := hlocalSum
+        _ = 1 := ih hprev
+
+#print axioms PAt_sum_eq_one
+
+
 end BBMSTPrefixMeasure
