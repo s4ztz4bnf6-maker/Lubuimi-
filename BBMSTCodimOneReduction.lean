@@ -150,9 +150,50 @@ theorem contains_iff_restricted
         rw [hred] at hi
         simpa [restrictPoint] using hi
 
+
+/-- A point in the reduced product. -/
+abbrev ReducedPoint (removed : ∀ i : Fin n, Option (C.S i)) :=
+  ∀ i : Fin n, ReducedValue removed i
+
+/-- The original hyperplane meets the reduced product exactly when it has a
+point all of whose coordinates avoid the deleted values. -/
+def MeetsReducedBox
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C) : Prop :=
+  ∃ x : ReducedPoint removed,
+    ∀ i, match H.assignment i with
+      | none => True
+      | some s => (x i).val = s
+
+/-- Survival is equivalent to nonempty intersection with the reduced
+product, provided every reduced coordinate is nonempty. -/
+theorem survives_iff_meets_reduced_box
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C)
+    (hNonempty : ∀ i, Nonempty (ReducedValue removed i)) :
+    Survives removed H ↔ MeetsReducedBox removed H := by
+  classical
+  constructor
+  · intro hSurvives
+    refine ⟨fun i => ?_, ?_⟩
+    · cases hA : H.assignment i with
+      | none =>
+          exact Classical.choice (hNonempty i)
+      | some s =>
+          exact ⟨s, hSurvives i s hA⟩
+    · intro i
+      cases hA : H.assignment i with
+      | none => trivial
+      | some s => rfl
+  · rintro ⟨x, hx⟩ i s hA
+    have hxi : (x i).val = s := by
+      simpa [hA] using hx i
+    simpa [hxi] using (x i).property
+
 #print axioms restrictOption_isSome_iff
 #print axioms fixedCoords_restrict_eq
 #print axioms restricted_nontrivial
 #print axioms contains_iff_restricted
+#print axioms survives_iff_meets_reduced_box
 
 end BBMSTCodimOneReduction
