@@ -128,12 +128,38 @@ theorem fixed_extension_event_mass_le
 
 
 
+/-- The finite set of length-k prefixes satisfying the constraints
+of a given hyperplane. -/
+noncomputable def prefixCylinder
+    {k : ℕ} (hk : k ≤ n) (H : Hyperplane C) :
+    Finset (PrefixPoint C k hk) := by
+  classical
+  exact Finset.univ.filter (fun x => H.ContainsPrefix hk x)
+
+/-- Membership in the finite hyperplane cylinder is exactly prefix
+containment; this is the interface used by the event-mass lemmas. -/
+theorem mem_prefixCylinder
+    {k : ℕ} (hk : k ≤ n) (H : Hyperplane C)
+    (x : PrefixPoint C k hk) :
+    x ∈ prefixCylinder C hk H ↔ H.ContainsPrefix hk x := by
+  simp [prefixCylinder]
+
+/-- The PAt mass of the finite cylinder cut out by H at prefix length k. -/
+noncomputable def prefixCylinderMass
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (j : ℕ) (hj : a + j ≤ n)
+    (H : Hyperplane C) : ℚ :=
+  ∑ x ∈ prefixCylinder C hj H, PAt C (A := A) a ha P0 δ j hj x
+
+#print axioms mem_prefixCylinder
+
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
 the restriction, and the boundary constraint is precisely the assignment
 at the newly exposed coordinate. -/
 theorem containsPrefix_extend_iff
-    {A : Finset (Hyperplane C)}
     {k : ℕ} (hk : k + 1 ≤ n)
     (H : Hyperplane C)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
