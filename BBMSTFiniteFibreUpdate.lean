@@ -161,25 +161,6 @@ theorem sum_updatedWeight_eq_updatedMass
           F.weight x * uncoveredMultiplier F.proportion δ) := by
           rw [hcovered, huncovered]
 
-/-- The pointwise finite measure is conserved, not just its two-part
-aggregate representation. -/
-theorem sum_updatedWeight_eq_total
-    (F : FibreData α) (δ : ℚ)
-    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
-    (∑ x ∈ F.points, updatedWeight F δ x) = F.total := by
-  rw [sum_updatedWeight_eq_updatedMass, updatedMass_eq_total F δ hδ hδhalf]
-
-/-- Conservation extends to any finite indexed family of independent
-fibres, by summing the pointwise conservation identity fibre by fibre. -/
-theorem finiteFamily_updatedWeight_eq_total
-    {ι : Type*} (indices : Finset ι) (F : ι → FibreData α)
-    (δ : ℚ) (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
-    (∑ i ∈ indices, ∑ x ∈ (F i).points, updatedWeight (F i) δ x) =
-      ∑ i ∈ indices, (F i).total := by
-  apply Finset.sum_congr rfl
-  intro i hi
-  exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
-
 /-- The finite sum factors through a constant multiplier. -/
 theorem sum_weight_mul (s : Finset α) (w : α → ℚ) (c : ℚ) :
     (∑ x ∈ s, w x * c) = (∑ x ∈ s, w x) * c := by
@@ -203,6 +184,25 @@ theorem updatedMass_eq_total
           (F.proportion * coveredMultiplier F.proportion δ +
             (1 - F.proportion) * uncoveredMultiplier F.proportion δ) := by ring
     _ = F.total := by rw [hmass]; ring
+
+/-- The pointwise finite measure is conserved, not just its two-part
+aggregate representation. -/
+theorem sum_updatedWeight_eq_total
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    (∑ x ∈ F.points, updatedWeight F δ x) = F.total := by
+  rw [sum_updatedWeight_eq_updatedMass, updatedMass_eq_total F δ hδ hδhalf]
+
+/-- Conservation extends to any finite indexed family of independent
+fibres, by summing the pointwise conservation identity fibre by fibre. -/
+theorem finiteFamily_updatedWeight_eq_total
+    {ι : Type*} (indices : Finset ι) (F : ι → FibreData α)
+    (δ : ℚ) (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    (∑ i ∈ indices, ∑ x ∈ (F i).points, updatedWeight (F i) δ x) =
+      ∑ i ∈ indices, (F i).total := by
+  apply Finset.sum_congr rfl
+  intro i hi
+  exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
 
 #print axioms uncovered_mass_eq
 #print axioms total_nonneg
