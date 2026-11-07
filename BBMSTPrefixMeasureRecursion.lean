@@ -658,9 +658,9 @@ theorem PAt_le_initial_mul_distortionProduct
               <;> ring
       have hprevBound := ih hprev xprev
       have hinitial :
-          initialPrefixOf C ha hprev xprev =
-            initialPrefixOf C ha (by omega) y :=
-        initialPrefixOf_restrictPrefix C ha hk y
+          initialPrefixOf C (a := a) (j := j) ha hprev xprev =
+            initialPrefixOf C (a := a) (j := j + 1) ha hj y :=
+        initialPrefixOf_restrictPrefix C (a := a) (j := j) ha hk y
       calc
         PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
             PAt C (A := A) a ha P0 δ j hprev xprev *
