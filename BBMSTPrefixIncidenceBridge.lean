@@ -289,10 +289,90 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
             (by omega) x).card : ℚ) / d ^ 2) := by
           rw [hpair]
 
+
+/-- The PAt-mass of the common old-coordinate shadow of an ordered pair
+of new-stage hyperplanes. This is the concrete pair-intersection quantity
+that Lemma 3.4 must bound using the initial profile c(I) and the distortion
+factor nu(J). -/
+noncomputable def prefixPairShadowMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C) : ℚ :=
+  ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+    if H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ∧
+        H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+    then P x else 0
+
+/-- Sum of the actual PAt-masses of all pairwise intersections of new
+hyperplane shadows. This is the finite pair-reserve expression in
+BBMST Lemma 3.4 for t = 2. -/
+noncomputable def prefixPairReserve
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ) : ℚ :=
+  ∑ p ∈ (newAtStage A (k + 1)).product (newAtStage A (k + 1)),
+    prefixPairShadowMass (C := C) (A := A) hk P p.1 p.2
+
+/-- Fubini's identity: the expected number of ordered compatible
+hyperplane pairs is exactly the sum, over all ordered pairs of new
+hyperplanes, of the PAt-mass of their common old-coordinate shadow. -/
+theorem prefixPairReserve_eq_weightedPairCount
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hP0_sum : (∑ x : PrefixPoint C a ha, P0 x) = 1)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + j + 1 ≤ n) :
+    prefixPairReserve (C := C) (A := A) (by omega)
+      (PAt C (A := A) a ha P0 δ j (by omega)) =
+    ∑ x : PrefixPoint C (a + j) (by omega),
+      PAt C (A := A) a ha P0 δ j (by omega) x *
+        (prefixCompatiblePairs (C := C) (A := A) (by omega) x).card := by
+  classical
+  let N := newAtStage A (a + j + 1)
+  let F := fun x : PrefixPoint C (a + j) (by omega) =>
+    prefixCompatibleHyperplanes (C := C) (A := A) (by omega) x
+  have hfilter (x : PrefixPoint C (a + j) (by omega)) :
+      prefixCompatiblePairs (C := C) (A := A) (by omega) x =
+        (N.product N).filter
+          (fun p => p.1 ∈ F x ∧ p.2 ∈ F x) := by
+    ext p
+    simp [prefixCompatiblePairs, prefixCompatibleHyperplanes,
+      stageCompatibleHyperplanes, N, F, Finset.mem_product,
+      Finset.mem_filter]
+  unfold prefixPairReserve prefixPairShadowMass
+  dsimp [N]
+  rw [Finset.sum_comm]
+  simp only [Finset.sum_ite_irrel]
+  calc
+    (∑ p ∈ (newAtStage A (a + j + 1)).product
+        (newAtStage A (a + j + 1)),
+      ∑ x : PrefixPoint C (a + j) (by omega),
+        if p.1 ∈ F x ∧ p.2 ∈ F x then
+          PAt C (A := A) a ha P0 δ j (by omega) x else 0)
+      =
+      ∑ x : PrefixPoint C (a + j) (by omega),
+        ∑ p ∈ (newAtStage A (a + j + 1)).product
+          (newAtStage A (a + j + 1)),
+          if p.1 ∈ F x ∧ p.2 ∈ F x then
+            PAt C (A := A) a ha P0 δ j (by omega) x else 0 := by
+        rw [Finset.sum_comm]
+    _ = ∑ x : PrefixPoint C (a + j) (by omega),
+        PAt C (A := A) a ha P0 δ j (by omega) x *
+          (prefixCompatiblePairs (C := C) (A := A) (by omega) x).card := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        rw [← hfilter x]
+        simp [Finset.sum_filter, mul_comm]
+
 #print axioms prefixPAt_firstMoment_eq_stageIncidence
 #print axioms prefixPAt_secondMoment_eq_stageIncidence
 #print axioms prefixCompatiblePairs_card
 #print axioms prefixPAt_secondMoment_le_pairIncidenceCount
+#print axioms prefixPairReserve_eq_weightedPairCount
 
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
