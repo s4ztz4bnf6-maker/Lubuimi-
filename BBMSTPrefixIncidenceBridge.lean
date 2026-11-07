@@ -93,11 +93,23 @@ theorem prefixAlpha_eq_stageCoveredValues_density
           (BBMSTHyperplaneFibreIncidence.stageCoordinate
             (k + 1) (by omega) (by omega))) : ℚ) := by
   classical
-  have hcoord := prefixStageCoordinate_eq_incidence (hk := hk)
+  have hcoord := prefixStageCoordinate_eq_incidence (C := C) hk
   change (prefixCoveredValues C (A := A) hk x).card /
       (Fintype.card (C.S (stageCoordinate hk)) : ℚ) = _
   rw [prefixCoveredValues_eq_stageCoveredValues (C := C) (A := A) hk x]
-  rw [← hcoord]
+  have hcard :
+      Fintype.card (C.S (stageCoordinate hk)) =
+        Fintype.card (C.S
+          (BBMSTHyperplaneFibreIncidence.stageCoordinate
+            (k + 1) (by omega) (by omega))) :=
+    congrArg (fun i => Fintype.card (C.S i)) hcoord
+  have hcardQ :
+      (Fintype.card (C.S (stageCoordinate hk)) : ℚ) =
+        (Fintype.card (C.S
+          (BBMSTHyperplaneFibreIncidence.stageCoordinate
+            (k + 1) (by omega) (by omega))) : ℚ) :=
+    congrArg (fun m : ℕ => (m : ℚ)) hcard
+  rw [hcardQ]
 
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
