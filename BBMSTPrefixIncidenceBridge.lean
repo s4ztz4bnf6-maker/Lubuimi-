@@ -275,8 +275,8 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
     have hcardCast :
         ((prefixCompatiblePairs (C := C) (A := A)
           (by omega) x).card : ℚ) =
-          (compatible.card : ℚ) ^ 2 := by
-      rw [hcardNat, Nat.cast_mul, pow_two]
+          (compatible.card : ℚ) * (compatible.card : ℚ) := by
+      rw [hcardNat, Nat.cast_mul]
     rw [div_pow, pow_two, hcardCast]
   have hweight :
       0 ≤ PAt C (A := A) a ha P0 δ j (by omega) x :=
