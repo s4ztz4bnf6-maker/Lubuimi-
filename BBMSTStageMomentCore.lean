@@ -221,6 +221,7 @@ theorem stageRemovedMass_le_secondMoment
                 _ = (F.total * F.proportion ^ 2) /
                     (4 * δ * (1 - δ)) := by ring
     _ = stageSecondMoment S / (4 * δ * (1 - δ)) := by
+      rw [← Finset.sum_div]
       rfl
 
 /-- The source's two-moment minimum bound at positive distortion. -/
