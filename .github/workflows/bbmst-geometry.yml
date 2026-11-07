@@ -8,6 +8,7 @@ on:
       - "BBMSTGeometryStageCore.lean"
       - "BBMSTCodimOneReduction.lean"
       - "BBMSTCodimOneFamily.lean"
+      - "BBMSTCodimOneAugmentation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
@@ -51,3 +52,5 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneReduction.olean BBMSTCodimOneReduction.lean
       - name: Compile codimension-one family consequences
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneFamily.olean BBMSTCodimOneFamily.lean
+      - name: Compile codimension-one augmentation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneAugmentation.olean BBMSTCodimOneAugmentation.lean
