@@ -36,7 +36,7 @@ theorem sum_extensions_eq_old_event_mass
     (∑ x ∈ E, ∑ t : C.S (stageCoordinate (by
       simpa [Nat.add_assoc] using hj)),
       PAt C (A := A) a ha P0 δ (j + 1) hj
-        (extendPrefix (by simpa [Nat.add_assoc] using hj) x t)) =
+        (extendPrefix C (by simpa [Nat.add_assoc] using hj) x t)) =
     ∑ x ∈ E, PAt C (A := A) a ha P0 δ j
       (Nat.le_trans (Nat.le_succ (a + j))
         (by simpa [Nat.add_assoc] using hj)) x := by
@@ -113,7 +113,7 @@ theorem fixed_extension_event_mass_le
       (Fintype.card (C.S (stageCoordinate (by
         simpa [Nat.add_assoc] using hj))) : ℚ) /
       (1 - δ (stageCoordinate (by
-        simpa [Nat.add_assoc] using hj))) := by
+        simpa [Nat.add_assoc] using hj)))) := by
   classical
   let k := a + j
   have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
