@@ -161,4 +161,35 @@ theorem restrictPrefix_extendPrefix
     prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega
 
 
+/-- Restricting a prefix and appending its last coordinate recovers it. -/
+theorem extendPrefix_restrictPrefix
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (y : PrefixPoint C (k + 1) hk) :
+    extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
+  funext i
+  by_cases hi : i.val < k
+  · simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
+      prefixIndex, stageCoordinate, Function.update, hi]
+  · have hiEq : i.val = k := by omega
+    have hlast : i = Fin.last k := Fin.ext hiEq
+    subst i
+    simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
+      prefixIndex, stageCoordinate, Function.update]
+
+/-- The recursive covered predicate is exactly the existence of a
+new-stage hyperplane containing the extended prefix. -/
+theorem prefixPointCovered_iff
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (y : PrefixPoint C (k + 1) hk) :
+    prefixPointCovered C (A := A) hk y ↔
+      ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
+  classical
+  simp [prefixPointCovered, prefixCoveredValues,
+    extendPrefix_restrictPrefix]
+
+#print axioms extendPrefix_restrictPrefix
+#print axioms prefixPointCovered_iff
+
+
 end BBMSTPrefixMeasure
