@@ -22,6 +22,7 @@ on:
       - "BBMSTCodimOneReduction.lean"
       - "BBMSTCodimOneFamily.lean"
       - "BBMSTCodimOneAugmentation.lean"
+      - "BBMSTPrimeCoordinateInstantiation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
