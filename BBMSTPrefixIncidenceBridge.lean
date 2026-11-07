@@ -259,10 +259,14 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
   have hright : 0 ≤ (compatible.card : ℚ) / d :=
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
+  have hdiff : 0 ≤ hright - hleft := sub_nonneg.mpr hfrac
+  have hsum : 0 ≤ hright + hleft := add_nonneg hright hleft
+  have hprod : 0 ≤ (hright - hleft) * (hright + hleft) :=
+    mul_nonneg hdiff hsum
   have hsq :
       ((covered.card : ℚ) / d) ^ 2 ≤
         ((compatible.card : ℚ) / d) ^ 2 := by
-    nlinarith [mul_nonneg (hright - hleft) (hright + hleft)]
+    nlinarith [hprod]
   have hpair :
       ((compatible.card : ℚ) / d) ^ 2 =
         ((prefixCompatiblePairs (C := C) (A := A)
@@ -339,14 +343,24 @@ theorem prefixPairReserve_eq_weightedPairCount
   let N := newAtStage A (a + j + 1)
   let F := fun x : PrefixPoint C (a + j) (by omega) =>
     prefixCompatibleHyperplanes (C := C) (A := A) (by omega) x
+  have hFsubset (x : PrefixPoint C (a + j) (by omega)) :
+      F x ⊆ N := by
+    intro H hH
+    change H ∈ (newAtStage A (a + j + 1)).filter _ at hH
+    exact (Finset.mem_filter.mp hH).1
   have hfilter (x : PrefixPoint C (a + j) (by omega)) :
       prefixCompatiblePairs (C := C) (A := A) (by omega) x =
         (N.product N).filter
           (fun p => p.1 ∈ F x ∧ p.2 ∈ F x) := by
     ext p
-    simp [prefixCompatiblePairs, prefixCompatibleHyperplanes,
-      stageCompatibleHyperplanes, N, F, Finset.mem_product,
-      Finset.mem_filter]
+    constructor
+    · intro hp
+      rcases Finset.mem_product.mp hp with ⟨hp1, hp2⟩
+      apply Finset.mem_filter.mpr
+      refine ⟨Finset.mem_product.mpr ⟨hFsubset x hp1, hFsubset x hp2⟩, ?_⟩
+      exact ⟨hp1, hp2⟩
+    · intro hp
+      exact Finset.mem_product.mpr (Finset.mem_filter.mp hp).2
   unfold prefixPairReserve prefixPairShadowMass
   calc
     (∑ p ∈ (newAtStage A (a + j + 1)).product
