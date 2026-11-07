@@ -36,7 +36,7 @@ structure FibreData (α : Type*) [DecidableEq α] where
 /-- The uncovered mass is forced by the total-mass identity and the
 covered-mass identity; it is not an independent input to the structure. -/
 theorem uncovered_mass_eq (F : FibreData α) :
-    (∑ x ∈ F.points  F.covered, F.weight x) =
+    (∑ x ∈ F.points \\ F.covered, F.weight x) =
       F.total * (1 - F.proportion) := by
   have hdisj : Disjoint F.covered (F.points \ F.covered) := by
     apply Finset.disjoint_left.mpr
@@ -56,7 +56,7 @@ theorem uncovered_mass_eq (F : FibreData α) :
           (Or.inr (Finset.mem_sdiff.mpr ⟨hxPoints, hxCovered⟩))
   have hsplit :
       (∑ x ∈ F.covered, F.weight x) +
-        (∑ x ∈ F.points  F.covered, F.weight x) = F.total := by
+        (∑ x ∈ F.points \\ F.covered, F.weight x) = F.total := by
     calc
       (∑ x ∈ F.covered, F.weight x) +
           (∑ x ∈ F.points \ F.covered, F.weight x)
