@@ -39,6 +39,11 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
   ext j
   simp [fixedCoords, singletonAt]
 
+theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
+    (fixedCoords (singletonAt i s)).Nonempty := by
+  rw [singletonAt_fixedCoords]
+  exact ⟨i, Finset.mem_singleton_self i⟩
+
 /-- Early coordinates for which the original family has no singleton
 fixed-coordinate hyperplane. -/
 def missingCoordinates
@@ -61,6 +66,16 @@ def augmentedFamily
     (default : ∀ i : Fin n, C.S i) :
     Finset (Hyperplane C) :=
   A ∪ addedFamily A early default
+
+/-- Adding hyperplanes cannot destroy an existing covering witness. -/
+theorem augmentedFamily_preserves_cover
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (x : ProductPoint C)
+    (hCover : ∃ H, H ∈ A ∧ H.Contains x) :
+    ∃ H, H ∈ augmentedFamily A early default ∧ H.Contains x := by
+  rcases hCover with ⟨H, hH, hContains⟩
+  exact ⟨H, Finset.mem_union_left _ hH, hContains⟩
 
 theorem augmentedFamily_has_codimOne
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
@@ -136,6 +151,8 @@ theorem augmentedChosenSurviving_no_singleton
     hH
 
 #print axioms singletonAt_fixedCoords
+#print axioms singletonAt_nontrivial
+#print axioms augmentedFamily_preserves_cover
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
