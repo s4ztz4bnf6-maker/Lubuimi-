@@ -17,6 +17,7 @@ on:
       - "BBMSTGeometryStageCore.lean"
       - "BBMSTCodimOneReduction.lean"
       - "BBMSTCodimOneFamily.lean"
+      - "BBMSTCodimOneAugmentation.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - ".github/workflows/bbmst-geometry.yml"
