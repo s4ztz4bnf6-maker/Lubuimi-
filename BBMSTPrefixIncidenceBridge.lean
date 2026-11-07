@@ -284,6 +284,11 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
             (by omega) x).card : ℚ) / d ^ 2) := by
           rw [hpair]
 
+#print axioms prefixPAt_firstMoment_eq_stageIncidence
+#print axioms prefixPAt_secondMoment_eq_stageIncidence
+#print axioms prefixCompatiblePairs_card
+#print axioms prefixPAt_secondMoment_le_pairIncidenceCount
+
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
 #print axioms prefixAlpha_eq_stageCoveredValues_density
