@@ -19,7 +19,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-- Finite fibre with a covered subset and a nonnegative rational weight
 on each point. The mass equations record the covered proportion. -/
-structure FibreData where
+structure FibreData (α : Type*) [DecidableEq α] where
   points : Finset α
   covered : Finset α
   weight : α → ℚ
