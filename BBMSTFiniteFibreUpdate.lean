@@ -108,6 +108,22 @@ def updatedWeight (F : FibreData α) (δ : ℚ) (x : α) : ℚ :=
     F.weight x * uncoveredMultiplier F.proportion δ
   else 0
 
+/-- The pointwise update preserves nonnegativity on the fibre. -/
+theorem updatedWeight_nonneg
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    {x : α} (hx : x ∈ F.points) :
+    0 ≤ updatedWeight F δ x := by
+  by_cases hc : x ∈ F.covered
+  · simp [updatedWeight, hc]
+    exact mul_nonneg (F.weight_nonneg x hx)
+      (coveredMultiplier_nonneg F.proportion_nonneg hδ hδhalf)
+  · simp [updatedWeight, hc, hx]
+    exact mul_nonneg (F.weight_nonneg x hx)
+      (le_of_lt
+        (uncoveredMultiplier_pos F.proportion_nonneg
+          F.proportion_le_one hδ hδhalf))
+
 /-- The sum of the pointwise updated weight is exactly the two-part
 definition of updatedMass. This identifies the update as a genuine finite
 weight function, rather than only an aggregate formula. -/
@@ -211,6 +227,7 @@ theorem finiteFamily_updatedWeight_eq_total
 #print axioms sum_weight_mul
 #print axioms updatedMass_eq_total
 #print axioms updatedWeight
+#print axioms updatedWeight_nonneg
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
 #print axioms finiteFamily_updatedWeight_eq_total
