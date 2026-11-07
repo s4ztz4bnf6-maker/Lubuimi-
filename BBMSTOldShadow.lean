@@ -221,5 +221,6 @@ theorem mergeOldShadows_containsPrefix_iff
 #print axioms oldShadows_disjoint_of_conflict
 #print axioms fixedCoords_mergeOldShadows
 #print axioms oldShadow_contains_iff_exists_boundary_extension
+#print axioms mergeOldShadows_containsPrefix_iff
 
 end BBMSTOldShadow
