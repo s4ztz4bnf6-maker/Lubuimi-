@@ -205,10 +205,59 @@ def coveredMoment (F : FibreData α) (X : α → ℚ) (k : ℕ) : ℚ :=
 def uncoveredMoment (F : FibreData α) (X : α → ℚ) (k : ℕ) : ℚ :=
   ∑ x ∈ F.points \ F.covered, F.weight x * (X x) ^ k
 
+/-- The old moment splits exactly over the covered/uncovered partition. -/
+theorem fibreMoment_eq_parts
+    (F : FibreData α) (X : α → ℚ) (k : ℕ) :
+    fibreMoment F X k =
+      coveredMoment F X k + uncoveredMoment F X k := by
+  classical
+  have hdisj : Disjoint F.covered (F.points \ F.covered) := by
+    apply Finset.disjoint_left.mpr
+    intro x hxCovered hxUncovered
+    exact (Finset.mem_sdiff.mp hxUncovered).2 hxCovered
+  have hunion : F.covered ∪ (F.points \ F.covered) = F.points := by
+    ext x
+    constructor
+    · intro hx
+      rcases Finset.mem_union.mp hx with hxCovered | hxUncovered
+      · exact F.covered_subset hxCovered
+      · exact (Finset.mem_sdiff.mp hxUncovered).1
+    · intro hxPoints
+      by_cases hxCovered : x ∈ F.covered
+      · exact Finset.mem_union.mpr (Or.inl hxCovered)
+      · exact Finset.mem_union.mpr
+          (Or.inr (Finset.mem_sdiff.mpr ⟨hxPoints, hxCovered⟩))
+  unfold fibreMoment coveredMoment uncoveredMoment
+  calc
+    (∑ x ∈ F.points, F.weight x * (X x) ^ k) =
+        (∑ x ∈ F.covered ∪ (F.points \ F.covered),
+          F.weight x * (X x) ^ k) := by rw [hunion]
+    _ = (∑ x ∈ F.covered, F.weight x * (X x) ^ k) +
+        (∑ x ∈ F.points \ F.covered, F.weight x * (X x) ^ k) :=
+          Finset.sum_union hdisj
+
+/-- First and second moments of a generic observable under the old finite
+fibre weight. These are generic measure moments, not yet the paper's
+stage-indexed BBMST quantities. -/
+def fibreFirstMoment (F : FibreData α) (X : α → ℚ) : ℚ :=
+  fibreMoment F X 1
+
+def fibreSecondMoment (F : FibreData α) (X : α → ℚ) : ℚ :=
+  fibreMoment F X 2
+
 /-- The updated weighted k-th moment of an observable. -/
 def updatedMoment (F : FibreData α) (δ : ℚ)
     (X : α → ℚ) (k : ℕ) : ℚ :=
   ∑ x ∈ F.points, updatedWeight F δ x * (X x) ^ k
+
+/-- First and second moments under the pointwise updated finite weight. -/
+def updatedFibreFirstMoment (F : FibreData α) (δ : ℚ)
+    (X : α → ℚ) : ℚ :=
+  updatedMoment F δ X 1
+
+def updatedFibreSecondMoment (F : FibreData α) (δ : ℚ)
+    (X : α → ℚ) : ℚ :=
+  updatedMoment F δ X 2
 
 /-- Exact moment propagation under the finite fibre update. The update
 rescales the covered and uncovered contributions separately; this theorem
@@ -393,7 +442,12 @@ theorem finiteFamily_updatedWeight_eq_total
 #print axioms fibreMoment
 #print axioms coveredMoment
 #print axioms uncoveredMoment
+#print axioms fibreMoment_eq_parts
+#print axioms fibreFirstMoment
+#print axioms fibreSecondMoment
 #print axioms updatedMoment
+#print axioms updatedFibreFirstMoment
+#print axioms updatedFibreSecondMoment
 #print axioms updatedMoment_eq_parts
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
