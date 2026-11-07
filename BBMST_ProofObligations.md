@@ -199,3 +199,84 @@ The corresponding finite-sum statements are prefixCylinder_free_mass_reindex and
 The one-step consequences are stated as prefixCylinder_free_mass_eq and prefixCylinder_fixed_mass_le. The free case preserves cylinder mass exactly; the fixed case incurs only the factor 1/(|S_k|(1-delta_k)). This is the precise local dichotomy required for the intended Lemma 3.3 suffix induction.
 
 Verification status: source-only. The GitHub contents API accepted the edits, but no Lean compiler output, GitHub workflow run, status check, or kernel result has been obtained for this head. The equivalence and reindexing proofs may still contain elaboration errors. The result does not yet constitute the multi-coordinate induction or Lemma 3.3. The initial cylinder-to-c(I) comparison, Lemma 3.4, the numerical strict inequality, replacement of sieve_criterion and sf_sieve_lt_one, and the final transitive axiom audit remain open.
+
+## 11. Multi-stage cylinder estimate and theorem-scope correction (2026-11-07)
+
+At source commit 810f9a44036954117134ca3e15dea643fce0d6ab, the free/fixed
+cylinder equivalences and their finite-sum reindexings were moved back inside
+the BBMSTPrefixCylinderMass namespace. The previous placement after the
+namespace terminator left C, n, and the namespace declarations out of scope;
+that source-structure defect is corrected.
+
+At source commit c8571657bb997cf57ae7a4e97da25b8318315f08, the module adds
+prefixCylinderMass_nonneg, hyperplaneSuffixFactor, and
+prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor. The last theorem
+is the multi-stage cylinder-mass induction: a free coordinate contributes
+factor 1, and a fixed coordinate contributes 1 / (|S_i| * (1 - δ_i)).
+It therefore charges only the coordinates fixed by the hyperplane in the
+suffix. This is the correct measure-theoretic shape of the suffix factor in
+published Lemma 3.3.
+
+Source/CI status at that head: the exact finite-certificate workflow
+42402679779 completed successfully. Its pinned independent checker reported
+ALL CHECKS PASS (12 checks) for the finite primal measures, strict leaf
+bounds, exhaustive finite configuration tree, initial parameter endpoints,
+and the large-prime tail recurrence. This is a Python exact-arithmetic
+certificate check, not a Lean kernel proof of the reductions or of the main
+theorem. The Lean workflow 42402679598 was still running at the time of this
+entry; its Mathlib-cache step had completed but no compilation result for
+the new cylinder module had yet been returned.
+
+### Critical theorem-scope mismatch
+
+The pinned upstream source ErdosSelfridge_v17_fixed.lean declares
+CS_squarefree, but the theorem erdos_selfridge (K) (cs) has only the
+hypothesis that cs : CoveringSystem K; it does not assume CS_squarefree cs.
+CoveringSystem requires distinct moduli greater than one, and CS_allOdd
+requires all of them to be odd. Thus the stated theorem is the unrestricted
+Erdős–Selfridge conjecture, not the square-free theorem proved by
+Balister–Bollobás–Morris–Sahasrabudhe–Tiba.
+
+This is not a cosmetic distinction. The unrestricted problem remains open.
+The Erdős Problems record still lists Problem 7 as open. The July 2026
+kernel-checked Mian–Siddique result proves only that a hypothetical odd
+cover has LCM greater than 10,000. A September 2026 preprint by Schroeder
+claims a lower bound of eight distinct prime divisors, not nonexistence.
+Hackmon's April 2026 preprint excludes support on at most four odd primes
+for arbitrary exponents, while explicitly leaving the general case open.
+These results are lower bounds/partial exclusions, not a proof of the
+unrestricted theorem.
+
+The two upstream axioms do not close this gap:
+
+- sieve_criterion has no square-freeness hypothesis and directly concludes
+  False from an odd covering plus a small sieve sum. In the unrestricted
+  theorem, this is precisely the missing noncoverage assertion and cannot be
+  treated as an already proved BBMST criterion.
+- sf_sieve_lt_one has a degenerate empty-list loophole. The checked
+  AuditCheck.lean file proves degenerate_sieveSum and
+  degenerate_actual_sieveSum_lt_one: with δs = [] and ca1 = ca3 = 1,
+  the getD fallback makes every distortion parameter zero and rational
+  division by zero makes each second-moment quotient zero. Hence the axiom's
+  strict-sum premise is met without constructing the BBMST initial measure
+  or a valid distortion vector. This exposes an interface defect; it does
+  not prove the conjecture.
+
+Consequently, erdos_selfridge is not a kernel-derived proof of the open
+conjecture: its proof depends on sieve_criterion, whose content already
+contains the essential unproved conclusion. The finite-certificate success
+does not change that fact.
+
+### Correct target
+
+The theorem matching the published BBMST result must carry the square-free
+hypothesis CS_squarefree cs. The unrestricted theorem must remain an
+explicit conjecture/target, not be presented as proved. For the square-free
+target, the remaining formal obligations are still substantial: prove the
+actual initial distribution and its c(I) maxima, connect the present
+cylinder estimate to the source-defined hyperplane event, formalize
+Lemma 3.4 and Theorems 3.1–3.2 with the exact codimension-one condition,
+connect the verified rational certificates to those moment bounds,
+formalize the large-prime tail, and finish the CRT correspondence. The final
+axiom audit must be run on that corrected square-free theorem and must
+exclude both project-specific axioms.
