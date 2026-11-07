@@ -333,6 +333,24 @@ theorem updatedMoment_eq_parts
         uncoveredMoment F X k * uncoveredMultiplier F.proportion δ := by
           rw [hcovered, huncovered]
 
+/-- First-moment propagation, obtained by specializing the exact
+observable-moment identity to exponent one. -/
+theorem updatedFibreFirstMoment_eq_parts
+    (F : FibreData α) (δ : ℚ) (X : α → ℚ) :
+    updatedFibreFirstMoment F δ X =
+      coveredMoment F X 1 * coveredMultiplier F.proportion δ +
+        uncoveredMoment F X 1 * uncoveredMultiplier F.proportion δ :=
+  updatedMoment_eq_parts F δ X 1
+
+/-- Second-moment propagation, obtained by specializing the exact
+observable-moment identity to exponent two. -/
+theorem updatedFibreSecondMoment_eq_parts
+    (F : FibreData α) (δ : ℚ) (X : α → ℚ) :
+    updatedFibreSecondMoment F δ X =
+      coveredMoment F X 2 * coveredMultiplier F.proportion δ +
+        uncoveredMoment F X 2 * uncoveredMultiplier F.proportion δ :=
+  updatedMoment_eq_parts F δ X 2
+
 /-- The sum of the pointwise updated weight is exactly the two-part
 definition of updatedMass. This identifies the update as a genuine finite
 weight function, rather than only an aggregate formula. -/
@@ -449,6 +467,8 @@ theorem finiteFamily_updatedWeight_eq_total
 #print axioms updatedFibreFirstMoment
 #print axioms updatedFibreSecondMoment
 #print axioms updatedMoment_eq_parts
+#print axioms updatedFibreFirstMoment_eq_parts
+#print axioms updatedFibreSecondMoment_eq_parts
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
 #print axioms finiteFamily_updatedWeight_eq_total
