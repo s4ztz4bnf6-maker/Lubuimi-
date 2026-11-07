@@ -76,6 +76,72 @@ theorem stageFactor_pos
     div_nonneg hz (le_of_lt hden)
   linarith
 
+/-- On the source range δ ≤ 1/2, each later-coordinate factor is
+bounded by 1 + 2z/|S_j|. -/
+theorem stageFactor_le_two_over_size
+    (δ size : ℕ → ℚ) (z : ℚ) (j : ℕ)
+    (hz : 0 ≤ z)
+    (hδ : 0 ≤ δ j) (hδhalf : δ j ≤ (1 / 2 : ℚ))
+    (hsize : 0 < size j) :
+    stageFactor δ size z j ≤ 1 + 2 * z / size j := by
+  unfold stageFactor
+  have hdenδ : 0 < 1 - δ j := by linarith
+  have hrecip : 1 / (1 - δ j) ≤ 2 := by
+    apply (div_le_iff₀ hdenδ).2
+    linarith
+  have hquot_nonneg : 0 ≤ z / size j :=
+    div_nonneg hz (le_of_lt hsize)
+  have hfrac :
+      z / ((1 - δ j) * size j) ≤ 2 * z / size j := by
+    calc
+      z / ((1 - δ j) * size j)
+          = (z / size j) / (1 - δ j) := by
+              field_simp [ne_of_gt hdenδ, ne_of_gt hsize]
+              <;> ring
+      _ = (z / size j) * (1 / (1 - δ j)) := by ring
+      _ ≤ (z / size j) * 2 :=
+        mul_le_mul_of_nonneg_left hrecip hquot_nonneg
+      _ = 2 * z / size j := by ring
+  linarith
+
+/-- The product of later-coordinate factors is bounded by the product
+with the source's coarse denominator estimate 1/(1-δ_j) ≤ 2. -/
+theorem stageFactorProduct_le_two_over_size_product
+    (a m : ℕ) (δ size : ℕ → ℚ) (z : ℚ)
+    (hz : 0 ≤ z)
+    (hδ : ∀ j, 0 ≤ δ (a + 1 + j))
+    (hδhalf : ∀ j, δ (a + 1 + j) ≤ (1 / 2 : ℚ))
+    (hsize : ∀ j, 0 < size (a + 1 + j)) :
+    stageFactorProduct a m δ size z ≤
+      ∏ j ∈ Finset.range m, (1 + 2 * z / size (a + 1 + j)) := by
+  unfold stageFactorProduct
+  apply Finset.prod_le_prod
+  · intro j hj
+    exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
+      (hδ j) (hδhalf j) (hsize j))
+  · intro j hj
+    exact stageFactor_le_two_over_size δ size z (a + 1 + j) hz
+      (hδ j) (hδhalf j) (hsize j)
+
+/-- The full moment polynomial inherits the coarse finite product bound
+from its nonnegative initial coefficient polynomial. -/
+theorem cK_le_initial_mul_two_over_size_product
+    (a m : ℕ) (c : Finset (Fin a) → ℚ)
+    (δ size : ℕ → ℚ) (z : ℚ)
+    (hc : ∀ I, 0 ≤ c I) (hz : 0 ≤ z)
+    (hδ : ∀ j, 0 ≤ δ (a + 1 + j))
+    (hδhalf : ∀ j, δ (a + 1 + j) ≤ (1 / 2 : ℚ))
+    (hsize : ∀ j, 0 < size (a + 1 + j)) :
+    cK a m c δ size z ≤
+      initialPolynomial a c z *
+        (∏ j ∈ Finset.range m,
+          (1 + 2 * z / size (a + 1 + j))) := by
+  unfold cK
+  apply mul_le_mul_of_nonneg_left
+  · exact stageFactorProduct_le_two_over_size_product
+      a m δ size z hz hδ hδhalf hsize
+  · exact initialPolynomial_nonneg a c z hc hz
+
 /-- The initial polynomial is nonnegative for nonnegative coefficients
 and nonnegative z. -/
 theorem initialPolynomial_nonneg
@@ -136,6 +202,9 @@ theorem cKThree_succ
 #print axioms cK_succ
 #print axioms cK_initial
 #print axioms stageFactor_pos
+#print axioms stageFactor_le_two_over_size
+#print axioms stageFactorProduct_le_two_over_size_product
+#print axioms cK_le_initial_mul_two_over_size_product
 #print axioms initialPolynomial_nonneg
 #print axioms cK_nonneg
 #print axioms cKOne_succ
