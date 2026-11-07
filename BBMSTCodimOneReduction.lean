@@ -179,6 +179,18 @@ noncomputable def chooseReducedValue
   | none => exact Classical.choice hNonempty
   | some s => exact ⟨s, hRetained s rfl⟩
 
+/-- If the optional assignment is fixed to s, the chosen reduced value
+has underlying value s. -/
+theorem chooseReducedValue_val_of_eq
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (i : Fin n) (hNonempty : Nonempty (ReducedValue removed i))
+    (v : Option (C.S i))
+    (hRetained : ∀ s, v = some s → Retained removed i s)
+    (s : C.S i) (hv : v = some s) :
+    (chooseReducedValue removed i hNonempty v hRetained).val = s := by
+  subst v
+  simp [chooseReducedValue]
+
 /-- Survival is equivalent to nonempty intersection with the reduced
 product, provided every reduced coordinate is nonempty. -/
 theorem survives_iff_meets_reduced_box
@@ -197,8 +209,10 @@ theorem survives_iff_meets_reduced_box
     cases hA : H.assignment i with
     | none => trivial
     | some s =>
-        change (x i).val = s
-        simp [x, chooseReducedValue, hA]
+        change (chooseReducedValue removed i (hNonempty i)
+          (H.assignment i) (fun t ht => hSurvives i t ht)).val = s
+        exact chooseReducedValue_val_of_eq removed i (hNonempty i)
+          (H.assignment i) (fun t ht => hSurvives i t ht) s hA
   · rintro ⟨x, hx⟩ i s hA
     have hxi : (x i).val = s := by
       simpa [hA] using hx i
@@ -208,6 +222,7 @@ theorem survives_iff_meets_reduced_box
 #print axioms fixedCoords_restrict_eq
 #print axioms restricted_nontrivial
 #print axioms contains_iff_restricted
+#print axioms chooseReducedValue_val_of_eq
 #print axioms survives_iff_meets_reduced_box
 
 end BBMSTCodimOneReduction
