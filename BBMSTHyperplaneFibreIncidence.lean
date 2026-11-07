@@ -120,7 +120,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
           · have hjlt' : j.val < k - 1 := by
               simp [i, stageCoordinate] at hji
               omega
-            simp [Function.update_of_ne hji, hxy j hjlt']
+            simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
         simpa [hassign, hsame] using hvalue
   · rintro ⟨H, hH, hContains⟩
