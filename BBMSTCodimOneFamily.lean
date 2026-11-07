@@ -83,6 +83,44 @@ theorem reducedValue_card_ge_two
   rw [reducedValue_card removed i r hRemoved]
   omega
 
+/-- A coordinate with at least three original values remains nonempty
+after deleting at most one value. -/
+theorem reducedValue_nonempty_of_card_ge_three
+    (removed : ∀ j : Fin n, Option (C.S j))
+    (i : Fin n)
+    (hCard : 3 ≤ Fintype.card (C.S i)) :
+    Nonempty (ReducedValue removed i) := by
+  classical
+  have hpos : 0 < Fintype.card (ReducedValue removed i) := by
+    cases hRemoved : removed i with
+    | none =>
+        let e : ReducedValue removed i ≃ C.S i where
+          toFun := Subtype.val
+          invFun := fun s => ⟨s, by simp [Retained, hRemoved]⟩
+          left_inv := by intro x; cases x; rfl
+          right_inv := by intro s; rfl
+        rw [Fintype.card_congr e]
+        omega
+    | some r =>
+        have hge : 2 ≤ Fintype.card (ReducedValue removed i) :=
+          reducedValue_card_ge_two removed i r hRemoved hCard
+        omega
+  exact Fintype.card_pos_iff.mp hpos
+
+/-- The reduced product itself is nonempty once every reduced coordinate
+has a nonempty value type. -/
+noncomputable def chooseReducedPoint
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (hNonempty : ∀ i, Nonempty (ReducedValue removed i)) :
+    ReducedPoint removed :=
+  fun i => Classical.choice (hNonempty i)
+
+theorem reducedProduct_nonempty
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (hNonempty : ∀ i, Nonempty (ReducedValue removed i)) :
+    Nonempty (ReducedPoint removed) :=
+  ⟨chooseReducedPoint removed hNonempty⟩
+
 noncomputable def survivingFamily
     (A : Finset (Hyperplane C))
     (removed : ∀ i : Fin n, Option (C.S i)) :
