@@ -47,13 +47,13 @@ The source-indexed prefix module is present as
 cardinality fraction of that exact set. The recursion `PAt` uses the same
 set and the last coordinate of the extended prefix.
 
-The commit adds `extendPrefix_last`, asserting that the appended value is
-read at `Fin.last k`. This is a source-level addition only until the
-workflow compiles the module on this commit. The following are still
-unproved in the prefix module: restriction after extension, extension after
-restriction, the fibre-indexing equivalence, a concrete `UniformFibre`
-instantiation over the actual coordinate type, and a pointwise identity
-between the recursion `PAt` and `updatedWeight`.
+Historical status at the initial prefix-module commit: only
+`extendPrefix_last` had been added at that point. This paragraph was
+superseded by the later source commits documented below. The current branch
+also contains restriction/extension inverse lemmas, the prefix-extension
+equivalence, the concrete `UniformFibre` instantiation, and the pointwise
+identity between `PAt` and `updatedWeight`. These remain source-level
+until the corresponding CI compilation is observed.
 
 The finite-fibre lemmas do not by themselves establish these links. In
 particular, `FibreData.covered_mass` requires the exact weighted sum over
@@ -127,12 +127,12 @@ At source commit `4445a988f4ffc91d9a73b3d80260a5c25fa1cfe0`,
 a separate module `BBMSTPrefixCylinderMass.lean` was added. It states two
 finite-prefix results for an arbitrary finite set E of old prefixes:
 
-- `sum_extensions_eq_old_event_mass`: summing the next-stage `PAt)
+- `sum_extensions_eq_old_event_mass`: summing the next-stage `PAt`
   weights over every value of the newly exposed coordinate preserves the
   mass of E;
 - `fixed_extension_event_mass_le`: retaining one prescribed next-coordinate
   value bounds the event mass by the old event mass divided by
-  `|S_k|(1-δ_k)).
+  `|S_k|(1-δ_k)`.
 
 The free-coordinate statement is stronger than global normalization:
 it is an event-level identity for each finite E. The fixed-coordinate
