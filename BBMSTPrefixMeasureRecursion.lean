@@ -243,4 +243,21 @@ theorem prefixFibreData_proportion
     prefixAlpha]
 
 
+/-- A length-(k+1) prefix is equivalent to its length-k restriction
+together with its final coordinate. -/
+noncomputable def prefixExtensionEquiv
+    {k : ℕ} (hk : k + 1 ≤ n) :
+    PrefixPoint C (k + 1) hk ≃
+      (Σ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+        C.S (stageCoordinate hk)) where
+  toFun y := ⟨restrictPrefix C hk y, y (Fin.last k)⟩
+  invFun p := extendPrefix C hk p.1 p.2
+  left_inv y := extendPrefix_restrictPrefix C hk y
+  right_inv p := by
+    rcases p with ⟨x, s⟩
+    simp [restrictPrefix_extendPrefix]
+
+#print axioms prefixExtensionEquiv
+
+
 end BBMSTPrefixMeasure
