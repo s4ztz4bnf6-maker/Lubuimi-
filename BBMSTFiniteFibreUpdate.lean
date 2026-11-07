@@ -471,19 +471,6 @@ def oldBaseEventMass
     (F : ι → FibreData α) : ℚ :=
   ∑ i ∈ indices, (F i).total
 
-/-- The update preserves every event that is a union of complete fibres.
-This is the finite analogue of preservation of Q_{k-1}-measurable events
-in Lemma 2.1. -/
-theorem updatedBaseEventMass_eq_old
-    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
-    (F : ι → FibreData α) (δ : ℚ)
-    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
-    updatedBaseEventMass indices F δ = oldBaseEventMass indices F := by
-  unfold updatedBaseEventMass oldBaseEventMass
-  apply Finset.sum_congr rfl
-  intro i hi
-  exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
-
 /-- Updated mass of an arbitrary event, decomposed into its section in
 each fibre. -/
 def updatedFamilyEventMass
@@ -632,6 +619,19 @@ theorem finiteFamily_updatedWeight_eq_total
     (δ : ℚ) (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
     (∑ i ∈ indices, ∑ x ∈ (F i).points, updatedWeight (F i) δ x) =
       ∑ i ∈ indices, (F i).total := by
+  apply Finset.sum_congr rfl
+  intro i hi
+  exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
+
+/-- The update preserves every event that is a union of complete fibres.
+This is the finite analogue of preservation of Q_{k-1}-measurable events
+in Lemma 2.1. -/
+theorem updatedBaseEventMass_eq_old
+    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    (F : ι → FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    updatedBaseEventMass indices F δ = oldBaseEventMass indices F := by
+  unfold updatedBaseEventMass oldBaseEventMass
   apply Finset.sum_congr rfl
   intro i hi
   exact sum_updatedWeight_eq_total (F i) δ hδ hδhalf
