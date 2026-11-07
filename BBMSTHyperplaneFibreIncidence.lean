@@ -136,7 +136,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        change Function.update x i t j = s at hvalue
+        change Function.update y i t j = s at hvalue
         exact hsame.symm.trans hvalue
   · rintro ⟨H, hH, hContains⟩
     refine ⟨H, hH, ?_⟩
