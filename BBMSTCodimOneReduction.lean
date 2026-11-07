@@ -60,6 +60,12 @@ noncomputable def restrictHyperplane (removed : ∀ i : Fin n, Option (C.S i))
     (H : Hyperplane C) : RestrictedHyperplane removed where
   assignment i := restrictOption removed i (H.assignment i)
 
+@[simp] theorem restrictHyperplane_assignment
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C) (i : Fin n) :
+    (restrictHyperplane removed H).assignment i =
+      restrictOption removed i (H.assignment i) := rfl
+
 /-- On a surviving hyperplane, restriction preserves whether each coordinate
 is fixed. -/
 theorem restrictOption_isSome_iff
@@ -116,23 +122,19 @@ theorem contains_iff_restricted
       (∀ i, match (restrictHyperplane removed H).assignment i with
         | none => True
         | some s => (restrictPoint removed x hx i).val = s.val) := by
+  simp only [restrictHyperplane_assignment]
   constructor
   · intro h i
     change (∀ j, match H.assignment j with
       | none => True
       | some s => x j = s) at h
-    change (match restrictOption removed i (H.assignment i) with
-      | none => True
-      | some t => (restrictPoint removed x hx i).val = t.val)
     cases hA : H.assignment i with
     | none =>
-        rw [hA]
         simp [restrictOption]
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
         have hxi : x i = s := by
           simpa [hA] using h i
-        rw [hA]
         simp [restrictOption, hs, restrictPoint, hxi]
   · intro h i
     change (match restrictOption removed i (H.assignment i) with
@@ -140,17 +142,15 @@ theorem contains_iff_restricted
       | some t => (restrictPoint removed x hx i).val = t.val) at h
     cases hA : H.assignment i with
     | none =>
-        change (match restrictOption removed i none with
-          | none => True
-          | some t => (restrictPoint removed x hx i).val = t.val) at h
         simp [restrictOption] at h
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
         have hred : restrictOption removed i (some s) = some ⟨s, hs⟩ := by
           simp [restrictOption, hs]
-        rw [hA] at h
-        rw [hred] at h
-        simpa [restrictPoint] using h
+        have hi := h i
+        rw [hA] at hi
+        rw [hred] at hi
+        simpa [restrictPoint] using hi
 
 #print axioms restrictOption_isSome_iff
 #print axioms fixedCoords_restrict_eq
