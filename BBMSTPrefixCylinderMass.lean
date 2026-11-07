@@ -483,3 +483,43 @@ theorem prefixCylinder_fixed_mass_reindex
         PAt C (A := A) a ha P0 δ (j + 1) hj
           (extendPrefix C hk x s) := by
             simp
+
+
+/-- One-step conservation of the hyperplane-cylinder mass when the
+boundary coordinate is free. -/
+theorem prefixCylinder_free_mass_eq
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C)
+    (hfree : H.assignment (stageCoordinate (by omega)) = none) :
+    prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
+      prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H := by
+  rw [prefixCylinder_free_mass_reindex C a ha P0 δ j hj H hfree]
+  exact prefixCylinder_allExtensions_mass_eq C a ha P0 δ
+    hP0_nonneg hδ hδhalf j hj H
+
+/-- One-step distortion of the hyperplane-cylinder mass when the boundary
+coordinate is fixed. -/
+theorem prefixCylinder_fixed_mass_le
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C)
+    (s : C.S (stageCoordinate (by omega)))
+    (hfixed : H.assignment (stageCoordinate (by omega)) = some s) :
+    prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
+      (prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H /
+        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
+        (1 - δ (stageCoordinate (by omega))) := by
+  rw [prefixCylinder_fixed_mass_reindex C a ha P0 δ j hj H s hfixed]
+  exact prefixCylinder_fixedExtension_mass_le C a ha P0 δ
+    hP0_nonneg hδ hδhalf j hj H s
