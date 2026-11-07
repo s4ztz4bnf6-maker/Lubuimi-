@@ -2,6 +2,7 @@ import Mathlib
 import BBMSTPrefixMeasureRecursion
 import BBMSTHyperplaneFibreIncidence
 import BBMSTPrefixMomentBridge
+import BBMSTOldShadow
 
 /-!
 # Concrete prefix-to-hyperplane incidence bridge
@@ -81,6 +82,108 @@ theorem prefixCoveredValues_eq_stageCoveredValues
     have hprefix : H.ContainsPrefix hk (projectPrefix hk z) :=
       (containsPrefix_iff_full hk H hinside z).mpr hfull
     simpa [hz] using hprefix
+
+
+/-- Exact identification of the compatible new hyperplanes with those
+whose old-coordinate shadows contain the prefix.  The boundary coordinate
+and all suffix coordinates have been removed before this test. -/
+theorem prefixCompatibleHyperplanes_iff_oldShadow
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (H : Hyperplane C) :
+    H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+      H ∈ newAtStage A (k + 1) ∧
+        (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
+          (Nat.le_trans (Nat.le_succ k) hk) x := by
+  classical
+  let boundary := stageCoordinate hk
+  let full := liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x
+  change H ∈ stageCompatibleHyperplanes (C := C) A (k + 1)
+      (by omega) (by omega) full ↔ _
+  simp only [stageCompatibleHyperplanes, Finset.mem_filter]
+  constructor
+  · rintro ⟨hH, hex⟩
+    have hboundary := newAtStage_has_last_coordinate
+      (C := C) A (by omega) (by omega) H hH
+    rcases hboundary with ⟨i, hi, hfixed⟩
+    have hib : i = boundary := by
+      apply Fin.ext
+      simp [boundary, stageCoordinate]
+      omega
+    subst i
+    have hisSome : (H.assignment boundary).isSome := by
+      simpa [fixedCoords] using hfixed
+    obtain ⟨s, hs⟩ : ∃ s, H.assignment boundary = some s := by
+      cases ha : H.assignment boundary with
+      | none => simp [ha] at hisSome
+      | some s => exact ⟨s, rfl⟩
+    have hInside : H.FixedInsidePrefix (k + 1) := by
+      intro q hq
+      have hstage := newAtStage_subset_stageFamily (C := C) A
+        (k + 1) hH
+      change H ∈ A.filter
+        (fun H => ∀ r ∈ fixedCoords H, r.val < k + 1) at hstage
+      exact (Finset.mem_filter.mp hstage).2 q hq
+    have hshadowFull :
+        (BBMSTOldShadow.oldShadow boundary H).Contains full :=
+      (BBMSTOldShadow.oldShadow_contains_iff_exists_boundary_extension
+        (C := C) boundary H ⟨s, hs⟩ hInside full).mpr hex
+    have hshadowInside :
+        (BBMSTOldShadow.oldShadow boundary H).FixedInsidePrefix k := by
+      intro q hq
+      simp [fixedCoords, BBMSTOldShadow.oldShadow] at hq
+      omega
+    have hprefix := (containsPrefix_iff_full
+      (Nat.le_trans (Nat.le_succ k) hk)
+      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mp hshadowFull
+    have hproject :
+        projectPrefix (Nat.le_trans (Nat.le_succ k) hk) full = x := by
+      exact projectPrefix_liftPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x
+    simpa [full, hproject] using hprefix
+  · rintro ⟨hH, hprefix⟩
+    have hboundary := newAtStage_has_last_coordinate
+      (C := C) A (by omega) (by omega) H hH
+    rcases hboundary with ⟨i, hi, hfixed⟩
+    have hib : i = boundary := by
+      apply Fin.ext
+      simp [boundary, stageCoordinate]
+      omega
+    subst i
+    have hisSome : (H.assignment boundary).isSome := by
+      simpa [fixedCoords] using hfixed
+    obtain ⟨s, hs⟩ : ∃ s, H.assignment boundary = some s := by
+      cases ha : H.assignment boundary with
+      | none => simp [ha] at hisSome
+      | some s => exact ⟨s, rfl⟩
+    have hInside : H.FixedInsidePrefix (k + 1) := by
+      intro q hq
+      have hstage := newAtStage_subset_stageFamily (C := C) A
+        (k + 1) hH
+      change H ∈ A.filter
+        (fun H => ∀ r ∈ fixedCoords H, r.val < k + 1) at hstage
+      exact (Finset.mem_filter.mp hstage).2 q hq
+    have hshadowInside :
+        (BBMSTOldShadow.oldShadow boundary H).FixedInsidePrefix k := by
+      intro q hq
+      simp [fixedCoords, BBMSTOldShadow.oldShadow] at hq
+      omega
+    have hproject :
+        projectPrefix (Nat.le_trans (Nat.le_succ k) hk) full = x := by
+      exact projectPrefix_liftPrefix
+        (Nat.le_trans (Nat.le_succ k) hk) x
+    have hshadowPrefix :
+        (BBMSTOldShadow.oldShadow boundary H).ContainsPrefix
+          (Nat.le_trans (Nat.le_succ k) hk) x := hprefix
+    have hshadowFull := (containsPrefix_iff_full
+      (Nat.le_trans (Nat.le_succ k) hk)
+      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mpr
+        (by simpa [hproject] using hshadowPrefix)
+    have hex :=
+      (BBMSTOldShadow.oldShadow_contains_iff_exists_boundary_extension
+        (C := C) boundary H ⟨s, hs⟩ hInside full).mp hshadowFull
+    exact ⟨hH, hex⟩
 
 /-- The set-theoretic incidence bridge induces the exact density
 identity: the recursively defined prefix alpha is the cardinality fraction
