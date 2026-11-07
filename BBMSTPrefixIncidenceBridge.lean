@@ -173,6 +173,117 @@ theorem prefixPAt_secondMoment_eq_stageIncidence
   rw [prefixAlpha_eq_stageCoveredValues_density
     (C := C) (A := A) (k := a + j) (by omega) x]
 
+
+/-- New hyperplanes whose old-coordinate shadows contain a given genuine
+prefix. This is the exact pair-counting family used in the proof of
+BBMST Lemma 3.4; it is not replaced by the total number of new hyperplanes. -/
+noncomputable def prefixCompatibleHyperplanes
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
+    Finset (Hyperplane C) :=
+  stageCompatibleHyperplanes (C := C) A (k + 1) (by omega) (by omega)
+    (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
+
+/-- Ordered pairs of new hyperplanes whose two old-coordinate shadows
+contain the same prefix. -/
+noncomputable def prefixCompatiblePairs
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
+    Finset (Hyperplane C × Hyperplane C) :=
+  (prefixCompatibleHyperplanes (C := C) (A := A) hk x).product
+    (prefixCompatibleHyperplanes (C := C) (A := A) hk x)
+
+/-- The ordered-pair count is exactly the square of the number of
+compatible new hyperplanes. -/
+theorem prefixCompatiblePairs_card
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
+    (prefixCompatiblePairs (C := C) (A := A) hk x).card =
+      (prefixCompatibleHyperplanes (C := C) (A := A) hk x).card ^ 2 := by
+  classical
+  simp [prefixCompatiblePairs, Finset.card_product]
+
+/-- The concrete PAt-weighted second moment is bounded by the exact
+ordered-pair count of compatible new hyperplanes. The right-hand side
+retains the pair structure; no bound by |N_k|^2 is taken here. -/
+theorem prefixPAt_secondMoment_le_pairIncidenceCount
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hP0_sum : (∑ x : PrefixPoint C a ha, P0 x) = 1)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + j + 1 ≤ n) :
+    uniformStageSecondMoment
+      (prefixUniformStageData C (A := A) a ha P0 δ
+        hP0_nonneg hP0_sum hδ hδhalf j hj) ≤
+      ∑ x : PrefixPoint C (a + j) (by omega),
+        PAt C (A := A) a ha P0 δ j (by omega) x *
+          ((((prefixCompatiblePairs (C := C) (A := A)
+              (by omega) x).card : ℚ) /
+            (Fintype.card (C.S
+              (BBMSTHyperplaneFibreIncidence.stageCoordinate
+                (a + j + 1) (by omega) (by omega))) : ℚ) ^ 2)) := by
+  classical
+  rw [prefixPAt_secondMoment_eq_stageIncidence
+    (C := C) (A := A) a ha P0 δ hP0_nonneg hP0_sum hδ hδhalf j hj]
+  let i := BBMSTHyperplaneFibreIncidence.stageCoordinate
+    (a + j + 1) (by omega) (by omega)
+  let d : ℚ := Fintype.card (C.S i)
+  have hdNat : 0 < Fintype.card (C.S i) := by
+    have h := C.card_ge_two i
+    omega
+  have hd : 0 < d := by
+    dsimp [d]
+    exact_mod_cast hdNat
+  apply Finset.sum_le_sum
+  intro x hx
+  let covered := stageCoveredValues (C := C) A (a + j + 1)
+    (by omega) (by omega) (liftPrefix C (by omega) x)
+  let compatible := prefixCompatibleHyperplanes
+    (C := C) (A := A) (by omega) x
+  have hcard : covered.card ≤ compatible.card := by
+    dsimp [covered, compatible, prefixCompatibleHyperplanes]
+    exact stageCoveredValues_card_le_compatible_card
+      (C := C) A (a + j + 1) (by omega) (by omega)
+      (liftPrefix C (by omega) x)
+  have hfrac : (covered.card : ℚ) / d ≤ (compatible.card : ℚ) / d := by
+    apply (div_le_div_iff_of_pos_right hd).2
+    exact_mod_cast hcard
+  have hleft : 0 ≤ (covered.card : ℚ) / d :=
+    div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
+  have hright : 0 ≤ (compatible.card : ℚ) / d :=
+    div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
+  have hsq :
+      ((covered.card : ℚ) / d) ^ 2 ≤
+        ((compatible.card : ℚ) / d) ^ 2 := by
+    nlinarith [mul_nonneg (hright - hleft) (hright + hleft)]
+  have hpair :
+      ((compatible.card : ℚ) / d) ^ 2 =
+        ((prefixCompatiblePairs (C := C) (A := A)
+          (by omega) x).card : ℚ) / d ^ 2 := by
+    dsimp [compatible, d]
+    rw [← prefixCompatiblePairs_card (C := C) (A := A) (by omega) x]
+    ring
+  have hweight :
+      0 ≤ PAt C (A := A) a ha P0 δ j (by omega) x :=
+    PAt_nonneg (C := C) (A := A) a ha P0 δ
+      hP0_nonneg hP0_sum hδ hδhalf j (by omega) x
+  calc
+    PAt C (A := A) a ha P0 δ j (by omega) x *
+        ((covered.card : ℚ) / d) ^ 2
+      ≤ PAt C (A := A) a ha P0 δ j (by omega) x *
+          ((compatible.card : ℚ) / d) ^ 2 :=
+        mul_le_mul_of_nonneg_left hsq hweight
+    _ = PAt C (A := A) a ha P0 δ j (by omega) x *
+          (((prefixCompatiblePairs (C := C) (A := A)
+            (by omega) x).card : ℚ) / d ^ 2) := by
+          rw [hpair]
+
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
 #print axioms prefixAlpha_eq_stageCoveredValues_density
