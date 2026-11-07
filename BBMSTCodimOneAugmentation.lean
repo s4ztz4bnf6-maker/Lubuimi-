@@ -206,6 +206,22 @@ theorem augmentedReducedProduct_nonempty
       (selectedDeletedValues (augmentedSelection A early default)) i
       (C.card_ge_two i))
 
+/-- The augmented family's surviving part has no singleton fixed-coordinate
+sets on the early coordinates. -/
+theorem augmentedChosenSurviving_no_singleton
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hNP : NoParallel A)
+    {H : Hyperplane C}
+    (hH : H ∈ survivingFamily (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default))) :
+    ∀ i ∈ early, fixedCoords H ≠ {i} := by
+  exact chosenSurviving_no_singleton
+    (augmentedFamily A early default) early
+    (augmentedFamily_noParallel A early default hNP)
+    (fun i hi => augmentedFamily_has_codimOne A early default i hi)
+    hH
+
 /-- The source reduction as a single statement: starting from an original
 cover of the full product and a nonparallel family, augment missing
 codimension-one members, delete their selected values, and obtain a cover
@@ -230,22 +246,6 @@ theorem canonicalReduction_result
       (augmentedFamily_covers_of_original_cover A early default hCover) x
   exact ⟨H, hH, hContains,
     augmentedChosenSurviving_no_singleton A early default hNP hH⟩
-
-/-- The augmented family's surviving part has no singleton fixed-coordinate
-sets on the early coordinates. -/
-theorem augmentedChosenSurviving_no_singleton
-    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
-    (default : ∀ i : Fin n, C.S i)
-    (hNP : NoParallel A)
-    {H : Hyperplane C}
-    (hH : H ∈ survivingFamily (augmentedFamily A early default)
-      (selectedDeletedValues (augmentedSelection A early default))) :
-    ∀ i ∈ early, fixedCoords H ≠ {i} := by
-  exact chosenSurviving_no_singleton
-    (augmentedFamily A early default) early
-    (augmentedFamily_noParallel A early default hNP)
-    (fun i hi => augmentedFamily_has_codimOne A early default i hi)
-    hH
 
 #print axioms singletonAt_fixedCoords
 #print axioms singletonAt_nontrivial
