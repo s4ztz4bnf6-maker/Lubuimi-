@@ -498,18 +498,20 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     (hP0_nonneg : ∀ x, 0 ≤ P0 x)
     (hδ : ∀ i, 0 ≤ δ i)
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
-    (j : ℕ) (hj : a + (j + 1) ≤ n)
-    (y : PrefixPoint C (a + (j + 1)) hj) :
-    PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
-      (PAt C (A := A) a ha P0 δ j (by omega)
-        (restrictPrefix C (k := a + j) (by omega) y) /
-        (Fintype.card (C.S (stageCoordinate (k := a + j) (by omega))) : ℚ)) /
-        (1 - δ (stageCoordinate (k := a + j) (by omega))) := by
+    (j : ℕ) (hk : a + j + 1 ≤ n)
+    (y : PrefixPoint C (a + j + 1) hk) :
+    PAt C (A := A) a ha P0 δ (j + 1)
+        (by simpa [Nat.add_succ] using hk) y ≤
+      (PAt C (A := A) a ha P0 δ j
+        (Nat.le_trans (Nat.le_succ (a + j)) hk)
+        (restrictPrefix C (k := a + j) hk y) /
+        (Fintype.card (C.S (stageCoordinate (k := a + j) hk)) : ℚ)) /
+        (1 - δ (stageCoordinate (k := a + j) hk)) := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
-  have hprev : k ≤ n := by omega
-  let xprev := restrictPrefix C hk y
+  have hk' : k + 1 ≤ n := by simpa [k] using hk
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk'
+  let xprev := restrictPrefix C hk' y
   let baseMass := PAt C (A := A) a ha P0 δ j hprev xprev
   have hbase : 0 ≤ baseMass :=
     PAt_nonneg (C := C) (A := A) a ha P0 δ
@@ -519,13 +521,15 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     simp [F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData]
   have hlocal := prefixFibre_updatedWeight_eq_PAt
-    (C := C) (A := A) a ha P0 δ j hj y (by
+    (C := C) (A := A) a ha P0 δ j
+    (by simpa [Nat.add_succ] using hk) y (by
       simpa [k, xprev, baseMass] using hbase)
   have hlocal' :
       BBMSTFiniteFibreUpdate.updatedWeight F
         (δ (stageCoordinate hk)) (y (Fin.last k)) =
-      PAt C (A := A) a ha P0 δ (j + 1) hj y := by
-    simpa [F, k, xprev, baseMass] using hlocal
+      PAt C (A := A) a ha P0 δ (j + 1)
+        (by simpa [Nat.add_succ] using hk) y := by
+    simpa [F, k, hk', xprev, baseMass] using hlocal
   have hbound :=
     BBMSTFiniteFibreUpdate.updatedWeight_le_old_div F
       (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
@@ -573,11 +577,12 @@ theorem initialPrefixOf_restrictPrefix
     initialPrefixOf C ha
         (Nat.le_trans (Nat.le_succ (a + j)) hk)
         (restrictPrefix C (k := a + j) hk y) =
-      initialPrefixOf C ha (by simpa [Nat.add_succ] using hk) y := by
+      initialPrefixOf C ha hk y := by
   funext i
+  have hi : i.val < a + j :=
+    Nat.lt_of_lt_of_le i.isLt (Nat.le_add_right a j)
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex]
-  omega
+    liftPrefix, prefixIndex, hi]
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
