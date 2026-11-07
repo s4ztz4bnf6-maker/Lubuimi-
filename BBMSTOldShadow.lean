@@ -177,6 +177,46 @@ theorem oldShadow_contains_iff_exists_boundary_extension
         Function.update, hne] using hi
     · simp [Hyperplane.Contains, oldShadow, hlt]
 
+
+/-- Prefix membership in the merged old shadow is exactly simultaneous
+membership in the two old shadows.  The proof is transported through the
+full product using the fact that all three shadows are supported strictly
+before the boundary. -/
+theorem mergeOldShadows_containsPrefix_iff
+    {k : ℕ} (hk : k ≤ n)
+    (boundary : Fin n) (hboundary : boundary.val = k)
+    (H H' : Hyperplane C)
+    (hcompat : OldCompatible boundary H H')
+    (x : ProductPoint C) :
+    (mergeOldShadows boundary H H').ContainsPrefix hk
+        (projectPrefix hk x) ↔
+      (oldShadow boundary H).ContainsPrefix hk
+          (projectPrefix hk x) ∧
+      (oldShadow boundary H').ContainsPrefix hk
+          (projectPrefix hk x) := by
+  have hleftInside : (oldShadow boundary H).FixedInsidePrefix k := by
+    intro i hi
+    simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
+    simp [oldShadow] at hi
+    exact lt_of_lt_of_eq hi.1 hboundary
+  have hrightInside : (oldShadow boundary H').FixedInsidePrefix k := by
+    intro i hi
+    simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
+    simp [oldShadow] at hi
+    exact lt_of_lt_of_eq hi.1 hboundary
+  have hmergeInside :
+      (mergeOldShadows boundary H H').FixedInsidePrefix k := by
+    intro i hi
+    rw [fixedCoords_mergeOldShadows] at hi
+    rcases Finset.mem_union.mp hi with hleft | hright
+    · exact hleftInside i hleft
+    · exact hrightInside i hright
+  rw [containsPrefix_iff_full hk
+      (mergeOldShadows boundary H H') hmergeInside x,
+    containsPrefix_iff_full hk (oldShadow boundary H) hleftInside x,
+    containsPrefix_iff_full hk (oldShadow boundary H') hrightInside x]
+  exact mergeOldShadows_contains_iff boundary H H' hcompat x
+
 #print axioms mergeOldShadows_contains_iff
 #print axioms oldShadows_disjoint_of_conflict
 #print axioms fixedCoords_mergeOldShadows
