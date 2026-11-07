@@ -72,7 +72,11 @@ noncomputable def stageUniformFibre
     { points := Finset.univ
       covered := stageCoveredValues (C := C) A k hk hk0 x
       total := baseMass
-      points_nonempty := Finset.univ_nonempty
+      points_nonempty := by
+        have hcard : 0 < Fintype.card (C.S i) := by
+          have := C.card_ge_two i
+          omega
+        exact Fintype.card_pos_iff.mp hcard
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
 
