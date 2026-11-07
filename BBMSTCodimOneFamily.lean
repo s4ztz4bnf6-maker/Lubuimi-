@@ -107,6 +107,38 @@ theorem reducedValue_nonempty_of_card_ge_three
         omega
   exact Fintype.card_pos_iff.mp hpos
 
+/-- Deleting at most one value from a coordinate of size at least two
+leaves a nonempty reduced coordinate. -/
+theorem reducedValue_nonempty_of_card_ge_two
+    (removed : ∀ j : Fin n, Option (C.S j))
+    (i : Fin n)
+    (hCard : 2 ≤ Fintype.card (C.S i)) :
+    Nonempty (ReducedValue removed i) := by
+  classical
+  have hpos : 0 < Fintype.card (ReducedValue removed i) := by
+    cases hRemoved : removed i with
+    | none =>
+        let e : ReducedValue removed i ≃ C.S i where
+          toFun := Subtype.val
+          invFun := fun s => ⟨s, by simp [Retained, hRemoved]⟩
+          left_inv := by intro x; cases x; rfl
+          right_inv := by intro s; rfl
+        rw [Fintype.card_congr e]
+        omega
+    | some r =>
+        rw [reducedValue_card removed i r hRemoved]
+        omega
+  exact Fintype.card_pos_iff.mp hpos
+
+/-- The CoordinateSystem cardinality axiom is enough for reduced-box
+nonemptiness: every coordinate starts with at least two values. -/
+theorem survives_iff_meets_reduced_box_of_coordinateSystem
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C) :
+    Survives removed H ↔ MeetsReducedBox removed H :=
+  survives_iff_meets_reduced_box removed H
+    (fun i => reducedValue_nonempty_of_card_ge_two removed i (C.card_ge_two i))
+
 /-- The reduced product itself is nonempty once every reduced coordinate
 has a nonempty value type. -/
 noncomputable def chooseReducedPoint
@@ -286,9 +318,11 @@ theorem chosenSurviving_no_singleton
 #print axioms codimOneAt_has_value
 #print axioms reducedValue_card
 #print axioms reducedValue_card_ge_two
+#print axioms reducedValue_nonempty_of_card_ge_two
 #print axioms reducedValue_nonempty_of_card_ge_three
 #print axioms chooseReducedPoint
 #print axioms reducedProduct_nonempty
+#print axioms survives_iff_meets_reduced_box_of_coordinateSystem
 #print axioms survives_iff_meets_reduced_box_of_card_ge_three
 #print axioms survivingFamily_noParallel
 #print axioms survivingFamily_no_singleton
