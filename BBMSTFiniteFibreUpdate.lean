@@ -351,6 +351,109 @@ theorem updatedFibreSecondMoment_eq_parts
         uncoveredMoment F X 2 * uncoveredMultiplier F.proportion δ :=
   updatedMoment_eq_parts F δ X 2
 
+/-- On covered points the multiplier never increases the old weight. -/
+theorem coveredMultiplier_le_one
+    {a δ : ℚ} (ha : 0 ≤ a) (ha1 : a ≤ 1)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    coveredMultiplier a δ ≤ 1 := by
+  by_cases h : a ≤ δ
+  · simp [coveredMultiplier, h]
+  · have hlt : δ < a := lt_of_not_ge h
+    have hden : 0 < a * (1 - δ) := by
+      apply mul_pos
+      · exact lt_of_le_of_lt hδ hlt
+      · linarith
+    simp only [coveredMultiplier, if_neg h]
+    apply (div_le_iff₀ hden).2
+    nlinarith [mul_nonneg hδ (sub_nonneg.mpr ha1)]
+
+/-- The uncovered multiplier is at most the global distortion factor
+1/(1-δ), including the branch a ≤ δ. -/
+theorem uncoveredMultiplier_le_inv_one_sub_delta
+    {a δ : ℚ} (ha : 0 ≤ a) (ha1 : a ≤ 1)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    uncoveredMultiplier a δ ≤ 1 / (1 - δ) := by
+  by_cases h : a ≤ δ
+  · have haDen : 0 < 1 - a := by linarith
+    have hδDen : 0 < 1 - δ := by linarith
+    simp only [uncoveredMultiplier, if_pos h]
+    apply (div_le_iff₀ haDen).2
+    field_simp [ne_of_gt hδDen]
+    nlinarith
+  · simp only [uncoveredMultiplier, if_neg h]
+
+/-- Every updated point weight is bounded by its old weight times the
+global distortion factor. -/
+theorem updatedWeight_le_old_div
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    {x : α} (hx : x ∈ F.points) :
+    updatedWeight F δ x ≤ F.weight x / (1 - δ) := by
+  by_cases hc : x ∈ F.covered
+  · simp [updatedWeight, hc]
+    have hmult :
+        coveredMultiplier F.proportion δ ≤ 1 / (1 - δ) := by
+      have hOne : 1 ≤ 1 / (1 - δ) := by
+        apply (le_div_iff₀ (by linarith : 0 < 1 - δ)).2
+        linarith
+      exact le_trans
+        (coveredMultiplier_le_one F.proportion_nonneg
+          F.proportion_le_one hδ hδhalf) hOne
+    exact mul_le_mul_of_nonneg_left hmult (F.weight_nonneg x hx)
+  · have hxNotCovered : x ∉ F.covered := hc
+    simp [updatedWeight, hxNotCovered, hx]
+    exact mul_le_mul_of_nonneg_left
+      (uncoveredMultiplier_le_inv_one_sub_delta
+        F.proportion_nonneg F.proportion_le_one hδ hδhalf)
+      (F.weight_nonneg x hx)
+
+/-- Updated mass of an event in one fibre. -/
+def updatedEventMass (F : FibreData α) (δ : ℚ) (E : Finset α) : ℚ :=
+  ∑ x ∈ E, updatedWeight F δ x
+
+/-- Old mass of an event in one fibre. -/
+def oldEventMass (F : FibreData α) (E : Finset α) : ℚ :=
+  ∑ x ∈ E, F.weight x
+
+/-- The full event distortion bound from Lemma 2.1, in finite-fibre form. -/
+theorem updatedEventMass_le_distorted_old
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (E : Finset α) (hE : E ⊆ F.points) :
+    updatedEventMass F δ E ≤ oldEventMass F E / (1 - δ) := by
+  unfold updatedEventMass oldEventMass
+  calc
+    (∑ x ∈ E, updatedWeight F δ x)
+      ≤ ∑ x ∈ E, F.weight x / (1 - δ) := by
+        apply Finset.sum_le_sum
+        intro x hx
+        exact updatedWeight_le_old_div F δ hδ hδhalf (hE hx)
+    _ = (∑ x ∈ E, F.weight x) / (1 - δ) := by
+      rw [← Finset.sum_div]
+
+/-- For events contained in the covered part, the update can only decrease
+mass. This is the second measure inequality in Lemma 2.1. -/
+theorem updatedCoveredEventMass_le_old
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ))
+    (E : Finset α) (hE : E ⊆ F.covered) :
+    updatedEventMass F δ E ≤ oldEventMass F E := by
+  unfold updatedEventMass oldEventMass
+  apply Finset.sum_le_sum
+  intro x hx
+  have hxCovered : x ∈ F.covered := hE hx
+  have hxPoints : x ∈ F.points := F.covered_subset hxCovered
+  simp [updatedWeight, hxCovered]
+  exact mul_le_of_le_one_right (F.weight_nonneg x hxPoints)
+    (coveredMultiplier_le_one F.proportion_nonneg
+      F.proportion_le_one hδ hδhalf)
+
+
+#print axioms coveredMultiplier_le_one
+#print axioms uncoveredMultiplier_le_inv_one_sub_delta
+#print axioms updatedWeight_le_old_div
+#print axioms updatedEventMass_le_distorted_old
+#print axioms updatedCoveredEventMass_le_old
 /-- The sum of the pointwise updated weight is exactly the two-part
 definition of updatedMass. This identifies the update as a genuine finite
 weight function, rather than only an aggregate formula. -/
