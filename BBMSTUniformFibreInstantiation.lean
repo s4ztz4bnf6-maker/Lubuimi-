@@ -43,7 +43,7 @@ theorem points_card_pos (F : UniformFibre (α := α)) :
 
 theorem points_card_ne_zero (F : UniformFibre (α := α)) :
     (F.points.card : ℚ) ≠ 0 :=
-  ne_of_gt F.points_card_pos
+  ne_of_gt points_card_pos F
 
 /-- Uniformly extended old mass sums back to the old base-point mass. -/
 theorem uniformWeight_sum_eq_total (F : UniformFibre (α := α)) :
@@ -60,7 +60,7 @@ theorem uniformWeight_sum_eq_total (F : UniformFibre (α := α)) :
     _ = (F.points.card : ℚ) *
           (F.total / (F.points.card : ℚ)) := by simp
     _ = F.total := by
-          field_simp [F.points_card_ne_zero]
+          field_simp [points_card_ne_zero F]
 
 /-- The old covered mass is exactly total mass times the counting fraction. -/
 theorem uniformCoveredMass_eq (F : UniformFibre (α := α)) :
@@ -75,7 +75,7 @@ theorem uniformCoveredMass_eq (F : UniformFibre (α := α)) :
           (F.total / (F.points.card : ℚ)) := by simp
     _ = F.total * coveredProportion F := by
           unfold coveredProportion
-          field_simp [F.points_card_ne_zero]
+          field_simp [points_card_ne_zero F]
           <;> ring
 
 /-- The counting fraction lies in [0,1]. -/
@@ -83,9 +83,9 @@ theorem coveredProportion_bounds (F : UniformFibre (α := α)) :
     0 ≤ coveredProportion F ∧ coveredProportion F ≤ 1 := by
   constructor
   · unfold coveredProportion
-    exact div_nonneg (Nat.cast_nonneg _) (le_of_lt F.points_card_pos)
+    exact div_nonneg (Nat.cast_nonneg _) (le_of_lt points_card_pos F)
   · unfold coveredProportion
-    apply (div_le_one₀ F.points_card_pos).2
+    apply (div_le_one₀ points_card_pos F).2
     exact_mod_cast Finset.card_le_card F.covered_subset
 
 /-- Convert a uniform counting fibre into the generic finite fibre update
@@ -100,7 +100,7 @@ noncomputable def toFibreData (F : UniformFibre (α := α)) :
   covered_subset := F.covered_subset
   weight_nonneg := by
     intro x hx
-    exact div_nonneg F.total_nonneg (le_of_lt F.points_card_pos)
+    exact div_nonneg F.total_nonneg (le_of_lt points_card_pos F)
   total_mass := uniformWeight_sum_eq_total F
   proportion_nonneg := (coveredProportion_bounds F).1
   proportion_le_one := (coveredProportion_bounds F).2
