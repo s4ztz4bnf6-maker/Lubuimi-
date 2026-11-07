@@ -174,14 +174,28 @@ noncomputable def stageAssignedValue
   exact if h : ∃ s, H.assignment i = some s then Classical.choose h
     else Classical.choice hne
 
-/-- Each new stage hyperplane contributes at most one candidate value
-in the new coordinate. -/
+/-- A new stage hyperplane is compatible with x when its old-coordinate
+constraints can be satisfied above x by some value of the new coordinate.
+This is the finite version of x belonging to the shadow A_F^[k-1]. -/
+def stageCompatibleHyperplanes
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) : Finset (Hyperplane C) := by
+  classical
+  let i := stageCoordinate (C := C) k hk hk0
+  exact (newAtStage A k).filter fun H =>
+    ∃ t, H.Contains (Function.update x i t)
+
+/-- Each compatible new stage hyperplane contributes at most one candidate
+value in the new coordinate. -/
 noncomputable def stageCandidateValues
     (A : Finset (Hyperplane C)) (k : ℕ)
-    (hk : k ≤ n) (hk0 : 0 < k) :
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) :
     Finset (C.S (stageCoordinate (C := C) k hk hk0)) := by
   classical
-  exact (newAtStage A k).image (stageAssignedValue (C := C) A k hk hk0)
+  exact (stageCompatibleHyperplanes (C := C) A k hk hk0 x).image
+    (stageAssignedValue (C := C) A k hk hk0)
 
 /-- Every actually covered coordinate value is contributed by a new
 stage hyperplane. This is the finite union-bound interface underlying
@@ -230,18 +244,27 @@ theorem stageCoveredValues_subset_candidates
 
 /-- The number of covered coordinate values is at most the number of
 new stage hyperplanes, by the finite union bound. -/
-theorem stageCoveredValues_card_le_newAtStage_card
+theorem stageCoveredValues_card_le_compatible_card
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) :
     (stageCoveredValues (C := C) A k hk hk0 x).card ≤
-      (newAtStage A k).card := by
+      (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card := by
   calc
     (stageCoveredValues (C := C) A k hk hk0 x).card
-        ≤ (stageCandidateValues (C := C) A k hk hk0).card :=
+        ≤ (stageCandidateValues (C := C) A k hk hk0 x).card :=
       Finset.card_le_card
         (stageCoveredValues_subset_candidates (C := C) A k hk hk0 x)
-    _ ≤ (newAtStage A k).card := Finset.card_image_le
+    _ ≤ (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card :=
+      Finset.card_image_le
+
+theorem stageCompatibleHyperplanes_card_le_newAtStage_card
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) :
+    (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card ≤
+      (newAtStage A k).card :=
+  Finset.card_le_card (Finset.filter_subset _ _)
 
 /-- The fibre's covered proportion is the exact incidence density of
 new stage-k hyperplanes above x. -/
@@ -307,7 +330,7 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
     {hk : k ≤ n} {hk0 : 0 < k}
     (D : HyperplaneStageData (C := C) A k hk hk0) :
     uniformStageFirstMoment (toUniformFiniteStageData D) ≤
-      ((newAtStage A k).card : ℚ) /
+      ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
         (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
   classical
   let i := stageCoordinate (C := C) k hk hk0
@@ -325,7 +348,7 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
           (Fintype.card (C.S i) : ℚ)))
       ≤ ∑ x ∈ D.basePoints,
         D.baseWeight x *
-          (((newAtStage A k).card : ℚ) /
+          (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S i) : ℚ)) := by
           apply Finset.sum_le_sum
           intro x hx
