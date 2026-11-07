@@ -139,9 +139,13 @@ theorem stageCoveredValues_subset_candidates
   have hpoint := hContains i
   have hts : t = s := by
     simpa [Function.update_same, hs] using hpoint
+  have hex : ∃ u, H.assignment i = some u := ⟨s, hs⟩
+  have hchoose : Classical.choose hex = s := by
+    have hspec := Classical.choose_spec hex
+    exact Option.some.inj (hspec.trans hs.symm)
   have hchosen :
       stageAssignedValue (C := C) A k hk hk0 H = s := by
-    simp [stageAssignedValue, hs]
+    simp [stageAssignedValue, hex, hchoose]
   apply Finset.mem_image.mpr
   refine ⟨H, hH, ?_⟩
   calc
