@@ -57,8 +57,9 @@ theorem primeCoordinateSystem_card_ge_three
   have htwo := (hp i).two_le
   have hne : p i ≠ 2 := by
     intro heq
-    rw [heq] at hodd
-    norm_num at hodd
+    have hodd_i := hodd i
+    rw [heq] at hodd_i
+    norm_num at hodd_i
   omega
 
 /-- In the odd-prime setting, deleting at most one selected singleton
@@ -87,11 +88,13 @@ theorem reduced_coordinate_card_ge_two
         rfl
     rw [Fintype.card_congr e, primeCoordinateSystem_card]
     exact hcard
-  · obtain ⟨r, hr⟩ := Option.ne_none_iff_exists'.mp hRemoved
-    have hcard := primeCoordinateSystem_card_ge_three p hp hodd i
-    rw [reducedValue_card removed i r hr]
-    rw [primeCoordinateSystem_card] at hcard
-    omega
+  · cases hopt : removed i with
+    | none => exact False.elim (hRemoved hopt)
+    | some r =>
+        have hcard := primeCoordinateSystem_card_ge_three p hp hodd i
+        rw [reducedValue_card removed i r hopt]
+        rw [primeCoordinateSystem_card] at hcard
+        omega
 
 #print axioms primeCoordinateSystem
 #print axioms primeCoordinateSystem_card
