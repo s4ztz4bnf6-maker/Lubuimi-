@@ -93,6 +93,42 @@ theorem mergeOldShadows_contains_iff
         simpa [Hyperplane.Contains, mergeOldShadows, oldShadow,
           hb, h1] using hl
 
+
+/-- A conflict on an old coordinate makes the two old shadows disjoint. -/
+theorem oldShadows_disjoint_of_conflict
+    (boundary : Fin n) (H H' : Hyperplane C)
+    (hconflict : ∃ i, i ≠ boundary ∧
+      ∃ s t, H.assignment i = some s ∧
+        H'.assignment i = some t ∧ s ≠ t) :
+    ∀ x : ProductPoint C,
+      ¬ ((oldShadow boundary H).Contains x ∧
+        (oldShadow boundary H').Contains x) := by
+  classical
+  intro x hboth
+  rcases hconflict with ⟨i, hib, s, t, hs, ht, hst⟩
+  have hxs : x i = s := by
+    simpa [Hyperplane.Contains, oldShadow, hib, hs] using hboth.1 i
+  have hxt : x i = t := by
+    simpa [Hyperplane.Contains, oldShadow, hib, ht] using hboth.2 i
+  exact hst (hxs.symm.trans hxt)
+
+/-- The fixed-coordinate set of the merged shadow is the union of the
+fixed-coordinate sets of the two old shadows. -/
+theorem fixedCoords_mergeOldShadows
+    (boundary : Fin n) (H H' : Hyperplane C) :
+    fixedCoords (mergeOldShadows boundary H H') =
+      fixedCoords (oldShadow boundary H) ∪
+        fixedCoords (oldShadow boundary H') := by
+  classical
+  ext i
+  by_cases hb : i = boundary
+  · subst i
+    simp [fixedCoords, mergeOldShadows, oldShadow]
+  · cases h1 : H.assignment i <;> cases h2 : H'.assignment i <;>
+      simp [fixedCoords, mergeOldShadows, oldShadow, hb, h1, h2]
+
 #print axioms mergeOldShadows_contains_iff
+#print axioms oldShadows_disjoint_of_conflict
+#print axioms fixedCoords_mergeOldShadows
 
 end BBMSTOldShadow
