@@ -45,3 +45,5 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
       - name: Compile finite-stage first and second moment bounds
         run: lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
+      - name: Compile finite weighted union and noncoverage bound
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
