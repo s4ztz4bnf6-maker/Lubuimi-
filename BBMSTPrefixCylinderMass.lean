@@ -86,7 +86,7 @@ theorem sum_extensions_eq_old_event_mass
             extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
-            restrictPrefix_extendPrefix, hlast] using hlocal
+            restrictPrefix_extendPrefix, hlast] using hlocal.symm
     _ = baseMass := hlocalSum
 
 /-- For a prescribed value of the newly exposed coordinate, the mass of
@@ -111,7 +111,7 @@ theorem fixed_extension_event_mass_le
       (Nat.le_trans (Nat.le_succ (a + j))
         (by simpa [Nat.add_assoc] using hj)) x) /
       (Fintype.card (C.S (stageCoordinate (by
-        simpa [Nat.add_assoc] using hj)) : ℚ)) /
+        simpa [Nat.add_assoc] using hj))) : ℚ) /
       (1 - δ (stageCoordinate (by
         simpa [Nat.add_assoc] using hj))) := by
   classical
