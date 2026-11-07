@@ -557,6 +557,119 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
           (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
           (1 - δ (stageCoordinate hk)) := by rfl
 
+
+/-- The initial length-a marginal of a longer prefix, obtained by
+lifting it to the full product and projecting to its first a coordinates. -/
+noncomputable def initialPrefixOf
+    {a j : ℕ} (ha : a ≤ n) (hj : a + j ≤ n)
+    (y : PrefixPoint C (a + j) hj) : PrefixPoint C a ha :=
+  projectPrefix ha (liftPrefix C hj y)
+
+/-- Restricting one stage does not change the initial length-a marginal. -/
+theorem initialPrefixOf_restrictPrefix
+    {a j : ℕ} (ha : a ≤ n)
+    (hk : a + j + 1 ≤ n)
+    (y : PrefixPoint C (a + j + 1) hk) :
+    initialPrefixOf C ha (by omega)
+        (restrictPrefix C (by omega) y) =
+      initialPrefixOf C ha (by omega) y := by
+  funext i
+  simp [initialPrefixOf, restrictPrefix, projectPrefix,
+    liftPrefix, prefixIndex]
+  omega
+
+/-- The one-coordinate distortion factor at coordinate i. -/
+noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
+  1 / ((Fintype.card (C.S i) : ℚ) * (1 - δ i))
+
+/-- Product of the actual one-coordinate distortion factors introduced
+between the initial prefix of length a and the prefix of length a+j. -/
+noncomputable def distortionProduct (a : ℕ) (δ : Fin n → ℚ) :
+    (j : ℕ) → (hj : a + j ≤ n) → ℚ
+  | 0, _ => 1
+  | j + 1, hj =>
+      distortionProduct a δ j (by omega) *
+        distortionFactor C δ (stageCoordinate (by omega))
+
+/-- Iterating the local estimate gives the full product distortion bound
+for the actual recursively defined measure PAt. The initial value is the
+actual marginal of the given longer prefix; no free intermediate weights
+or independently chosen fibre distributions occur. -/
+theorem PAt_le_initial_mul_distortionProduct
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ)) :
+    ∀ (j : ℕ) (hj : a + j ≤ n)
+      (y : PrefixPoint C (a + j) hj),
+      PAt C (A := A) a ha P0 δ j hj y ≤
+        P0 (initialPrefixOf C ha hj y) *
+          distortionProduct C a δ j hj := by
+  intro j
+  induction j with
+  | zero =>
+      intro hj y
+      simp [PAt, initialPrefixOf, projectPrefix_liftPrefix,
+        distortionProduct]
+  | succ j ih =>
+      intro hj y
+      let k := a + j
+      have hk : k + 1 ≤ n := by omega
+      have hprev : k ≤ n := by omega
+      let xprev := restrictPrefix C hk y
+      have hstep :=
+        PAt_succ_le_prev_div_card_mul_one_sub_delta
+          (C := C) (A := A) a ha P0 δ hP0_nonneg hδ hδhalf j hj y
+      have hcardpos :
+          0 < (Fintype.card (C.S (stageCoordinate hk)) : ℚ) := by
+        have hcard := C.card_ge_two (stageCoordinate hk)
+        exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) hcard)
+      have hdenpos : 0 < 1 - δ (stageCoordinate hk) := by
+        linarith [hδhalf (stageCoordinate hk)]
+      have hfactorpos : 0 < distortionFactor C δ (stageCoordinate hk) := by
+        unfold distortionFactor
+        exact one_div_pos.mpr (mul_pos hcardpos hdenpos)
+      have hstep' :
+          PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
+            PAt C (A := A) a ha P0 δ j hprev xprev *
+              distortionFactor C δ (stageCoordinate hk) := by
+        calc
+          PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
+              (PAt C (A := A) a ha P0 δ j hprev xprev /
+                (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
+                (1 - δ (stageCoordinate hk)) := hstep
+          _ = PAt C (A := A) a ha P0 δ j hprev xprev *
+                distortionFactor C δ (stageCoordinate hk) := by
+              unfold distortionFactor
+              field_simp [ne_of_gt hcardpos, ne_of_gt hdenpos]
+              <;> ring
+      have hprevBound := ih hprev xprev
+      have hinitial :
+          initialPrefixOf C ha hprev xprev =
+            initialPrefixOf C ha (by omega) y :=
+        initialPrefixOf_restrictPrefix C ha hk y
+      calc
+        PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
+            PAt C (A := A) a ha P0 δ j hprev xprev *
+              distortionFactor C δ (stageCoordinate hk) := hstep'
+        _ ≤
+            (P0 (initialPrefixOf C ha hprev xprev) *
+              distortionProduct C a δ j hprev) *
+              distortionFactor C δ (stageCoordinate hk) := by
+                exact mul_le_mul_of_nonneg_right hprevBound
+                  (le_of_lt hfactorpos)
+        _ =
+            P0 (initialPrefixOf C ha (by omega) y) *
+              distortionProduct C a δ (j + 1) hj := by
+                rw [hinitial]
+                simp [distortionProduct, k, hk]
+                ring
+
+#print axioms initialPrefixOf_restrictPrefix
+#print axioms PAt_le_initial_mul_distortionProduct
+
 #print axioms PAt_succ_le_prev_div_card_mul_one_sub_delta
 
 #print axioms PAt_sum_eq_one
