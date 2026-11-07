@@ -144,8 +144,12 @@ theorem oldShadow_contains_iff_exists_boundary_extension
       | none => simp [Hyperplane.Contains, ha]
       | some v =>
         have hx := hshadow i
+        have hne : i ≠ boundary := by
+          intro he
+          subst i
+          simp at hlt
         simpa [Hyperplane.Contains, oldShadow, hlt, ha,
-          Function.update] using hx
+          Function.update, hne] using hx
     · by_cases heq : i = boundary
       · subst i
         simp [Hyperplane.Contains, hs, Function.update]
@@ -165,8 +169,12 @@ theorem oldShadow_contains_iff_exists_boundary_extension
     intro i
     by_cases hlt : i.val < boundary.val
     · have hi := ht i
+      have hne : i ≠ boundary := by
+        intro he
+        subst i
+        simp at hlt
       simpa [Hyperplane.Contains, oldShadow, hlt,
-        Function.update] using hi
+        Function.update, hne] using hi
     · simp [Hyperplane.Contains, oldShadow, hlt]
 
 #print axioms mergeOldShadows_contains_iff
