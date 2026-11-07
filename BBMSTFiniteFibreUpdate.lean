@@ -31,13 +31,13 @@ structure FibreData where
   covered_mass :
     (∑ x in covered, weight x) = total * proportion
   uncovered_mass :
-    (∑ x in points \\ covered, weight x) = total * (1 - proportion)
+    (∑ x in points \ covered, weight x) = total * (1 - proportion)
 
 /-- The updated finite fibre mass, summing covered and uncovered parts
 separately so the two source multipliers are applied pointwise. -/
 def updatedMass (F : FibreData α) (δ : ℚ) : ℚ :=
   (∑ x in F.covered, F.weight x * coveredMultiplier F.proportion δ) +
-  (∑ x in F.points \\ F.covered,
+  (∑ x in F.points \ F.covered,
     F.weight x * uncoveredMultiplier F.proportion δ)
 
 /-- The finite sum factors through a constant multiplier. -/
