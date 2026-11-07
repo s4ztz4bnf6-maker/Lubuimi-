@@ -37,7 +37,7 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     fixedCoords (singletonAt i s) = {i} := by
   classical
   ext j
-  simp [fixedCoords, singletonAt]
+  simp [fixedCoords, singletonAt, eq_comm]
 
 theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
     (fixedCoords (singletonAt i s)).Nonempty := by
@@ -46,13 +46,13 @@ theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
 
 /-- Early coordinates for which the original family has no singleton
 fixed-coordinate hyperplane. -/
-def missingCoordinates
+noncomputable def missingCoordinates
     (A : Finset (Hyperplane C)) (early : Finset (Fin n)) :
     Finset (Fin n) :=
   early.filter fun i => ¬ ∃ H, H ∈ A ∧ CodimOneAt H i
 
 /-- Add one canonical singleton hyperplane at each missing early coordinate. -/
-def addedFamily
+noncomputable def addedFamily
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
     (default : ∀ i : Fin n, C.S i) :
     Finset (Hyperplane C) :=
@@ -61,7 +61,7 @@ def addedFamily
 
 /-- The augmented family contains the original family and all added
 singleton hyperplanes. -/
-def augmentedFamily
+noncomputable def augmentedFamily
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
     (default : ∀ i : Fin n, C.S i) :
     Finset (Hyperplane C) :=
@@ -87,6 +87,8 @@ theorem augmentedFamily_has_codimOne
   · rcases hExists with ⟨H, hH, hFix⟩
     exact ⟨H, Finset.mem_union_left _ hH, hFix⟩
   · have hMissing : i ∈ missingCoordinates A early := by
+      change i ∈ early.filter
+        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j)
       exact Finset.mem_filter.mpr ⟨hi, hExists⟩
     refine ⟨singletonAt i (default i), ?_, ?_⟩
     · apply Finset.mem_union_right
@@ -109,6 +111,8 @@ theorem augmentedFamily_noParallel
         ⟨i, hi, rfl⟩
       have hCodim : CodimOneAt H i := by
         simpa [CodimOneAt, singletonAt_fixedCoords] using hFix
+      change i ∈ early.filter
+        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j) at hi
       have hMissing := (Finset.mem_filter.mp hi).2
       exact (hMissing ⟨H, hHA, hCodim⟩).elim
   · rcases Finset.mem_image.mp (by simpa [addedFamily] using hHadd) with
@@ -116,6 +120,8 @@ theorem augmentedFamily_noParallel
     rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH') with hH'A | hH'add
     · have hCodim : CodimOneAt H' i := by
         simpa [CodimOneAt, singletonAt_fixedCoords] using hFix.symm
+      change i ∈ early.filter
+        (fun j => ¬ ∃ H, H ∈ A ∧ CodimOneAt H j) at hi
       have hMissing := (Finset.mem_filter.mp hi).2
       exact (hMissing ⟨H', hH'A, hCodim⟩).elim
     · rcases Finset.mem_image.mp (by simpa [addedFamily] using hH'add) with
