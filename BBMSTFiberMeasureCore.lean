@@ -30,7 +30,7 @@ theorem coveredMultiplier_nonneg {a δ : ℚ}
     have hnum : 0 < a - δ := sub_pos.mpr hlt
     have hden : 0 < a * (1 - δ) := by
       apply mul_pos
-      · exact lt_of_le_of_lt ha hlt
+      · exact lt_of_le_of_lt hδ hlt
       · linarith
     simp [coveredMultiplier, h]
     exact le_of_lt (div_pos hnum hden)
@@ -42,10 +42,10 @@ theorem uncoveredMultiplier_pos {a δ : ℚ}
     0 < uncoveredMultiplier a δ := by
   by_cases h : a ≤ δ
   · have hden : 0 < 1 - a := by linarith
-    simp [uncoveredMultiplier, h]
+    simp only [uncoveredMultiplier, if_pos h]
     exact one_div_pos.mpr hden
   · have hden : 0 < 1 - δ := by linarith
-    simp [uncoveredMultiplier, h]
+    simp only [uncoveredMultiplier, if_neg h]
     exact one_div_pos.mpr hden
 
 /-- Exact conservation of the total mass in one fibre. -/
@@ -98,7 +98,9 @@ theorem coveredMultiplier_zero_distortion {a : ℚ}
     (ha : 0 < a) :
     coveredMultiplier a 0 = 1 := by
   have hnot : ¬ a ≤ 0 := not_le.mpr ha
-  simp [coveredMultiplier, hnot]
+  have ha0 : a ≠ 0 := ne_of_gt ha
+  simp only [coveredMultiplier, if_neg hnot]
+  field_simp
 
 #print axioms coveredMultiplier_nonneg
 #print axioms uncoveredMultiplier_pos
