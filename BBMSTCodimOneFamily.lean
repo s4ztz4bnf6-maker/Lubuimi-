@@ -41,7 +41,7 @@ theorem codimOneAt_has_value
   | none =>
       simp [fixedCoords, h] at hi
   | some s =>
-      exact ⟨s, h⟩
+      exact ⟨s, rfl⟩
 
 theorem reducedValue_card
     (removed : ∀ j : Fin n, Option (C.S j))
@@ -53,13 +53,14 @@ theorem reducedValue_card
   let e : ReducedValue removed i ≃
       {s : C.S i // s ∈ (Finset.univ.erase r)} where
     toFun := fun s =>
-      ⟨s.val, by
-        simp only [Finset.mem_erase, Finset.mem_univ, true_and]
-        simpa [Retained, hRemoved] using s.property⟩
+      (⟨s.val, by
+        have hne : s.val ≠ r := by
+          simpa [Retained, hRemoved] using s.property
+        simp [hne]⟩ : {t : C.S i // t ∈ Finset.univ.erase r})
     invFun := fun s =>
-      ⟨s.val, by
+      (⟨s.val, by
         have hne : s.val ≠ r := (Finset.mem_erase.mp s.property).1
-        simpa [Retained, hRemoved] using hne⟩
+        simpa [Retained, hRemoved] using hne⟩ : ReducedValue removed i)
     left_inv := by
       intro s
       rfl
@@ -82,11 +83,12 @@ theorem reducedValue_card_ge_two
   rw [reducedValue_card removed i r hRemoved]
   omega
 
-def survivingFamily
+noncomputable def survivingFamily
     (A : Finset (Hyperplane C))
     (removed : ∀ i : Fin n, Option (C.S i)) :
-    Finset (Hyperplane C) :=
-  A.filter fun H => Survives removed H
+    Finset (Hyperplane C) := by
+  classical
+  exact A.filter fun H => Survives removed H
 
 theorem survivingFamily_noParallel
     (A : Finset (Hyperplane C))
@@ -101,10 +103,15 @@ theorem survivingFamily_noParallel
       (Finset.univ.filter
         (fun i => (restrictHyperplane removed H').assignment i |>.isSome))) :
     H = H' := by
-  have hHmem : H ∈ A := (Finset.mem_filter.mp hH).1
-  have hHsurv : Survives removed H := (Finset.mem_filter.mp hH).2
-  have hH'mem : H' ∈ A := (Finset.mem_filter.mp hH').1
-  have hH'surv : Survives removed H' := (Finset.mem_filter.mp hH').2
+  classical
+  have hHfilter : H ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH
+  have hH'filter : H' ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH'
+  have hHmem : H ∈ A := (Finset.mem_filter.mp hHfilter).1
+  have hHsurv : Survives removed H := (Finset.mem_filter.mp hHfilter).2
+  have hH'mem : H' ∈ A := (Finset.mem_filter.mp hH'filter).1
+  have hH'surv : Survives removed H' := (Finset.mem_filter.mp hH'filter).2
   apply hNP hHmem hH'mem
   calc
     fixedCoords H =
@@ -130,9 +137,12 @@ theorem survivingFamily_no_singleton
     {H : Hyperplane C}
     (hH : H ∈ survivingFamily A removed) :
     ∀ i ∈ early, fixedCoords H ≠ {i} := by
+  classical
   intro i hiEarly hSingleton
-  have hHmem : H ∈ A := (Finset.mem_filter.mp hH).1
-  have hHsurv : Survives removed H := (Finset.mem_filter.mp hH).2
+  have hHfilter : H ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH
+  have hHmem : H ∈ A := (Finset.mem_filter.mp hHfilter).1
+  have hHsurv : Survives removed H := (Finset.mem_filter.mp hHfilter).2
   have hEq : H = selected i := by
     apply hNP hHmem (hSelectedMem i hiEarly)
     exact hSingleton.trans (hSelectedFix i hiEarly).symm
