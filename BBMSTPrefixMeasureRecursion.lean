@@ -290,11 +290,17 @@ theorem sum_prefix_eq_sum_extensions
           f (extendPrefix C hk p.1 p.2) := by
             apply Fintype.sum_equiv e
             intro y
-            simp [e, extendPrefix_restrictPrefix]
+            change f y =
+              f (extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)))
+            rw [extendPrefix_restrictPrefix]
     _ = ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
           ∑ t : C.S (stageCoordinate hk),
             f (extendPrefix C hk x t) := by
-          exact Fintype.sum_sigma (fun p => f (extendPrefix C hk p.1 p.2))
+          exact Fintype.sum_sigma
+            (fun p : Σ x : PrefixPoint C k
+                (Nat.le_trans (Nat.le_succ k) hk),
+                C.S (stageCoordinate hk) =>
+              f (extendPrefix C hk p.1 p.2))
 
 #print axioms sum_prefix_eq_sum_extensions
 
@@ -332,7 +338,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp [F, prefixFibreData, prefixUniformFibre,
+  dsimp [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
