@@ -121,6 +121,17 @@ theorem reducedProduct_nonempty
     Nonempty (ReducedPoint removed) :=
   ⟨chooseReducedPoint removed hNonempty⟩
 
+/-- With at least three values in every original coordinate, survival is
+equivalent to meeting the reduced product without a separate nonemptiness
+hypothesis. -/
+theorem survives_iff_meets_reduced_box_of_card_ge_three
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (H : Hyperplane C)
+    (hCard : ∀ i, 3 ≤ Fintype.card (C.S i)) :
+    Survives removed H ↔ MeetsReducedBox removed H :=
+  survives_iff_meets_reduced_box removed H
+    (fun i => reducedValue_nonempty_of_card_ge_three removed i (hCard i))
+
 noncomputable def survivingFamily
     (A : Finset (Hyperplane C))
     (removed : ∀ i : Fin n, Option (C.S i)) :
