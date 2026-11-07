@@ -205,7 +205,7 @@ theorem stageCoveredValues_subset_candidates
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) :
     stageCoveredValues (C := C) A k hk hk0 x ⊆
-      stageCandidateValues (C := C) A k hk hk0 := by
+      stageCandidateValues (C := C) A k hk hk0 x := by
   classical
   intro t ht
   rcases (mem_stageCoveredValues_iff (C := C) A k hk hk0 x t).mp ht with
@@ -236,8 +236,12 @@ theorem stageCoveredValues_subset_candidates
   have hchosen :
       stageAssignedValue (C := C) A k hk hk0 H = s := by
     simp [stageAssignedValue, hex, hchoose]
+  have hCompatible :
+      H ∈ stageCompatibleHyperplanes (C := C) A k hk hk0 x := by
+    apply Finset.mem_filter.mpr
+    exact ⟨hH, ⟨t, hContains⟩⟩
   apply Finset.mem_image.mpr
-  refine ⟨H, hH, ?_⟩
+  refine ⟨H, hCompatible, ?_⟩
   calc
     stageAssignedValue (C := C) A k hk hk0 H = s := hchosen
     _ = t := hts.symm
@@ -320,18 +324,19 @@ theorem actualStageFirstMoment_eq
   simp [stageUniformFibre, coveredProportion, uniformWeight,
     stageCoordinate]
 
-/-- A coarse but fully geometric first-moment estimate: under any
-normalized nonnegative base distribution, the mean fraction of covered
-next-coordinate values is at most |N_k| / |S_k|. This is the direct
-incidence-counting consequence of the fact that each new hyperplane fixes
-the new coordinate to at most one value. -/
-theorem actualStageFirstMoment_le_newHyperplaneRatio
+/-- The first moment is bounded by the expected number of new
+hyperplanes whose old-coordinate shadow contains the base point, divided
+by the size of the new coordinate. This is the precise union-bound
+intermediate in the proof of Lemma 3.4. -/
+theorem actualStageFirstMoment_le_compatibleRatio
     {A : Finset (Hyperplane C)} {k : ℕ}
     {hk : k ≤ n} {hk0 : 0 < k}
     (D : HyperplaneStageData (C := C) A k hk hk0) :
     uniformStageFirstMoment (toUniformFiniteStageData D) ≤
-      ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-        (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+      ∑ x ∈ D.basePoints,
+        D.baseWeight x *
+          ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
   classical
   let i := stageCoordinate (C := C) k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
@@ -341,36 +346,77 @@ theorem actualStageFirstMoment_le_newHyperplaneRatio
   have hden : 0 < (Fintype.card (C.S i) : ℚ) := by
     exact_mod_cast hdenNat
   rw [actualStageFirstMoment_eq]
+  apply Finset.sum_le_sum
+  intro x hx
+  have hcard :=
+    stageCoveredValues_card_le_compatible_card
+      (C := C) A k hk hk0 x
+  have hcardQ :
+      (stageCoveredValues (C := C) A k hk hk0 x).card
+        ≤ (stageCompatibleHyperplanes (C := C) A k hk hk0 x).card :=
+    hcard
+  have hfrac :
+      ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ)
+        ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) := by
+    apply (div_le_div_iff_of_pos_right hden).2
+    exact_mod_cast hcardQ
+  have hw := D.baseWeight_nonneg x hx
+  change D.baseWeight x *
+      (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+        (Fintype.card (C.S i) : ℚ)) ≤
+    D.baseWeight x *
+      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+        (Fintype.card (C.S i) : ℚ))
+  exact mul_le_mul_of_nonneg_left hfrac hw
+
+/-- The classical coarse consequence follows by bounding every compatible
+subfamily by all of N_k and using that the base weights sum to one. -/
+theorem actualStageFirstMoment_le_newHyperplaneRatio
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    {hk : k ≤ n} {hk0 : 0 < k}
+    (D : HyperplaneStageData (C := C) A k hk hk0) :
+    uniformStageFirstMoment (toUniformFiniteStageData D) ≤
+      ((newAtStage A k).card : ℚ) /
+        (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ) := by
+  classical
+  let i := stageCoordinate (C := C) k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  have hdenNat : 0 < Fintype.card (C.S i) := by
+    have := C.card_ge_two i
+    omega
+  have hden : 0 < (Fintype.card (C.S i) : ℚ) := by
+    exact_mod_cast hdenNat
   calc
-    (∑ x ∈ D.basePoints,
-      D.baseWeight x *
-        (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-          (Fintype.card (C.S i) : ℚ)))
+    uniformStageFirstMoment (toUniformFiniteStageData D)
       ≤ ∑ x ∈ D.basePoints,
-        D.baseWeight x *
-          (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-            (Fintype.card (C.S i) : ℚ)) := by
-          apply Finset.sum_le_sum
-          intro x hx
-          have hcard :=
-            stageCoveredValues_card_le_newAtStage_card
-              (C := C) A k hk hk0 x
-          have hcardQ :
-              (stageCoveredValues (C := C) A k hk hk0 x).card
-                ≤ (newAtStage A k).card := hcard
-          have hfrac :
-              ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-                  (Fintype.card (C.S i) : ℚ)
-                ≤ ((newAtStage A k).card : ℚ) /
-                  (Fintype.card (C.S i) : ℚ) := by
-            apply (div_le_div_iff_of_pos_right hden).2
-            exact_mod_cast hcardQ
-          exact mul_le_mul_of_nonneg_left hfrac
-            (D.baseWeight_nonneg x hx)
+          D.baseWeight x *
+            ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+              (Fintype.card (C.S i) : ℚ) :=
+        actualStageFirstMoment_le_compatibleRatio D
+    _ ≤ ∑ x ∈ D.basePoints,
+          D.baseWeight x *
+            ((newAtStage A k).card : ℚ) /
+              (Fintype.card (C.S i) : ℚ) := by
+        apply Finset.sum_le_sum
+        intro x hx
+        have hcard :=
+          stageCompatibleHyperplanes_card_le_newAtStage_card
+            (C := C) A k hk hk0 x
+        have hfrac :
+            ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+                (Fintype.card (C.S i) : ℚ)
+              ≤ ((newAtStage A k).card : ℚ) /
+                (Fintype.card (C.S i) : ℚ) := by
+          apply (div_le_div_iff_of_pos_right hden).2
+          exact_mod_cast hcard
+        exact mul_le_mul_of_nonneg_left hfrac
+          (D.baseWeight_nonneg x hx)
     _ = ((newAtStage A k).card : ℚ) /
           (Fintype.card (C.S i) : ℚ) := by
-          rw [← Finset.sum_mul, D.baseWeight_sum_one]
-          ring
+        rw [← Finset.sum_mul, D.baseWeight_sum_one]
+        ring
 
 /-- The analogous exact second-moment incidence identity. -/
 theorem actualStageSecondMoment_eq
