@@ -288,4 +288,46 @@ theorem sum_prefix_eq_sum_extensions
 #print axioms sum_prefix_eq_sum_extensions
 
 
+/-- The pointwise update of the concrete geometric FibreData is exactly
+the recursively defined PAt value at the extended prefix. -/
+theorem prefixFibre_updatedWeight_eq_PAt
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (y : PrefixPoint C (a + (j + 1)) hj)
+    (hbase : 0 ≤ PAt C (A := A) a ha P0 δ j
+      (by omega) (restrictPrefix C (by omega) y)) :
+    BBMSTFiniteFibreUpdate.updatedWeight
+      (prefixFibreData C (A := A)
+        (by omega)
+        (restrictPrefix C (by omega) y)
+        (PAt C (A := A) a ha P0 δ j
+          (by omega) (restrictPrefix C (by omega) y))
+        hbase)
+      (δ (stageCoordinate (by omega)))
+      (y (Fin.last (a + j))) =
+    PAt C (A := A) a ha P0 δ (j + 1) hj y := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by
+    simpa [k, Nat.add_succ] using hj
+  have hprev : k ≤ n := by omega
+  let xprev := restrictPrefix C hk y
+  have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
+    simpa [xprev, k] using hbase
+  let F := prefixFibreData C (A := A) hk xprev
+    (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
+  change BBMSTFiniteFibreUpdate.updatedWeight F
+      (δ (stageCoordinate hk)) (y (Fin.last k)) =
+    PAt C (A := A) a ha P0 δ (j + 1) hj y
+  simp [F, prefixFibreData, prefixUniformFibre,
+    BBMSTUniformFibreInstantiation.toFibreData,
+    BBMSTUniformFibreInstantiation.uniformWeight,
+    BBMSTUniformFibreInstantiation.coveredProportion,
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt, k, xprev]
+
+#print axioms prefixFibre_updatedWeight_eq_PAt
+
+
 end BBMSTPrefixMeasure
