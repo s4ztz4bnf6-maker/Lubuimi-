@@ -1,0 +1,45 @@
+name: Parallel diagnostic for BBMST prefix moment bridge
+
+on:
+  push:
+    branches:
+      - research/prefix-bound-index-fix-2026-11-07
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  prefix-moment-without-cylinder-step:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and generate lake manifest
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Install dependencies and restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile BBMST fibre measure core
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
+      - name: Compile finite weighted fibre update
+        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
+      - name: Compile uniform-coordinate fibre instantiation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTUniformFibreInstantiation.olean BBMSTUniformFibreInstantiation.lean
+      - name: Compile finite-stage first and second moment bounds
+        run: lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
+      - name: Compile finite-coordinate geometry core
+        run: lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+      - name: Compile uniform-stage source moment instantiation
+        run: lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
+      - name: Compile source-indexed BBMST prefix measure recursion
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureRecursion.olean BBMSTPrefixMeasureRecursion.lean
+      - name: Compile step 17 independently, without compiling step 16
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixMomentBridge.olean BBMSTPrefixMomentBridge.lean
