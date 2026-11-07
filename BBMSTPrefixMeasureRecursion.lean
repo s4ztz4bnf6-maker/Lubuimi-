@@ -97,7 +97,7 @@ noncomputable def prefixAlpha
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) : ℚ := by
   letI := C.fintypeS (stageCoordinate hk)
-  exact (prefixCoveredValues C A hk x).card /
+  exact (prefixCoveredValues C (A := A) hk x).card /
     (Fintype.card (C.S (stageCoordinate hk)) : ℚ)
 
 /-- Whether a point in Q_(k+1) lies in the newly covered part of its
@@ -107,7 +107,7 @@ noncomputable def prefixPointCovered
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C (k + 1) hk) : Prop :=
   x (Fin.last k) ∈
-    prefixCoveredValues C A hk (restrictPrefix C hk x)
+    prefixCoveredValues C (A := A) hk (restrictPrefix C hk x)
 
 /-- The recursively defined measure P_(a+j) on Q_(a+j), extended by the
 source's uniform-coordinate update at each stage. The index j counts stages
@@ -127,7 +127,7 @@ noncomputable def PAt
       have hprev : k ≤ n := by omega
       letI := C.fintypeS (stageCoordinate hk)
       let xprev := restrictPrefix C hk x
-      let values := prefixCoveredValues C A hk xprev
+      let values := prefixCoveredValues C (A := A) hk xprev
       let α : ℚ := (values.card : ℚ) /
         (Fintype.card (C.S (stageCoordinate hk)) : ℚ)
       let covered : Prop := x (Fin.last k) ∈ values
