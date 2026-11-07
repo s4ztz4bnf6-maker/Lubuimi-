@@ -389,3 +389,97 @@ theorem prefixCylinder_free_mass_reindex
           PAt C (A := A) a ha P0 δ (j + 1) hj
             (extendPrefix C hk x t) := by
               simp
+
+
+/-- If the newly exposed coordinate is fixed to s, the next cylinder is
+the graph of the constant section x ↦ extendPrefix x s over the old
+cylinder. -/
+noncomputable def prefixCylinderExtensionEquivFixed
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C) (s : C.S (stageCoordinate hk))
+    (hfixed : H.assignment (stageCoordinate hk) = some s) :
+    {y : PrefixPoint C (k + 1) hk //
+        y ∈ prefixCylinder C hk H} ≃
+      {x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) //
+        x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H} where
+  toFun y := by
+    have hy : H.ContainsPrefix hk y.1 :=
+      (mem_prefixCylinder C hk H y.1).mp y.2
+    have hy' : H.ContainsPrefix hk
+        (extendPrefix C hk (restrictPrefix C hk y.1)
+          (y.1 (Fin.last k))) := by
+      simpa [extendPrefix_restrictPrefix] using hy
+    have hsection :=
+      (containsPrefix_extend_fixed C hk H s hfixed
+        (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp hy'
+    exact ⟨restrictPrefix C hk y.1,
+      (mem_prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk)
+        H (restrictPrefix C hk y.1)).mpr hsection.1⟩
+  invFun x := by
+    exact ⟨extendPrefix C hk x.1 s,
+      (mem_prefixCylinder C hk H (extendPrefix C hk x.1 s)).mpr
+        ((containsPrefix_extend_fixed C hk H s hfixed x.1 s).mpr
+          ⟨(mem_prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk)
+              H x.1).mp x.2, rfl⟩)⟩
+  left_inv y := by
+    apply Subtype.ext
+    have hy : H.ContainsPrefix hk y.1 :=
+      (mem_prefixCylinder C hk H y.1).mp y.2
+    have hsection :=
+      (containsPrefix_extend_fixed C hk H s hfixed
+        (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp
+        (by simpa [extendPrefix_restrictPrefix] using hy)
+    rw [← hsection.2]
+    exact extendPrefix_restrictPrefix C hk y.1
+  right_inv x := by
+    apply Subtype.ext
+    exact restrictPrefix_extendPrefix C hk x.1 s
+
+/-- Reindexing the mass of a fixed-coordinate cylinder by the unique
+section over the old cylinder. -/
+theorem prefixCylinder_fixed_mass_reindex
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C)
+    (s : C.S (stageCoordinate (by omega)))
+    (hfixed : H.assignment (stageCoordinate (by omega)) = some s) :
+    prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
+      ∑ x ∈ prefixCylinder C (by omega) H,
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C (by omega) x s) := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by omega
+  let e := prefixCylinderExtensionEquivFixed C hk H s hfixed
+  unfold prefixCylinderMass
+  calc
+    (∑ y ∈ prefixCylinder C hj H,
+        PAt C (A := A) a ha P0 δ (j + 1) hj y) =
+      ∑ y : {y : PrefixPoint C (k + 1) hk //
+          y ∈ prefixCylinder C hk H},
+        PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
+          simp [k, prefixCylinder]
+    _ = ∑ x : {x : PrefixPoint C k
+          (Nat.le_trans (Nat.le_succ k) hk) //
+          x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C hk x.1 s) := by
+            apply Fintype.sum_equiv e
+            intro y
+            change
+              PAt C (A := A) a ha P0 δ (j + 1) hj y.1 =
+                PAt C (A := A) a ha P0 δ (j + 1) hj
+                  (extendPrefix C hk (restrictPrefix C hk y.1) s)
+            have hy : H.ContainsPrefix hk y.1 :=
+              (mem_prefixCylinder C hk H y.1).mp y.2
+            have hsection :=
+              (containsPrefix_extend_fixed C hk H s hfixed
+                (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp
+                (by simpa [extendPrefix_restrictPrefix] using hy)
+            rw [← hsection.2, extendPrefix_restrictPrefix]
+    _ = ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H,
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C hk x s) := by
+            simp
