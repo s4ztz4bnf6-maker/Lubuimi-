@@ -100,7 +100,7 @@ noncomputable def toFibreData (F : UniformFibre (α := α)) :
   covered_subset := F.covered_subset
   weight_nonneg := by
     intro x hx
-    exact div_nonneg F.total_nonneg (le_of_lt points_card_pos F)
+    exact div_nonneg F.total_nonneg (le_of_lt (points_card_pos F))
   total_mass := uniformWeight_sum_eq_total F
   proportion_nonneg := (coveredProportion_bounds F).1
   proportion_le_one := (coveredProportion_bounds F).2
