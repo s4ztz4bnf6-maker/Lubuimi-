@@ -98,7 +98,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
   rw [mem_stageCoveredValues_iff, mem_stageCoveredValues_iff]
   constructor
   · rintro ⟨H, hH, hContains⟩
-    refine ⟨H, hCompatible, ?_⟩
+    refine ⟨H, hH, ?_⟩
     intro j
     cases hassign : H.assignment j with
     | none => simp [hassign]
