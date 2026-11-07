@@ -153,3 +153,35 @@ instantiate E as the successive sections of the actual hyperplane shadow,
 prove the fixed/free classification from its assignment map, and connect
 the initial section to the source-defined coefficient c(I). The main
 theorem and the final axiom audit remain open.
+
+
+## 9. Hyperplane-cylinder geometry and event-mass instantiation (2026-11-07)
+
+At source commit `2dfde335eafa1f4f64c691ac6a2770f5db224e22`,
+`BBMSTPrefixCylinderMass.lean` was extended with the finite cylinder
+`prefixCylinder` and its actual `PAt)-mass `prefixCylinderMass`.
+The membership theorem `mem_prefixCylinder` identifies the finite filter
+with `Hyperplane.ContainsPrefix).
+
+The geometric one-coordinate decomposition is stated as
+`containsPrefix_extend_iff`: membership after appending a coordinate is
+equivalent to (i) membership of the restricted old prefix and (ii) the
+boundary assignment condition. Its specializations
+`containsPrefix_extend_free` and `containsPrefix_extend_fixed` state
+the free and prescribed-value cases separately.
+
+The existing arbitrary-event identities are now instantiated at the
+actual old hyperplane cylinder:
+- `prefixCylinder_allExtensions_mass_eq` applies exact event-mass
+  conservation to all extensions of the old cylinder;
+- `prefixCylinder_fixedExtension_mass_le` applies the one-value
+  event-mass domination with the exact single-coordinate factor.
+
+These are source additions only. No Lean compilation or kernel result is
+claimed for this commit. In particular, the free all-extension sum has
+not yet been identified by a proved finite-sum reindexing theorem with
+`prefixCylinderMass` at the next stage. The fixed section likewise still
+needs that explicit identification with the next-stage cylinder. The
+multi-stage induction, initial-cylinder coefficient construction, Lemma 3.3,
+Lemma 3.4, numerical strict inequality, and final axiom elimination remain
+open. The project axioms are not removed.
