@@ -257,6 +257,7 @@ theorem stageRemovedMass_le_zeroSafeMomentBound
       stageRemovedMass_le_secondMoment S δ hpos hδhalf⟩
 
 
+#print axioms stageTotalMass_eq_one
 #print axioms stageRemovedMass_eq
 #print axioms stageRemovedMass_le_firstMoment
 #print axioms stageRemovedMass_le_secondMoment
