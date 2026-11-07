@@ -278,3 +278,114 @@ theorem prefixCylinder_fixedExtension_mass_le
 #print axioms fixed_extension_event_mass_le
 
 end BBMSTPrefixCylinderMass
+
+
+/-- Restricting the next cylinder to a free boundary coordinate gives
+exactly the old cylinder times the new coordinate. This is the cylinder-
+level restriction of prefixExtensionEquiv. -/
+noncomputable def prefixCylinderExtensionEquivFree
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C)
+    (hfree : H.assignment (stageCoordinate hk) = none) :
+    {y : PrefixPoint C (k + 1) hk //
+        y ∈ prefixCylinder C hk H} ≃
+      (Σ x : {x : PrefixPoint C k
+          (Nat.le_trans (Nat.le_succ k) hk) //
+          x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
+        C.S (stageCoordinate hk)) where
+  toFun y := by
+    have hy : H.ContainsPrefix hk y.1 :=
+      (mem_prefixCylinder C hk H y.1).mp y.2
+    have hy' : H.ContainsPrefix hk
+        (extendPrefix C hk (restrictPrefix C hk y.1)
+          (y.1 (Fin.last k))) := by
+      simpa [extendPrefix_restrictPrefix] using hy
+    have hold : H.ContainsPrefix
+        (Nat.le_trans (Nat.le_succ k) hk)
+        (restrictPrefix C hk y.1) :=
+      (containsPrefix_extend_free C hk H hfree
+        (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp hy'
+    exact ⟨⟨restrictPrefix C hk y.1,
+      (mem_prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk)
+        H (restrictPrefix C hk y.1)).mpr hold⟩,
+      y.1 (Fin.last k)⟩
+  invFun p := by
+    rcases p with ⟨x, t⟩
+    exact ⟨extendPrefix C hk x.1 t,
+      (mem_prefixCylinder C hk H (extendPrefix C hk x.1 t)).mpr
+        ((containsPrefix_extend_free C hk H hfree x.1 t).mpr
+          ((mem_prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk)
+            H x.1).mp x.2))⟩
+  left_inv y := by
+    apply Subtype.ext
+    exact extendPrefix_restrictPrefix C hk y.1
+  right_inv p := by
+    rcases p with ⟨⟨x, hx⟩, t⟩
+    apply Sigma.ext
+    · apply Subtype.ext
+      exact restrictPrefix_extendPrefix C hk x t
+    · exact extendPrefix_last C hk x t
+
+/-- The mass of the next free-coordinate cylinder, reindexed by its exact
+old-cylinder/final-coordinate equivalence. This is the missing finite
+cylinder reindexing, not merely the unrestricted prefix identity. -/
+theorem prefixCylinder_free_mass_reindex
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C)
+    (hfree : H.assignment
+      (stageCoordinate (by omega)) = none) :
+    prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
+      ∑ x ∈ prefixCylinder C (by omega) H,
+        ∑ t : C.S (stageCoordinate (by omega)),
+          PAt C (A := A) a ha P0 δ (j + 1) hj
+            (extendPrefix C (by omega) x t) := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by omega
+  let e := prefixCylinderExtensionEquivFree C hk H hfree
+  unfold prefixCylinderMass
+  calc
+    (∑ y ∈ prefixCylinder C hj H,
+        PAt C (A := A) a ha P0 δ (j + 1) hj y) =
+      ∑ y : {y : PrefixPoint C (k + 1) hk //
+          y ∈ prefixCylinder C hk H},
+        PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
+          simp [k, prefixCylinder]
+    _ = ∑ p :
+        Σ x : {x : PrefixPoint C k
+            (Nat.le_trans (Nat.le_succ k) hk) //
+            x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
+          C.S (stageCoordinate hk),
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C hk p.1.1 p.2) := by
+            apply Fintype.sum_equiv e
+            intro y
+            change
+              PAt C (A := A) a ha P0 δ (j + 1) hj y.1 =
+                PAt C (A := A) a ha P0 δ (j + 1) hj
+                  (extendPrefix C hk
+                    (restrictPrefix C hk y.1) (y.1 (Fin.last k)))
+            rw [extendPrefix_restrictPrefix]
+    _ = ∑ x : {x : PrefixPoint C k
+          (Nat.le_trans (Nat.le_succ k) hk) //
+          x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
+        ∑ t : C.S (stageCoordinate hk),
+          PAt C (A := A) a ha P0 δ (j + 1) hj
+            (extendPrefix C hk x.1 t) := by
+              exact Fintype.sum_sigma
+                (fun p :
+                  Σ x : {x : PrefixPoint C k
+                      (Nat.le_trans (Nat.le_succ k) hk) //
+                      x ∈ prefixCylinder C
+                        (Nat.le_trans (Nat.le_succ k) hk) H},
+                    C.S (stageCoordinate hk) =>
+                  PAt C (A := A) a ha P0 δ (j + 1) hj
+                    (extendPrefix C hk p.1.1 p.2))
+    _ = ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H,
+        ∑ t : C.S (stageCoordinate hk),
+          PAt C (A := A) a ha P0 δ (j + 1) hj
+            (extendPrefix C hk x t) := by
+              simp
