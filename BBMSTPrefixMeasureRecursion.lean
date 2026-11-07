@@ -585,8 +585,8 @@ theorem initialPrefixOf_restrictPrefix
   have hi' : i.val < a + j + 1 :=
     Nat.lt_trans hi (Nat.lt_succ_self (a + j))
   have hi'' : i.val < a + (j + 1) := by omega
-  simp only [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex, dif_pos, hi, hi', hi'']
+  simp [initialPrefixOf, restrictPrefix, projectPrefix,
+    liftPrefix, prefixIndex, hi, hi', hi'']
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
