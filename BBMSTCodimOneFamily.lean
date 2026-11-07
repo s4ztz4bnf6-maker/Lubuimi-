@@ -8,6 +8,13 @@ open BBMSTCodimOneReduction
 
 variable {n : ℕ} {C : CoordinateSystem n}
 
+noncomputable instance coordinateFintype (i : Fin n) : Fintype (C.S i) :=
+  C.fintypeS i
+
+noncomputable instance reducedValueFintype
+    (removed : ∀ i : Fin n, Option (C.S i)) (i : Fin n) :
+    Fintype (ReducedValue removed i) := Fintype.ofFinite _
+
 def NoParallel (A : Finset (Hyperplane C)) : Prop :=
   ∀ ⦃H⦄, H ∈ A → ∀ ⦃H'⦄, H' ∈ A →
     fixedCoords H = fixedCoords H' → H = H'
