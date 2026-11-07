@@ -184,7 +184,7 @@ theorem survives_iff_meets_reduced_box
     · intro i
       cases hA : H.assignment i with
       | none => trivial
-      | some s => rfl
+      | some s => simp [hA]
   · rintro ⟨x, hx⟩ i s hA
     have hxi : (x i).val = s := by
       simpa [hA] using hx i
