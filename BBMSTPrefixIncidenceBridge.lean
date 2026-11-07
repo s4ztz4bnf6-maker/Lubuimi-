@@ -30,7 +30,6 @@ theorem prefixStageCoordinate_eq_incidence
   apply Fin.ext
   simp [BBMSTPrefixMeasure.stageCoordinate,
     BBMSTHyperplaneFibreIncidence.stageCoordinate]
-  omega
 
 /-- The genuine prefix-covered values are exactly the full-point incidence
 values of the new hyperplanes at stage k+1, evaluated at the canonical lift
