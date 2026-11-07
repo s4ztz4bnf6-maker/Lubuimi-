@@ -127,7 +127,64 @@ theorem fixedCoords_mergeOldShadows
   · cases h1 : H.assignment i <;> cases h2 : H'.assignment i <;>
       simp [fixedCoords, mergeOldShadows, oldShadow, hb, h1, h2]
 
+
+/-- For a hyperplane supported in the prefix ending at the boundary and
+fixing that boundary, membership in its old shadow is equivalent to
+membership after some choice of the newly exposed coordinate. -/
+theorem oldShadow_contains_iff_exists_boundary_extension
+    (boundary : Fin n) (H : Hyperplane C)
+    (hBoundary : ∃ s, H.assignment boundary = some s)
+    (hInside : H.FixedInsidePrefix (boundary.val + 1))
+    (x : ProductPoint C) :
+    (oldShadow boundary H).Contains x ↔
+      ∃ t, H.Contains (Function.update x boundary t) := by
+  classical
+  constructor
+  · intro hshadow
+    rcases hBoundary with ⟨s, hs⟩
+    refine ⟨s, ?_⟩
+    intro i
+    by_cases hib : i = boundary
+    · subst i
+      simp [Hyperplane.Contains, hs, Function.update]
+    · cases ha : H.assignment i with
+      | none =>
+        simp [Hyperplane.Contains, ha]
+      | some v =>
+        have hfixed : i ∈ fixedCoords H := by
+          simp [fixedCoords, ha]
+        have hlt := hInside i hfixed
+        have hval : i.val < boundary.val := by
+          have hne : i.val ≠ boundary.val := by
+            intro heq
+            exact hib (Fin.ext heq)
+          omega
+        have hx := hshadow i
+        simpa [Hyperplane.Contains, oldShadow, hib, ha,
+          Function.update, hib] using hx
+  · rintro ⟨t, ht⟩
+    intro i
+    by_cases hib : i = boundary
+    · subst i
+      simp [Hyperplane.Contains, oldShadow]
+    · cases ha : H.assignment i with
+      | none =>
+        simp [Hyperplane.Contains, oldShadow, ha]
+      | some v =>
+        have hfixed : i ∈ fixedCoords H := by
+          simp [fixedCoords, ha]
+        have hlt := hInside i hfixed
+        have hval : i.val < boundary.val := by
+          have hne : i.val ≠ boundary.val := by
+            intro heq
+            exact hib (Fin.ext heq)
+          omega
+        have hx := ht i
+        simpa [Hyperplane.Contains, oldShadow, hib, ha,
+          Function.update, hib] using hx
+
 #print axioms mergeOldShadows_contains_iff
+#print axioms oldShadow_contains_iff_exists_boundary_extension
 #print axioms oldShadows_disjoint_of_conflict
 #print axioms fixedCoords_mergeOldShadows
 
