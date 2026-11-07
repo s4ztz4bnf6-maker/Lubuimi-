@@ -341,4 +341,46 @@ theorem prefixFibre_updatedWeight_eq_PAt
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
+/-- Nonnegativity propagates through the actual prefix recursion when the
+initial distribution is nonnegative and every distortion lies in [0,1/2]. -/
+theorem PAt_nonneg
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0 : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ)) :
+    ∀ (j : ℕ) (hj : a + j ≤ n)
+      (x : PrefixPoint C (a + j) hj),
+      0 ≤ PAt C (A := A) a ha P0 δ j hj x := by
+  intro j
+  induction j with
+  | zero =>
+      intro hj x
+      simpa [PAt] using hP0 x
+  | succ j ih =>
+      intro hj y
+      let k := a + j
+      have hk : k + 1 ≤ n := by
+        simpa [k, Nat.add_succ] using hj
+      have hprev : k ≤ n := by omega
+      let xprev := restrictPrefix C hk y
+      have hbase : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev :=
+        ih hprev xprev
+      let F := prefixFibreData C (A := A) (k := k) hk xprev
+        (PAt C (A := A) a ha P0 δ j hprev xprev) hbase
+      have hpoint : y (Fin.last k) ∈ F.points := by
+        simp [F, prefixFibreData, prefixUniformFibre,
+          BBMSTUniformFibreInstantiation.toFibreData]
+      have hlocal := prefixFibre_updatedWeight_eq_PAt
+        (C := C) (A := A) a ha P0 δ j hj y (by
+          simpa [k, xprev] using hbase)
+      rw [← hlocal]
+      exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
+        (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
+        (hδhalf (stageCoordinate hk)) hpoint
+
+#print axioms PAt_nonneg
+
+
 end BBMSTPrefixMeasure
