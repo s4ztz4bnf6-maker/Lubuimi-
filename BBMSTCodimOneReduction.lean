@@ -121,28 +121,36 @@ theorem contains_iff_restricted
     change (∀ j, match H.assignment j with
       | none => True
       | some s => x j = s) at h
+    change (match restrictOption removed i (H.assignment i) with
+      | none => True
+      | some t => (restrictPoint removed x hx i).val = t.val)
     cases hA : H.assignment i with
     | none =>
-        simp [restrictHyperplane, restrictOption, hA]
+        rw [hA]
+        simp [restrictOption]
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
         have hxi : x i = s := by
           simpa [hA] using h i
-        simp [restrictHyperplane, restrictOption, hA, hs,
-          restrictPoint, hxi]
+        rw [hA]
+        simp [restrictOption, hs, restrictPoint, hxi]
   · intro h i
+    change (match restrictOption removed i (H.assignment i) with
+      | none => True
+      | some t => (restrictPoint removed x hx i).val = t.val) at h
     cases hA : H.assignment i with
     | none =>
-        simp [hA]
+        change (match restrictOption removed i none with
+          | none => True
+          | some t => (restrictPoint removed x hx i).val = t.val) at h
+        simp [restrictOption] at h
     | some s =>
         have hs : Retained removed i s := hSurvives i s hA
-        have hred :
-            (restrictHyperplane removed H).assignment i =
-              some ⟨s, hs⟩ := by
-          simp [restrictHyperplane, restrictOption, hA, hs]
-        have hi := h i
-        rw [hred] at hi
-        simpa [restrictPoint] using hi
+        have hred : restrictOption removed i (some s) = some ⟨s, hs⟩ := by
+          simp [restrictOption, hs]
+        rw [hA] at h
+        rw [hred] at h
+        simpa [restrictPoint] using h
 
 #print axioms restrictOption_isSome_iff
 #print axioms fixedCoords_restrict_eq
