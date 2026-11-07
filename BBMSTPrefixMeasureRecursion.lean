@@ -23,6 +23,10 @@ open BBMSTFiberMeasureCore
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
+/-- Classical equality on each finite coordinate type, needed for its Finset fibre. -/
+noncomputable instance instDecidableEqCoordinate (i : Fin n) :
+    DecidableEq (C.S i) := Classical.decEq _
+
 /-- Every prefix product is finite. -/
 noncomputable instance instFintypePrefixPoint {k : ℕ} (hk : k ≤ n) :
     Fintype (PrefixPoint C k hk) := by
@@ -169,13 +173,14 @@ theorem extendPrefix_restrictPrefix
     extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
   funext i
   by_cases hi : i.val < k
-  · simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi]
+  · have hne : i.val ≠ k := by omega
+    simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
+      prefixIndex, stageCoordinate, Function.update, hi, hne] <;> omega
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update]
+      prefixIndex, stageCoordinate, Function.update] <;> omega
 
 /-- The recursive covered predicate is exactly the existence of a
 new-stage hyperplane containing the extended prefix. -/
@@ -214,7 +219,6 @@ noncomputable def prefixUniformFibre
       points_nonempty := ?_
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
-  exact ⟨Classical.choice (Fintype.card_pos_iff.mp hcard), Finset.mem_univ _⟩
 
 /-- The concrete prefix fibre converted to the weighted update interface.
 Its covered set is the actual geometric prefixCoveredValues set. -/
