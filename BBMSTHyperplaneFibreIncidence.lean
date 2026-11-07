@@ -238,11 +238,13 @@ theorem stageCoveredValues_subset_candidates
     | none => simp [hassign] at hisSome
     | some s => exact ⟨s, rfl⟩
   have hpoint := hContains i
+  have hpoint' : Function.update x i t i = s := by
+    simpa only [hs] using hpoint
   have hts : t = s := by
-    simpa [hs, Function.update_same] using hpoint
+    simpa [i, Function.update] using hpoint'
   have hchosen :
       stageAssignedValue (C := C) A k hk hk0 H = s := by
-    simp [stageAssignedValue, hs]
+    simp [stageAssignedValue, i, hs]
   have hCompatible :
       H ∈ stageCompatibleHyperplanes (C := C) A k hk hk0 x := by
     apply Finset.mem_filter.mpr
