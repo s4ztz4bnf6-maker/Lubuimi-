@@ -1,0 +1,132 @@
+import Mathlib
+import BBMSTPrefixMeasureRecursion
+
+/-!
+# Event-mass identities for the source-indexed BBMST prefix recursion
+
+These lemmas isolate the two genuinely different one-coordinate operations:
+summing over every value of a free coordinate conserves the event mass,
+whereas retaining one prescribed value incurs the local distortion factor.
+They are finite-prefix statements and do not yet identify the relevant
+hyperplane cylinder or prove BBMST Lemma 3.3.
+-/
+
+namespace BBMSTPrefixCylinderMass
+
+open BBMSTGeometry
+open BBMSTPrefixMeasure
+open BBMSTFiniteFibreUpdate
+
+variable {n : ℕ} (C : CoordinateSystem n)
+
+/-- Summing the next-stage mass over every value of the newly exposed
+coordinate preserves the mass of any finite set of old prefixes. This is
+the event-level, rather than merely total-probability, conservation law. -/
+theorem sum_extensions_eq_old_event_mass
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (E : Finset (PrefixPoint C (a + j) (by omega))) :
+    (∑ x ∈ E, ∑ t : C.S (stageCoordinate (by omega)),
+      PAt C (A := A) a ha P0 δ (j + 1) hj
+        (extendPrefix C (by omega) x t)) =
+    ∑ x ∈ E, PAt C (A := A) a ha P0 δ j (by omega) x := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by omega
+  have hprev : k ≤ n := by omega
+  have hnonneg := PAt_nonneg (C := C) (A := A) a ha P0 δ
+    hP0_nonneg hδ hδhalf
+  apply Finset.sum_congr rfl
+  intro x hx
+  let baseMass := PAt C (A := A) a ha P0 δ j hprev x
+  have hbase : 0 ≤ baseMass := hnonneg j hprev x
+  let F := prefixFibreData C (A := A) (k := k) hk x baseMass hbase
+  have hpoints : F.points = Finset.univ := by
+    rfl
+  have hlocalSum :
+      (∑ t : C.S (stageCoordinate hk),
+        updatedWeight F (δ (stageCoordinate hk)) t) = baseMass := by
+    calc
+      (∑ t : C.S (stageCoordinate hk),
+          updatedWeight F (δ (stageCoordinate hk)) t) =
+        ∑ t ∈ F.points,
+          updatedWeight F (δ (stageCoordinate hk)) t := by
+            simpa [hpoints]
+      _ = F.total :=
+        sum_updatedWeight_eq_total F (δ (stageCoordinate hk))
+          (hδ (stageCoordinate hk)) (hδhalf (stageCoordinate hk))
+      _ = baseMass := by rfl
+  calc
+    (∑ t : C.S (stageCoordinate hk),
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C hk x t)) =
+      ∑ t : C.S (stageCoordinate hk),
+        updatedWeight F (δ (stageCoordinate hk)) t := by
+          apply Finset.sum_congr rfl
+          intro t ht
+          have hbase' :
+              0 ≤ PAt C (A := A) a ha P0 δ j hprev
+                (restrictPrefix C hk (extendPrefix C hk x t)) := by
+            simpa [restrictPrefix_extendPrefix] using hbase
+          have hlocal := prefixFibre_updatedWeight_eq_PAt
+            (C := C) (A := A) a ha P0 δ j hj
+            (extendPrefix C hk x t) hbase'
+          have hlast :
+              (extendPrefix C hk x t) (Fin.last k) = t :=
+            extendPrefix_last C hk x t
+          simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
+            BBMSTUniformFibreInstantiation.toFibreData,
+            restrictPrefix_extendPrefix, hlast] using hlocal.symm
+    _ = baseMass := hlocalSum
+
+/-- For a prescribed value of the newly exposed coordinate, the mass of
+any finite old-prefix event is bounded by the old event mass times exactly
+the one-coordinate distortion factor. -/
+theorem fixed_extension_event_mass_le
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (E : Finset (PrefixPoint C (a + j) (by omega)))
+    (t : C.S (stageCoordinate (by omega))) :
+    (∑ x ∈ E, PAt C (A := A) a ha P0 δ (j + 1) hj
+      (extendPrefix C (by omega) x t)) ≤
+    ((∑ x ∈ E, PAt C (A := A) a ha P0 δ j (by omega) x) /
+      (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
+      (1 - δ (stageCoordinate (by omega))) := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by omega
+  have hprev : k ≤ n := by omega
+  calc
+    (∑ x ∈ E, PAt C (A := A) a ha P0 δ (j + 1) hj
+        (extendPrefix C hk x t)) ≤
+      ∑ x ∈ E,
+        (PAt C (A := A) a ha P0 δ j hprev x /
+          (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
+          (1 - δ (stageCoordinate hk)) := by
+            apply Finset.sum_le_sum
+            intro x hx
+            have hstep :=
+              PAt_succ_le_prev_div_card_mul_one_sub_delta
+                (C := C) (A := A) a ha P0 δ hP0_nonneg hδ hδhalf
+                j hj (extendPrefix C hk x t)
+            simpa [restrictPrefix_extendPrefix] using hstep
+    _ =
+      ((∑ x ∈ E, PAt C (A := A) a ha P0 δ j hprev x) /
+        (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
+        (1 - δ (stageCoordinate hk)) := by
+          rw [← Finset.sum_div, ← Finset.sum_div]
+
+#print axioms sum_extensions_eq_old_event_mass
+#print axioms fixed_extension_event_mass_le
+
+end BBMSTPrefixCylinderMass
