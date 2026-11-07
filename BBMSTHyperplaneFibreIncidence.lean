@@ -25,6 +25,13 @@ open BBMSTUniformStageMoment
 
 variable {n : ℕ} {C : CoordinateSystem n}
 
+/-- Classical equality instances for the finite product and coordinate fibres. -/
+noncomputable instance instDecidableEqProductPoint :
+    DecidableEq (ProductPoint C) := Classical.decEq _
+
+noncomputable instance instDecidableEqCoordinate (i : Fin n) :
+    DecidableEq (C.S i) := Classical.decEq _
+
 /-- The coordinate introduced at stage k (the k-th coordinate, in
 one-based stage notation). -/
 def stageCoordinate (k : ℕ) (hk : k ≤ n) (hk0 : 0 < k) : Fin n :=
