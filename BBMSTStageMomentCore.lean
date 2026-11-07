@@ -93,6 +93,14 @@ stage variable α at that base point. -/
 structure FiniteStageData where
   indices : Finset ι
   fibre : ι → FibreData α
+  /-- The old base-point weights form a probability measure. -/
+  total_mass_one : (∑ i ∈ indices, (fibre i).total) = 1
+
+/-- The stage's old base-point measure is normalized. -/
+theorem stageTotalMass_eq_one
+    (S : FiniteStageData (ι := ι) (α := α)) :
+    (∑ i ∈ S.indices, (S.fibre i).total) = 1 :=
+  S.total_mass_one
 
 /-- The stage first moment E[α]. -/
 def stageFirstMoment (S : FiniteStageData (ι := ι) (α := α)) : ℚ :=
