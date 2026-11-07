@@ -179,13 +179,13 @@ theorem extendPrefix_restrictPrefix
   by_cases hi : i.val < k
   · have hne : i.val ≠ k := by omega
     have hle : i.val ≤ k := Nat.le_of_lt hi
+    have hhi : i.val < k + 1 := i.isLt
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hle] <;> omega
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi]
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
-    simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update] <;> omega
+    exact extendPrefix_last C hk (restrictPrefix C hk y) (y (Fin.last k))
 
 /-- The recursive covered predicate is exactly the existence of a
 new-stage hyperplane containing the extended prefix. -/
