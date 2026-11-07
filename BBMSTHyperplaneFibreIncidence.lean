@@ -136,6 +136,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
+        change Function.update x i t j = s at hvalue
         exact hsame.symm.trans hvalue
   · rintro ⟨H, hH, hContains⟩
     refine ⟨H, hH, ?_⟩
@@ -165,6 +166,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
+        change Function.update x i t j = s at hvalue
         exact hsame.symm.trans hvalue
 
 /-- The coordinate value assigned by a stage hyperplane. The fallback
@@ -236,17 +238,19 @@ theorem stageCoveredValues_subset_candidates
   obtain ⟨s, hs⟩ : ∃ s, H.assignment i = some s := by
     cases hassign : H.assignment i with
     | none => simp [hassign] at hisSome
-    | some s => exact ⟨s, hassign⟩
+    | some s => exact ⟨s, rfl⟩
   have hpoint := hContains i
   have hts : t = s := by
     simpa [hs] using hpoint
   have hex : ∃ u, H.assignment i = some u := ⟨s, hs⟩
   have hchoose : Classical.choose hex = s := by
     have hspec := Classical.choose_spec hex
-    exact Option.some.inj (hspec.trans hs.symm)
+    exact (Option.some.inj (hs.symm.trans hspec)).symm
   have hchosen :
       stageAssignedValue (C := C) A k hk hk0 H = s := by
-    simp [stageAssignedValue, hex, hchoose]
+    unfold stageAssignedValue
+    rw [if_pos hex]
+    exact hchoose.symm
   have hCompatible :
       H ∈ stageCompatibleHyperplanes (C := C) A k hk hk0 x := by
     apply Finset.mem_filter.mpr
@@ -348,10 +352,9 @@ theorem actualStageFirstMoment_eq
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  unfold uniformStageFirstMoment stageFirstMoment toFiniteStageData
-    stageFirstMoment toFibreData
-  simp [stageUniformFibre, coveredProportion, uniformWeight,
-    stageCoordinate]
+  simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
+    toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
+    coveredProportion, uniformWeight, stageCoordinate]
 
 /-- The first moment is bounded by the expected number of new
 hyperplanes whose old-coordinate shadow contains the base point, divided
@@ -448,10 +451,9 @@ theorem actualStageSecondMoment_eq
           ((((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
-  unfold uniformStageSecondMoment stageSecondMoment toFiniteStageData
-    stageSecondMoment toFibreData
-  simp [stageUniformFibre, coveredProportion, uniformWeight,
-    stageCoordinate]
+  simp [uniformStageSecondMoment, toFiniteStageData, toFibreData,
+    toUniformFiniteStageData, stageSecondMoment, stageUniformFibre,
+    coveredProportion, uniformWeight, stageCoordinate]
 
 /-- The second moment is bounded by the second moment of the number
 of new hyperplanes whose old-coordinate shadows contain the base point,
@@ -495,20 +497,23 @@ theorem actualStageSecondMoment_le_compatibleSquareAverage
       0 ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
         (Fintype.card (C.S i) : ℚ) :=
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hden)
+  have hsub :
+      0 ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) -
+        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) := sub_nonneg.mpr hfrac
+  have hadd :
+      0 ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) +
+        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) := add_nonneg hright0 hleft0
+  have hprod := mul_nonneg hsub hadd
   have hsq :
       (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
           (Fintype.card (C.S i) : ℚ)) ^ 2
         ≤ (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
           (Fintype.card (C.S i) : ℚ)) ^ 2 := by
-    nlinarith [mul_nonneg
-      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-          (Fintype.card (C.S i) : ℚ) -
-        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-          (Fintype.card (C.S i) : ℚ))
-      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
-          (Fintype.card (C.S i) : ℚ) +
-        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
-          (Fintype.card (C.S i) : ℚ))]
+    nlinarith [hprod]
   exact mul_le_mul_of_nonneg_left hsq
     (D.baseWeight_nonneg x hx)
 
