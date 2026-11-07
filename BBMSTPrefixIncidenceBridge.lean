@@ -1,6 +1,7 @@
 import Mathlib
 import BBMSTPrefixMeasureRecursion
 import BBMSTHyperplaneFibreIncidence
+import BBMSTPrefixMomentBridge
 
 /-!
 # Concrete prefix-to-hyperplane incidence bridge
@@ -18,6 +19,7 @@ namespace BBMSTPrefixIncidenceBridge
 open BBMSTGeometry
 open BBMSTPrefixMeasure
 open BBMSTHyperplaneFibreIncidence
+open BBMSTPrefixMomentBridge
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
@@ -110,6 +112,66 @@ theorem prefixAlpha_eq_stageCoveredValues_density
             (k + 1) (by omega) (by omega))) : ℚ) :=
     congrArg (fun m : ℕ => (m : ℚ)) hcard
   rw [hcardQ]
+
+
+/-- The actual PAt-weighted first moment is now written directly as the
+average of the concrete hyperplane-incidence cardinality fractions. -/
+theorem prefixPAt_firstMoment_eq_stageIncidence
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hP0_sum : (∑ x : PrefixPoint C a ha, P0 x) = 1)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + j + 1 ≤ n) :
+    uniformStageFirstMoment
+      (prefixUniformStageData C (A := A) a ha P0 δ
+        hP0_nonneg hP0_sum hδ hδhalf j hj) =
+      ∑ x : PrefixPoint C (a + j) (by omega),
+        PAt C (A := A) a ha P0 δ j (by omega) x *
+          (((stageCoveredValues (C := C) A (a + j + 1)
+            (by omega) (by omega)
+            (liftPrefix C (by omega) x)).card : ℚ) /
+            (Fintype.card (C.S
+              (BBMSTHyperplaneFibreIncidence.stageCoordinate
+                (a + j + 1) (by omega) (by omega))) : ℚ)) := by
+  rw [prefixUniformStageFirstMoment_eq
+    (C := C) (A := A) a ha P0 δ hP0_nonneg hP0_sum hδ hδhalf j hj]
+  apply Finset.sum_congr rfl
+  intro x hx
+  rw [prefixAlpha_eq_stageCoveredValues_density
+    (C := C) (A := A) (k := a + j) (by omega) x]
+
+/-- The actual PAt-weighted second moment is likewise the exact average
+of the squares of the concrete hyperplane-incidence densities. This is the
+starting point for the pair-intersection expansion in Lemma 3.4. -/
+theorem prefixPAt_secondMoment_eq_stageIncidence
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hP0_sum : (∑ x : PrefixPoint C a ha, P0 x) = 1)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + j + 1 ≤ n) :
+    uniformStageSecondMoment
+      (prefixUniformStageData C (A := A) a ha P0 δ
+        hP0_nonneg hP0_sum hδ hδhalf j hj) =
+      ∑ x : PrefixPoint C (a + j) (by omega),
+        PAt C (A := A) a ha P0 δ j (by omega) x *
+          ((((stageCoveredValues (C := C) A (a + j + 1)
+            (by omega) (by omega)
+            (liftPrefix C (by omega) x)).card : ℚ) /
+            (Fintype.card (C.S
+              (BBMSTHyperplaneFibreIncidence.stageCoordinate
+                (a + j + 1) (by omega) (by omega))) : ℚ)) ^ 2) := by
+  rw [prefixUniformStageSecondMoment_eq
+    (C := C) (A := A) a ha P0 δ hP0_nonneg hP0_sum hδ hδhalf j hj]
+  apply Finset.sum_congr rfl
+  intro x hx
+  rw [prefixAlpha_eq_stageCoveredValues_density
+    (C := C) (A := A) (k := a + j) (by omega) x]
 
 #print axioms prefixStageCoordinate_eq_incidence
 #print axioms prefixCoveredValues_eq_stageCoveredValues
