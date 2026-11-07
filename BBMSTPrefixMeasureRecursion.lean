@@ -485,6 +485,80 @@ theorem PAt_sum_eq_one
             _ = baseMass := hlocalSum
         _ = 1 := ih hprev
 
+
+/-- One-step distortion domination for the actual recursively defined
+prefix measure.  At each newly exposed coordinate, every point mass is at
+most its old prefix mass divided by |S_k|(1-δ_k).  This is the local
+multiplicative estimate needed to iterate the ν(J) factor in BBMST
+Lemma 3.3; it is not yet the fixed-coordinate/profile statement. -/
+theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (y : PrefixPoint C (a + (j + 1)) hj) :
+    PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
+      (PAt C (A := A) a ha P0 δ j (by omega)
+        (restrictPrefix C (by omega) y) /
+        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
+        (1 - δ (stageCoordinate (by omega))) := by
+  classical
+  let k := a + j
+  have hk : k + 1 ≤ n := by omega
+  have hprev : k ≤ n := by omega
+  let xprev := restrictPrefix C hk y
+  let baseMass := PAt C (A := A) a ha P0 δ j hprev xprev
+  have hbase : 0 ≤ baseMass :=
+    PAt_nonneg (C := C) (A := A) a ha P0 δ
+      hP0_nonneg hδ hδhalf j hprev xprev
+  let F := prefixFibreData C (A := A) (k := k) hk xprev baseMass hbase
+  have hpoint : y (Fin.last k) ∈ F.points := by
+    simp [F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData]
+  have hlocal := prefixFibre_updatedWeight_eq_PAt
+    (C := C) (A := A) a ha P0 δ j hj y (by
+      simpa [k, xprev, baseMass] using hbase)
+  have hlocal' :
+      BBMSTFiniteFibreUpdate.updatedWeight F
+        (δ (stageCoordinate hk)) (y (Fin.last k)) =
+      PAt C (A := A) a ha P0 δ (j + 1) hj y := by
+    simpa [F, k, xprev, baseMass] using hlocal
+  have hbound :=
+    BBMSTFiniteFibreUpdate.updatedWeight_le_old_div F
+      (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
+      (hδhalf (stageCoordinate hk)) hpoint
+  have hweight :
+      F.weight (y (Fin.last k)) =
+        baseMass / (Fintype.card (C.S (stageCoordinate hk)) : ℚ) := by
+    simp [F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData,
+      BBMSTUniformFibreInstantiation.uniformWeight]
+  have hcardpos :
+      0 < (Fintype.card (C.S (stageCoordinate hk)) : ℚ) := by
+    have hcard := C.card_ge_two (stageCoordinate hk)
+    exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) hcard)
+  have hdenpos : 0 < 1 - δ (stageCoordinate hk) := by
+    have := hδhalf (stageCoordinate hk)
+    linarith
+  calc
+    PAt C (A := A) a ha P0 δ (j + 1) hj y =
+        BBMSTFiniteFibreUpdate.updatedWeight F
+          (δ (stageCoordinate hk)) (y (Fin.last k)) :=
+      hlocal'.symm
+    _ ≤ F.weight (y (Fin.last k)) /
+          (1 - δ (stageCoordinate hk)) := hbound
+    _ = (baseMass /
+          (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
+          (1 - δ (stageCoordinate hk)) := by rw [hweight]
+    _ = (PAt C (A := A) a ha P0 δ j hprev xprev /
+          (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) /
+          (1 - δ (stageCoordinate hk)) := by rfl
+
+#print axioms PAt_succ_le_prev_div_card_mul_one_sub_delta
+
 #print axioms PAt_sum_eq_one
 
 
