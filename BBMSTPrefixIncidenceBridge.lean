@@ -485,24 +485,6 @@ theorem prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
       fun hboth => hmerge (hiff.mpr hboth)
     simp [hmerge, hnot]
 
-/-- For a compatible pair of genuine new-stage hyperplanes, its pair
-shadow mass is exactly the P-mass of their single merged old shadow. -/
-theorem prefixPairShadowMass_eq_prefixMergedOldShadowMass
-    {A : Finset (Hyperplane C)} {k : ℕ}
-    (hk : k + 1 ≤ n)
-    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
-    (H H' : Hyperplane C)
-    (hH : H ∈ newAtStage A (k + 1))
-    (hH' : H' ∈ newAtStage A (k + 1))
-    (hcompat :
-      BBMSTOldShadow.OldCompatible (stageCoordinate hk) H H') :
-    prefixPairShadowMass (C := C) (A := A) hk P H H' =
-      prefixMergedOldShadowMass (C := C) (A := A) hk P H H' := by
-  rw [prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
-    (C := C) (A := A) hk P H H' hH hH']
-  exact prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
-    (C := C) (A := A) hk P H H' hcompat
-
 /-- The pair-shadow mass is exactly the P-mass of the intersection of the
 two old shadows, provided both hyperplanes really enter at this stage.
 This removes the existential boundary-extension witness from the mass
@@ -551,6 +533,24 @@ theorem prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
         (Nat.le_trans (Nat.le_succ k) hk) x :=
         fun hs => hleft (hHiff.mpr hs)
     simp [hleft, hsleft]
+
+/-- For a compatible pair of genuine new-stage hyperplanes, its pair
+shadow mass is exactly the P-mass of their single merged old shadow. -/
+theorem prefixPairShadowMass_eq_prefixMergedOldShadowMass
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
+    (H H' : Hyperplane C)
+    (hH : H ∈ newAtStage A (k + 1))
+    (hH' : H' ∈ newAtStage A (k + 1))
+    (hcompat :
+      BBMSTOldShadow.OldCompatible (stageCoordinate hk) H H') :
+    prefixPairShadowMass (C := C) (A := A) hk P H H' =
+      prefixMergedOldShadowMass (C := C) (A := A) hk P H H' := by
+  rw [prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
+    (C := C) (A := A) hk P H H' hH hH']
+  exact prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
+    (C := C) (A := A) hk P H H' hcompat
 
 /-- Sum of the actual PAt-masses of all pairwise intersections of new
 hyperplane shadows. This is the finite pair-reserve expression in
