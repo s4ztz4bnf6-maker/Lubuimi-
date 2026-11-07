@@ -50,17 +50,18 @@ theorem reducedValue_card
     Fintype.card (ReducedValue removed i) =
       Fintype.card (C.S i) - 1 := by
   classical
-  let e : ReducedValue removed i ≃
-      {s : C.S i // s ∈ (Finset.univ.erase r)} := {
+  let p : C.S i → Prop := fun s => s ≠ r
+  letI : Fintype {s : C.S i // p s} :=
+    Fintype.subtype (Finset.univ.erase r) (by
+      intro s
+      simp)
+  let e : ReducedValue removed i ≃ {s : C.S i // p s} := {
     toFun := fun s =>
       ⟨s.val, by
-        have hne : s.val ≠ r := by
-          simpa [Retained, hRemoved] using s.property
-        simp [hne]⟩
+        simpa [p, Retained, hRemoved] using s.property⟩
     invFun := fun s =>
       ⟨s.val, by
-        have hne : s.val ≠ r := (Finset.mem_erase.mp s.property).1
-        simpa [Retained, hRemoved] using hne⟩
+        simpa [p, Retained, hRemoved] using s.property⟩
     left_inv := by
       intro s
       rfl
@@ -68,11 +69,16 @@ theorem reducedValue_card
       intro s
       rfl
   }
+  have hcard : Fintype.card {s : C.S i // p s} =
+      (Finset.univ.erase r).card := by
+    exact Fintype.subtype_card (p := p) (Finset.univ.erase r) (by
+      intro s
+      simp [p])
   calc
     Fintype.card (ReducedValue removed i) =
-        Fintype.card {s : C.S i // s ∈ (Finset.univ.erase r)} :=
+        Fintype.card {s : C.S i // p s} :=
       Fintype.card_congr e
-    _ = (Finset.univ.erase r).card := by simp
+    _ = (Finset.univ.erase r).card := hcard
     _ = Fintype.card (C.S i) - 1 := by simp
 
 theorem reducedValue_card_ge_two
