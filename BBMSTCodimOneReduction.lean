@@ -165,6 +165,20 @@ def MeetsReducedBox
       | none => True
       | some s => (x i).val = s
 
+/-- Choose a reduced coordinate value compatible with one optional
+assignment. If the coordinate is fixed, survival supplies its retained value;
+if it is free, nonemptiness supplies any retained value. -/
+noncomputable def chooseReducedValue
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (i : Fin n) (hNonempty : Nonempty (ReducedValue removed i))
+    (v : Option (C.S i))
+    (hRetained : ∀ s, v = some s → Retained removed i s) :
+    ReducedValue removed i := by
+  classical
+  cases v with
+  | none => exact Classical.choice hNonempty
+  | some s => exact ⟨s, hRetained s rfl⟩
+
 /-- Survival is equivalent to nonempty intersection with the reduced
 product, provided every reduced coordinate is nonempty. -/
 theorem survives_iff_meets_reduced_box
@@ -175,16 +189,16 @@ theorem survives_iff_meets_reduced_box
   classical
   constructor
   · intro hSurvives
-    refine ⟨fun i => ?_, ?_⟩
-    · cases hA : H.assignment i with
-      | none =>
-          exact Classical.choice (hNonempty i)
-      | some s =>
-          exact ⟨s, hSurvives i s hA⟩
-    · intro i
-      cases hA : H.assignment i with
-      | none => trivial
-      | some s => simp [hA]
+    let x : ReducedPoint removed := fun i =>
+      chooseReducedValue removed i (hNonempty i) (H.assignment i)
+        (fun s hs => hSurvives i s hs)
+    refine ⟨x, ?_⟩
+    intro i
+    cases hA : H.assignment i with
+    | none => trivial
+    | some s =>
+        change (x i).val = s
+        simp [x, chooseReducedValue, hA]
   · rintro ⟨x, hx⟩ i s hA
     have hxi : (x i).val = s := by
       simpa [hA] using hx i
