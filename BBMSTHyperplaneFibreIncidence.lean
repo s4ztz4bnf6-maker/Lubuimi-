@@ -136,7 +136,145 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        change Function.update y i t j = s at hvalue
+        import Mathlib
+import BBMSTGeometryStageCore
+import BBMSTUniformFibreInstantiation
+import BBMSTUniformStageMoment
+
+/-!
+# Hyperplane-induced uniform coordinate fibres
+
+Unlike the abstract UniformFibre input, this module constructs its covered
+set from the actual stage hyperplanes in the finite-coordinate geometry.
+For a base point x and stage k, a next-coordinate value t is covered exactly
+when some hyperplane entering at stage k contains x with coordinate k-1
+replaced by t. Thus the covered proportion is an incidence count, not an
+independent parameter.
+
+This is a finite incidence bridge. It does not yet identify the resulting
+base-point weights with the paper's recursively defined P_k.
+-/
+
+namespace BBMSTHyperplaneFibreIncidence
+
+open BBMSTGeometry
+open BBMSTUniformFibreInstantiation
+open BBMSTUniformStageMoment
+open BBMSTStageMomentCore
+
+variable {n : ℕ} {C : CoordinateSystem n}
+
+/-- Classical equality instances for the finite product and coordinate fibres. -/
+noncomputable instance instDecidableEqProductPoint :
+    DecidableEq (ProductPoint C) := Classical.decEq _
+
+noncomputable instance instDecidableEqCoordinate (i : Fin n) :
+    DecidableEq (C.S i) := Classical.decEq _
+
+noncomputable instance instFintypeCoordinate (i : Fin n) :
+    Fintype (C.S i) := C.fintypeS i
+
+/-- The coordinate introduced at stage k (the k-th coordinate, in
+one-based stage notation). -/
+def stageCoordinate (k : ℕ) (hk : k ≤ n) (hk0 : 0 < k) : Fin n :=
+  ⟨k - 1, by omega⟩
+
+/-- Values of the new coordinate that are covered by at least one
+hyperplane entering at stage k, above the old base point x. -/
+noncomputable def stageCoveredValues
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) : Finset (C.S (stageCoordinate k hk hk0)) := by
+  classical
+  let i := stageCoordinate k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  exact Finset.univ.filter fun t =>
+    ∃ H ∈ newAtStage A k,
+      H.Contains (Function.update x i t)
+
+/-- Membership in the incidence set is exactly existence of a new
+stage-k hyperplane containing the corresponding coordinate extension. -/
+theorem mem_stageCoveredValues_iff
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C)
+    (t : C.S (stageCoordinate k hk hk0)) :
+    t ∈ stageCoveredValues (C := C) A k hk hk0 x ↔
+      ∃ H ∈ newAtStage A k,
+        H.Contains (Function.update x
+          (stageCoordinate k hk hk0) t) := by
+  classical
+  simp [stageCoveredValues]
+
+/-- The actual finite coordinate fibre induced by the stage hyperplanes.
+Its covered subset is constructed from incidence, rather than supplied
+as a free parameter. -/
+noncomputable def stageUniformFibre
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) (baseMass : ℚ) (hbase : 0 ≤ baseMass) :
+    UniformFibre (C.S (stageCoordinate k hk hk0)) := by
+  classical
+  let i := stageCoordinate k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  refine
+    { points := Finset.univ
+      covered := stageCoveredValues (C := C) A k hk hk0 x
+      total := baseMass
+      points_nonempty := by
+        have hcard : 0 < Fintype.card (C.S i) := by
+          have := C.card_ge_two i
+          omega
+        exact ⟨Classical.choice (Fintype.card_pos_iff.mp hcard), Finset.mem_univ _⟩
+      covered_subset := Finset.subset_univ _
+      total_nonneg := hbase }
+
+/-- The covered-value set depends only on the old coordinates
+(indices strictly below k-1), not on the arbitrary suffix used to represent
+a full product point. This is the finite-coordinate form of the fact that
+the new stage hyperplanes are measurable with respect to the old prefix
+together with the newly exposed coordinate. -/
+theorem stageCoveredValues_eq_of_agree_before_stage
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x y : ProductPoint C)
+    (hxy : ∀ j : Fin n, j.val < k - 1 → x j = y j) :
+    stageCoveredValues (C := C) A k hk hk0 x =
+      stageCoveredValues (C := C) A k hk hk0 y := by
+  classical
+  apply Finset.ext
+  intro t
+  rw [mem_stageCoveredValues_iff, mem_stageCoveredValues_iff]
+  constructor
+  · rintro ⟨H, hH, hContains⟩
+    refine ⟨H, hH, ?_⟩
+    intro j
+    cases hassign : H.assignment j with
+    | none => simp [hassign]
+    | some s =>
+        have hjfixed : j ∈ fixedCoords H := by
+          simp [fixedCoords, hassign]
+        have hstageMem : H ∈ stageFamily A k :=
+          newAtStage_subset_stageFamily A k hH
+        change H ∈ A.filter
+          (fun H => ∀ q ∈ fixedCoords H, q.val < k) at hstageMem
+        have hjlt : j.val < k :=
+          (Finset.mem_filter.mp hstageMem).2 j hjfixed
+        let i := stageCoordinate k hk hk0
+        have hsame : Function.update x i t j =
+            Function.update y i t j := by
+          by_cases hji : j = i
+          · subst j
+            simp
+          · have hjne : j.val ≠ k - 1 := by
+              intro hval
+              apply hji
+              apply Fin.ext
+              simpa [i, stageCoordinate] using hval
+            have hjlt' : j.val < k - 1 := by omega
+            simp [Function.update, hji, hxy j hjlt']
+        have hvalue := hContains j
+        change Function.update x i t j = s at hvalue
         exact hsame.symm.trans hvalue
   · rintro ⟨H, hH, hContains⟩
     refine ⟨H, hH, ?_⟩
@@ -166,7 +304,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        change Function.update x i t j = s at hvalue
+        
         exact hsame.symm.trans hvalue
 
 /-- The coordinate value assigned by a stage hyperplane. The fallback
