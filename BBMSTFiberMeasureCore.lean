@@ -100,7 +100,7 @@ theorem coveredMultiplier_zero_distortion {a : ℚ}
   have hnot : ¬ a ≤ 0 := not_le.mpr ha
   have ha0 : a ≠ 0 := ne_of_gt ha
   simp only [coveredMultiplier, if_neg hnot]
-  field_simp [ha0]
+  field_simp [ha0] <;> ring
 
 #print axioms coveredMultiplier_nonneg
 #print axioms uncoveredMultiplier_pos
