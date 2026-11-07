@@ -57,6 +57,8 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixMomentBridge.olean BBMSTPrefixMomentBridge.lean
       - name: Compile hyperplane-induced finite fibre incidence bridge
         run: lake env lean -o .lake/build/lib/lean/BBMSTHyperplaneFibreIncidence.olean BBMSTHyperplaneFibreIncidence.lean
+      - name: Compile concrete prefix-to-hyperplane incidence bridge
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixIncidenceBridge.olean BBMSTPrefixIncidenceBridge.lean
       - name: Compile finite weighted union and noncoverage bound
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
       - name: Compile BBMST c_k(z) moment recurrence
