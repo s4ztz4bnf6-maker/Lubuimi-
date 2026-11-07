@@ -15,7 +15,7 @@ namespace BBMSTFiniteFibreUpdate
 
 open BBMSTFiberMeasureCore
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
 /-- Finite fibre with a covered subset and a nonnegative rational weight
 on each point. The mass equations record the covered proportion. -/
