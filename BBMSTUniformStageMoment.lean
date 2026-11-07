@@ -24,6 +24,8 @@ variable {ι α : Type*} [DecidableEq ι] [DecidableEq α]
 structure UniformFiniteStageData where
   indices : Finset ι
   fibre : ι → UniformFibre α
+  /-- The old measure on the stage base is a probability measure. -/
+  total_mass_one : (∑ i ∈ indices, (fibre i).total) = 1
 
 /-- The generic stage data obtained by deriving each fibre's mass and
 covered proportion from its uniform counting definition. -/
@@ -31,6 +33,13 @@ def toFiniteStageData (S : UniformFiniteStageData (ι := ι) (α := α)) :
     FiniteStageData (ι := ι) (α := α) where
   indices := S.indices
   fibre := fun i => toFibreData (S.fibre i)
+  total_mass_one := S.total_mass_one
+
+/-- The uniform old base-point weights are normalized to total mass one. -/
+theorem uniformStageTotalMass_eq_one
+    (S : UniformFiniteStageData (ι := ι) (α := α)) :
+    (∑ i ∈ S.indices, (S.fibre i).total) = 1 :=
+  S.total_mass_one
 
 /-- The stage first moment is exactly the weighted average of the
 cardinality fractions |covered_i| / |points_i|. -/
