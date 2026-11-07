@@ -113,7 +113,9 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile step 21 in isolation
-        run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
 
   step22-moment-recurrence:
     runs-on: ubuntu-latest
@@ -132,4 +134,6 @@ jobs:
           build: false
           use-mathlib-cache: true
       - name: Compile step 22 in isolation
-        run: lake env lean -o .lake/build/lib/lean/BBMSTMomentRecurrence.olean BBMSTMomentRecurrence.lean
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTMomentRecurrence.olean BBMSTMomentRecurrence.lean
