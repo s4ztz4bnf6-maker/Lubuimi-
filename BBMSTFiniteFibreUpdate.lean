@@ -29,20 +29,20 @@ structure FibreData where
   proportion_nonneg : 0 ≤ proportion
   proportion_le_one : proportion ≤ 1
   covered_mass :
-    (∑ x in covered, weight x) = total * proportion
+    (∑ x ∈ covered, weight x) = total * proportion
   uncovered_mass :
-    (∑ x in points \ covered, weight x) = total * (1 - proportion)
+    (∑ x ∈ points \ covered, weight x) = total * (1 - proportion)
 
 /-- The updated finite fibre mass, summing covered and uncovered parts
 separately so the two source multipliers are applied pointwise. -/
 def updatedMass (F : FibreData α) (δ : ℚ) : ℚ :=
-  (∑ x in F.covered, F.weight x * coveredMultiplier F.proportion δ) +
-  (∑ x in F.points \ F.covered,
+  (∑ x ∈ F.covered, F.weight x * coveredMultiplier F.proportion δ) +
+  (∑ x ∈ F.points \ F.covered,
     F.weight x * uncoveredMultiplier F.proportion δ)
 
 /-- The finite sum factors through a constant multiplier. -/
 theorem sum_weight_mul (s : Finset α) (w : α → ℚ) (c : ℚ) :
-    (∑ x in s, w x * c) = (∑ x in s, w x) * c := by
+    (∑ x ∈ s, w x * c) = (∑ x ∈ s, w x) * c := by
   rw [Finset.sum_mul]
 
 /-- The finite weighted update conserves the total mass exactly. -/
