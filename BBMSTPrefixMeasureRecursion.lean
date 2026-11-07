@@ -71,11 +71,11 @@ noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
 full product, updating exactly the new coordinate, and projecting back. -/
 noncomputable def extendPrefix {k : ℕ} (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
-    (s : C.S (stageCoordinate C hk)) :
+    (s : C.S (stageCoordinate hk)) :
     PrefixPoint C (k + 1) hk :=
   projectPrefix hk
     (Function.update (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
-      (stageCoordinate C hk) s)
+      (stageCoordinate hk) s)
 
 /-- The values of the new coordinate that are actually covered by a
 hyperplane first appearing at stage k+1. -/
@@ -83,9 +83,9 @@ noncomputable def prefixCoveredValues
     {A : Finset (Hyperplane C)} {k : ℕ}
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
-    Finset (C.S (stageCoordinate C hk)) := by
+    Finset (C.S (stageCoordinate hk)) := by
   classical
-  letI := C.fintypeS (stageCoordinate C hk)
+  letI := C.fintypeS (stageCoordinate hk)
   exact Finset.univ.filter fun s =>
     ∃ H ∈ newAtStage A (k + 1),
       H.ContainsPrefix hk (extendPrefix C hk x s)
@@ -96,9 +96,9 @@ noncomputable def prefixAlpha
     {A : Finset (Hyperplane C)} {k : ℕ}
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) : ℚ := by
-  letI := C.fintypeS (stageCoordinate C hk)
+  letI := C.fintypeS (stageCoordinate hk)
   exact (prefixCoveredValues C A hk x).card /
-    (Fintype.card (C.S (stageCoordinate C hk)) : ℚ)
+    (Fintype.card (C.S (stageCoordinate hk)) : ℚ)
 
 /-- Whether a point in Q_(k+1) lies in the newly covered part of its
 old-coordinate fibre. -/
@@ -123,18 +123,18 @@ noncomputable def PAt
   | j + 1, hj, x => by
       let k := a + j
       have hk : k + 1 ≤ n := by
-        simpa [k, Nat.add_succ] using hj
+        simpa only [k, Nat.add_succ] using hj
       have hprev : k ≤ n := by omega
-      letI := C.fintypeS (stageCoordinate C hk)
+      letI := C.fintypeS (stageCoordinate hk)
       let xprev := restrictPrefix C hk x
       let values := prefixCoveredValues C A hk xprev
       let α : ℚ := (values.card : ℚ) /
-        (Fintype.card (C.S (stageCoordinate C hk)) : ℚ)
+        (Fintype.card (C.S (stageCoordinate hk)) : ℚ)
       let covered : Prop := x (Fin.last k) ∈ values
       exact
         (PAt C A a ha P0 δ j hprev xprev /
-          (Fintype.card (C.S (stageCoordinate C hk)) : ℚ)) *
-          (if covered then coveredMultiplier α (δ (stageCoordinate C hk))
-            else uncoveredMultiplier α (δ (stageCoordinate C hk)))
+          (Fintype.card (C.S (stageCoordinate hk)) : ℚ)) *
+          (if covered then coveredMultiplier α (δ (stageCoordinate hk))
+            else uncoveredMultiplier α (δ (stageCoordinate hk)))
 
 end BBMSTPrefixMeasure
