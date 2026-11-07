@@ -140,13 +140,14 @@ sets on the early coordinates. -/
 theorem augmentedChosenSurviving_no_singleton
     (A : Finset (Hyperplane C)) (early : Finset (Fin n))
     (default : ∀ i : Fin n, C.S i)
+    (hNP : NoParallel A)
     {H : Hyperplane C}
     (hH : H ∈ survivingFamily (augmentedFamily A early default)
       (selectedDeletedValues (augmentedSelection A early default))) :
     ∀ i ∈ early, fixedCoords H ≠ {i} := by
   exact chosenSurviving_no_singleton
     (augmentedFamily A early default) early
-    (augmentedFamily_noParallel A early default)
+    (augmentedFamily_noParallel A early default hNP)
     (fun i hi => augmentedFamily_has_codimOne A early default i hi)
     hH
 
@@ -156,10 +157,6 @@ theorem augmentedChosenSurviving_no_singleton
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
-#print axioms canonicalDefault
-#print axioms canonicalAugmentedFamily_noParallel
-#print axioms canonicalAugmentedFamily_has_codimOne
-#print axioms canonicalAugmentedChosenSurviving_no_singleton
 
 /-- Canonical augmentation using only the coordinate system's nonemptiness. -/
 noncomputable def canonicalAugmentedFamily
@@ -192,5 +189,10 @@ theorem canonicalAugmentedChosenSurviving_no_singleton
       (selectedDeletedValues (canonicalAugmentedSelection A early))) :
     ∀ i ∈ early, fixedCoords H ≠ {i} := by
   exact augmentedChosenSurviving_no_singleton A early canonicalDefault hNP hH
+
+#print axioms canonicalDefault
+#print axioms canonicalAugmentedFamily_noParallel
+#print axioms canonicalAugmentedFamily_has_codimOne
+#print axioms canonicalAugmentedChosenSurviving_no_singleton
 
 end BBMSTCodimOneAugmentation
