@@ -332,7 +332,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   classical
   let k := a + j
   have hk : k + 1 ≤ n := by
-    simpa [k, Nat.add_succ] using hj
+    omega
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
@@ -347,7 +347,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, if_true]
+    Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
   split_ifs <;> ring
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
@@ -374,7 +374,7 @@ theorem PAt_nonneg
       intro hj y
       let k := a + j
       have hk : k + 1 ≤ n := by
-        simpa [k, Nat.add_succ] using hj
+        omega
       have hprev : k ≤ n := by omega
       let xprev := restrictPrefix C hk y
       have hbase : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev :=
@@ -418,7 +418,7 @@ theorem PAt_sum_eq_one
       intro hj
       let k := a + j
       have hk : k + 1 ≤ n := by
-        simpa [k, Nat.add_succ] using hj
+        omega
       have hprev : k ≤ n := by omega
       have hnonneg := PAt_nonneg (C := C) (A := A) a ha P0 δ
         hP0_nonneg hδ hδhalf
