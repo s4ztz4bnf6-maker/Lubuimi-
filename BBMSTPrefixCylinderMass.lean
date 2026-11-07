@@ -194,6 +194,84 @@ theorem containsPrefix_extend_iff
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
         projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
 
+
+/-- In the free-coordinate case, the next cylinder contains exactly all
+extensions of the old cylinder. -/
+theorem containsPrefix_extend_free
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C)
+    (hfree : H.assignment (stageCoordinate hk) = none)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (t : C.S (stageCoordinate hk)) :
+    H.ContainsPrefix hk (extendPrefix C hk x t) ↔
+      H.ContainsPrefix (Nat.le_trans (Nat.le_succ k) hk) x := by
+  rw [containsPrefix_extend_iff]
+  simp [hfree]
+
+/-- In the fixed-coordinate case, the next cylinder is the single
+prescribed extension of the old cylinder. -/
+theorem containsPrefix_extend_fixed
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C) (s : C.S (stageCoordinate hk))
+    (hfixed : H.assignment (stageCoordinate hk) = some s)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (t : C.S (stageCoordinate hk)) :
+    H.ContainsPrefix hk (extendPrefix C hk x t) ↔
+      H.ContainsPrefix (Nat.le_trans (Nat.le_succ k) hk) x ∧ t = s := by
+  rw [containsPrefix_extend_iff]
+  simp [hfixed]
+
+/-- The total mass of all extensions of the old hyperplane cylinder is
+exactly its old mass. In the free-coordinate case these are precisely the
+points of the next cylinder, by containsPrefix_extend_free. -/
+theorem prefixCylinder_allExtensions_mass_eq
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C) :
+    (∑ x ∈ prefixCylinder C (by omega) H,
+      ∑ t : C.S (stageCoordinate (by omega)),
+        PAt C (A := A) a ha P0 δ (j + 1) hj
+          (extendPrefix C (by omega) x t)) =
+      prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H := by
+  simpa [prefixCylinderMass] using
+    (sum_extensions_eq_old_event_mass (C := C)
+      (A := A) a ha P0 δ hP0_nonneg hδ hδhalf j hj
+      (prefixCylinder C (by omega) H))
+
+/-- The mass of the prescribed section of a hyperplane cylinder is bounded
+by the old cylinder mass with exactly one distortion factor. In the fixed
+case this section is precisely the next cylinder. -/
+theorem prefixCylinder_fixedExtension_mass_le
+    {A : Finset (Hyperplane C)}
+    (a : ℕ) (ha : a ≤ n)
+    (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
+    (hP0_nonneg : ∀ x, 0 ≤ P0 x)
+    (hδ : ∀ i, 0 ≤ δ i)
+    (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
+    (j : ℕ) (hj : a + (j + 1) ≤ n)
+    (H : Hyperplane C)
+    (s : C.S (stageCoordinate (by omega))) :
+    (∑ x ∈ prefixCylinder C (by omega) H,
+      PAt C (A := A) a ha P0 δ (j + 1) hj
+        (extendPrefix C (by omega) x s)) ≤
+      (prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H /
+        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
+        (1 - δ (stageCoordinate (by omega))) := by
+  simpa [prefixCylinderMass] using
+    (fixed_extension_event_mass_le (C := C)
+      (A := A) a ha P0 δ hP0_nonneg hδ hδhalf j hj
+      (prefixCylinder C (by omega) H) s)
+
+#print axioms containsPrefix_extend_free
+#print axioms containsPrefix_extend_fixed
+#print axioms prefixCylinder_allExtensions_mass_eq
+#print axioms prefixCylinder_fixedExtension_mass_le
+
 #print axioms containsPrefix_extend_iff
 
 #print axioms sum_extensions_eq_old_event_mass
