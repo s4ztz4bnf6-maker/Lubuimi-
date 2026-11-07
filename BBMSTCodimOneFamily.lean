@@ -66,9 +66,10 @@ theorem reducedValue_card
   }
   have hcard : Fintype.card {s : C.S i // s ≠ r} =
       (Finset.univ.erase r).card := by
-    exact Fintype.subtype_card (Finset.univ.erase r) (by
-      intro s
-      simp)
+    exact Fintype.subtype_card (p := fun s : C.S i => s ≠ r)
+      (Finset.univ.erase r) (by
+        intro s
+        simp)
   calc
     Fintype.card (ReducedValue removed i) =
         Fintype.card {s : C.S i // s ≠ r} :=
