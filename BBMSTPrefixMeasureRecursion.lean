@@ -502,9 +502,9 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     (y : PrefixPoint C (a + (j + 1)) hj) :
     PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
       (PAt C (A := A) a ha P0 δ j (by omega)
-        (restrictPrefix C (by omega) y) /
-        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
-        (1 - δ (stageCoordinate (by omega))) := by
+        (restrictPrefix C (k := a + j) (by omega) y) /
+        (Fintype.card (C.S (stageCoordinate (k := a + j) (by omega))) : ℚ)) /
+        (1 - δ (stageCoordinate (k := a + j) (by omega))) := by
   classical
   let k := a + j
   have hk : k + 1 ≤ n := by omega
@@ -570,9 +570,10 @@ theorem initialPrefixOf_restrictPrefix
     {a j : ℕ} (ha : a ≤ n)
     (hk : a + j + 1 ≤ n)
     (y : PrefixPoint C (a + j + 1) hk) :
-    initialPrefixOf C ha (by omega)
-        (restrictPrefix C (by omega) y) =
-      initialPrefixOf C ha (by omega) y := by
+    initialPrefixOf C ha
+        (Nat.le_trans (Nat.le_succ (a + j)) hk)
+        (restrictPrefix C (k := a + j) hk y) =
+      initialPrefixOf C ha (by simpa [Nat.add_succ] using hk) y := by
   funext i
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
     liftPrefix, prefixIndex]
@@ -588,8 +589,10 @@ noncomputable def distortionProduct (a : ℕ) (δ : Fin n → ℚ) :
     (j : ℕ) → (hj : a + j ≤ n) → ℚ
   | 0, _ => 1
   | j + 1, hj =>
-      distortionProduct a δ j (by omega) *
-        distortionFactor C δ (stageCoordinate (by omega))
+      let hk : a + j + 1 ≤ n := by simpa [Nat.add_succ] using hj
+      let hprev : a + j ≤ n := Nat.le_trans (Nat.le_succ (a + j)) hk
+      distortionProduct a δ j hprev *
+        distortionFactor C δ (stageCoordinate (k := a + j) hk)
 
 /-- Iterating the local estimate gives the full product distortion bound
 for the actual recursively defined measure PAt. The initial value is the
