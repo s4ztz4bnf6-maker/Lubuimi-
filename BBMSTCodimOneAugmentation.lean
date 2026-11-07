@@ -304,6 +304,7 @@ theorem canonicalReduction_result
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
+#print axioms survivingNewAtStage_no_early_singleton
 #print axioms augmentedReducedBox_covered
 
 /-- Canonical augmentation using only the coordinate system's nonemptiness. -/
