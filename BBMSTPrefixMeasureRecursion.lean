@@ -158,7 +158,7 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt]
+    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega
 
 
 end BBMSTPrefixMeasure
