@@ -424,6 +424,65 @@ theorem actualStageSecondMoment_eq
   simp [stageUniformFibre, coveredProportion, uniformWeight,
     stageCoordinate]
 
+/-- The second moment is bounded by the second moment of the number
+of new hyperplanes whose old-coordinate shadows contain the base point,
+divided by |S_k|. This is the t=2 union-bound step before the intersection
+weights of Lemma 3.4 are inserted. -/
+theorem actualStageSecondMoment_le_compatibleSquareAverage
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    {hk : k ≤ n} {hk0 : 0 < k}
+    (D : HyperplaneStageData (C := C) A k hk hk0) :
+    uniformStageSecondMoment (toUniformFiniteStageData D) ≤
+      ∑ x ∈ D.basePoints,
+        D.baseWeight x *
+          ((((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+            (Fintype.card (C.S (stageCoordinate (C := C) k hk hk0)) : ℚ)) ^ 2) := by
+  classical
+  let i := stageCoordinate (C := C) k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  have hdenNat : 0 < Fintype.card (C.S i) := by
+    have := C.card_ge_two i
+    omega
+  have hden : 0 < (Fintype.card (C.S i) : ℚ) := by
+    exact_mod_cast hdenNat
+  rw [actualStageSecondMoment_eq]
+  apply Finset.sum_le_sum
+  intro x hx
+  have hcard :=
+    stageCoveredValues_card_le_compatible_card
+      (C := C) A k hk hk0 x
+  have hfrac :
+      ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ)
+        ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) := by
+    apply (div_le_div_iff_of_pos_right hden).2
+    exact_mod_cast hcard
+  have hleft0 :
+      0 ≤ ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+        (Fintype.card (C.S i) : ℚ) :=
+    div_nonneg (Nat.cast_nonneg _) (le_of_lt hden)
+  have hright0 :
+      0 ≤ ((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+        (Fintype.card (C.S i) : ℚ) :=
+    div_nonneg (Nat.cast_nonneg _) (le_of_lt hden)
+  have hsq :
+      (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ)) ^ 2
+        ≤ (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ)) ^ 2 := by
+    nlinarith [mul_nonneg
+      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) -
+        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ))
+      (((stageCompatibleHyperplanes (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ) +
+        ((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
+          (Fintype.card (C.S i) : ℚ))]
+  exact mul_le_mul_of_nonneg_left hsq
+    (D.baseWeight_nonneg x hx)
+
 #print axioms stageCoveredValues
 #print axioms mem_stageCoveredValues_iff
 #print axioms stageCoveredValues_eq_of_agree_before_stage
@@ -439,5 +498,6 @@ theorem actualStageSecondMoment_eq
 #print axioms actualStageFirstMoment_le_compatibleRatio
 #print axioms actualStageFirstMoment_le_newHyperplaneRatio
 #print axioms actualStageSecondMoment_eq
+#print axioms actualStageSecondMoment_le_compatibleSquareAverage
 
 end BBMSTHyperplaneFibreIncidence
