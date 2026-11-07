@@ -80,6 +80,89 @@ noncomputable def stageUniformFibre
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
 
+/-- The coordinate value assigned by a stage hyperplane. The fallback
+value is used only for hyperplanes that do not fix the stage coordinate. -/
+noncomputable def stageAssignedValue
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (H : Hyperplane C) :
+    C.S (stageCoordinate (C := C) k hk hk0) := by
+  classical
+  let i := stageCoordinate (C := C) k hk hk0
+  letI : Fintype (C.S i) := C.fintypeS i
+  have hne : Nonempty (C.S i) := by
+    have hcard : 0 < Fintype.card (C.S i) := by
+      have := C.card_ge_two i
+      omega
+    exact Fintype.card_pos_iff.mp hcard
+  exact if h : ∃ s, H.assignment i = some s then Classical.choose h
+    else Classical.choice hne
+
+/-- Each new stage hyperplane contributes at most one candidate value
+in the new coordinate. -/
+noncomputable def stageCandidateValues
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k) :
+    Finset (C.S (stageCoordinate (C := C) k hk hk0)) := by
+  classical
+  exact (newAtStage A k).image (stageAssignedValue (C := C) A k hk hk0)
+
+/-- Every actually covered coordinate value is contributed by a new
+stage hyperplane. This is the finite union-bound interface underlying
+the first step of Lemma 3.4. -/
+theorem stageCoveredValues_subset_candidates
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) :
+    stageCoveredValues (C := C) A k hk hk0 x ⊆
+      stageCandidateValues (C := C) A k hk hk0 := by
+  classical
+  intro t ht
+  rcases (mem_stageCoveredValues_iff (C := C) A k hk hk0 x t).mp ht with
+    ⟨H, hH, hContains⟩
+  let i := stageCoordinate (C := C) k hk hk0
+  have hboundary := newAtStage_has_last_coordinate
+    (C := C) A hk hk0 H hH
+  rcases hboundary with ⟨j, hjval, hjfixed⟩
+  have hji : j = i := by
+    apply Fin.ext
+    simp [i, stageCoordinate]
+    omega
+  subst j
+  have hfixed : i ∈ fixedCoords H := hjfixed
+  have hisSome : (H.assignment i).isSome := by
+    simpa [fixedCoords] using hfixed
+  obtain ⟨s, hs⟩ : ∃ s, H.assignment i = some s := by
+    cases hassign : H.assignment i with
+    | none => simp [hassign] at hisSome
+    | some s => exact ⟨s, hassign⟩
+  have hpoint := hContains i
+  have hts : t = s := by
+    simpa [Function.update_same, hs] using hpoint
+  have hchosen :
+      stageAssignedValue (C := C) A k hk hk0 H = s := by
+    simp [stageAssignedValue, hs]
+  apply Finset.mem_image.mpr
+  refine ⟨H, hH, ?_⟩
+  calc
+    stageAssignedValue (C := C) A k hk hk0 H = s := hchosen
+    _ = t := hts.symm
+
+/-- The number of covered coordinate values is at most the number of
+new stage hyperplanes, by the finite union bound. -/
+theorem stageCoveredValues_card_le_newAtStage_card
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x : ProductPoint C) :
+    (stageCoveredValues (C := C) A k hk hk0 x).card ≤
+      (newAtStage A k).card := by
+  calc
+    (stageCoveredValues (C := C) A k hk hk0 x).card
+        ≤ (stageCandidateValues (C := C) A k hk hk0).card :=
+      Finset.card_le_card
+        (stageCoveredValues_subset_candidates (C := C) A k hk hk0 x)
+    _ ≤ (newAtStage A k).card := Finset.card_image_le
+
 /-- The fibre's covered proportion is the exact incidence density of
 new stage-k hyperplanes above x. -/
 theorem stageUniformFibre_proportion
@@ -154,6 +237,10 @@ theorem actualStageSecondMoment_eq
 #print axioms mem_stageCoveredValues_iff
 #print axioms stageUniformFibre
 #print axioms stageUniformFibre_proportion
+#print axioms stageAssignedValue
+#print axioms stageCandidateValues
+#print axioms stageCoveredValues_subset_candidates
+#print axioms stageCoveredValues_card_le_newAtStage_card
 #print axioms toUniformFiniteStageData
 #print axioms actualStageFirstMoment_eq
 #print axioms actualStageSecondMoment_eq
