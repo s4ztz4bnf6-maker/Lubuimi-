@@ -20,6 +20,7 @@ open BBMSTGeometry
 open BBMSTPrefixMeasure
 open BBMSTHyperplaneFibreIncidence
 open BBMSTPrefixMomentBridge
+open BBMSTUniformStageMoment
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
