@@ -229,5 +229,9 @@ theorem chosenSurviving_no_singleton
 #print axioms reducedValue_card_ge_two
 #print axioms survivingFamily_noParallel
 #print axioms survivingFamily_no_singleton
+#print axioms chooseEarlySelection
+#print axioms selectedDeletedValues_spec
+#print axioms chooseEarlySelection_unique
+#print axioms chosenSurviving_no_singleton
 
 end BBMSTCodimOneFamily
