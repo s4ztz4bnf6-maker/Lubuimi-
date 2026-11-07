@@ -300,12 +300,28 @@ noncomputable def toUniformFiniteStageData
     (D : HyperplaneStageData (C := C) A k hk hk0) :
     UniformFiniteStageData
       (ι := ProductPoint C)
-      (α := C.S (stageCoordinate (C := C) k hk hk0)) where
-  indices := D.basePoints
-  fibre := fun x =>
-    stageUniformFibre (C := C) A k hk hk0 x
-      (D.baseWeight x) (D.baseWeight_nonneg x)
-  total_mass_one := D.baseWeight_sum_one
+      (α := C.S (stageCoordinate (C := C) k hk hk0)) := by
+  classical
+  let F : ProductPoint C →
+      UniformFibre (C.S (stageCoordinate (C := C) k hk hk0)) :=
+    fun x =>
+      let w := if x ∈ D.basePoints then D.baseWeight x else 0
+      stageUniformFibre (C := C) A k hk hk0 x w (by
+        dsimp [w]
+        split_ifs with hx
+        · exact D.baseWeight_nonneg x hx
+        · norm_num)
+  refine
+    { indices := D.basePoints
+      fibre := F
+      total_mass_one := ?_ }
+  calc
+    (∑ x ∈ D.basePoints, (F x).total)
+        = ∑ x ∈ D.basePoints, D.baseWeight x := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            simp [F, stageUniformFibre, hx]
+    _ = 1 := D.baseWeight_sum_one
 
 /-- The induced stage moment is the base-distribution average of the
 actual cardinality fractions of hyperplane-covered next-coordinate values. -/
