@@ -90,7 +90,7 @@ theorem uncoveredMultiplier_zero_distortion {a : ℚ}
   · have ha0 : a = 0 := le_antisymm h ha
     simp [uncoveredMultiplier, ha0]
   · have hpos : 0 < a := lt_of_not_ge h
-    simp [uncoveredMultiplier, hpos.le]
+    simp [uncoveredMultiplier, h]
 
 /-- At positive covered proportion and zero distortion, covered points keep
 their original weight. -/
