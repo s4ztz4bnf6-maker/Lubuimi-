@@ -108,6 +108,75 @@ def updatedWeight (F : FibreData α) (δ : ℚ) (x : α) : ℚ :=
     F.weight x * uncoveredMultiplier F.proportion δ
   else 0
 
+/-- The updated mass on the covered part has the exact source branch:
+it is zero when the old covered proportion is at most δ, and otherwise
+equals total · (a - δ) / (1 - δ). -/
+theorem updatedCoveredMass_eq
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    (∑ x ∈ F.covered, updatedWeight F δ x) =
+      if F.proportion ≤ δ then 0
+      else F.total * (F.proportion - δ) / (1 - δ) := by
+  have hsum :
+      (∑ x ∈ F.covered, updatedWeight F δ x) =
+        (∑ x ∈ F.covered, F.weight x) *
+          coveredMultiplier F.proportion δ := by
+    calc
+      (∑ x ∈ F.covered, updatedWeight F δ x) =
+          (∑ x ∈ F.covered,
+            F.weight x * coveredMultiplier F.proportion δ) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            simp [updatedWeight, hx]
+      _ = (∑ x ∈ F.covered, F.weight x) *
+          coveredMultiplier F.proportion δ := by rw [Finset.sum_mul]
+  rw [hsum, F.covered_mass]
+  by_cases h : F.proportion ≤ δ
+  · simp [coveredMultiplier, h]
+  · have ha0 : F.proportion ≠ 0 := by
+      have hlt : δ < F.proportion := lt_of_not_ge h
+      linarith
+    have hden : 1 - δ ≠ 0 := by linarith
+    simp [coveredMultiplier, h]
+    field_simp [ha0, hden]
+    <;> ring
+
+/-- The updated mass on the uncovered part is total in the zeroed-covered
+branch; otherwise it is scaled by 1 / (1 - δ). -/
+theorem updatedUncoveredMass_eq
+    (F : FibreData α) (δ : ℚ)
+    (hδ : 0 ≤ δ) (hδhalf : δ ≤ (1 / 2 : ℚ)) :
+    (∑ x ∈ F.points \ F.covered, updatedWeight F δ x) =
+      if F.proportion ≤ δ then F.total
+      else F.total * (1 - F.proportion) / (1 - δ) := by
+  have hsum :
+      (∑ x ∈ F.points \ F.covered, updatedWeight F δ x) =
+        (∑ x ∈ F.points \ F.covered, F.weight x) *
+          uncoveredMultiplier F.proportion δ := by
+    calc
+      (∑ x ∈ F.points \ F.covered, updatedWeight F δ x) =
+          (∑ x ∈ F.points \ F.covered,
+            F.weight x * uncoveredMultiplier F.proportion δ) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            have hxPoints := (Finset.mem_sdiff.mp hx).1
+            have hxNotCovered := (Finset.mem_sdiff.mp hx).2
+            simp [updatedWeight, hxNotCovered, hxPoints]
+      _ = (∑ x ∈ F.points \ F.covered, F.weight x) *
+          uncoveredMultiplier F.proportion δ := by rw [Finset.sum_mul]
+  rw [hsum, uncovered_mass_eq F]
+  by_cases h : F.proportion ≤ δ
+  · have hden : 1 - F.proportion ≠ 0 := by
+      have haLe : F.proportion ≤ 1 / 2 := le_trans h hδhalf
+      linarith
+    simp [uncoveredMultiplier, h]
+    field_simp [hden]
+    <;> ring
+  · have hden : 1 - δ ≠ 0 := by linarith
+    simp [uncoveredMultiplier, h]
+    field_simp [hden]
+    <;> ring
+
 /-- The pointwise update preserves nonnegativity on the fibre. -/
 theorem updatedWeight_nonneg
     (F : FibreData α) (δ : ℚ)
@@ -227,6 +296,8 @@ theorem finiteFamily_updatedWeight_eq_total
 #print axioms sum_weight_mul
 #print axioms updatedMass_eq_total
 #print axioms updatedWeight
+#print axioms updatedCoveredMass_eq
+#print axioms updatedUncoveredMass_eq
 #print axioms updatedWeight_nonneg
 #print axioms sum_updatedWeight_eq_updatedMass
 #print axioms sum_updatedWeight_eq_total
