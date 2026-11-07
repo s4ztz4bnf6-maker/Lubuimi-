@@ -245,6 +245,31 @@ theorem augmentedChosenSurviving_no_singleton
     (fun i hi => augmentedFamily_has_codimOne A early default i hi)
     hH
 
+/-- The newly entering hyperplanes of the reduced surviving family
+inherit the absence of early singleton fixed-coordinate sets. This is the
+stagewise geometric hypothesis needed for the improved second-moment
+branch of Theorem 3.2. -/
+theorem survivingNewAtStage_no_early_singleton
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hNP : NoParallel A)
+    (k : ℕ) {H : Hyperplane C}
+    (hH : H ∈ newAtStage
+      (survivingFamily (augmentedFamily A early default)
+        (selectedDeletedValues (augmentedSelection A early default))) k) :
+    ∀ i ∈ early, fixedCoords H ≠ {i} := by
+  classical
+  have hStage : H ∈ stageFamily
+      (survivingFamily (augmentedFamily A early default)
+        (selectedDeletedValues (augmentedSelection A early default))) k :=
+    (Finset.mem_sdiff.mp hH).1
+  have hSurviving : H ∈
+      survivingFamily (augmentedFamily A early default)
+        (selectedDeletedValues (augmentedSelection A early default)) :=
+    (Finset.mem_filter.mp hStage).1
+  exact augmentedChosenSurviving_no_singleton
+    A early default hNP hSurviving
+
 /-- The source reduction as a single statement: starting from an original
 cover of the full product and a nonparallel family, augment missing
 codimension-one members, delete their selected values, and obtain a cover
