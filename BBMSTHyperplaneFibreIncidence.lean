@@ -80,6 +80,76 @@ noncomputable def stageUniformFibre
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
 
+/-- The covered-value set depends only on the old coordinates
+(indices strictly below k-1), not on the arbitrary suffix used to represent
+a full product point. This is the finite-coordinate form of the fact that
+the new stage hyperplanes are measurable with respect to the old prefix
+together with the newly exposed coordinate. -/
+theorem stageCoveredValues_eq_of_agree_before_stage
+    (A : Finset (Hyperplane C)) (k : ℕ)
+    (hk : k ≤ n) (hk0 : 0 < k)
+    (x y : ProductPoint C)
+    (hxy : ∀ j : Fin n, j.val < k - 1 → x j = y j) :
+    stageCoveredValues (C := C) A k hk hk0 x =
+      stageCoveredValues (C := C) A k hk hk0 y := by
+  classical
+  apply Finset.ext
+  intro t
+  rw [mem_stageCoveredValues_iff, mem_stageCoveredValues_iff]
+  constructor
+  · rintro ⟨H, hH, hContains⟩
+    refine ⟨H, hH, ?_⟩
+    intro j
+    cases hassign : H.assignment j with
+    | none => simp [hassign]
+    | some s =>
+        have hjfixed : j ∈ fixedCoords H := by
+          simp [fixedCoords, hassign]
+        have hstageMem : H ∈ stageFamily A k :=
+          newAtStage_subset_stageFamily A k hH
+        change H ∈ A.filter
+          (fun H => ∀ q ∈ fixedCoords H, q.val < k) at hstageMem
+        have hjlt : j.val < k :=
+          (Finset.mem_filter.mp hstageMem).2 j hjfixed
+        let i := stageCoordinate (C := C) k hk hk0
+        have hsame : Function.update x i t j =
+            Function.update y i t j := by
+          by_cases hji : j = i
+          · subst j
+            simp
+          · have hjlt' : j.val < k - 1 := by
+              simp [i, stageCoordinate] at hji
+              omega
+            simp [Function.update_of_ne hji, hxy j hjlt']
+        have hvalue := hContains j
+        simpa [hassign, hsame] using hvalue
+  · rintro ⟨H, hH, hContains⟩
+    refine ⟨H, hH, ?_⟩
+    intro j
+    cases hassign : H.assignment j with
+    | none => simp [hassign]
+    | some s =>
+        have hjfixed : j ∈ fixedCoords H := by
+          simp [fixedCoords, hassign]
+        have hstageMem : H ∈ stageFamily A k :=
+          newAtStage_subset_stageFamily A k hH
+        change H ∈ A.filter
+          (fun H => ∀ q ∈ fixedCoords H, q.val < k) at hstageMem
+        have hjlt : j.val < k :=
+          (Finset.mem_filter.mp hstageMem).2 j hjfixed
+        let i := stageCoordinate (C := C) k hk hk0
+        have hsame : Function.update y i t j =
+            Function.update x i t j := by
+          by_cases hji : j = i
+          · subst j
+            simp
+          · have hjlt' : j.val < k - 1 := by
+              simp [i, stageCoordinate] at hji
+              omega
+            simp [Function.update_of_ne hji, hxy j hjlt']
+        have hvalue := hContains j
+        simpa [hassign, hsame] using hvalue
+
 /-- The coordinate value assigned by a stage hyperplane. The fallback
 value is used only for hyperplanes that do not fix the stage coordinate. -/
 noncomputable def stageAssignedValue
@@ -291,6 +361,7 @@ theorem actualStageSecondMoment_eq
 
 #print axioms stageCoveredValues
 #print axioms mem_stageCoveredValues_iff
+#print axioms stageCoveredValues_eq_of_agree_before_stage
 #print axioms stageUniformFibre
 #print axioms stageUniformFibre_proportion
 #print axioms stageAssignedValue
