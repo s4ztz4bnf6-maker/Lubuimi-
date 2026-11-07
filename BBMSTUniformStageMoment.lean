@@ -21,7 +21,7 @@ open BBMSTStageMomentCore
 variable {ι α : Type*} [DecidableEq ι] [DecidableEq α]
 
 /-- A finite family of uniformly extended coordinate fibres. -/
-structure UniformFiniteStageData where
+structure UniformFiniteStageData (ι α : Type*) [DecidableEq ι] [DecidableEq α] where
   indices : Finset ι
   fibre : ι → UniformFibre α
   /-- The old measure on the stage base is a probability measure. -/
@@ -29,7 +29,7 @@ structure UniformFiniteStageData where
 
 /-- The generic stage data obtained by deriving each fibre's mass and
 covered proportion from its uniform counting definition. -/
-def toFiniteStageData (S : UniformFiniteStageData (ι := ι) (α := α)) :
+noncomputable def toFiniteStageData (S : UniformFiniteStageData (ι := ι) (α := α)) :
     FiniteStageData (ι := ι) (α := α) where
   indices := S.indices
   fibre := fun i => toFibreData (S.fibre i)
@@ -43,18 +43,18 @@ theorem uniformStageTotalMass_eq_one
 
 /-- The stage first moment is exactly the weighted average of the
 cardinality fractions |covered_i| / |points_i|. -/
-def uniformStageFirstMoment
+noncomputable def uniformStageFirstMoment
     (S : UniformFiniteStageData (ι := ι) (α := α)) : ℚ :=
   stageFirstMoment (toFiniteStageData S)
 
 /-- The stage second moment is exactly the weighted average of the squares
 of the cardinality fractions |covered_i| / |points_i|. -/
-def uniformStageSecondMoment
+noncomputable def uniformStageSecondMoment
     (S : UniformFiniteStageData (ι := ι) (α := α)) : ℚ :=
   stageSecondMoment (toFiniteStageData S)
 
 /-- The actual removed mass in the uniform-coordinate stage. -/
-def uniformStageRemovedMass
+noncomputable def uniformStageRemovedMass
     (S : UniformFiniteStageData (ι := ι) (α := α)) (δ : ℚ) : ℚ :=
   stageRemovedMass (toFiniteStageData S) δ
 
