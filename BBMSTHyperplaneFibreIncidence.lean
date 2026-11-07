@@ -136,7 +136,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        change Function.update x i t j = s at hvalue
+        simp only [hassign] at hvalue
         exact hsame.symm.trans hvalue
   · rintro ⟨H, hH, hContains⟩
     refine ⟨H, hH, ?_⟩
@@ -166,7 +166,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        change Function.update y i t j = s at hvalue
+        simp only [hassign] at hvalue
         exact hsame.symm.trans hvalue
 
 /-- The coordinate value assigned by a stage hyperplane. The fallback
@@ -179,13 +179,11 @@ noncomputable def stageAssignedValue
   classical
   let i := stageCoordinate k hk hk0
   letI : Fintype (C.S i) := C.fintypeS i
-  have hne : Nonempty (C.S i) := by
-    have hcard : 0 < Fintype.card (C.S i) := by
-      have := C.card_ge_two i
-      omega
-    exact Fintype.card_pos_iff.mp hcard
-  exact if h : ∃ s, H.assignment i = some s then Classical.choose h
-    else Classical.choice hne
+  have hcard : 0 < Fintype.card (C.S i) := by
+    have := C.card_ge_two i
+    omega
+  exact (H.assignment i).getD
+    (Classical.choice (Fintype.card_pos_iff.mp hcard))
 
 /-- A new stage hyperplane is compatible with x when its old-coordinate
 constraints can be satisfied above x by some value of the new coordinate.
@@ -241,16 +239,10 @@ theorem stageCoveredValues_subset_candidates
     | some s => exact ⟨s, rfl⟩
   have hpoint := hContains i
   have hts : t = s := by
-    simpa [hs] using hpoint
-  have hex : ∃ u, H.assignment i = some u := ⟨s, hs⟩
-  have hchoose : Classical.choose hex = s := by
-    have hspec := Classical.choose_spec hex
-    exact (Option.some.inj (hs.symm.trans hspec)).symm
+    simpa [hs, Function.update_same] using hpoint
   have hchosen :
       stageAssignedValue (C := C) A k hk hk0 H = s := by
-    unfold stageAssignedValue
-    rw [if_pos hex]
-    exact hchoose
+    simp [stageAssignedValue, hs]
   have hCompatible :
       H ∈ stageCompatibleHyperplanes (C := C) A k hk hk0 x := by
     apply Finset.mem_filter.mpr
