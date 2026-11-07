@@ -33,6 +33,9 @@ noncomputable instance instDecidableEqProductPoint :
 noncomputable instance instDecidableEqCoordinate (i : Fin n) :
     DecidableEq (C.S i) := Classical.decEq _
 
+noncomputable instance instFintypeCoordinate (i : Fin n) :
+    Fintype (C.S i) := C.fintypeS i
+
 /-- The coordinate introduced at stage k (the k-th coordinate, in
 one-based stage notation). -/
 def stageCoordinate (k : ℕ) (hk : k ≤ n) (hk0 : 0 < k) : Fin n :=
@@ -84,7 +87,7 @@ noncomputable def stageUniformFibre
         have hcard : 0 < Fintype.card (C.S i) := by
           have := C.card_ge_two i
           omega
-        exact Fintype.card_pos_iff.mp hcard
+        exact ⟨Classical.choice (Fintype.card_pos_iff.mp hcard), Finset.mem_univ _⟩
       covered_subset := Finset.subset_univ _
       total_nonneg := hbase }
 
@@ -133,7 +136,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        simpa [hassign, hsame] using hvalue
+        exact hsame.symm.trans hvalue
   · rintro ⟨H, hH, hContains⟩
     refine ⟨H, hH, ?_⟩
     intro j
@@ -162,7 +165,7 @@ theorem stageCoveredValues_eq_of_agree_before_stage
             have hjlt' : j.val < k - 1 := by omega
             simp [Function.update, hji, hxy j hjlt']
         have hvalue := hContains j
-        simpa [hassign, hsame] using hvalue
+        exact hsame.symm.trans hvalue
 
 /-- The coordinate value assigned by a stage hyperplane. The fallback
 value is used only for hyperplanes that do not fix the stage coordinate. -/
@@ -185,7 +188,7 @@ noncomputable def stageAssignedValue
 /-- A new stage hyperplane is compatible with x when its old-coordinate
 constraints can be satisfied above x by some value of the new coordinate.
 This is the finite version of x belonging to the shadow A_F^[k-1]. -/
-def stageCompatibleHyperplanes
+noncomputable def stageCompatibleHyperplanes
     (A : Finset (Hyperplane C)) (k : ℕ)
     (hk : k ≤ n) (hk0 : 0 < k)
     (x : ProductPoint C) : Finset (Hyperplane C) := by
@@ -236,7 +239,7 @@ theorem stageCoveredValues_subset_candidates
     | some s => exact ⟨s, hassign⟩
   have hpoint := hContains i
   have hts : t = s := by
-    simpa [Function.update_same, hs] using hpoint
+    simpa [hs] using hpoint
   have hex : ∃ u, H.assignment i = some u := ⟨s, hs⟩
   have hchoose : Classical.choose hex = s := by
     have hspec := Classical.choose_spec hex
