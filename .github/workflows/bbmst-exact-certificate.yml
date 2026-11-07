@@ -1,0 +1,43 @@
+name: BBMST exact finite certificate
+
+on:
+  push:
+    branches:
+      - research/sieve-interface-defect-audit-2026-11-06
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-bbmst-certificates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout pinned independent certificate and checker
+        uses: actions/checkout@v4
+        with:
+          repository: plasma-ai/erdos
+          ref: 17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd
+          path: erdos
+          lfs: true
+
+      - name: Verify Lemma 5.4, Lemma 5.3, and Corollary 5.2 certificates
+        env:
+          PYTHONPATH: ${{ github.workspace }}/erdos
+        run: |
+          python3 erdos/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/evidence/verify_bbmst_squarefree.py \
+            --component all \
+            --output "${{ runner.temp }}/bbmst-verification.json"
+
+      - name: Publish exact verification result
+        if: always()
+        run: |
+          if [ -f "${{ runner.temp }}/bbmst-verification.json" ]; then
+            cat "${{ runner.temp }}/bbmst-verification.json"
+          else
+            echo "No verification JSON was produced."
+          fi
