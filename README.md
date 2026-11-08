@@ -43,6 +43,7 @@ with runs [42522617423](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/run
 ## Publication files
 
 - [APW4 publication record](publication/APW4_PUBLICATION_RECORD.md)
+- [Manuscript verification memorandum](publication/APW4_MANUSCRIPT_VERIFICATION_2026-11-08.md)
 - [Citation metadata](CITATION.cff)
 
 The author prepares and publishes the paper PDF separately. No PDF is generated or committed by this branch at this stage.
