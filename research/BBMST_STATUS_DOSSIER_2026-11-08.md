@@ -83,3 +83,17 @@ A follow-up source repair was committed as [`3ffe65b`](https://github.com/s4ztz4
 The focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still in progress at the last poll: checkout and Lean/Lake setup succeeded; the Lean action was active; the five prerequisites and Step 16 target compile were pending. The full audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) were also active on the same source commit. These overlapping runs are not independent confirmations.
 
 Accordingly, the new repair remains **OPEN — NOT YET VERIFIED**. The previous failure at `e230c450` is historical evidence for that earlier revision, not a verdict on `3ffe65b`. A final update must record the actual result and axiom output of run 42515743524.
+
+
+## 12.7 Latest Step 16 CI result — 2026-11-08 (supersedes 12.6 pending status)
+
+The focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524), on commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`, is now complete with **failure**. The five actual prerequisite modules succeeded. The target compile failed in `BBMSTPrefixCylinderMass.lean` at:
+
+- Line 253: after simplifying the boundary case, `hlast` still has a dependent match over `H.assignment (prefixIndex hk (Fin.last k))`, while the goal has reduced to `t = s`.
+- Line 257: the reverse boundary branch reports a type mismatch between the dependent boundary-match expression and the goal, despite their superficially identical pretty-printed forms.
+
+The job's axiom output reports `sorryAx` in `containsPrefix_extend_iff`, its specializations, the extension equivalences/reindexing results, and the multi-stage cylinder estimate. Since the target compilation itself failed, these traces must be interpreted as error-contaminated declarations generated during failed elaboration, not as proof that an explicit `sorry` exists in the source. The target is nevertheless not accepted; the relevant declarations have not passed kernel verification on this revision.
+
+The full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) both failed at the prefix-cylinder step; subsequent stages 17–22 were skipped in those runs. These are overlapping CI runs on the same commit, not independent proof replications.
+
+**Current status: Step 16 OPEN — FAILED on commit 3ffe65b.** The next repair must be derived from the dependent match and coordinate types at the exact source definitions. Do not patch by guessing a simp set. The documentation branch remains separate from the active proof branch.
