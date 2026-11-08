@@ -75,15 +75,17 @@ theorem sum_extensions_eq_old_event_mass
           apply Finset.sum_congr rfl
           intro t ht
           have hbase' :
-              0 ≤ PAt C (A := A) a ha P0 δ j hprev
-                (restrictPrefix C hk (extendPrefix C hk x t)) := by
+              0 ≤ PAt C (A := A) a ha P0 δ j
+                (by omega)
+                (restrictPrefix C (k := k) (by omega)
+                  (extendPrefix C hk x t)) := by
             simpa [restrictPrefix_extendPrefix] using hbase
           have hlocal := prefixFibre_updatedWeight_eq_PAt
-            (C := C) (A := A) a ha P0 δ j hj
+            (C := C) (A := A) a ha P0 δ j (by omega)
             (extendPrefix C hk x t) hbase'
           have hlast :
-              (extendPrefix C hk x t) (Fin.last k) = t :=
-            extendPrefix_last C hk x t
+              (extendPrefix C hk x t) (Fin.last (a + j)) = t := by
+            simpa [k] using extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
             restrictPrefix_extendPrefix, hlast] using hlocal.symm
@@ -186,10 +188,6 @@ theorem containsPrefix_extend_iff
       prefixIndex hk (Fin.castSucc i) = prefixIndex hprev i := by
     apply Fin.ext
     rfl
-  have hlastidx :
-      prefixIndex hk (Fin.last k) = stageCoordinate hk := by
-    apply Fin.ext
-    rfl
   constructor
   · intro h
     constructor
@@ -198,10 +196,9 @@ theorem containsPrefix_extend_iff
       have hindex := hidx i
       cases hindex
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
+        projectPrefix, liftPrefix, stageCoordinate, Function.update,
+        i.isLt] using hi
     · have hlast := h (Fin.last k)
-      have hindex := hlastidx
-      cases hindex
       cases hassign : H.assignment (stageCoordinate hk) with
       | none => trivial
       | some s =>
@@ -210,19 +207,17 @@ theorem containsPrefix_extend_iff
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · have hindex := hlastidx
-      cases hindex
-      cases hassign : H.assignment (stageCoordinate hk) with
+    · cases hassign : H.assignment (stageCoordinate hk) with
       | none => simp [Hyperplane.ContainsPrefix, hassign]
       | some s =>
-          have hs : t = s := by simpa [hassign] using hboundary
           simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last] using hs
+            hassign, extendPrefix_last] using hboundary
     · have hi := hold i
       have hindex := hidx i
       cases hindex
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
+        projectPrefix, liftPrefix, stageCoordinate, Function.update,
+        i.isLt] using hi
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
@@ -352,7 +347,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · have hlast := extendPrefix_last C hk x t
+    · have hlast := (extendPrefix_last C hk x t).symm
       cases hlast
       rfl
 
