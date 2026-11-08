@@ -371,7 +371,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · exact HEq.r_of_eq (extendPrefix_last C hk x t)
+    · exact HEq.r_of_eq (extendPrefix_last C hk x t).symm
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
