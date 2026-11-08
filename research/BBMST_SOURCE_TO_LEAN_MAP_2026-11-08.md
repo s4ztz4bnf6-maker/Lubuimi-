@@ -45,14 +45,14 @@ A separate branch `verification/steps-17-22-rerun-2026-11-08` was created from `
 
 The workflow file commit is `364a07358e1856b5a17a6963f2f223061b92fb5e`. The connector did not return a run/status for that new workflow commit, so that branch's own workflow trigger remains unconfirmed. Separately, the previously green historical jobs were re-run directly:
 
-- Step 17: rerun job `128842591881` in run `42488903023` — in progress at the last poll.
-- Step 18: rerun job `128842605058` in run `42488903065` — in progress at the last poll.
+- Step 17: rerun job `128842591881` in run `42488903023` — **success**; target declarations show `[propext, Classical.choice, Quot.sound]`.
+- Step 18: rerun job `128842605058` in run `42488903065` — **success**; target declarations show `[propext, Classical.choice, Quot.sound]`.
 - Step 19: rerun job `128842605996` in run `42488903065` — **success**.
-- Step 20: rerun job `128842622425` in run `42513785862` — in progress at the last poll. This is the later-successful Step 20 workflow, not the earlier failed job.
+- Step 20: rerun job `128842622425` in run `42513785862` — **in progress**, still compiling its prerequisites at the latest poll. This is the later-successful Step 20 workflow, not the earlier failed job.
 - Step 21: rerun job `128842627032` in run `42488903065` — **success**.
 - Step 22: rerun job `128842642270` in run `42488903065` — **success**.
 
-These reruns are attached to the historical workflow commits. A commit comparison establishes that the corresponding Lean target files have not changed between those historical commits and `3ffe65b`. The active jobs must still be polled to completion and their logs checked for the expected axiom profile and absence of `sorryAx`. This remains isolated module evidence, not an integrated build.
+These reruns are attached to the historical workflow commits. A commit comparison establishes that the corresponding Lean target files have not changed between those historical commits and `3ffe65b`. The completed rerun logs for Steps 17, 18, 19, 21 and 22 were checked: the expected standard profile was printed for the relevant declarations, no `sorryAx` string occurred, and no compiler `error:` line occurred. Step 20 remains pending; its target compile and axiom output are not yet confirmed. These are isolated module results, not an integrated build.
 
 ## 5. Mandatory proof-fidelity checks before publication
 
