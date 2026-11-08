@@ -245,25 +245,38 @@ theorem containsPrefix_extend_iff
           have hx : x i = Eq.mpr (congrArg C.S hidx) s := by
             simpa [hvalue] using hi'
           simpa [hidx] using hx
-    · have hlast := h (Fin.last k)
+    · have hidx :
+          prefixIndex hk (Fin.last k) = stageCoordinate hk := by
+        apply Fin.ext
+        simp [prefixIndex, stageCoordinate]
+      have hlast := h (Fin.last k)
+      rw [hidx] at hlast
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
-          simpa [stageCoordinate, hassign] using hlast
+          simp [hassign] at hlast
       | some s =>
           have hvalue :
-              (extendPrefix C hk x t) (Fin.last k) = s := by
-            simpa [stageCoordinate, hassign] using hlast
+              (extendPrefix C hk x t) (Fin.last k) = s := hlast
           simpa [hassign, extendPrefix_last] using hvalue
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
+    · have hidx :
+          prefixIndex hk (Fin.last k) = stageCoordinate hk := by
+        apply Fin.ext
+        simp [prefixIndex, stageCoordinate]
+      change
+        (match H.assignment (prefixIndex hk (Fin.last k)) with
+         | none => True
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s)
+      rw [hidx]
+      cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
-          simpa [stageCoordinate, hassign] using hboundary
+          simp [hassign]
       | some s =>
           have hvalue : t = s := by
             simpa [hassign] using hboundary
-          simpa [stageCoordinate, hassign, extendPrefix_last] using hvalue
+          simpa [hassign, extendPrefix_last] using hvalue
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
