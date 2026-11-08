@@ -223,41 +223,66 @@ theorem containsPrefix_extend_iff
     constructor
     · intro i
       have hi := h (Fin.castSucc i)
-      have h_idx := prefixIndex_castSucc hk i
-      cases h_idx
-      have hvalue := extendPrefix_castSucc C hk x t i
-      simpa only [hvalue] using hi
+      have hidx := prefixIndex_castSucc hk i
+      cases hassign : H.assignment (prefixIndex hprev i) with
+      | none =>
+          have hassign' :
+              H.assignment (prefixIndex hk (Fin.castSucc i)) = none := by
+            rw [hidx]
+            exact hassign
+          simpa [hassign, hassign'] using hi
+      | some s =>
+          have hassign' :
+              H.assignment (prefixIndex hk (Fin.castSucc i)) =
+                some (Eq.mpr (congrArg C.S hidx) s) := by
+            cases hidx
+            exact hassign
+          have hi' :
+              (extendPrefix C hk x t) (Fin.castSucc i) =
+                Eq.mpr (congrArg C.S hidx) s := by
+            simpa [hassign'] using hi
+          have hvalue := extendPrefix_castSucc C hk x t i
+          have hx : x i = Eq.mpr (congrArg C.S hidx) s := by
+            simpa [hvalue] using hi'
+          simpa [hidx] using hx
     · have hlast := h (Fin.last k)
-      change
-        (match H.assignment (stageCoordinate hk) with
-         | none => True
-         | some s => (extendPrefix C hk x t) (Fin.last k) = s) at hlast
       cases hassign : H.assignment (stageCoordinate hk) with
-      | none => simp [hassign]
+      | none =>
+          simpa [stageCoordinate, hassign] using hlast
       | some s =>
           have hvalue :
               (extendPrefix C hk x t) (Fin.last k) = s := by
-            simpa [hassign] using hlast
+            simpa [stageCoordinate, hassign] using hlast
           simpa [hassign, extendPrefix_last] using hvalue
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · change
-        (match H.assignment (stageCoordinate hk) with
-         | none => True
-         | some s => t = s)
-          at hboundary
-      cases hassign : H.assignment (stageCoordinate hk) with
-      | none => simp [hassign]
+    · cases hassign : H.assignment (stageCoordinate hk) with
+      | none =>
+          simpa [stageCoordinate, hassign] using hboundary
       | some s =>
           have hvalue : t = s := by
             simpa [hassign] using hboundary
-          simpa [hassign, extendPrefix_last] using hvalue
+          simpa [stageCoordinate, hassign, extendPrefix_last] using hvalue
     · have hi := hold i
-      have h_idx := prefixIndex_castSucc hk i
-      cases h_idx
-      have hvalue := extendPrefix_castSucc C hk x t i
-      simpa only [hvalue] using hi
+      have hidx := prefixIndex_castSucc hk i
+      cases hassign : H.assignment (prefixIndex hprev i) with
+      | none =>
+          have hassign' :
+              H.assignment (prefixIndex hk (Fin.castSucc i)) = none := by
+            rw [hidx]
+            exact hassign
+          simpa [hassign, hassign', extendPrefix_castSucc] using hi
+      | some s =>
+          have hassign' :
+              H.assignment (prefixIndex hk (Fin.castSucc i)) =
+                some (Eq.mpr (congrArg C.S hidx) s) := by
+            cases hidx
+            exact hassign
+          have hx : x i = s := by
+            simpa [hassign] using hi
+          have hvalue := extendPrefix_castSucc C hk x t i
+          simpa [hassign', hvalue, hidx] using hx
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
@@ -416,8 +441,8 @@ theorem prefixCylinder_free_mass_reindex
       ∑ y : {y : PrefixPoint C (k + 1) hk //
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
-          rw [← Finset.sum_attach]
-          simp [k, prefixCylinder]
+          rw [← Finset.sum_coe_sort]
+          simp [k, Nat.add_assoc, prefixCylinder]
     _ = ∑ p :
         Σ x : {x : PrefixPoint C k
             (Nat.le_trans (Nat.le_succ k) hk) //
@@ -452,7 +477,7 @@ theorem prefixCylinder_free_mass_reindex
         ∑ t : C.S (stageCoordinate hk),
           PAt C (A := A) a ha P0 δ (j + 1) hj
             (extendPrefix C hk x t) := by
-              rw [← Finset.sum_attach]
+              rw [Finset.sum_coe_sort]
               simp [Nat.add_assoc]
 
 
@@ -557,7 +582,7 @@ theorem prefixCylinder_fixed_mass_reindex
     _ = ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H,
         PAt C (A := A) a ha P0 δ (j + 1) hj
           (extendPrefix C hk x s) := by
-            rw [Finset.sum_attach]
+            rw [Finset.sum_coe_sort]
             simp
 
 
