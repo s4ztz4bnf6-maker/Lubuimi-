@@ -359,3 +359,15 @@ Focused run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/r
 The ordered run [42518133245](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133245) compiled all modules preceding Step 16 in that workflow and failed at the same target; later steps were skipped.
 
 Steps 1–5 still need their exact work-plan-to-file/declaration mapping before a separate regression run can be honestly labelled with those step numbers.
+
+
+## 12.7 Clarification of the dependent boundary-match failure — 2026-11-08
+
+The focused run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133266), job `128845536627`, failed at lines 249 and 261 of `BBMSTPrefixCylinderMass.lean`. The compiler displayed the proposed match on `H.assignment (stageCoordinate hk)` and the elaborated target match on `H.assignment (prefixIndex hk (Fin.last k))`.
+
+This diagnostic establishes that the *whole dependent match expressions* are not accepted as definitionally interchangeable by the attempted `change` steps. It does **not**, by itself, establish that the underlying `Fin n` coordinate values are unequal or that the definition of `stageCoordinate` is wrong. The source defines
+`stageCoordinate hk := prefixIndex hk (Fin.last k)`; the difficult part is that `Hyperplane.assignment i` has a fibre `C.S i` depending on the index, and a match over that assignment carries the dependent fibre into its branch.
+
+The next repair should therefore avoid changing the entire match expression. First isolate the boundary assignment by a case split at one chosen index. Then prove the coordinate equality (or use its definitional equality where Lean accepts it) and explicitly transport the `C.S i` value across that equality. Only after this local transport is established should the boundary branch be simplified using `extendPrefix_last`. The forward and reverse directions may require different orientations of the transport.
+
+This is a **proof-design plan**, not a verified Lean lemma or patch. No Lean source was changed by this documentation update. The acceptance gate remains: compile the five prerequisites and Step 16 on the same repair commit, then inspect successful `#print axioms` output for every affected declaration and confirm that `sorryAx` is absent. The failed run's downstream `sorryAx` traces remain error-contaminated and are not accepted proof terms.
