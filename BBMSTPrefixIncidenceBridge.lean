@@ -240,8 +240,16 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
     have hshadowInside :
         (BBMSTOldShadow.oldShadow boundary H).FixedInsidePrefix k := by
       intro q hq
-      simp [fixedCoords, BBMSTOldShadow.oldShadow] at hq
-      omega
+      have hsome :
+          ((BBMSTOldShadow.oldShadow boundary H).assignment q).isSome := by
+        simpa [fixedCoords] using hq
+      have hlt : q.val < boundary.val := by
+        by_contra hnot
+        have hnone :
+            (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
+          simp [BBMSTOldShadow.oldShadow, not_lt.mpr hnot]
+        simp [hnone] at hsome
+      exact lt_of_lt_of_eq hlt hboundaryVal
     have hprefix := (containsPrefix_iff_full
       (Nat.le_trans (Nat.le_succ k) hk)
       (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mpr hshadowFull
@@ -275,8 +283,16 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
     have hshadowInside :
         (BBMSTOldShadow.oldShadow boundary H).FixedInsidePrefix k := by
       intro q hq
-      simp [fixedCoords, BBMSTOldShadow.oldShadow] at hq
-      omega
+      have hsome :
+          ((BBMSTOldShadow.oldShadow boundary H).assignment q).isSome := by
+        simpa [fixedCoords] using hq
+      have hlt : q.val < boundary.val := by
+        by_contra hnot
+        have hnone :
+            (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
+          simp [BBMSTOldShadow.oldShadow, not_lt.mpr hnot]
+        simp [hnone] at hsome
+      exact lt_of_lt_of_eq hlt hboundaryVal
     have hproject :
         projectPrefix (Nat.le_trans (Nat.le_succ k) hk) full = x := by
       exact projectPrefix_liftPrefix (C := C)
