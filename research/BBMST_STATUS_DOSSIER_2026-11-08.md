@@ -225,3 +225,31 @@ The authoritative current CI state is recorded in [the Step 16 current-status ad
 ## Latest Step 16 CI outcome — 2026-11-08
 
 The later poll completed all three runs. Focused Step 16 [42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145), job `128850631653`, **failed**: all five prerequisites compiled, but `BBMSTPrefixCylinderMass.lean` failed at lines 255 and 259. Both errors are dependent-match type mismatches for the same pretty-printed match on `H.assignment (prefixIndex hk (Fin.last k))`; the simplifier-based transport did not resolve the dependent type distinction. Its failed-elaboration axiom trace contains `sorryAx` for dependent target declarations, so the target is not accepted. Foundation regression [42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133), job `128850631591`, **succeeded**. Full ordered audit [42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128), job `128850631484`, **failed at the prefix-cylinder event-mass module** after all earlier stages in that workflow succeeded; subsequent stages 17–22 were skipped. Current Step 16 status: **OPEN — FAILED** on head `2ea5983bb8627379873edda743e6b0249116274b`. No merge. Full evidence and interpretation: [current Step 16 status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
+
+
+## Final integrated Step 16 verification — 2026-11-08
+
+This section supersedes the earlier Step 16 failure/pending snapshots above for the current repair branch. Those earlier failures remain preserved as historical diagnostics and are not erased.
+
+**Verified repair head:** `ca9d245aa1851a54b65850ddb1130d1ca12e850e`  
+**Lean source blob:** `2d9587ffceb7fac729a3219b6b5114f1512936ad`  
+**PR:** [#63](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/63), open and unmerged.
+
+| Audit gate on the repair head | Run | Job | Result |
+|---|---:|---:|---|
+| Focused Step 16 compile and axiom print | [42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223) | 128859824694 | PASS |
+| PR-focused Step 16 verification | [42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150) | 128859824529 | PASS |
+| Pre-Step 16 foundation regression | [42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092) | 128859824287 | PASS |
+| Full ordered 22-module audit | [42522812163](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812163) | 128859824547 | PASS |
+
+The full ordered job completed all 23 job steps (setup/checkout plus all 22 module stages). It compiled the upstream audit source, aligned sieve core, fibre measure core, finite weighted fibre update, uniform-coordinate instantiation, stage-moment core, geometry core, uniform-stage source moments, prefix-measure recursion, **Step 16 prefix-cylinder event-mass identities**, prefix-to-stage moment bridge, hyperplane-fibre incidence bridge, old-shadow intersection geometry, prefix-to-hyperplane bridge, finite weighted union/noncoverage bound, and final `BBMSTMomentRecurrence` module.
+
+The complete logs for the focused Step 16 run and full ordered audit were inspected:
+- no compiler-error lines;
+- no `sorryAx` occurrences;
+- Step 16 declarations `containsPrefix_extend_free`, `containsPrefix_extend_fixed`, `containsPrefix_extend_iff`, `prefixCylinder_free_mass_eq`, `prefixCylinder_fixed_mass_le`, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` print the standard project profile `[propext, Classical.choice, Quot.sound]`;
+- the full audit's downstream modules, including `BBMSTMomentRecurrence.cKThree_succ`, also compile successfully and print the standard profile.
+
+The full log additionally preserves the pre-existing explicit upstream axiom dependencies `sieve_criterion` and `sf_sieve_lt_one` on the imported `erdos_selfridge` declaration. These do not occur in the Step 16 declarations.
+
+**Current Step 16 status: VERIFIED — PASS on repair commit `ca9d245`.** The successful full ordered audit is integrated evidence, not merely an isolated module compile. PR #63 remains open and unmerged; no merge was performed.
