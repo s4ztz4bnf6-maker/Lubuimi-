@@ -278,7 +278,7 @@ theorem containsPrefix_extend_iff
       | none =>
           simpa [hassign, stageCoordinate, extendPrefix_last] using hboundary
       | some s =>
-          simpa [hassign, stageCoordinate] using hboundary
+          simpa [hassign, stageCoordinate, extendPrefix_last] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
