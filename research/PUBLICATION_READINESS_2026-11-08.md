@@ -140,3 +140,16 @@ For Route B, use a shorter structure centred on the pinned source, axiom signatu
 ---
 
 **Release decision:** internal research documentation only. No manuscript, preprint, DOI, prize claim, or completed theorem announcement is authorized by this document. The next technical gate is the result of the current Step 16 run and, after it, a complete source-faithful transitive theorem audit.
+
+
+## 11.1 Latest CI correction — 2026-11-08
+
+The pending status recorded above has been superseded. Focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) completed with failure on code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`. The five prerequisite modules passed; the target failed at lines 253 and 257 of `BBMSTPrefixCylinderMass.lean`. The concurrent full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) also stopped at that step and skipped later stages. See dossier section 12.7 for the exact diagnostics.
+
+This result does not invalidate previously verified isolated modules, but it means Step 16 is not complete. The manuscript route for a complete BBMST formalization therefore remains gated. A narrowly scoped upstream-interface audit could be developed separately, but it requires its own independent source review and should not be conflated with a proof of the published theorem.
+
+## 11.2 Patent and intellectual-property screening (preliminary, not legal advice)
+
+The presently documented outputs are mathematical statements, proof arguments, Lean formalization, and a source-level specification audit. A mathematical theorem or abstract mathematical method is generally not itself a patentable technical invention. The EPO excludes mathematical methods claimed as such, while allowing a mathematical method to contribute where a claim is tied to a specific technical purpose or a specifically adapted technical implementation; mere generic computer implementation or algorithmic efficiency alone is insufficient ([EPO Guidelines G-II, 3.3](https://www.epo.org/en/legal/guidelines-epc/2025/g_ii_3_3.html)). In the United States, claims directed to nothing more than an abstract idea such as a mathematical formula are not eligible, although software is not categorically excluded and the claim must be assessed as a whole ([USPTO MPEP §2106](https://www.uspto.gov/web/offices/pac/mpep/s2106.html); [USPTO subject-matter eligibility guidance](https://www.uspto.gov/patents/laws/examination-policy/subject-matter-eligibility)).
+
+No patentable technical application has been identified in the current evidence. Do not file a speculative patent application merely to protect the theorem or proof. If a separate concrete technical implementation emerges, document the technical problem, implementation-specific effect, inventors, prior art, and disclosure history, and obtain patent counsel's advice **before** public disclosure. Patent rights, copyright in code, attribution, and academic priority are distinct matters.
