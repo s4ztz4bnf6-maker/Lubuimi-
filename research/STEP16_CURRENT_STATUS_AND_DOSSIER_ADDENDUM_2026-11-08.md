@@ -58,3 +58,41 @@ Keep the current repair candidate unchanged while these three runs execute. Once
 ## Supersession rule
 
 This addendum is the authoritative current snapshot for the three run IDs and the current Step 16 repair head. Older Step 16 statuses in the historical dossier remain useful as history, but are superseded for current status by this dated addendum. If the runs finish after this snapshot, append a new dated result rather than silently rewriting this snapshot.
+
+
+## Final result of the three authoritative runs — 2026-11-08, later poll
+
+This section supersedes the “in progress” table above.
+
+| Gate | Run / job | Final result | Verified detail |
+|---|---|---|---|
+| Focused Step 16 | [42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145), job `128850631653` | **FAILURE** | All five actual Step 16 prerequisites compiled. The target compile failed in `BBMSTPrefixCylinderMass.lean` at lines 255 and 259. |
+| Foundation regression | [42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133), job `128850631591` | **SUCCESS** | All pre-Step 16 foundation modules compiled in dependency order. Their printed declaration traces show the standard profile `[propext, Classical.choice, Quot.sound]`; no failure was reported by this workflow. |
+| Full ordered audit | [42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128), job `128850631484` | **FAILURE** | The upstream audit, aligned sieve core, fibre measure core, finite update, uniform instantiation, stage moments, geometry, uniform-stage moment and prefix-measure recursion compiled. The audit then failed at “Compile prefix cylinder event-mass identities”; later stages 17–22 were skipped. |
+
+### Exact Step 16 diagnostic
+
+At line 255, Lean reports a type mismatch after simplification for `hlast`. At line 259, it reports the analogous mismatch for `hboundary`. In both cases, the printed expected and inferred types look textually identical:
+
+```lean
+match H.assignment (prefixIndex hk (Fin.last k)) with
+| none => True
+| some s => t = s
+```
+
+The identical pretty-printed text does not establish definitional equality: Lean is still tracking a dependent match/type transport distinction. The attempted `simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last]` did not transport the dependent target. This is the concrete unresolved Step 16 defect on the current candidate; it is not a generic “simp set” issue.
+
+The focused log prints `sorryAx` in `containsPrefix_extend_free`, `containsPrefix_extend_fixed`, `containsPrefix_extend_iff`, dependent extension equivalences/reindexing declarations, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Because the target compile has errors, these are error-contaminated declarations from failed elaboration, not evidence that a valid kernel-accepted proof exists and not, by themselves, proof of a literal source-level `sorry`. They are nevertheless a hard rejection under the project's acceptance rule.
+
+### Axiom and proof-quality verdict
+
+- The five prerequisites in the focused Step 16 workflow compiled.
+- The focused target did **not** compile.
+- The required target axiom profile was therefore **not achieved**: the failed elaboration output explicitly contains `sorryAx` for dependent target declarations.
+- The foundation regression passed, but that does not close Step 16.
+- The full ordered audit reached the same failing prefix-cylinder stage and stopped; it is not an integrated success.
+- No merge is authorized by these results.
+
+**Current Step 16 status: OPEN — FAILED on current CI head `2ea5983bb8627379873edda743e6b0249116274b`.**
+
+The Lean repair source commit remains `e8573b4bacc9f4b333827c7bff6e2216f821c934`; the tested branch head includes subsequent workflow-trigger commits. The next repair must address the dependent match's actual type transport, not merely repeat the same simplifier-based conversion. No code change is made by this documentation update.
