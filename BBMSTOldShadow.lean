@@ -203,7 +203,8 @@ theorem mergeOldShadows_containsPrefix_iff
       by_cases hlt' : i.val < boundary.val
       · exact hnot hlt'
       · have hnone : (oldShadow boundary H).assignment i = none := by
-          simp [oldShadow, hlt']
+          change (if i.val < boundary.val then H.assignment i else none) = none
+          rw [if_neg hnot]
         rw [hnone] at hi
         simp at hi
     exact lt_of_lt_of_eq hlt hboundary
@@ -215,7 +216,8 @@ theorem mergeOldShadows_containsPrefix_iff
       by_cases hlt' : i.val < boundary.val
       · exact hnot hlt'
       · have hnone : (oldShadow boundary H').assignment i = none := by
-          simp [oldShadow, hlt']
+          change (if i.val < boundary.val then H'.assignment i else none) = none
+          rw [if_neg hnot]
         rw [hnone] at hi
         simp at hi
     exact lt_of_lt_of_eq hlt hboundary
