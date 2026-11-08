@@ -371,3 +371,21 @@ This diagnostic establishes that the *whole dependent match expressions* are not
 The next repair should therefore avoid changing the entire match expression. First isolate the boundary assignment by a case split at one chosen index. Then prove the coordinate equality (or use its definitional equality where Lean accepts it) and explicitly transport the `C.S i` value across that equality. Only after this local transport is established should the boundary branch be simplified using `extendPrefix_last`. The forward and reverse directions may require different orientations of the transport.
 
 This is a **proof-design plan**, not a verified Lean lemma or patch. No Lean source was changed by this documentation update. The acceptance gate remains: compile the five prerequisites and Step 16 on the same repair commit, then inspect successful `#print axioms` output for every affected declaration and confirm that `sorryAx` is absent. The failed run's downstream `sorryAx` traces remain error-contaminated and are not accepted proof terms.
+
+
+## 12.8 Explicit coordinate-transport candidate and CI status — 2026-11-08
+
+A narrowly scoped candidate patch was committed on the repair branch as
+[`27090476ac778d1e512a2939920749770026e27a`](https://github.com/s4ztz4bnf6-maker/Lubuimi-/commit/27090476ac778d1e512a2939920749770026e27a).
+It changes only `BBMSTPrefixCylinderMass.lean`: introduces
+`stageCoordinate_eq_prefixIndex` (proved by `rfl` from the definition) and
+uses that equality in opposite directions to align the forward and reverse
+boundary hypotheses. No other Lean module or active audit branch was changed.
+
+At the latest poll, these three runs had started on that exact commit and
+were still in progress:
+- focused Step 16: [42519176511](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176511), job `128848687783`;
+- pre-Step-16 foundation regression: [42519176485](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176485), job `128848687539`;
+- full ordered audit: [42519176465](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176465), job `128848687751`.
+
+All three were still in dependency installation / manifest generation at the latest poll. There is no compile result yet. The candidate is therefore **OPEN — CI PENDING**, not a successful repair. If Step 16 compiles, the successful log's axiom output must still be inspected for every affected declaration; a compile-only pass is not sufficient. The source-scope, project-axiom, integrated-build, and reproducibility gates remain separate.
