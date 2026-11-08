@@ -124,3 +124,33 @@ The failed candidate split the dependent assignment at `stageCoordinate hk`, whi
 ### Main repair branch / PR re-verification
 
 The successful Variant A Lean source was copied to the existing repair branch `fix/step16-dependent-transport-v2-2026-11-08` in commit `ca9d245aa1851a54b65850ddb1130d1ca12e850e`. PR [#63](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/63) remains open and unmerged. On that exact repair-branch head, the focused Step 16 workflow, pre-Step 16 foundation regression and full ordered audit were triggered as runs [42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223), [42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), and [42522812163](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812163). Their final outcomes must be appended when complete. The four already successful isolated variant audits are independent positive evidence and are not to be overwritten by these re-verification runs.
+
+
+## 14. Final re-verification on the existing repair branch — 2026-11-08
+
+The canonical-index proof from successful Variant A was copied without source changes into the existing repair branch:
+
+- Repair branch: `fix/step16-dependent-transport-v2-2026-11-08`
+- Repair commit: `ca9d245aa1851a54b65850ddb1130d1ca12e850e`
+- Pull request: [#63 — Step 16 canonical dependent-boundary transport repair](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/63)
+- Exact Lean source blob for `BBMSTPrefixCylinderMass.lean`: `2d9587ffceb7fac729a3219b6b5114f1512936ad`, identical to the successful Variant A source.
+
+All three re-verification workflows on the repair-branch commit completed successfully:
+
+| Gate | Run | Job | Result |
+|---|---:|---:|---|
+| Focused Step 16 compile | [42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223) | `128859824694` | PASS |
+| PR focused verification | [42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150) | `128859824529` | PASS |
+| Pre-Step 16 foundation regression | [42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092) | `128859824287` | PASS |
+| Full ordered 22-module audit | [42522812163](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812163) | `128859824547` | PASS |
+
+The full ordered audit completed every stage, including Step 16, the prefix-to-stage moment bridge, hyperplane fibre incidence, old-shadow geometry, prefix-to-hyperplane incidence, the finite weighted union/noncoverage bound, and the final `BBMSTMomentRecurrence` module.
+
+The complete full-audit job log was inspected:
+- zero compiler-error lines;
+- zero `sorryAx` occurrences;
+- `BBMSTPrefixCylinderMass.containsPrefix_extend_iff` has axiom profile `[propext, Classical.choice, Quot.sound]`;
+- `BBMSTPrefixCylinderMass.prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` has axiom profile `[propext, Classical.choice, Quot.sound]`;
+- downstream `BBMSTMomentRecurrence.cKThree_succ` has the same standard profile.
+
+**Final Step 16 status on repair commit `ca9d245`: VERIFIED — PASS.** The complete ordered module build has passed on this repair-branch commit. PR #63 remains open and unmerged; no merge action was taken.
