@@ -21,7 +21,9 @@ The successful isolated module logs print the standard Lean profile `[propext, C
 
 ## What “only Step 16 remains” means
 
-It means that Step 16 is the only uncompleted item in this staged implementation sequence, given the recorded status above. It does **not** mean that the unrestricted Erdős–Selfridge conjecture has been proved, that every published BBMST hypothesis has been reconstructed, or that all project-specific axioms have been eliminated from every final theorem. The earlier source/interface audit in this repository identifies `sieve_criterion` and `sf_sieve_lt_one` as explicit upstream axioms and records why their interfaces require further work. Those obligations remain visible until a named final theorem is checked transitively with `#print axioms` and the forbidden project assumptions are absent.
+It means only that Step 16 is the sole open item in the numbered 1–22 implementation sequence. It does **not** mean that the BBMST square-free theorem has been completely formalized, that the final theorem is kernel-proved, or that all project-specific axioms have been removed.
+
+**Critical theorem-scope correction:** the pinned upstream declaration `erdos_selfridge` in `ErdosSelfridge_v17_fixed.lean` has type `¬ CS_allOdd cs` for an arbitrary `CoveringSystem`; it has no `CS_squarefree cs` premise. It is therefore an unrestricted odd-covering statement, not the square-free theorem of Balister–Bollobás–Morris–Sahasrabudhe–Tiba. Its proof also depends on the explicit axioms `sieve_criterion` and `sf_sieve_lt_one`. The exact square-free theorem (or its geometric equivalent, Theorem 1.2) remains a separate, not-yet-certified target. See [`research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`](research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md). A successful Step 16 compile cannot resolve this mismatch by itself.
 
 ## Research authorship and AI-use disclosure
 
@@ -125,3 +127,12 @@ The code snapshot reviewed for this documentation branch is `3ffe65b933222b135d4
 The focused rerun [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) on code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089` has completed with **failure**. All five actual prerequisite modules compiled; the target `BBMSTPrefixCylinderMass.lean` failed at lines 253 and 257 with dependent-match/type mismatches. The log prints `sorryAx` for declarations downstream of the failed boundary equivalence; because this run exits with compiler errors, those traces are not evidence of a valid accepted proof term. They nevertheless mean the target is not accepted and no Step 16 success can be claimed.
 
 The two concurrent full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) also failed at the Step 16 workflow step; later stages were skipped. They are same-commit workflow executions, not independent mathematical replications.
+
+
+## Fresh isolated verification of Steps 17–22
+
+A separate branch `verification/steps-17-22-rerun-2026-11-08` was created from code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`. It contains only `.github/workflows/rerun-steps-17-22-isolated.yml`; no Lean source file or active proof branch was changed. Workflow commit: `364a07358e1856b5a17a6963f2f223061b92fb5e`. No GitHub Actions run ID or status check has yet been returned for this commit, so the fresh rerun is **NOT YET CONFIRMED**. Historical results remain: Step 17 run 42488903023; Steps 18/19/21/22 run 42488903065; Step 20 later success run 42513785862.
+
+## Source-to-Lean correspondence
+
+See [`research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`](research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md).
