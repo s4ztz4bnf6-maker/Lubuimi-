@@ -215,3 +215,8 @@ Three workflows were started on this exact commit:
 - ordered full audit: [42519176465](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176465).
 
 At the latest poll, all three remained in dependency installation / Lake manifest generation. **No Lean compile result is available yet.** Step 16 remains **OPEN — CANDIDATE PATCH, CI PENDING**. The candidate must not be called a successful repair until the focused target compile succeeds and its successful declaration axiom output is inspected. The active audit branch remains untouched; this update is documentation-only.
+
+
+## Current Step 16 snapshot — 2026-11-08
+
+The authoritative current CI state is recorded in [the Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md). It supersedes earlier “latest” or “pending” status statements in this document for the repair branch head `2ea5983bb8627379873edda743e6b0249116274b`. At the recorded poll, focused Step 16 run `42519816145`, foundation run `42519816133`, and full audit run `42519816128` were still in progress; no new Step 16 compiler result or axiom audit was available. Step 16 remains **OPEN — NOT VERIFIED**. Do not infer success or merge from an in-progress run.
