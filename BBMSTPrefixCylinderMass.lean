@@ -245,39 +245,24 @@ theorem containsPrefix_extend_iff
           have hx : x i = Eq.mpr (congrArg C.S hidx) s := by
             simpa [hvalue] using hi'
           simpa [hidx] using hx
-    · have hidx :
-          prefixIndex hk (Fin.last k) = stageCoordinate hk := by
-        apply Fin.ext
-        simp [prefixIndex, stageCoordinate]
-      -- Eliminate the dependent index equality before constructing the
-      -- boundary goal, whose assignment match depends on that index.
-      cases hidx
-      have hlast := h (Fin.last k)
+    · have hlast := h (Fin.last k)
+      change
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s) at hlast
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
-          simpa [hassign] using hlast
+          exact hlast
       | some s =>
-          have hvalue :
-              (extendPrefix C hk x t) (Fin.last k) = s := by
-            simpa [hassign] using hlast
-          simpa [extendPrefix_last] using hvalue
+          simpa [extendPrefix_last] using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · have hidx :
-          prefixIndex hk (Fin.last k) = stageCoordinate hk := by
-        apply Fin.ext
-        simp [prefixIndex, stageCoordinate]
-      -- Eliminate the dependent index equality before splitting the
-      -- assignment match in the boundary hypothesis and target.
-      cases hidx
-      cases hassign : H.assignment (stageCoordinate hk) with
-      | none =>
-          trivial
-      | some s =>
-          have hvalue : t = s := by
-            simpa [hassign] using hboundary
-          simpa [extendPrefix_last] using hvalue
+    · change
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s)
+      exact hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
@@ -602,8 +587,10 @@ theorem prefixCylinder_fixed_mass_reindex
                 y ∈ prefixCylinder C hj H} ≃
               {y : PrefixPoint C (k + 1) hk //
                 y ∈ prefixCylinder C hk H} :=
-            { toFun := fun y => ⟨y.1, hCylinder ▸ y.2⟩
-              invFun := fun y => ⟨y.1, hCylinder.symm ▸ y.2⟩
+            { toFun := fun y => ⟨y.1, by
+                simpa only [hCylinder] using y.2⟩
+              invFun := fun y => ⟨y.1, by
+                simpa only [hCylinder] using y.2⟩
               left_inv := by
                 intro y
                 apply Subtype.ext
