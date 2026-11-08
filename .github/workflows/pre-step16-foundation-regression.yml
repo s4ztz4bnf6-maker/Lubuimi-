@@ -5,6 +5,7 @@ on:
     branches:
       - fix/step16-dependent-boundary-transport-2026-11-08
       - fix/step16-dependent-transport-v2-2026-11-08
+      - fix/step16-variant-case-before-extract-2026-11-08
 
 permissions:
   contents: read
