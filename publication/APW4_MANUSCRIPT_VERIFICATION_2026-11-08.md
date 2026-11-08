@@ -115,3 +115,14 @@ This memorandum is an evidence and attribution audit. It does not withdraw or re
 The purpose of this memorandum is to keep the mathematical proof record, the manuscript text reviewed at the time, and the specific Lean CI evidence accurately distinguished. Its declaration-scoped description of the cited CI runs is not a claim that the mathematical DT, HT, or strict lower-bound proofs are missing, incomplete, or unproved. Those results remain recorded as established results in the author's APW4 proof record, with their complete proof expositions and historical definitions. Nothing in this memorandum withdraws or reopens them.
 
 The earlier phrase “not safe to publish unchanged” refers only to the evidence attribution and presentation issues identified in the particular prose snapshot reviewed in this memorandum. It must not be read as a negative mathematical verdict on the author's completed proof work or as a statement about the subsequently published PDF.
+
+
+## 11. Author-supplied consolidated manuscript — 9 November 2026
+
+The author supplied a consolidated German main manuscript dated 8 November 2026. The manuscript records DT, HT, the global upper energy estimate, and the strict APW4 lower-bound implication as proved mathematical results. This memorandum adopts that mathematical status and does not reopen or downgrade any of those results.
+
+The only scope distinction retained here concerns the machine-verification record: the cited APW4 CI runs and standard axiom profiles apply to the seven named Lean declarations on the specified commit. They are not to be generalized beyond those declarations without additional logs. This declaration-level limitation is not a statement that DT, HT, or the strict lower bound are mathematically open, missing, or unproved.
+
+The current manuscript's equation (2.4), weighted Hall condition (3.1), and strict lower-bound theorem (5.4) are presented as established components of the author's proof record. Their complete proof provenance remains with the author's full APW4 proof materials and historical definitions; no replacement definitions are introduced by this memorandum.
+
+**Editorial correction:** any prior wording that could be read as treating the strict lower bound as an open mathematical transfer problem is superseded by this clarification. The strict lower bound is established. Its mathematical status is not contingent on whether the cited Lean declarations formalize it.
