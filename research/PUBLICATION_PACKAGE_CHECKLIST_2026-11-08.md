@@ -74,3 +74,8 @@ The pinned upstream declaration `erdos_selfridge` has no `CS_squarefree` premise
 ## Fresh Steps 17–22 rerun
 
 A separate verification branch and six-job workflow have been prepared from `3ffe65b` without changing Lean source. The workflow commit is `364a07358e1856b5a17a6963f2f223061b92fb5e`; no Actions run ID/status has yet been confirmed. Do not mark this item complete until current job logs are inspected.
+
+
+## Separate Route B preparation
+
+A structural note skeleton is available at `UPSTREAM_SIEVE_INTERFACE_AUDIT_NOTE_SKELETON_2026-11-08.md`. It is limited to the pinned upstream Lean axiom interface and the reproducible degenerate-parameter witness. It must not be described as a disproof of the number-theoretic conjecture or as a proof of the BBMST square-free theorem. Independent review of the source, the totalized rational arithmetic, and the exact axiom dependency is required before submission.
