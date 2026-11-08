@@ -50,7 +50,7 @@ theorem mergeOldShadows_contains_iff
   · intro hmerge
     constructor
     · intro i
-      by_cases hlt : i.val < boundary.val
+      by_cases hlt : i < boundary
       · cases h1 : H.assignment i with
         | none =>
           simp [Hyperplane.Contains, oldShadow, hlt, h1]
@@ -60,7 +60,7 @@ theorem mergeOldShadows_contains_iff
             hlt, h1] using hm
       · simp [Hyperplane.Contains, oldShadow, hlt]
     · intro i
-      by_cases hlt : i.val < boundary.val
+      by_cases hlt : i < boundary
       · cases h1 : H.assignment i with
         | none =>
           have hm := hmerge i
@@ -71,14 +71,14 @@ theorem mergeOldShadows_contains_iff
           | none =>
             simp [Hyperplane.Contains, oldShadow, hlt, h2]
           | some t =>
-            have hst := hcompat i hlt s t h1 h2
+            have hst := hcompat i (by simpa using hlt) s t h1 h2
             subst t
             have hm := hmerge i
             simpa [Hyperplane.Contains, mergeOldShadows, oldShadow,
               hlt, h1, h2] using hm
       · simp [Hyperplane.Contains, oldShadow, hlt]
   · rintro ⟨hleft, hright⟩ i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · cases h1 : H.assignment i with
       | none =>
         have hr := hright i
@@ -118,7 +118,7 @@ theorem fixedCoords_mergeOldShadows
         fixedCoords (oldShadow boundary H') := by
   classical
   ext i
-  by_cases hlt : i.val < boundary.val
+  by_cases hlt : i < boundary
   · cases h1 : H.assignment i <;> cases h2 : H'.assignment i <;>
       simp [fixedCoords, mergeOldShadows, oldShadow, hlt, h1, h2]
   · simp [fixedCoords, mergeOldShadows, oldShadow, hlt]
@@ -139,7 +139,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
     rcases hBoundary with ⟨s, hs⟩
     refine ⟨s, ?_⟩
     intro i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · cases ha : H.assignment i with
       | none => simp [Hyperplane.Contains, ha]
       | some v =>
@@ -167,7 +167,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
         simp [Hyperplane.Contains, hnone]
   · rintro ⟨t, ht⟩
     intro i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · have hi := ht i
       have hne : i ≠ boundary := by
         intro he
