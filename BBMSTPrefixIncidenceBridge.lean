@@ -202,8 +202,11 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
         (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := by
   classical
-  let boundary := stageCoordinate hk
+  let boundary := BBMSTPrefixMeasure.stageCoordinate hk
   let full := liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x
+  have hboundaryVal : boundary.val = k := by
+    simp [boundary, BBMSTPrefixMeasure.stageCoordinate,
+      BBMSTGeometry.prefixIndex]
   change H ∈ stageCompatibleHyperplanes (C := C) A (k + 1)
       (by omega) (by omega) full ↔ _
   simp only [stageCompatibleHyperplanes, Finset.mem_filter]
@@ -214,8 +217,8 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
     rcases hboundary with ⟨i, hi, hfixed⟩
     have hib : i = boundary := by
       apply Fin.ext
-      simp [boundary, stageCoordinate]
-      omega
+      simpa [boundary, BBMSTPrefixMeasure.stageCoordinate,
+        BBMSTGeometry.prefixIndex] using hi
     subst i
     have hisSome : (H.assignment boundary).isSome := by
       simpa [fixedCoords] using hfixed
@@ -241,20 +244,20 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
       omega
     have hprefix := (containsPrefix_iff_full
       (Nat.le_trans (Nat.le_succ k) hk)
-      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mp hshadowFull
+      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mpr hshadowFull
     have hproject :
         projectPrefix (Nat.le_trans (Nat.le_succ k) hk) full = x := by
-      exact projectPrefix_liftPrefix
+      exact projectPrefix_liftPrefix (C := C)
         (Nat.le_trans (Nat.le_succ k) hk) x
-    simpa [full, hproject] using hprefix
+    exact ⟨hH, by simpa [full, hproject] using hprefix⟩
   · rintro ⟨hH, hprefix⟩
     have hboundary := newAtStage_has_last_coordinate
       (C := C) A (by omega) (by omega) H hH
     rcases hboundary with ⟨i, hi, hfixed⟩
     have hib : i = boundary := by
       apply Fin.ext
-      simp [boundary, stageCoordinate]
-      omega
+      simpa [boundary, BBMSTPrefixMeasure.stageCoordinate,
+        BBMSTGeometry.prefixIndex] using hi
     subst i
     have hisSome : (H.assignment boundary).isSome := by
       simpa [fixedCoords] using hfixed
@@ -276,14 +279,14 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
       omega
     have hproject :
         projectPrefix (Nat.le_trans (Nat.le_succ k) hk) full = x := by
-      exact projectPrefix_liftPrefix
+      exact projectPrefix_liftPrefix (C := C)
         (Nat.le_trans (Nat.le_succ k) hk) x
     have hshadowPrefix :
         (BBMSTOldShadow.oldShadow boundary H).ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := hprefix
     have hshadowFull := (containsPrefix_iff_full
       (Nat.le_trans (Nat.le_succ k) hk)
-      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mpr
+      (BBMSTOldShadow.oldShadow boundary H) hshadowInside full).mp
         (by simpa [hproject] using hshadowPrefix)
     have hex :=
       (BBMSTOldShadow.oldShadow_contains_iff_exists_boundary_extension
