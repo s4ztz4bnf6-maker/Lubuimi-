@@ -245,15 +245,15 @@ theorem prefixCylinder_allExtensions_mass_eq
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C) :
-    (∑ x ∈ prefixCylinder C (by omega) H,
-      ∑ t : C.S (stageCoordinate (by omega)),
+    (∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H,
+      ∑ t : C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj)),
         PAt C (A := A) a ha P0 δ (j + 1) hj
-          (extendPrefix C (by omega) x t)) =
-      prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H := by
+          (extendPrefix C (by simpa [Nat.add_assoc] using hj) x t)) =
+      prefixCylinderMass C (A := A) a ha P0 δ j (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H := by
   simpa [prefixCylinderMass] using
     (sum_extensions_eq_old_event_mass (C := C)
       (A := A) a ha P0 δ hP0_nonneg hδ hδhalf j hj
-      (prefixCylinder C (by omega) H))
+      (prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H))
 
 /-- The mass of the prescribed section of a hyperplane cylinder is bounded
 by the old cylinder mass with exactly one distortion factor. In the fixed
@@ -267,17 +267,17 @@ theorem prefixCylinder_fixedExtension_mass_le
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C)
-    (s : C.S (stageCoordinate (by omega))) :
-    (∑ x ∈ prefixCylinder C (by omega) H,
+    (s : C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj))) :
+    (∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H,
       PAt C (A := A) a ha P0 δ (j + 1) hj
-        (extendPrefix C (by omega) x s)) ≤
-      (prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H /
-        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
-        (1 - δ (stageCoordinate (by omega))) := by
+        (extendPrefix C (by simpa [Nat.add_assoc] using hj) x s)) ≤
+      (prefixCylinderMass C (A := A) a ha P0 δ j (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H /
+        (Fintype.card (C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj))) : ℚ)) /
+        (1 - δ (stageCoordinate (by simpa [Nat.add_assoc] using hj))) := by
   simpa [prefixCylinderMass] using
     (fixed_extension_event_mass_le (C := C)
       (A := A) a ha P0 δ hP0_nonneg hδ hδhalf j hj
-      (prefixCylinder C (by omega) H) s)
+      (prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H) s)
 
 #print axioms containsPrefix_extend_free
 #print axioms containsPrefix_extend_fixed
@@ -346,15 +346,15 @@ theorem prefixCylinder_free_mass_reindex
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C)
     (hfree : H.assignment
-      (stageCoordinate (by omega)) = none) :
+      (stageCoordinate (by simpa [Nat.add_assoc] using hj)) = none) :
     prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
-      ∑ x ∈ prefixCylinder C (by omega) H,
-        ∑ t : C.S (stageCoordinate (by omega)),
+      ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H,
+        ∑ t : C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj)),
           PAt C (A := A) a ha P0 δ (j + 1) hj
-            (extendPrefix C (by omega) x t) := by
+            (extendPrefix C (by simpa [Nat.add_assoc] using hj) x t) := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
+  have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
   let e := prefixCylinderExtensionEquivFree C hk H hfree
   unfold prefixCylinderMass
   calc
@@ -453,12 +453,12 @@ theorem prefixCylinder_fixed_mass_reindex
     (P0 : PrefixPoint C a ha → ℚ) (δ : Fin n → ℚ)
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C)
-    (s : C.S (stageCoordinate (by omega)))
-    (hfixed : H.assignment (stageCoordinate (by omega)) = some s) :
+    (s : C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj)))
+    (hfixed : H.assignment (stageCoordinate (by simpa [Nat.add_assoc] using hj)) = some s) :
     prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
-      ∑ x ∈ prefixCylinder C (by omega) H,
+      ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H,
         PAt C (A := A) a ha P0 δ (j + 1) hj
-          (extendPrefix C (by omega) x s) := by
+          (extendPrefix C (by simpa [Nat.add_assoc] using hj) x s) := by
   classical
   let k := a + j
   have hk : k + 1 ≤ n := by omega
@@ -506,9 +506,9 @@ theorem prefixCylinder_free_mass_eq
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C)
-    (hfree : H.assignment (stageCoordinate (by omega)) = none) :
+    (hfree : H.assignment (stageCoordinate (by simpa [Nat.add_assoc] using hj)) = none) :
     prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H =
-      prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H := by
+      prefixCylinderMass C (A := A) a ha P0 δ j (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H := by
   rw [prefixCylinder_free_mass_reindex C a ha P0 δ j hj H hfree]
   exact prefixCylinder_allExtensions_mass_eq C a ha P0 δ
     hP0_nonneg hδ hδhalf j hj H
@@ -524,12 +524,12 @@ theorem prefixCylinder_fixed_mass_le
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
     (j : ℕ) (hj : a + (j + 1) ≤ n)
     (H : Hyperplane C)
-    (s : C.S (stageCoordinate (by omega)))
-    (hfixed : H.assignment (stageCoordinate (by omega)) = some s) :
+    (s : C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj)))
+    (hfixed : H.assignment (stageCoordinate (by simpa [Nat.add_assoc] using hj)) = some s) :
     prefixCylinderMass C (A := A) a ha P0 δ (j + 1) hj H ≤
-      (prefixCylinderMass C (A := A) a ha P0 δ j (by omega) H /
-        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
-        (1 - δ (stageCoordinate (by omega))) := by
+      (prefixCylinderMass C (A := A) a ha P0 δ j (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) H /
+        (Fintype.card (C.S (stageCoordinate (by simpa [Nat.add_assoc] using hj))) : ℚ)) /
+        (1 - δ (stageCoordinate (by simpa [Nat.add_assoc] using hj))) := by
   rw [prefixCylinder_fixed_mass_reindex C a ha P0 δ j hj H s hfixed]
   exact prefixCylinder_fixedExtension_mass_le C a ha P0 δ
     hP0_nonneg hδ hδhalf j hj H s
@@ -569,8 +569,8 @@ noncomputable def hyperplaneSuffixFactor
   | 0, _ => 1
   | j + 1, hj =>
       hyperplaneSuffixFactor a δ H j (by omega) *
-        (if (H.assignment (stageCoordinate (by omega))).isSome
-         then distortionFactor C δ (stageCoordinate (by omega))
+        (if (H.assignment (stageCoordinate (by simpa [Nat.add_assoc] using hj))).isSome
+         then distortionFactor C δ (stageCoordinate (by simpa [Nat.add_assoc] using hj))
          else 1)
 
 /-- Cylinder-mass induction with the exact BBMST suffix factor: each
@@ -599,7 +599,7 @@ theorem prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor
       intro hj
       let k := a + j
       have hk : k + 1 ≤ n := by omega
-      have hprev : k ≤ n := by omega
+      have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
       let i := stageCoordinate hk
       have hmass_nonneg :
           0 ≤ prefixCylinderMass C (A := A) a ha P0 δ j hprev H :=
