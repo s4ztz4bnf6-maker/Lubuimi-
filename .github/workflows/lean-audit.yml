@@ -1,14 +1,17 @@
 name: Lean degenerate-witness audit
 
 on:
-  push:
   pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: apw4-canonical-lean-audit-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Install Lean and generate lake manifest
@@ -34,3 +37,10 @@ jobs:
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+      - name: Kernel-check APW4 diagonal majorization
+        run: lake env lean APW4DiagonalAudit.lean
+
+      - name: Kernel-check canonical APW4 majorization and print all four axiom audits
+        run: |
+          lake env lean APW4CanonicalMajorization.lean
+          echo "All four #print axioms commands completed above."
