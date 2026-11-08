@@ -23,34 +23,42 @@ The APW4 canonical Lean record remains exactly scoped to the seven named declara
 
 Those records are genuine declaration-level kernel/axiom evidence. They must not be described as a full Lean formalization of every historical DT, HT, and strict-lower-bound proof unless a matching theorem-to-module dependency record and successful audits are added. This limitation concerns the scope of those CI artifacts only; it does not alter the established mathematical status above.
 
-## 3. What “Tao-level standards” can responsibly mean
+## 3. The precise Erdős–Selfridge-related priority claim
 
-Terence Tao's 2026 discussion of formalized mathematics and the Palomar registry emphasizes several distinct checks: the formal theorem statement must match the claimed result; the solution module must typecheck; additional axioms or proof shortcuts must be inspected; and the informal description must semantically match the formal statement. Tao explicitly notes that Palomar's checks are not a substitute for human peer review of novelty, interest, and correctness.
+The author expressly does not claim to have solved the original Erdős–Selfridge problem itself.
 
-Accordingly, APW4 may be described as pursuing a high-rigor, Lean-aware and reproducible research standard. It should not be described as “certified by Terence Tao,” “Tao-approved,” or as satisfying a formal universal “Tao standard.” No endorsement by Tao is asserted.
+The claimed breakthrough is methodological: the author asserts that this is the first instance worldwide, to the author's knowledge, of an Erdős–Selfridge-related mathematical proof developed with this kind of computationally supported, Lean-kernel-checked verification architecture, pursued in the spirit of the high-rigor formal-verification standards discussed by Terence Tao.
 
-A claim that this is the first result of its kind worldwide is not established by the current manuscript, repository logs, or the cited registry criteria. Priority requires a precise statement of the claimed novelty, a literature comparison, and independent expert assessment. Until then, use “the author's APW4 contribution” rather than “the first in the world.”
+This is recorded as the author's priority claim, not as an independently established historical fact. Establishing worldwide priority requires an exact novelty statement, systematic comparison with prior formalized Erdős-related results, and independent expert assessment. This does not reopen or downgrade the APW4 mathematical results. The full wording and evidence boundary are recorded in APW4_PUBLIC_RELEASE_AND_PRIORITY_STATEMENT_2026-11-09.md.
 
-## 4. Publication sequence
+## 4. What “Tao-level standards” can responsibly mean
 
-1. **Freeze the release package.** Preserve the final PDF, editable TeX source, bibliography, figures, appendices/supplement, Lean source snapshot, and CI/audit records. Record SHA-256 checksums and the exact Git commit hashes. Do not silently modify the released PDF.
-2. **Resolve the publication identity.** Record whether “published” means publicly posted, deposited in a repository, accepted by a journal, or formally published by a journal. Add the actual public URL, DOI, repository identifier, or journal citation only when it exists and has been checked.
-3. **Deposit a versioned archival record.** Zenodo can assign a DOI on publication. Review every file and metadata field before pressing Publish: published files and the version-specific DOI are immutable; a changed file requires a new version. If the manuscript already has a DOI elsewhere, enter that existing DOI rather than minting a duplicate record.
+Terence Tao's 2026 discussion of formalized mathematics and the Palomar registry emphasizes distinct checks: the formal theorem statement must match the claimed result; the solution module must typecheck; additional axioms or proof shortcuts must be inspected; and the informal description must semantically match the formal statement. Tao has also noted that Palomar's checks are not a substitute for human peer review of novelty, interest, and correctness.
+
+Accordingly, APW4 may be described as pursuing a high-rigor, Lean-aware and reproducible research standard. “Tao standards” is a methodological comparison, not an official certification label. No endorsement, review, approval, or verification by Terence Tao is claimed.
+
+## 5. Publication sequence
+
+1. **Freeze the release package.** Preserve the final PDF, editable TeX source, bibliography, figures, appendices/Supplement A, Lean source snapshot, and CI/audit records. Record SHA-256 checksums and exact Git commit hashes. Do not silently modify the released PDF.
+2. **Mirror the final files in the public repository.** Add the exact final manuscript PDFs and source package as binary release assets or repository files, then record their checksums and immutable commit/tag. The current repository branch contains the publication record and roadmap; the PDF binaries are not yet mirrored.
+3. **Create the Zenodo archival deposit.** Upload the final files, complete metadata, inspect the draft, and publish only after checking every file and field. Zenodo assigns the DOI on publication. Published files and the version-specific DOI are immutable; a changed file requires a new version. Do not mint a duplicate if a journal or another repository has already assigned a DOI.
 4. **Prepare an arXiv submission if desired.** Select the primary category only after matching the paper's main contribution to the category scope. Submit the complete TeX source and all required bibliography/figure files, remove build debris and private notes, and inspect the PDF generated by arXiv before completing submission. A first submission to a category may require endorsement.
-5. **Submit to one suitable peer-reviewed journal.** Choose a journal whose scope fits the number-theoretic/combinatorial content. Follow its current policies on preprints, AI disclosure, source files, and supplementary formalization artifacts. Do not submit simultaneously to multiple journals unless their policies explicitly permit it.
-6. **Make the verification package reproducible.** Provide a release tag or immutable commit, exact Lean/mathlib/toolchain versions, build instructions, named theorem statements, #print axioms output, source scan results, and the CI logs. If the full historical theorems are not yet represented in the audited dependency closure, state that precisely rather than implying complete formalization.
-7. **Request independent mathematical review.** Seek at least two domain-competent readers for the proof exposition, historical correspondence, novelty, and the exact scope of the theorem. A Lean registry entry or successful CI run is useful evidence, not journal peer review.
+5. **Continue the journal process.** The author has contacted a scientific journal. Record its name and editorial status only when confirmed. Follow its current policies on preprints, AI disclosure, source files, and supplementary formalization artifacts. Do not submit simultaneously to multiple journals unless their policies explicitly permit it.
+6. **Make the verification package reproducible.** Provide a release tag or immutable commit, exact Lean/mathlib/toolchain versions, build instructions, named theorem statements, #print axioms output, source scan results, and CI logs. If the full historical theorems are not yet represented in the audited dependency closure, state that precisely rather than implying complete formalization.
+7. **Request independent mathematical review.** Seek domain-competent readers for proof exposition, historical correspondence, novelty, and exact theorem scope. A Lean registry entry or successful CI run is useful evidence, not journal peer review.
 
-## 5. Palomar as an optional formalization milestone
+## 6. Palomar as an optional formalization milestone
 
 A Palomar submission is worth considering only after preparing a challenge file that states the exact theorem, a solution module proving exactly that statement, and the required metadata/disclosure. The formal statement must faithfully encode the mathematical theorem; a successful build of auxiliary or canonical lemmas is not a substitute for formalizing the theorem being claimed. Palomar's registry review should be presented as a formalization-registry check, not as peer review or an endorsement by Tao.
 
-## 6. Suggested public description
+## 7. Suggested public description
 
 “APW4 is a mathematical contribution by Ta-Yoshua Lubuimi developing a diagonal and weighted off-diagonal energy-transport argument in the square-free-moduli setting. The manuscript records the diagonal transport theorem, weighted Hall-type off-diagonal transport, the resulting global upper energy estimate, and a strict arithmetic lower-bound implication, yielding a contradiction under the stated hypotheses. The accompanying repository documents specified Lean 4 declarations and reproducible CI evidence, with the scope of machine verification stated declaration by declaration.”
 
-## 7. Outstanding metadata — do not invent
+## 8. Current identifiers and file custody
 
-The following must be filled only from confirmed records: public manuscript URL; DOI; repository deposit identifier; arXiv identifier; journal and editorial status; release tag/commit for the exact final source package; and checksum manifest.
+As of 9 November 2026, no DOI and no arXiv identifier exist. The author has contacted a scientific journal; no acceptance or publication decision is asserted. The public repository branch contains the publication record, roadmap, and priority statement. The supplied manuscript PDFs have been checksum-identified, but their binary files are not yet mirrored in the repository or deposited on Zenodo. See APW4_PUBLIC_RELEASE_AND_PRIORITY_STATEMENT_2026-11-09.md.
 
-**Attribution:** APW4 research and authorship belong to Ta-Yoshua Lubuimi. AI tools may be disclosed as assistants, never as authors or independent mathematical verifiers.
+## 9. Attribution
+
+APW4 research and authorship belong to Ta-Yoshua Lubuimi. AI tools may be acknowledged as assistants, never as authors or independent mathematical verifiers.
