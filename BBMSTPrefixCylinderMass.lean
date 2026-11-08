@@ -250,7 +250,9 @@ theorem containsPrefix_extend_iff
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
       have hlast := h (Fin.last k)
-      rw [hidx] at hlast
+      -- Eliminate the dependent index equality before inspecting the
+      -- assignment: its value type depends on the coordinate index.
+      cases hidx
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simp [hassign] at hlast
@@ -265,11 +267,9 @@ theorem containsPrefix_extend_iff
           prefixIndex hk (Fin.last k) = stageCoordinate hk := by
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
-      change
-        (match H.assignment (prefixIndex hk (Fin.last k)) with
-         | none => True
-         | some s => (extendPrefix C hk x t) (Fin.last k) = s)
-      rw [hidx]
+      -- Eliminate the dependent index equality before reducing the
+      -- assignment match.
+      cases hidx
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simp [hassign]
