@@ -55,3 +55,8 @@ No claim of a complete proof, a new theorem, patentable invention, or publicatio
 A source-level review of the pinned upstream file confirms that the declaration named `erdos_selfridge` is unrestricted (its signature has no `CS_squarefree` premise) and invokes the explicit axioms `sieve_criterion` and `sf_sieve_lt_one`. Do not attribute a completed proof of the BBMST square-free theorem to this declaration. The exact theorem-scope correction and provisional source correspondence are recorded in `BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`.
 
 Fresh reruns of historical CI jobs have been initiated for Steps 17–22. At the latest documented poll, Steps 19, 21 and 22 had rerun successfully; Steps 17, 18 and 20 were still running. Record each completed result only with its job ID, workflow run, source commit, actual log and printed axiom profile. These isolated module reruns do not establish a full theorem proof.
+
+
+### Completed rerun record — 2026-11-08
+
+All six direct isolated reruns of Steps 17–22 completed successfully. Job IDs: Step 17 `128842591881`; Step 18 `128842605058`; Step 19 `128842605996`; Step 20 `128842622425`; Step 21 `128842627032`; Step 22 `128842642270`. Each log was checked for the standard axiom profile and for `sorryAx`/compiler errors. Step 20 additionally reports unused assumptions `hP0_nonneg`, `hP0_sum`, `hδ`, and `hδhalf` in a finite Fubini identity; record this as a theorem-interface review item, not as a compile failure. These are isolated historical workflow commits and do not amount to a single integrated build or final theorem audit.
