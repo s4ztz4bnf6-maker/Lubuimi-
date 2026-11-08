@@ -121,3 +121,21 @@ BBMST Theorem 1.1 is the square-free-moduli statement: any finite collection of 
 See `research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md` for the provisional mapping of Lemmas 2.1, 3.3, 3.4, Theorems 3.1–3.2 and equation (11) to current Lean modules.
 
 **Current overall status remains:** Step 16 failed on `3ffe65b`; Steps 17–22 have historical isolated successes but no confirmed fresh rerun on that exact tree; the complete square-free BBMST theorem is not yet established; no complete-proof publication claim is supported.
+
+
+## 12.9 Direct reruns of historical isolated jobs — latest poll 2026-11-08
+
+The GitHub rerun endpoint accepted direct reruns of the previously successful isolated jobs. Latest observed state:
+
+| Step | Rerun job | Workflow run | Latest result |
+|---|---:|---:|---|
+| 17 | `128842591881` | `42488903023` | In progress; dependency/cache setup |
+| 18 | `128842605058` | `42488903065` | In progress; Lean action |
+| 19 | `128842605996` | `42488903065` | **Success** |
+| 20 | `128842622425` | `42513785862` | In progress; dependency/cache setup |
+| 21 | `128842627032` | `42488903065` | **Success** |
+| 22 | `128842642270` | `42488903065` | **Success** |
+
+The earlier Step 20 failure job `128842606683` remains visible as the historical failed attempt in run 42488903065; the later Step 20 workflow run 42513785862 is the one being rerun. Logs for the three still-running jobs were not yet available at the last poll. Do not report them as passed until the job completes and its compile/axiom output is inspected. The three completed reruns show the standard profile `[propext, Classical.choice, Quot.sound]` in their declaration traces and no `sorryAx` in the captured output.
+
+These jobs rerun the historical workflow commits. The relevant Lean source files are unchanged through `3ffe65b`, but there is still no single integrated run of Steps 17–22 on one common commit, and none of these jobs incorporates Step 16.
