@@ -223,25 +223,29 @@ theorem containsPrefix_extend_iff
     constructor
     · intro i
       have hi := h (Fin.castSucc i)
-      simpa only [extendPrefix_castSucc, prefixIndex_castSucc] using hi
+      have h_idx := prefixIndex_castSucc hk i
+      rw [h_idx] at hi
+      simpa only [extendPrefix_castSucc] using hi
     · have hlast := h (Fin.last k)
-      have hlast' :
+      have hboundary' :
           (match H.assignment (stageCoordinate hk) with
            | none => True
            | some s => t = s) := by
-        simpa only [stageCoordinate, extendPrefix_last] using hlast
-      exact hlast'
+        simpa [stageCoordinate, extendPrefix_last] using hlast
+      exact hboundary'
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
     · have hboundary' :
-          (match H.assignment (stageCoordinate hk) with
+          (match H.assignment (prefixIndex hk (Fin.last k)) with
            | none => True
            | some s => t = s) := by
-        simpa only [stageCoordinate] using hboundary
-      simpa only [extendPrefix_last] using hboundary'
+        simpa [stageCoordinate] using hboundary
+      simpa [extendPrefix_last] using hboundary'
     · have hi := hold i
-      simpa only [prefixIndex_castSucc, extendPrefix_castSucc] using hi
+      have h_idx := prefixIndex_castSucc hk i
+      rw [← h_idx] at hi
+      simpa only [extendPrefix_castSucc] using hi
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
@@ -371,7 +375,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · exact HEq.r_of_eq (extendPrefix_last C hk x t).symm
+    · exact HEq.of_eq (extendPrefix_last C hk x t)
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
