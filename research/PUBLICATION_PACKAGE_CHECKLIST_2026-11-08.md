@@ -84,3 +84,8 @@ A structural note skeleton is available at `UPSTREAM_SIEVE_INTERFACE_AUDIT_NOTE_
 ## Reproducibility finding — 2026-11-08
 
 At code commit `3ffe65b`, `lean-toolchain` pins `leanprover/lean4:v4.28.0` and `lakefile.lean` requests Mathlib from the `v4.28.0` tag, but `lake-manifest.json` is absent. The current workflows run `lake update`, so the exact dependency resolution is not preserved as a committed manifest in this snapshot. Before a release, commit the generated manifest (after review), record the exact Mathlib revision and all transitive dependencies, and rerun the clean-checkout build against that locked dependency graph. Do not silently change the active proof branch to do this; make it a separately reviewed reproducibility change.
+
+
+## Steps 17–22 rerun status — latest poll 2026-11-08
+
+Direct GitHub reruns have now completed successfully for Steps 19, 21 and 22. Steps 17, 18 and 20 were still in progress at the latest poll. Job IDs and workflow runs are recorded in Section 12.9 of `BBMST_STATUS_DOSSIER_2026-11-08.md`. The current workflow commit `364a073...` has no confirmed run ID. Do not mark all six reruns complete until Steps 17, 18 and 20 finish and their logs are checked. Even six successful isolated jobs would not establish an integrated end-to-end theorem proof.
