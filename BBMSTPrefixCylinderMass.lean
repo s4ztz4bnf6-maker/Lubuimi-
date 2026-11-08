@@ -252,11 +252,25 @@ theorem containsPrefix_extend_iff
             simpa [hvalue] using hi'
           simpa [hidx] using hx
     · have hlast := h (Fin.last k)
-      simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last] using hlast
+      cases hassign : H.assignment (stageCoordinate hk) with
+      | none =>
+          simp [stageCoordinate_eq_prefixIndex, hassign] at hlast ⊢
+      | some s =>
+          have hlast' : t = s := by
+            simpa only [stageCoordinate_eq_prefixIndex, extendPrefix_last,
+              hassign] using hlast
+          exact hlast'
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last] using hboundary
+    · cases hassign : H.assignment (stageCoordinate hk) with
+      | none =>
+          simp [stageCoordinate_eq_prefixIndex, hassign] at hboundary ⊢
+      | some s =>
+          have hboundary' : t = s := by
+            simpa only [stageCoordinate_eq_prefixIndex, hassign] using hboundary
+          simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last,
+            hassign] using hboundary'
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
