@@ -93,7 +93,7 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
     (H : Hyperplane C) :
-    H ∈ prefixCompatibleHyperplanes C hk x ↔
+    H ∈ prefixCompatibleHyperplanes C (A := A) hk x ↔
       H ∈ newAtStage A (k + 1) ∧
         (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := by
@@ -365,7 +365,7 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
   have hdiff : (0 : ℚ) ≤ hright - hleft := by
     dsimp [hleft, hright]
-    exact sub_nonneg.mpr hfrac
+    linarith [hfrac]
   have hsum : 0 ≤ hright + hleft := add_nonneg hright hleft
   have hprod : 0 ≤ (hright - hleft) * (hright + hleft) :=
     mul_nonneg hdiff hsum
@@ -471,7 +471,7 @@ theorem prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
     (BBMSTPrefixMeasure.stageCoordinate hk)
     (by
       change (prefixIndex hk (Fin.last k)).val = k
-      rfl)
+      simp [BBMSTGeometry.prefixIndex])
     H H' hcompat
     (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
   have hproject :
