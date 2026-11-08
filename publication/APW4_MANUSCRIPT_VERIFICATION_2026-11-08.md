@@ -106,3 +106,12 @@ The original BBMST theorem remains attributed to its five published authors. The
 - **PDF:** prepared and released by the author; this repository documentation change does not create or upload a PDF.
 
 This memorandum is an evidence and attribution audit. It does not withdraw or reopen the mathematical results recorded in the APW4 dossier.
+
+
+## 10. Author's publication update and clarification of scope
+
+**Update, 8 November 2026:** The author has subsequently informed this record that the complete manuscript PDF has been finalized, published, and secured independently by the author. The PDF is not mirrored in this repository; no external URL, DOI, or repository identifier was supplied for inclusion here.
+
+The purpose of this memorandum is to keep the mathematical proof record, the manuscript text reviewed at the time, and the specific Lean CI evidence accurately distinguished. Its declaration-scoped description of the cited CI runs is not a claim that the mathematical DT, HT, or strict lower-bound proofs are missing, incomplete, or unproved. Those results remain recorded as established results in the author's APW4 proof record, with their complete proof expositions and historical definitions. Nothing in this memorandum withdraws or reopens them.
+
+The earlier phrase “not safe to publish unchanged” refers only to the evidence attribution and presentation issues identified in the particular prose snapshot reviewed in this memorandum. It must not be read as a negative mathematical verdict on the author's completed proof work or as a statement about the subsequently published PDF.
