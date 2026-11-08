@@ -247,7 +247,7 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
         by_contra hnot
         have hnone :
             (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
-          simp [BBMSTOldShadow.oldShadow, not_lt.mpr hnot]
+          simp [BBMSTOldShadow.oldShadow, not_lt.mp hnot]
         simp [hnone] at hsome
       exact lt_of_lt_of_eq hlt hboundaryVal
     have hprefix := (containsPrefix_iff_full
@@ -290,7 +290,7 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
         by_contra hnot
         have hnone :
             (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
-          simp [BBMSTOldShadow.oldShadow, not_lt.mpr hnot]
+          simp [BBMSTOldShadow.oldShadow, not_lt.mp hnot]
         simp [hnone] at hsome
       exact lt_of_lt_of_eq hlt hboundaryVal
     have hproject :
