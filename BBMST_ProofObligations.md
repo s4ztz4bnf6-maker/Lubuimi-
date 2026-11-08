@@ -299,7 +299,7 @@ The current project status records steps 1–15 and 17–22 as completed in the 
 | 17 | [Run 42488903023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903023), commit `125507564b4b6d89565d0d606ab0bd38951b158d` | Independent Lean compile succeeded; the job compiled the prefix recursion prerequisites and Step 17 without compiling Step 16. |
 | 18, 19, 21, 22 | [Run 42488903065](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903065), same commit | Isolated jobs succeeded. The workflow labels prerequisite sets as assumed rather than asserting that all preceding steps were compiled in each job. |
 | 20 | [Run 42513785862](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42513785862), commit `9daa08aecc68ce9de0e086ca006dbc9980ab5ad0` | Later isolated Step 20 compile succeeded. An earlier isolated attempt in run 42488903065 failed; the later successful run supersedes that earlier status for the later source revision. |
-| 16 | [Focused run 42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215), head `e230c4508b17fccfd006392b92d39b70d7f23ca6` | OPEN — NOT YET VERIFIED. At the last status check, the Lean action was still running; the Step 16 compile and axiom output had not yet completed. |
+| 16 | [Focused run 42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215), head `e230c4508b17fccfd006392b92d39b70d7f23ca6` | OPEN — FAILED ON CURRENT HEAD. Run 42515001215 completed with failure after all five prerequisites passed. The target reported dependent-index/type mismatches at lines 251, 255 and 259 of `BBMSTPrefixCylinderMass.lean`; `sorryAx` remains in the affected dependent declarations. |
 
 The logs for the successful Step 17–22 jobs print the ordinary Lean profile `[propext, Classical.choice, Quot.sound]` for the declarations included in those runs. This does not substitute for a final transitive audit of the intended main theorem.
 
@@ -324,3 +324,16 @@ The research direction, mathematical objectives, selection of assumptions, accep
 - Lean toolchain in current workflows: `leanprover/lean4:v4.28.0`.
 - Source of step definitions and reproducible commands: `.github/workflows/diagnostic-prefix-incidence-18-22.yml`, `.github/workflows/step20-isolated.yml`, and `.github/workflows/diagnostic-prefix-cylinder-mass-step16.yml`.
 - Current Step 16 run: [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215).
+
+
+### 12.5 Step 16 diagnostic result (run 42515001215)
+
+The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has completed with **failure**. Setup, Lean installation, the Lean action, and all five actual prerequisite modules succeeded. The target compile failed in `BBMSTPrefixCylinderMass.lean`:
+
+- Line 251: after simplification, `hlast` has type `True`, but the goal is a match on `H.assignment (stageCoordinate hk)`.
+- Line 255: `hlast'` has type `t = s`, but the expected goal remains the dependent match on `H.assignment (stageCoordinate hk)`.
+- Line 259: `change` cannot establish the proposed boundary expression involving `prefixIndex hk (Fin.last k)`.
+
+The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
+
+The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
