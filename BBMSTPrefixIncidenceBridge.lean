@@ -33,6 +33,7 @@ theorem prefixStageCoordinate_eq_incidence
       BBMSTHyperplaneFibreIncidence.stageCoordinate (k + 1) (by omega) (by omega) := by
   apply Fin.ext
   simp [BBMSTPrefixMeasure.stageCoordinate,
+    BBMSTGeometry.prefixIndex,
     BBMSTHyperplaneFibreIncidence.stageCoordinate]
 
 /-- The genuine prefix-covered values are exactly the full-point incidence
@@ -92,7 +93,7 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
     (H : Hyperplane C) :
-    H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+    H ∈ prefixCompatibleHyperplanes C (A := A) hk x ↔
       H ∈ newAtStage A (k + 1) ∧
         (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := by
@@ -296,8 +297,8 @@ noncomputable def prefixCompatiblePairs
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
     Finset (Hyperplane C × Hyperplane C) :=
-  (prefixCompatibleHyperplanes (C := C) (A := A) hk x).product
-    (prefixCompatibleHyperplanes (C := C) (A := A) hk x)
+  (prefixCompatibleHyperplanes C (A := A) hk x).product
+    (prefixCompatibleHyperplanes C (A := A) hk x)
 
 /-- The ordered-pair count is exactly the square of the number of
 compatible new hyperplanes. -/
@@ -305,8 +306,8 @@ theorem prefixCompatiblePairs_card
     {A : Finset (Hyperplane C)} {k : ℕ}
     (hk : k + 1 ≤ n)
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk)) :
-    (prefixCompatiblePairs (C := C) (A := A) hk x).card =
-      (prefixCompatibleHyperplanes (C := C) (A := A) hk x).card ^ 2 := by
+    (prefixCompatiblePairs C (A := A) hk x).card =
+      (prefixCompatibleHyperplanes C (A := A) hk x).card ^ 2 := by
   classical
   simp [prefixCompatiblePairs, Finset.card_product, pow_two]
 
@@ -327,7 +328,7 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
         hP0_nonneg hP0_sum hδ hδhalf j hj) ≤
       ∑ x : PrefixPoint C (a + j) (by omega),
         PAt C (A := A) a ha P0 δ j (by omega) x *
-          ((((prefixCompatiblePairs (C := C) (A := A)
+          ((((prefixCompatiblePairs C (A := A)
               (by omega) x).card : ℚ) /
             (Fintype.card (C.S
               (BBMSTHyperplaneFibreIncidence.stageCoordinate
@@ -362,7 +363,7 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
   have hright : 0 ≤ (compatible.card : ℚ) / d :=
     div_nonneg (Nat.cast_nonneg _) (le_of_lt hd)
-  have hdiff : 0 ≤ hright - hleft := sub_nonneg.mpr hfrac
+  have hdiff : (0 : ℚ) ≤ hright - hleft := sub_nonneg.mpr hfrac
   have hsum : 0 ≤ hright + hleft := add_nonneg hright hleft
   have hprod : 0 ≤ (hright - hleft) * (hright + hleft) :=
     mul_nonneg hdiff hsum
@@ -372,15 +373,15 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
     nlinarith [hprod]
   have hpair :
       ((compatible.card : ℚ) / d) ^ 2 =
-        ((prefixCompatiblePairs (C := C) (A := A)
+        ((prefixCompatiblePairs C (A := A)
           (by omega) x).card : ℚ) / d ^ 2 := by
     have hcardNat :
-        (prefixCompatiblePairs (C := C) (A := A)
+        (prefixCompatiblePairs C (A := A)
           (by omega) x).card = compatible.card * compatible.card := by
       simpa [compatible, pow_two] using
         (prefixCompatiblePairs_card (C := C) (A := A) (by omega) x)
     have hcardCast :
-        ((prefixCompatiblePairs (C := C) (A := A)
+        ((prefixCompatiblePairs C (A := A)
           (by omega) x).card : ℚ) =
           (compatible.card : ℚ) * (compatible.card : ℚ) := by
       rw [hcardNat, Nat.cast_mul]
@@ -396,7 +397,7 @@ theorem prefixPAt_secondMoment_le_pairIncidenceCount
           ((compatible.card : ℚ) / d) ^ 2 :=
         mul_le_mul_of_nonneg_left hsq hweight
     _ = PAt C (A := A) a ha P0 δ j (by omega) x *
-          (((prefixCompatiblePairs (C := C) (A := A)
+          (((prefixCompatiblePairs C (A := A)
             (by omega) x).card : ℚ) / d ^ 2) := by
           rw [hpair]
 
@@ -411,8 +412,8 @@ noncomputable def prefixPairShadowMass
     (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
     (H H' : Hyperplane C) : ℚ :=
   ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
-    if H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ∧
-        H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+    if H ∈ prefixCompatibleHyperplanes C (A := A) hk x ∧
+        H' ∈ prefixCompatibleHyperplanes C (A := A) hk x
     then P x else 0
 
 
@@ -422,8 +423,9 @@ noncomputable def prefixOldShadowIntersectionMass
     {A : Finset (Hyperplane C)} {k : ℕ}
     (hk : k + 1 ≤ n)
     (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
-    (H H' : Hyperplane C) : ℚ :=
-  ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+    (H H' : Hyperplane C) : ℚ := by
+  classical
+  exact ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
     if
       (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
         (Nat.le_trans (Nat.le_succ k) hk) x ∧
@@ -438,8 +440,9 @@ noncomputable def prefixMergedOldShadowMass
     {A : Finset (Hyperplane C)} {k : ℕ}
     (hk : k + 1 ≤ n)
     (P : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk) → ℚ)
-    (H H' : Hyperplane C) : ℚ :=
-  ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
+    (H H' : Hyperplane C) : ℚ := by
+  classical
+  exact ∑ x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk),
     if
       (BBMSTOldShadow.mergeOldShadows (stageCoordinate hk) H H').ContainsPrefix
         (Nat.le_trans (Nat.le_succ k) hk) x
@@ -463,13 +466,14 @@ theorem prefixOldShadowIntersectionMass_eq_prefixMergedOldShadowMass
   have hiff := BBMSTOldShadow.mergeOldShadows_containsPrefix_iff
     (C := C) (k := k)
     (Nat.le_trans (Nat.le_succ k) hk)
-    (stageCoordinate hk) (by simp [stageCoordinate])
+    (BBMSTPrefixMeasure.stageCoordinate hk)
+    (by simp [BBMSTPrefixMeasure.stageCoordinate])
     H H' hcompat
     (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
   have hproject :
       projectPrefix (Nat.le_trans (Nat.le_succ k) hk)
         (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x) = x :=
-    projectPrefix_liftPrefix
+    projectPrefix_liftPrefix C
       (Nat.le_trans (Nat.le_succ k) hk) x
   rw [hproject] at hiff
   by_cases hmerge :
@@ -503,23 +507,23 @@ theorem prefixPairShadowMass_eq_prefixOldShadowIntersectionMass
   apply Finset.sum_congr rfl
   intro x hx
   have hHiff :
-      H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+      H ∈ prefixCompatibleHyperplanes C (A := A) hk x ↔
         (BBMSTOldShadow.oldShadow (stageCoordinate hk) H).ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := by
     rw [prefixCompatibleHyperplanes_iff_oldShadow
       (C := C) (A := A) hk x H]
     simp [hH]
   have hH'iff :
-      H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x ↔
+      H' ∈ prefixCompatibleHyperplanes C (A := A) hk x ↔
         (BBMSTOldShadow.oldShadow (stageCoordinate hk) H').ContainsPrefix
           (Nat.le_trans (Nat.le_succ k) hk) x := by
     rw [prefixCompatibleHyperplanes_iff_oldShadow
       (C := C) (A := A) hk x H']
     simp [hH']
   by_cases hleft :
-      H ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+      H ∈ prefixCompatibleHyperplanes C (A := A) hk x
   · by_cases hright :
-        H' ∈ prefixCompatibleHyperplanes (C := C) (A := A) hk x
+        H' ∈ prefixCompatibleHyperplanes C (A := A) hk x
     · have hsleft := hHiff.mp hleft
       have hsright := hH'iff.mp hright
       simp [hleft, hright, hsleft, hsright]
@@ -578,18 +582,18 @@ theorem prefixPairReserve_eq_weightedPairCount
       (PAt C (A := A) a ha P0 δ j (by omega)) =
     ∑ x : PrefixPoint C (a + j) (by omega),
       PAt C (A := A) a ha P0 δ j (by omega) x *
-        (prefixCompatiblePairs (C := C) (A := A) (by omega) x).card := by
+        (prefixCompatiblePairs C (A := A) (by omega) x).card := by
   classical
   let N := newAtStage A (a + j + 1)
   let F := fun x : PrefixPoint C (a + j) (by omega) =>
-    prefixCompatibleHyperplanes (C := C) (A := A) (by omega) x
+    prefixCompatibleHyperplanes C (A := A) (by omega) x
   have hFsubset (x : PrefixPoint C (a + j) (by omega)) :
       F x ⊆ N := by
     intro H hH
     change H ∈ (newAtStage A (a + j + 1)).filter _ at hH
     exact (Finset.mem_filter.mp hH).1
   have hfilter (x : PrefixPoint C (a + j) (by omega)) :
-      prefixCompatiblePairs (C := C) (A := A) (by omega) x =
+      prefixCompatiblePairs C (A := A) (by omega) x =
         (N.product N).filter
           (fun p => p.1 ∈ F x ∧ p.2 ∈ F x) := by
     ext p
@@ -625,7 +629,7 @@ theorem prefixPairReserve_eq_weightedPairCount
         rw [← Finset.sum_filter]
     _ = ∑ x : PrefixPoint C (a + j) (by omega),
         PAt C (A := A) a ha P0 δ j (by omega) x *
-          (prefixCompatiblePairs (C := C) (A := A) (by omega) x).card := by
+          (prefixCompatiblePairs C (A := A) (by omega) x).card := by
         apply Finset.sum_congr rfl
         intro x hx
         rw [← hfilter x]

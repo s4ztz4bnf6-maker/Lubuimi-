@@ -72,7 +72,7 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
 
 /-- The coordinate introduced after a prefix of length k. -/
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
-  ⟨k, by omega⟩
+  prefixIndex hk (Fin.last k)
 
 /-- Restrict a prefix of length k+1 to its first k coordinates. -/
 noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
@@ -498,18 +498,20 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     (hP0_nonneg : ∀ x, 0 ≤ P0 x)
     (hδ : ∀ i, 0 ≤ δ i)
     (hδhalf : ∀ i, δ i ≤ (1 / 2 : ℚ))
-    (j : ℕ) (hj : a + (j + 1) ≤ n)
-    (y : PrefixPoint C (a + (j + 1)) hj) :
-    PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
-      (PAt C (A := A) a ha P0 δ j (by omega)
-        (restrictPrefix C (by omega) y) /
-        (Fintype.card (C.S (stageCoordinate (by omega))) : ℚ)) /
-        (1 - δ (stageCoordinate (by omega))) := by
+    (j : ℕ) (hk : a + j + 1 ≤ n)
+    (y : PrefixPoint C (a + j + 1) hk) :
+    PAt C (A := A) a ha P0 δ (j + 1)
+        hk y ≤
+      (PAt C (A := A) a ha P0 δ j
+        (Nat.le_trans (Nat.le_succ (a + j)) hk)
+        (restrictPrefix C (k := a + j) hk y) /
+        (Fintype.card (C.S (stageCoordinate (k := a + j) hk)) : ℚ)) /
+        (1 - δ (stageCoordinate (k := a + j) hk)) := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
-  have hprev : k ≤ n := by omega
-  let xprev := restrictPrefix C hk y
+  have hk' : k + 1 ≤ n := by simpa [k] using hk
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk'
+  let xprev := restrictPrefix C hk' y
   let baseMass := PAt C (A := A) a ha P0 δ j hprev xprev
   have hbase : 0 ≤ baseMass :=
     PAt_nonneg (C := C) (A := A) a ha P0 δ
@@ -519,13 +521,15 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     simp [F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData]
   have hlocal := prefixFibre_updatedWeight_eq_PAt
-    (C := C) (A := A) a ha P0 δ j hj y (by
+    (C := C) (A := A) a ha P0 δ j
+    hk y (by
       simpa [k, xprev, baseMass] using hbase)
   have hlocal' :
       BBMSTFiniteFibreUpdate.updatedWeight F
         (δ (stageCoordinate hk)) (y (Fin.last k)) =
-      PAt C (A := A) a ha P0 δ (j + 1) hj y := by
-    simpa [F, k, xprev, baseMass] using hlocal
+      PAt C (A := A) a ha P0 δ (j + 1)
+        hk y := by
+    simpa [F, k, hk', xprev, baseMass] using hlocal
   have hbound :=
     BBMSTFiniteFibreUpdate.updatedWeight_le_old_div F
       (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
@@ -544,7 +548,8 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
     have := hδhalf (stageCoordinate hk)
     linarith
   calc
-    PAt C (A := A) a ha P0 δ (j + 1) hj y =
+    PAt C (A := A) a ha P0 δ (j + 1)
+        hk y =
         BBMSTFiniteFibreUpdate.updatedWeight F
           (δ (stageCoordinate hk)) (y (Fin.last k)) :=
       hlocal'.symm
@@ -570,13 +575,18 @@ theorem initialPrefixOf_restrictPrefix
     {a j : ℕ} (ha : a ≤ n)
     (hk : a + j + 1 ≤ n)
     (y : PrefixPoint C (a + j + 1) hk) :
-    initialPrefixOf C ha (by omega)
-        (restrictPrefix C (by omega) y) =
-      initialPrefixOf C ha (by omega) y := by
+    initialPrefixOf C (a := a) (j := j) ha
+        (Nat.le_trans (Nat.le_succ (a + j)) hk)
+        (restrictPrefix C (k := a + j) hk y) =
+      initialPrefixOf C (a := a) (j := j + 1) ha hk y := by
   funext i
+  have hi : i.val < a + j :=
+    Nat.lt_of_lt_of_le i.isLt (Nat.le_add_right a j)
+  have hi' : i.val < a + j + 1 :=
+    Nat.lt_trans hi (Nat.lt_succ_self (a + j))
+  have hi'' : i.val < a + (j + 1) := by omega
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex]
-  omega
+    liftPrefix, prefixIndex, hi, hi', hi'']
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
@@ -588,8 +598,10 @@ noncomputable def distortionProduct (a : ℕ) (δ : Fin n → ℚ) :
     (j : ℕ) → (hj : a + j ≤ n) → ℚ
   | 0, _ => 1
   | j + 1, hj =>
-      distortionProduct a δ j (by omega) *
-        distortionFactor C δ (stageCoordinate (by omega))
+      let hk : a + j + 1 ≤ n := hj
+      let hprev : a + j ≤ n := Nat.le_trans (Nat.le_succ (a + j)) hk
+      distortionProduct a δ j hprev *
+        distortionFactor C δ (stageCoordinate (k := a + j) hk)
 
 /-- Iterating the local estimate gives the full product distortion bound
 for the actual recursively defined measure PAt. The initial value is the
@@ -647,9 +659,9 @@ theorem PAt_le_initial_mul_distortionProduct
               <;> ring
       have hprevBound := ih hprev xprev
       have hinitial :
-          initialPrefixOf C ha hprev xprev =
-            initialPrefixOf C ha (by omega) y :=
-        initialPrefixOf_restrictPrefix C ha hk y
+          initialPrefixOf C (a := a) (j := j) ha hprev xprev =
+            initialPrefixOf C (a := a) (j := j + 1) ha hj y :=
+        initialPrefixOf_restrictPrefix C (a := a) (j := j) ha hk y
       calc
         PAt C (A := A) a ha P0 δ (j + 1) hj y ≤
             PAt C (A := A) a ha P0 δ j hprev xprev *

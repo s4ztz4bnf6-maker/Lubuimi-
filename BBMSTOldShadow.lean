@@ -50,7 +50,7 @@ theorem mergeOldShadows_contains_iff
   · intro hmerge
     constructor
     · intro i
-      by_cases hlt : i.val < boundary.val
+      by_cases hlt : i < boundary
       · cases h1 : H.assignment i with
         | none =>
           simp [Hyperplane.Contains, oldShadow, hlt, h1]
@@ -60,7 +60,7 @@ theorem mergeOldShadows_contains_iff
             hlt, h1] using hm
       · simp [Hyperplane.Contains, oldShadow, hlt]
     · intro i
-      by_cases hlt : i.val < boundary.val
+      by_cases hlt : i < boundary
       · cases h1 : H.assignment i with
         | none =>
           have hm := hmerge i
@@ -71,14 +71,14 @@ theorem mergeOldShadows_contains_iff
           | none =>
             simp [Hyperplane.Contains, oldShadow, hlt, h2]
           | some t =>
-            have hst := hcompat i hlt s t h1 h2
+            have hst := hcompat i (by simpa using hlt) s t h1 h2
             subst t
             have hm := hmerge i
             simpa [Hyperplane.Contains, mergeOldShadows, oldShadow,
               hlt, h1, h2] using hm
       · simp [Hyperplane.Contains, oldShadow, hlt]
   · rintro ⟨hleft, hright⟩ i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · cases h1 : H.assignment i with
       | none =>
         have hr := hright i
@@ -103,10 +103,11 @@ theorem oldShadows_disjoint_of_conflict
   classical
   intro x hboth
   rcases hconflict with ⟨i, hlt, s, t, hs, ht, hst⟩
+  have hltFin : i < boundary := by simpa using hlt
   have hxs : x i = s := by
-    simpa [Hyperplane.Contains, oldShadow, hlt, hs] using hboth.1 i
+    simpa [Hyperplane.Contains, oldShadow, hltFin, hs] using hboth.1 i
   have hxt : x i = t := by
-    simpa [Hyperplane.Contains, oldShadow, hlt, ht] using hboth.2 i
+    simpa [Hyperplane.Contains, oldShadow, hltFin, ht] using hboth.2 i
   exact hst (hxs.symm.trans hxt)
 
 /-- The fixed-coordinate set of the merged shadow is the union of the
@@ -118,7 +119,7 @@ theorem fixedCoords_mergeOldShadows
         fixedCoords (oldShadow boundary H') := by
   classical
   ext i
-  by_cases hlt : i.val < boundary.val
+  by_cases hlt : i < boundary
   · cases h1 : H.assignment i <;> cases h2 : H'.assignment i <;>
       simp [fixedCoords, mergeOldShadows, oldShadow, hlt, h1, h2]
   · simp [fixedCoords, mergeOldShadows, oldShadow, hlt]
@@ -139,7 +140,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
     rcases hBoundary with ⟨s, hs⟩
     refine ⟨s, ?_⟩
     intro i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · cases ha : H.assignment i with
       | none => simp [Hyperplane.Contains, ha]
       | some v =>
@@ -155,7 +156,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
         simp [Hyperplane.Contains, hs, Function.update]
       · have hnone : H.assignment i = none := by
           cases ha : H.assignment i with
-          | none => exact ha
+          | none => rfl
           | some v =>
             have hfixed : i ∈ fixedCoords H := by
               simp [fixedCoords, ha]
@@ -167,7 +168,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
         simp [Hyperplane.Contains, hnone]
   · rintro ⟨t, ht⟩
     intro i
-    by_cases hlt : i.val < boundary.val
+    by_cases hlt : i < boundary
     · have hi := ht i
       have hne : i ≠ boundary := by
         intro he
@@ -197,13 +198,29 @@ theorem mergeOldShadows_containsPrefix_iff
   have hleftInside : (oldShadow boundary H).FixedInsidePrefix k := by
     intro i hi
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    simp [oldShadow] at hi
-    exact lt_of_lt_of_eq hi.1 hboundary
+    have hlt : i.val < boundary.val := by
+      by_contra hnot
+      by_cases hlt' : i.val < boundary.val
+      · exact hnot hlt'
+      · have hnone : (oldShadow boundary H).assignment i = none := by
+          change (if i.val < boundary.val then H.assignment i else none) = none
+          rw [if_neg hnot]
+        rw [hnone] at hi
+        simp at hi
+    exact lt_of_lt_of_eq hlt hboundary
   have hrightInside : (oldShadow boundary H').FixedInsidePrefix k := by
     intro i hi
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    simp [oldShadow] at hi
-    exact lt_of_lt_of_eq hi.1 hboundary
+    have hlt : i.val < boundary.val := by
+      by_contra hnot
+      by_cases hlt' : i.val < boundary.val
+      · exact hnot hlt'
+      · have hnone : (oldShadow boundary H').assignment i = none := by
+          change (if i.val < boundary.val then H'.assignment i else none) = none
+          rw [if_neg hnot]
+        rw [hnone] at hi
+        simp at hi
+    exact lt_of_lt_of_eq hlt hboundary
   have hmergeInside :
       (mergeOldShadows boundary H H').FixedInsidePrefix k := by
     intro i hi
