@@ -1,5 +1,8 @@
 # BBMST-to-Lean proof-obligation map (audit note)
 
+**Research lead / formalization:** Ta-Yoshua Lubuimi  
+**AI assistance:** ChatGPT (OpenAI); see the dated disclosure and verification boundary in Section 12.
+
 Pinned Lean source:
 - Repository: axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture
 - Commit: fe530b2cedd3a71c2cdb47cc36ed0c3cb047b086
@@ -280,3 +283,44 @@ connect the verified rational certificates to those moment bounds,
 formalize the large-prime tail, and finish the CRT correspondence. The final
 axiom audit must be run on that corrected square-free theorem and must
 exclude both project-specific axioms.
+
+
+## 12. Consolidated staged verification status and attribution (2026-11-08)
+
+**Research lead and formalization:** Ta-Yoshua Lubuimi.
+
+### 12.1 Step status
+
+The current project status records steps 1–15 and 17–22 as completed in the staged work plan, with Step 16 the only open stage. The evidence is deliberately recorded by its actual scope:
+
+| Step(s) | Evidence | Status and limitation |
+|---|---|---|
+| 1–15 | Prior project verification history | Recorded complete. Individual historic run/commit records remain the authoritative evidence; this update does not invent one combined run. |
+| 17 | [Run 42488903023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903023), commit `125507564b4b6d89565d0d606ab0bd38951b158d` | Independent Lean compile succeeded; the job compiled the prefix recursion prerequisites and Step 17 without compiling Step 16. |
+| 18, 19, 21, 22 | [Run 42488903065](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903065), same commit | Isolated jobs succeeded. The workflow labels prerequisite sets as assumed rather than asserting that all preceding steps were compiled in each job. |
+| 20 | [Run 42513785862](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42513785862), commit `9daa08aecc68ce9de0e086ca006dbc9980ab5ad0` | Later isolated Step 20 compile succeeded. An earlier isolated attempt in run 42488903065 failed; the later successful run supersedes that earlier status for the later source revision. |
+| 16 | [Focused run 42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215), head `e230c4508b17fccfd006392b92d39b70d7f23ca6` | OPEN — NOT YET VERIFIED. At the last status check, the Lean action was still running; the Step 16 compile and axiom output had not yet completed. |
+
+The logs for the successful Step 17–22 jobs print the ordinary Lean profile `[propext, Classical.choice, Quot.sound]` for the declarations included in those runs. This does not substitute for a final transitive audit of the intended main theorem.
+
+### 12.2 Formal verification versus mathematical completion
+
+A successful Lean compilation establishes that the submitted declarations elaborate and that Lean's kernel accepts their proof terms relative to their declared dependencies. It does not, by itself, establish that a declaration captures the intended published theorem, that all supplied hypotheses are used, or that the final theorem has no project-specific axioms in its transitive dependency closure.
+
+In particular, the Step 20 successful log contains unused-variable warnings for supplied hypotheses `hP0_nonneg`, `hP0_sum`, `hδ`, and `hδhalf` in the prefix-incidence bridge. These warnings do not invalidate kernel checking, but they are a concrete review item: inspect the exact theorem statement and proof to determine whether the intended measure and parameter assumptions are actually encoded in the result.
+
+The earlier sections of this dossier also record the upstream project-specific axioms `sieve_criterion` and `sf_sieve_lt_one`, and the degeneracy/interface issues found in their signatures. Unless a revised final theorem replaces those assumptions and its complete transitive axiom trace is inspected, this repository must not describe the unrestricted Erdős–Selfridge conjecture as proved. The phrase “only Step 16 remains” is restricted to the current staged 1–22 implementation sequence.
+
+### 12.3 AI-assisted research disclosure
+
+ChatGPT (OpenAI) was used as an AI-assisted research and formalization tool during the project. Its assistance included exploring and comparing alternative proof strategies, interpreting Lean compiler diagnostics, suggesting candidate local proof repairs, navigating source material, and helping maintain technical documentation. The iterative use of alternative approaches contributed to the development and testing of the current proof architecture.
+
+The research direction, mathematical objectives, selection of assumptions, acceptance criteria, and final responsibility are attributed to **Ta-Yoshua Lubuimi**. AI-generated suggestions were treated as candidates to be checked, not as mathematical authority. Lean kernel acceptance is reported only for the declarations and commits covered by the cited CI runs. No claim is made that AI independently proved the conjecture, that every research idea is novel, or that the current staged work is already a complete solution.
+
+### 12.4 Reproducibility references
+
+- BBMST paper: Balister, Bollobás, Morris, Sahasrabudhe and Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), 609–626, [DOI 10.2140/ant.2021.15.609](https://doi.org/10.2140/ant.2021.15.609).
+- Upstream Lean source: [axxen95 repository](https://github.com/axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture), pinned commit `fe530b2cedd3a71c2cdb47cc36ed0c3cb047b086`.
+- Lean toolchain in current workflows: `leanprover/lean4:v4.28.0`.
+- Source of step definitions and reproducible commands: `.github/workflows/diagnostic-prefix-incidence-18-22.yml`, `.github/workflows/step20-isolated.yml`, and `.github/workflows/diagnostic-prefix-cylinder-mass-step16.yml`.
+- Current Step 16 run: [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215).
