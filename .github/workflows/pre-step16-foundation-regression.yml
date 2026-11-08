@@ -1,0 +1,38 @@
+name: Pre-Step 16 foundation regression audit
+
+on:
+  push:
+    branches:
+      - fix/step16-dependent-boundary-transport-2026-11-08
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and resolve dependencies
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile pre-Step 16 foundation modules in dependency order
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTSieveAlignedCore.olean BBMSTSieveAlignedCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTUniformFibreInstantiation.olean BBMSTUniformFibreInstantiation.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureRecursion.olean BBMSTPrefixMeasureRecursion.lean
