@@ -261,6 +261,10 @@ theorem containsPrefix_extend_iff
     · change
         (match H.assignment (stageCoordinate hk) with
          | none => True
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s)
+      change
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
          | some s => t = s) at hboundary
       simpa [extendPrefix_last] using hboundary
     · have hi := hold i
