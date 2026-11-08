@@ -1,9 +1,6 @@
 name: Isolated Step 20 incidence bridge audit
 
 on:
-  push:
-    branches:
-      - audit/step20-isolated-2026-11-08
   workflow_dispatch:
 
 jobs:
