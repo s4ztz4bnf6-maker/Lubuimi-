@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - audit/step20-isolated-2026-11-08
+      - fix/step16-variant-case-before-extract-2026-11-08
   workflow_dispatch:
 
 permissions:
