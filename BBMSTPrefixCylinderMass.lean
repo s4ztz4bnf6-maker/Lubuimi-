@@ -598,7 +598,7 @@ theorem prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor
   | succ j ih =>
       intro hj
       let k := a + j
-      have hk : k + 1 ≤ n := by omega
+      have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
       have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
       let i := stageCoordinate hk
       have hmass_nonneg :
