@@ -103,10 +103,11 @@ theorem oldShadows_disjoint_of_conflict
   classical
   intro x hboth
   rcases hconflict with ⟨i, hlt, s, t, hs, ht, hst⟩
+  have hltFin : i < boundary := by simpa using hlt
   have hxs : x i = s := by
-    simpa [Hyperplane.Contains, oldShadow, hlt, hs] using hboth.1 i
+    simpa [Hyperplane.Contains, oldShadow, hltFin, hs] using hboth.1 i
   have hxt : x i = t := by
-    simpa [Hyperplane.Contains, oldShadow, hlt, ht] using hboth.2 i
+    simpa [Hyperplane.Contains, oldShadow, hltFin, ht] using hboth.2 i
   exact hst (hxs.symm.trans hxt)
 
 /-- The fixed-coordinate set of the merged shadow is the union of the
@@ -155,7 +156,7 @@ theorem oldShadow_contains_iff_exists_boundary_extension
         simp [Hyperplane.Contains, hs, Function.update]
       · have hnone : H.assignment i = none := by
           cases ha : H.assignment i with
-          | none => exact ha
+          | none => rfl
           | some v =>
             have hfixed : i ∈ fixedCoords H := by
               simp [fixedCoords, ha]
