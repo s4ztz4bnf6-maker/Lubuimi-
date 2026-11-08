@@ -1,17 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this research software, please cite it using the metadata below."
-title: "Lean 4 research and formalization artifacts for the Erdős–Selfridge square-free-moduli problem"
+title: "Lean 4 research, source-audit, and staged formalization artifacts related to the Erdős–Selfridge square-free-moduli problem"
 type: software
 authors:
   - family-names: "Lubuimi"
     given-names: "Ta-Yoshua"
 abstract: >-
-  Research software and Lean 4 formalization artifacts for the study, source
-  audit, and formal verification programme related to the Erdős–Selfridge
-  problem with square-free moduli. The repository includes staged Lean
-  developments, reproducible audit workflows, and research documentation.
-  The metadata identifies the research software contribution and does not
-  claim authorship of the original 2021 theorem.
+  Research software and staged Lean 4 formalization artifacts related to the
+  Erdős–Selfridge problem with square-free moduli, including source audits,
+  reproducible workflows, and research documentation. This metadata
+  describes the software artifact; it does not claim that the complete BBMST
+  square-free theorem has been formalized or that the researcher authored
+  the original 2021 theorem.
 repository-code: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
 url: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
 keywords:
