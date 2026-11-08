@@ -118,3 +118,10 @@ No prize eligibility or award is guaranteed by this audit.
 ## Latest Step 16 source snapshot
 
 The code snapshot reviewed for this documentation branch is `3ffe65b933222b135d4fa27cd8e6efa358aa8089`. It contains a single-file boundary-proof adjustment in `BBMSTPrefixCylinderMass.lean`: the case split is performed directly on `H.assignment (stageCoordinate hk)`, with `stageCoordinate` unfolded only when simplifying the boundary expression. The focused CI run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still running at the last check. No compile success is claimed for this revision.
+
+
+## Latest Step 16 CI result — 2026-11-08 (supersedes the earlier pending status)
+
+The focused rerun [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) on code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089` has completed with **failure**. All five actual prerequisite modules compiled; the target `BBMSTPrefixCylinderMass.lean` failed at lines 253 and 257 with dependent-match/type mismatches. The log prints `sorryAx` for declarations downstream of the failed boundary equivalence; because this run exits with compiler errors, those traces are not evidence of a valid accepted proof term. They nevertheless mean the target is not accepted and no Step 16 success can be claimed.
+
+The two concurrent full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) also failed at the Step 16 workflow step; later stages were skipped. They are same-commit workflow executions, not independent mathematical replications.
