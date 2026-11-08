@@ -224,7 +224,7 @@ theorem containsPrefix_extend_iff
     · intro i
       have hi := h (Fin.castSucc i)
       have h_idx := prefixIndex_castSucc hk i
-      rw [h_idx] at hi
+      cases h_idx
       simpa only [extendPrefix_castSucc] using hi
     · have hlast := h (Fin.last k)
       have hboundary' :
@@ -244,7 +244,7 @@ theorem containsPrefix_extend_iff
       simpa [extendPrefix_last] using hboundary'
     · have hi := hold i
       have h_idx := prefixIndex_castSucc hk i
-      rw [← h_idx] at hi
+      cases h_idx
       simpa only [extendPrefix_castSucc] using hi
 
 
