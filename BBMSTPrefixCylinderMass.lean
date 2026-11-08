@@ -184,18 +184,23 @@ theorem extendPrefix_castSucc
     (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
     (t : C.S (stageCoordinate hk)) (i : Fin k) :
     (extendPrefix C hk x t) (Fin.castSucc i) = x i := by
-  have hidx := prefixIndex_castSucc (C := C) hk i
+  have hidx := prefixIndex_castSucc hk i
   have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
   have hne : prefixIndex hprev i ≠ stageCoordinate hk := by
     intro h
     have hv := congrArg Fin.val h
     simp [stageCoordinate, prefixIndex] at hv
     omega
+  have hbase :
+      (liftPrefix C hprev x) (prefixIndex hprev i) = x i := by
+    have hproj :=
+      congrFun (projectPrefix_liftPrefix (C := C) hprev x) i
+    simpa [projectPrefix] using hproj
   change
     Function.update (liftPrefix C hprev x) (stageCoordinate hk) t
       (prefixIndex hk (Fin.castSucc i)) = x i
   rw [hidx]
-  simp [Function.update, hne, liftPrefix, prefixIndex, i.isLt]
+  simp [Function.update, hne, hbase]
 
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
