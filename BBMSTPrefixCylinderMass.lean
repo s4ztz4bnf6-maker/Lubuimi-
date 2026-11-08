@@ -86,7 +86,7 @@ theorem sum_extensions_eq_old_event_mass
             extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
-            restrictPrefix_extendPrefix, hlast] using hlocal
+            restrictPrefix_extendPrefix, hlast] using hlocal.symm
     _ = baseMass := hlocalSum
 
 /-- For a prescribed value of the newly exposed coordinate, the mass of
@@ -181,28 +181,46 @@ theorem containsPrefix_extend_iff
         (match H.assignment (stageCoordinate hk) with
          | none => True
          | some s => t = s) := by
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
+  have hidx (i : Fin k) :
+      prefixIndex hk (Fin.castSucc i) = prefixIndex hprev i := by
+    apply Fin.ext
+    rfl
+  have hlastidx :
+      prefixIndex hk (Fin.last k) = stageCoordinate hk := by
+    apply Fin.ext
+    rfl
   constructor
   · intro h
     constructor
     · intro i
-      have hi := h i.castSucc
+      have hi := h (Fin.castSucc i)
+      have hindex := hidx i
+      cases hindex
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
         projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
-    · cases hassign : H.assignment (stageCoordinate hk) with
+    · have hlast := h (Fin.last k)
+      have hindex := hlastidx
+      cases hindex
+      cases hassign : H.assignment (stageCoordinate hk) with
       | none => trivial
       | some s =>
-          have hlast := h (Fin.last k)
           simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
             hassign, extendPrefix_last] using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
+    · have hindex := hlastidx
+      cases hindex
+      cases hassign : H.assignment (stageCoordinate hk) with
       | none => simp [Hyperplane.ContainsPrefix, hassign]
       | some s =>
-          simp [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last, hboundary]
+          have hs : t = s := by simpa [hassign] using hboundary
+          simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
+            hassign, extendPrefix_last] using hs
     · have hi := hold i
+      have hindex := hidx i
+      cases hindex
       simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
         projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
 
@@ -334,7 +352,9 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · exact HEq.of_eq (extendPrefix_last C hk x t)
+    · have hlast := extendPrefix_last C hk x t
+      cases hlast
+      rfl
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
@@ -439,8 +459,11 @@ noncomputable def prefixCylinderExtensionEquivFixed
       (containsPrefix_extend_fixed C hk H s hfixed
         (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp
         (by simpa [extendPrefix_restrictPrefix] using hy)
-    rw [← hsection.2]
-    exact extendPrefix_restrictPrefix C hk y.1
+    have hsectionEq :
+        extendPrefix C hk (restrictPrefix C hk y.1) s =
+          extendPrefix C hk (restrictPrefix C hk y.1) (y.1 (Fin.last k)) :=
+      congrArg (extendPrefix C hk (restrictPrefix C hk y.1)) hsection.2.symm
+    exact hsectionEq.trans (extendPrefix_restrictPrefix C hk y.1)
   right_inv x := by
     apply Subtype.ext
     exact restrictPrefix_extendPrefix C hk x.1 s
