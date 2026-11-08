@@ -72,7 +72,7 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
 
 /-- The coordinate introduced after a prefix of length k. -/
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
-  ⟨k, by omega⟩
+  prefixIndex hk (Fin.last k)
 
 /-- Restrict a prefix of length k+1 to its first k coordinates. -/
 noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
