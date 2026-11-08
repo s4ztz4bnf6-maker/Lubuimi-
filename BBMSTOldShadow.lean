@@ -200,24 +200,24 @@ theorem mergeOldShadows_containsPrefix_iff
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
     have hlt : i.val < boundary.val := by
       by_contra hnot
-      have hnotFin : ¬ i < boundary := by
-        intro h
-        exact hnot (by simpa using h)
-      have hnotVal : ¬ i.val < boundary.val := by
-        simpa using hnotFin
-      simp [hnotFin] at hi
+      by_cases hlt' : i.val < boundary.val
+      · exact hnot hlt'
+      · have hnone : (oldShadow boundary H).assignment i = none := by
+          simp [oldShadow, hlt']
+        rw [hnone] at hi
+        simp at hi
     exact lt_of_lt_of_eq hlt hboundary
   have hrightInside : (oldShadow boundary H').FixedInsidePrefix k := by
     intro i hi
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
     have hlt : i.val < boundary.val := by
       by_contra hnot
-      have hnotFin : ¬ i < boundary := by
-        intro h
-        exact hnot (by simpa using h)
-      have hnotVal : ¬ i.val < boundary.val := by
-        simpa using hnotFin
-      simp [hnotFin] at hi
+      by_cases hlt' : i.val < boundary.val
+      · exact hnot hlt'
+      · have hnone : (oldShadow boundary H').assignment i = none := by
+          simp [oldShadow, hlt']
+        rw [hnone] at hi
+        simp at hi
     exact lt_of_lt_of_eq hlt hboundary
   have hmergeInside :
       (mergeOldShadows boundary H H').FixedInsidePrefix k := by
