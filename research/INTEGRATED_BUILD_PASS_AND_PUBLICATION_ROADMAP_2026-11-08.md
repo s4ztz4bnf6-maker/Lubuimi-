@@ -87,9 +87,9 @@ Four declarations in the full audit have additional explicit upstream dependenci
 
 These are upstream interface assumptions, not the axiom profile of the Step 16 declarations or the BBMST project-core declarations printed in this audit. Their presence means the manuscript must not describe the entire upstream theorem interface as axiom-free. The original upstream `erdos_selfridge` declaration is unrestricted and is not, by itself, the exact square-free-moduli theorem of BBMST 2021.
 
-## 4. Independent confirmation on the repair branch
+## 4. Additional repair-branch evidence — kept separate
 
-A second repair path was also reported as successful on commit `ca9d245aa1851a54b65850ddb1130d1ca12e850e`, with focused Step 16 run [42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150), foundation run [42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), and full ordered audit run [42522816180](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522816180). This is additional corroboration, not a replacement for the primary same-commit variant B evidence in Section 2.
+The repair branch associated with PR #63 has its own successful Step 16 and foundation checks recorded in the PR description. However, the full-audit run identifier in that PR description differs from the run identifier in the project status summary available for this addendum. To avoid propagating a potentially mismatched run reference, this addendum does not count that second branch as a separately verified full-audit confirmation. The primary evidence in Section 2 is complete on its own: all three required workflows passed on one exact source commit. PR #63 remains unmerged; no merge was performed as part of this documentation update.
 
 ## 5. What is established — and what is not
 
@@ -198,3 +198,10 @@ Do not pay for predatory “publication guarantees,” paper mills, vanity award
 - Full ordered audit: https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494
 - Exact source commit: https://github.com/s4ztz4bnf6-maker/Lubuimi-/commit/436a2e387bb774ee2d31d5dc8908ec3cfdb06150
 - Publication documentation branch: https://github.com/s4ztz4bnf6-maker/Lubuimi-/tree/docs/publication-readiness-2026-11-08
+
+
+## 11. Current publication-policy and archiving references
+
+Publication policies must be checked again for the selected journal at submission time. As current examples, the American Physical Society requires substantive AI use in research or manuscript preparation to be disclosed and asks authors to identify the tool/version, its role, and how outputs were directed and verified; AI systems cannot be authors and humans retain accountability ([APS AI-tools policy](https://journals.aps.org/authors/appropriate-use-ai-tools)). arXiv's moderation guidance likewise says significant use of sophisticated tools, including text-to-text generative AI, should be reported consistently with disciplinary standards ([arXiv moderation guidance](https://github.com/arXiv/arxiv-docs/blob/develop/source/help/moderation/index.md)). These are examples, not a universal policy statement for every mathematics journal.
+
+For a citable software snapshot, Zenodo's current GitHub workflow requires connecting/enabling the repository and creating a GitHub release; the resulting release is ingested and a DOI record becomes available after processing ([enable repository](https://help.zenodo.org/docs/github/enable-repository/), [archive a GitHub release](https://help.zenodo.org/docs/github/archive-software/github-upload/)). Therefore: do not invent a DOI or release version now. First lock dependencies, choose the licence, validate `CITATION.cff`, and create a deliberate tagged release; then verify that Zenodo actually issued the DOI.
