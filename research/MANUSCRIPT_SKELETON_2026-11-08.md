@@ -106,3 +106,8 @@ The parallel foundation/full audit run [42518133245](https://github.com/s4ztz4bn
 **Reproducibility:** Lean 4.28.0 is pinned by `lean-toolchain`; Mathlib is requested by tag `v4.28.0`. The reviewed proof snapshot still lacks a committed `lake-manifest.json`; exact dependency locking and clean-checkout verification remain release tasks.
 
 **AI and authorship:** Ta-Yoshua Lubuimi is named as research lead and formalization developer. ChatGPT is disclosed as an AI-assisted tool, not an author or independent verifier. The precise historical model list must be reconstructed from actual project records before submission. The original BBMST theorem remains attributed to its five published authors.
+
+
+## Step 16 status — 2026-11-08
+
+The latest focused verification [run 42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145) failed at dependent-match transport in `BBMSTPrefixCylinderMass.lean` lines 255 and 259 after all five prerequisites compiled. Foundation regression [42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133) succeeded. Full ordered audit [42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128) failed at the same prefix-cylinder module; later stages were skipped. Step 16 is **OPEN — FAILED**, and no accepted Step 16 axiom audit exists. See [the full current status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
