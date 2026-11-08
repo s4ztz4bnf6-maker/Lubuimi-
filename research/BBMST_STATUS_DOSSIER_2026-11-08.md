@@ -97,3 +97,27 @@ The job's axiom output reports `sorryAx` in `containsPrefix_extend_iff`, its spe
 The full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) both failed at the prefix-cylinder step; subsequent stages 17–22 were skipped in those runs. These are overlapping CI runs on the same commit, not independent proof replications.
 
 **Current status: Step 16 OPEN — FAILED on commit 3ffe65b.** The next repair must be derived from the dependent match and coordinate types at the exact source definitions. Do not patch by guessing a simp set. The documentation branch remains separate from the active proof branch.
+
+ 
+## 12.8 Steps 17–22 re-verification and theorem-scope correction — 2026-11-08
+
+### Historical module evidence
+
+- Step 17: successful isolated compile in run [42488903023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903023), commit `125507564b4b6d89565d0d606ab0bd38951b158d`.
+- Steps 18, 19, 21 and 22: successful isolated jobs in run [42488903065](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903065), same commit.
+- Step 20: failed in the earlier job in run 42488903065; later successful isolated compile in run [42513785862](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42513785862), commit `9daa08aecc68ce9de0e086ca006dbc9980ab5ad0`.
+- The source comparison from `9daa08a` to `3ffe65b` shows that the Lean target files for Steps 17–22 were not modified. This makes the Step 20 success relevant to the unchanged module, but it is not a fresh run on the exact `3ffe65b` tree.
+
+### Fresh rerun branch
+
+A separate branch `verification/steps-17-22-rerun-2026-11-08` was created from `3ffe65b`. Its only change is the workflow file `.github/workflows/rerun-steps-17-22-isolated.yml`, committed as `364a07358e1856b5a17a6963f2f223061b92fb5e`. The workflow defines six isolated jobs (17–22) and deliberately excludes Step 16. No Actions run ID or status check has yet been returned for this commit; fresh rerun status is **NOT YET CONFIRMED**. Do not report it as running or successful without the corresponding GitHub Actions evidence.
+
+### Critical theorem-scope correction
+
+The pinned upstream source `ErdosSelfridge_v17_fixed.lean` at `fe530b2cedd3a71c2cdb47cc36ed0c3cb047b086` defines `CS_squarefree`, but the theorem `erdos_selfridge (K) (cs) : ¬ CS_allOdd cs` has no square-free hypothesis. It is an unrestricted odd-covering statement. The same file declares `sieve_criterion` and `sf_sieve_lt_one` as axioms, and the proof of `erdos_selfridge` invokes both. Thus this declaration is not a kernel-derived proof of the unrestricted conjecture and is not the exact statement of BBMST Theorem 1.1.
+
+BBMST Theorem 1.1 is the square-free-moduli statement: any finite collection of arithmetic progressions with distinct square-free moduli greater than one that covers the integers has at least one even modulus. The corresponding geometric statement is Theorem 1.2. A separate exact square-free target and the CRT correspondence must be formalized and audited. This issue is independent of the Step 16 compile and is a hard publication gate.
+
+See `research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md` for the provisional mapping of Lemmas 2.1, 3.3, 3.4, Theorems 3.1–3.2 and equation (11) to current Lean modules.
+
+**Current overall status remains:** Step 16 failed on `3ffe65b`; Steps 17–22 have historical isolated successes but no confirmed fresh rerun on that exact tree; the complete square-free BBMST theorem is not yet established; no complete-proof publication claim is supported.
