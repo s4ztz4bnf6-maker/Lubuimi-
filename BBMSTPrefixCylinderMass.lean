@@ -258,7 +258,7 @@ theorem containsPrefix_extend_iff
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
     · dsimp [stageCoordinate] at hboundary ⊢
-      exact hboundary
+      simpa [extendPrefix_last] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
