@@ -111,3 +111,8 @@ The parallel foundation/full audit run [42518133245](https://github.com/s4ztz4bn
 ## Step 16 status — 2026-11-08
 
 The latest focused verification [run 42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145) failed at dependent-match transport in `BBMSTPrefixCylinderMass.lean` lines 255 and 259 after all five prerequisites compiled. Foundation regression [42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133) succeeded. Full ordered audit [42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128) failed at the same prefix-cylinder module; later stages were skipped. Step 16 is **OPEN — FAILED**, and no accepted Step 16 axiom audit exists. See [the full current status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
+
+
+## Verification update — 2026-11-08
+
+The “Current blockers” section above records the state before the successful Step 16 variant B repair and must now be read as historical. The current integrated module-build evidence is documented in [the integrated-build PASS addendum](INTEGRATED_BUILD_PASS_AND_PUBLICATION_ROADMAP_2026-11-08.md): focused Step 16, foundation regression and full ordered audit passed on the same code commit `436a2e387bb774ee2d31d5dc8908ec3cfdb06150`. The manuscript remains a structural skeleton, not a submission-ready paper. Do not yet claim a complete formalization of BBMST Theorem 1.1: the exact square-free theorem declaration, its CRT/geometric correspondence and its final transitive axiom profile still require verification and independent review. The four explicit upstream sieve-axiom declarations are disclosed in the addendum.
