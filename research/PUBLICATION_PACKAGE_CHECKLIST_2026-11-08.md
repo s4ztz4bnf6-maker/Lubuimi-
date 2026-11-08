@@ -17,7 +17,7 @@ Prepare the paper, software release, provenance record, and reproducibility pack
 | G1 — integrated build | Clean checkout builds the complete intended dependency chain, not merely isolated modules | Not established |
 | G2 — final theorem audit | Name the exact final theorem; record its transitive axiom profile; exclude project-specific axioms and placeholders | Not established |
 | G3 — mathematical fidelity and theorem scope | Identify a separate formal target matching BBMST Theorem 1.1 (square-free moduli) or Theorem 1.2 (geometric form); do not use the unrestricted upstream `erdos_selfridge` declaration as a substitute; audit every premise | **BLOCKED — scope mismatch identified** |
-| G4 — reproducibility | Immutable source snapshot, pinned toolchain/dependencies, clean build instructions, archived logs and audit output | In preparation |
+| G4 — reproducibility | Immutable source snapshot, pinned toolchain and exact dependency revisions, clean build instructions, archived logs and audit output | **INCOMPLETE** — `lean-toolchain` pins Lean 4.28.0 and `lakefile.lean` requests Mathlib tag `v4.28.0`, but no `lake-manifest.json` is present at code commit `3ffe65b`; CI currently runs `lake update` |
 | G5 — independent review | Independent mathematician/formalization reviewer checks theorem scope, proof correspondence, and contribution claims | Not started |
 | G6 — release | Version tag, validated citation metadata, selected licence, archival DOI, final manuscript | Not ready |
 
@@ -79,3 +79,8 @@ A separate verification branch and six-job workflow have been prepared from `3ff
 ## Separate Route B preparation
 
 A structural note skeleton is available at `UPSTREAM_SIEVE_INTERFACE_AUDIT_NOTE_SKELETON_2026-11-08.md`. It is limited to the pinned upstream Lean axiom interface and the reproducible degenerate-parameter witness. It must not be described as a disproof of the number-theoretic conjecture or as a proof of the BBMST square-free theorem. Independent review of the source, the totalized rational arithmetic, and the exact axiom dependency is required before submission.
+
+
+## Reproducibility finding — 2026-11-08
+
+At code commit `3ffe65b`, `lean-toolchain` pins `leanprover/lean4:v4.28.0` and `lakefile.lean` requests Mathlib from the `v4.28.0` tag, but `lake-manifest.json` is absent. The current workflows run `lake update`, so the exact dependency resolution is not preserved as a committed manifest in this snapshot. Before a release, commit the generated manifest (after review), record the exact Mathlib revision and all transitive dependencies, and rerun the clean-checkout build against that locked dependency graph. Do not silently change the active proof branch to do this; make it a separately reviewed reproducibility change.
