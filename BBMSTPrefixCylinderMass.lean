@@ -378,6 +378,7 @@ theorem prefixCylinder_free_mass_reindex
       ∑ y : {y : PrefixPoint C (k + 1) hk //
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
+          rw [Finset.sum_attach]
           simp [k, prefixCylinder]
     _ = ∑ p :
         Σ x : {x : PrefixPoint C k
@@ -413,6 +414,7 @@ theorem prefixCylinder_free_mass_reindex
         ∑ t : C.S (stageCoordinate hk),
           PAt C (A := A) a ha P0 δ (j + 1) hj
             (extendPrefix C hk x t) := by
+              rw [← Finset.sum_attach]
               simp
 
 
@@ -488,6 +490,7 @@ theorem prefixCylinder_fixed_mass_reindex
       ∑ y : {y : PrefixPoint C (k + 1) hk //
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
+          rw [Finset.sum_attach]
           simp [k, prefixCylinder]
     _ = ∑ x : {x : PrefixPoint C k
           (Nat.le_trans (Nat.le_succ k) hk) //
