@@ -509,10 +509,17 @@ theorem prefixCylinder_fixed_mass_reindex
               (containsPrefix_extend_fixed C hk H s hfixed
                 (restrictPrefix C hk y.1) (y.1 (Fin.last k))).mp
                 (by simpa [extendPrefix_restrictPrefix] using hy)
-            rw [← hsection.2, extendPrefix_restrictPrefix]
+            have hsectionEq :
+                extendPrefix C hk (restrictPrefix C hk y.1) s =
+                  extendPrefix C hk (restrictPrefix C hk y.1)
+                    (y.1 (Fin.last k)) :=
+              congrArg (extendPrefix C hk (restrictPrefix C hk y.1))
+                hsection.2.symm
+            rw [hsectionEq, extendPrefix_restrictPrefix]
     _ = ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H,
         PAt C (A := A) a ha P0 δ (j + 1) hj
           (extendPrefix C hk x s) := by
+            rw [← Finset.sum_attach]
             simp
 
 
