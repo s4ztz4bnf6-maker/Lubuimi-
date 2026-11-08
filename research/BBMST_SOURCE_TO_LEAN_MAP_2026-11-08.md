@@ -69,3 +69,16 @@ These reruns are attached to the historical workflow commits. A commit compariso
 
 - P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe and M. Tiba, “The Erdős–Selfridge problem with square-free moduli,” *Algebra & Number Theory* 15 (2021), no. 3, 609–626, DOI: 10.2140/ant.2021.15.609. Published PDF: https://par.nsf.gov/servlets/purl/10300177.
 - Pinned upstream Lean source: `axxen95/Lean-4-formalization-of-the-Erd-s-Selfridge-odd-covering-system-conjecture`, commit `fe530b2cedd3a71c2cdb47cc36ed0c3cb047b086`, file `ErdosSelfridge_v17_fixed.lean`.
+
+
+## 7. Latest Step 16 CI correction — 2026-11-08
+
+The repair branch `fix/step16-dependent-boundary-transport-2026-11-08` now points to `59a55e4c5054dcebc99910cf11415646c1fef404`. Focused run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133266) compiled all five prerequisites but failed in the target at lines 249 and 261. The exact diagnostic is that the proposed match on `H.assignment (stageCoordinate hk)` is not definitionally equal to the target match on `H.assignment (prefixIndex hk (Fin.last k))`. The target coordinate equality/transport must be proved explicitly, including the dependent fibre type. No Step 16 theorem is accepted on this commit.
+
+The ordered foundation run [42518133245](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133245) likewise reached Step 16 after compiling all earlier listed modules and failed there; subsequent modules were skipped.
+
+The prior six Step 17–22 reruns remain isolated successes on historical workflow commits. They do not constitute a full integrated build on `59a55e4`.
+
+## 8. Step-number mapping limitation
+
+The present source-to-Lean map documents the later mathematical modules, but does not identify authoritative target files/declarations for numbered Steps 1–5. Do not infer that they are the five prerequisites of Step 16. A fresh Steps 1–5 regression must be tied to the original numbered work-plan mapping before it is scheduled or reported.
