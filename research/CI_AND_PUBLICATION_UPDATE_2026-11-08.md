@@ -90,3 +90,8 @@ The root README is an overview of the project and current evidence boundary. It 
 7. Finalize AI declaration from the actual model/tool history, software licence, release metadata and manuscript.
 
 **Status:** Step 16 remains the sole open numbered implementation stage in the recorded 1–22 sequence, but it is not accurate to say that Step 16 is the only remaining publication gate.
+
+
+## Current Step 16 snapshot — 2026-11-08
+
+The authoritative current CI state is recorded in [the Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md). It supersedes earlier “latest” or “pending” status statements in this document for the repair branch head `2ea5983bb8627379873edda743e6b0249116274b`. At the recorded poll, focused Step 16 run `42519816145`, foundation run `42519816133`, and full audit run `42519816128` were still in progress; no new Step 16 compiler result or axiom audit was available. Step 16 remains **OPEN — NOT VERIFIED**. Do not infer success or merge from an in-progress run.
