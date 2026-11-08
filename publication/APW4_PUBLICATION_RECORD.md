@@ -127,13 +127,13 @@ for the following declarations:
 
 These are exact declaration-level CI/kernel records. The mathematical DT, HT, and strict lower-bound results are recorded as established in the APW4 proof dossier. The above list is not an assertion that every historical APW4 object or every theorem in the mathematical dossier is represented by those particular Lean declarations.
 
-A separate integrated 22-module BBMST build was successful on commit
+A separate BBMST full ordered module audit was successful on commit
 `436a2e387bb774ee2d31d5dc8908ec3cfdb06150`:
 - Step 16 focused run `42522617423`, job `128859206391`.
 - Foundation regression `42522617399`, job `128859206286`.
 - Full ordered audit `42522617494`, job `128859206766`.
 
-This separate BBMST build record must remain tied to its own commit and exact module chain.
+This record concerns the documented dependency-ordered module chain on its own commit. It is not a single integrated run of all 22 numbered project steps; the historical isolated checks for later numbered steps are separate records. It must remain separate from the APW4 canonical verification record.
 
 ## 7. Source and attribution
 
