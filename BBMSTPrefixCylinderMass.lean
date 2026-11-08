@@ -249,10 +249,10 @@ theorem containsPrefix_extend_iff
           prefixIndex hk (Fin.last k) = stageCoordinate hk := by
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
-      have hlast := h (Fin.last k)
-      -- Eliminate the dependent index equality before inspecting the
-      -- assignment: its value type depends on the coordinate index.
+      -- Eliminate the dependent index equality before constructing the
+      -- boundary goal, whose assignment match depends on that index.
       cases hidx
+      have hlast := h (Fin.last k)
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simpa [hassign] using hlast
@@ -268,11 +268,12 @@ theorem containsPrefix_extend_iff
           prefixIndex hk (Fin.last k) = stageCoordinate hk := by
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
-      -- Eliminate the dependent index equality before reducing the assignment match.
+      -- Eliminate the dependent index equality before splitting the
+      -- assignment match in the boundary hypothesis and target.
       cases hidx
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
-          simp [hassign]
+          trivial
       | some s =>
           have hvalue : t = s := by
             simpa [hassign] using hboundary
@@ -463,8 +464,10 @@ theorem prefixCylinder_free_mass_reindex
                 y ∈ prefixCylinder C hj H} ≃
               {y : PrefixPoint C (k + 1) hk //
                 y ∈ prefixCylinder C hk H} :=
-            { toFun := fun y => ⟨y.1, hCylinder ▸ y.2⟩
-              invFun := fun y => ⟨y.1, hCylinder.symm ▸ y.2⟩
+            { toFun := fun y => ⟨y.1, by
+                simpa [prefixCylinder, k, Nat.add_assoc] using y.2⟩
+              invFun := fun y => ⟨y.1, by
+                simpa [prefixCylinder, k, Nat.add_assoc] using y.2⟩
               left_inv := by
                 intro y
                 apply Subtype.ext
