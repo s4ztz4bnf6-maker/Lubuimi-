@@ -192,3 +192,14 @@ The parallel foundation/full audit run [42518133245](https://github.com/s4ztz4bn
 **Reproducibility:** Lean 4.28.0 is pinned by `lean-toolchain`; Mathlib is requested by tag `v4.28.0`. The reviewed proof snapshot still lacks a committed `lake-manifest.json`; exact dependency locking and clean-checkout verification remain release tasks.
 
 **AI and authorship:** Ta-Yoshua Lubuimi is named as research lead and formalization developer. ChatGPT is disclosed as an AI-assisted tool, not an author or independent verifier. The precise historical model list must be reconstructed from actual project records before submission. The original BBMST theorem remains attributed to its five published authors.
+
+
+## 2026-11-08 addendum: dependent boundary-match diagnosis
+
+The Step 16 repair head remains `59a55e4c5054dcebc99910cf11415646c1fef404`. Focused run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133266), job `128845536627`, confirms: all five actual prerequisites compiled; the Step 16 target failed at lines 249 and 261 on `change` tactics attempting to replace a dependent match at `prefixIndex hk (Fin.last k)` with one at `stageCoordinate hk`.
+
+Interpretation is deliberately narrow: this is a failure to identify the *whole dependent match expressions* definitionally. It is not evidence that the coordinate definition itself is wrong. Since the assignment fibre is `C.S i`, the proof must handle transport of the branch value across the coordinate equality, rather than rewriting the complete match wholesale.
+
+The next planned proof step is to isolate the assignment case split at a single boundary index, establish the coordinate equality, and explicitly transport the dependent `C.S i` value before applying `extendPrefix_last`. This remains a design plan; no candidate patch has been compiled or accepted. The repair branch and all Lean source files remain unchanged by this dossier update.
+
+**Status:** Step 16 **OPEN — FAILED on 59a55e4**. Steps 1–5 remain unmapped to authoritative targets and have not been relabelled or rerun. The documentation-only update is on the publication-readiness branch; no integrated build, final transitive axiom audit, or theorem-scope gate is passed by this update.
