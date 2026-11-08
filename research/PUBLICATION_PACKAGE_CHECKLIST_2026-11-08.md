@@ -16,7 +16,7 @@ Prepare the paper, software release, provenance record, and reproducibility pack
 | G0 — Step 16 | Target module compiles on a pinned commit; inspect all relevant `#print axioms`; no `sorryAx` | **OPEN** — run 42515743524 failed on commit 3ffe65b |
 | G1 — integrated build | Clean checkout builds the complete intended dependency chain, not merely isolated modules | Not established |
 | G2 — final theorem audit | Name the exact final theorem; record its transitive axiom profile; exclude project-specific axioms and placeholders | Not established |
-| G3 — mathematical fidelity | Match each formal hypothesis and conclusion to the exact published square-free-moduli theorem; audit all premise use | Not established |
+| G3 — mathematical fidelity and theorem scope | Identify a separate formal target matching BBMST Theorem 1.1 (square-free moduli) or Theorem 1.2 (geometric form); do not use the unrestricted upstream `erdos_selfridge` declaration as a substitute; audit every premise | **BLOCKED — scope mismatch identified** |
 | G4 — reproducibility | Immutable source snapshot, pinned toolchain/dependencies, clean build instructions, archived logs and audit output | In preparation |
 | G5 — independent review | Independent mathematician/formalization reviewer checks theorem scope, proof correspondence, and contribution claims | Not started |
 | G6 — release | Version tag, validated citation metadata, selected licence, archival DOI, final manuscript | Not ready |
@@ -65,3 +65,12 @@ The current outputs are mathematical and formal-verification artifacts. A theore
 ## Publication timing
 
 The repository can be prepared now. A **complete-proof publication claim** cannot be made today on the current CI evidence: Step 16 failed, and the full-audit workflow skipped later stages. If the narrow interface-audit route is pursued, it needs a separately bounded claim and its own review; it is not a substitute for Route A.
+
+
+## New hard scope gate — 2026-11-08
+
+The pinned upstream declaration `erdos_selfridge` has no `CS_squarefree` premise and depends on explicit `sieve_criterion` and `sf_sieve_lt_one` axioms. It cannot be presented as the BBMST square-free theorem. The publication package must name and audit a separate theorem whose hypotheses exactly encode distinct square-free moduli (or the equivalent nonparallel hyperplane-cover statement), and must verify the Chinese-remainder correspondence. See `BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`.
+
+## Fresh Steps 17–22 rerun
+
+A separate verification branch and six-job workflow have been prepared from `3ffe65b` without changing Lean source. The workflow commit is `364a07358e1856b5a17a6963f2f223061b92fb5e`; no Actions run ID/status has yet been confirmed. Do not mark this item complete until current job logs are inspected.
