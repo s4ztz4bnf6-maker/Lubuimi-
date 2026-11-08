@@ -136,3 +136,7 @@ A separate branch `verification/steps-17-22-rerun-2026-11-08` was created from c
 ## Source-to-Lean correspondence
 
 See [`research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`](research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md).
+
+## Reproducibility note
+
+At code snapshot `3ffe65b`, `lean-toolchain` pins Lean 4.28.0 and `lakefile.lean` requests Mathlib tag `v4.28.0`, but `lake-manifest.json` is not present. Current CI runs `lake update`; a release therefore still needs a reviewed, committed manifest pinning exact dependency revisions and a clean-checkout build against that lockfile. See the publication checklist.
