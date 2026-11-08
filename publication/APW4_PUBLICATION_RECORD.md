@@ -171,3 +171,21 @@ The current publication sequence and optional Palomar formalization route are re
 The roadmap distinguishes mathematical proof status from the scope of the seven named Lean declarations and their cited CI runs. It also records that Terence Tao's discussion of Palomar and formal verification is a useful methodological reference, not a personal endorsement or a universal certification standard. No claim of Tao approval or worldwide priority is made. Any priority claim requires a precise novelty statement, literature comparison, and independent expert assessment.
 
 The manuscript's mathematical results remain as stated in Sections 2–5 above. This editorial addition does not reopen, downgrade, or redefine DT, HT, the global upper estimate, the strict lower-bound implication, or the resulting contradiction.
+
+
+## 11. Erdős–Selfridge-related priority claim and public-release status — 9 November 2026
+
+The author expressly clarifies that APW4 is **not** a claim to have solved the original Erdős–Selfridge problem itself. The claimed breakthrough is methodological: the author asserts that APW4 is, to the author's knowledge, the first Erdős–Selfridge-related mathematical proof developed with this kind of computationally supported, Lean-kernel-checked verification architecture, pursued in the spirit of the high-rigor formal-verification standards discussed by Terence Tao.
+
+This is the author's stated worldwide-priority claim. It is not represented here as an independently established historical fact; that requires a precise novelty statement, systematic comparison with prior formalized Erdős-related results, and independent expert assessment. This qualification does not reopen, downgrade, or redefine the mathematical APW4 results in Sections 2–5.
+
+The current Lean record remains exactly declaration-scoped: the seven declarations, commit, and CI runs in Section 6. The manuscript's mathematical proof status is distinct from the reach of those specific kernel/CI artifacts. No Tao endorsement, review, approval, or certification is claimed.
+
+As of 9 November 2026:
+- no DOI has been assigned;
+- no arXiv identifier exists;
+- the author has contacted a scientific journal, but no acceptance or publication decision is asserted;
+- the publication record, roadmap, and priority statement are publicly available on the branch \`docs/apw4-publication-package-2026-11-08\`;
+- the two supplied manuscript PDFs have been checksum-identified, but their binary files are not yet mirrored in this repository or deposited on Zenodo.
+
+See [APW4 public release and priority statement](APW4_PUBLIC_RELEASE_AND_PRIORITY_STATEMENT_2026-11-09.md) for the exact claim, file checksums, and evidence boundaries.
