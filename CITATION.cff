@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this research software, please cite it using the metadata below."
-title: "Lean 4 research, source-audit, and staged formalization artifacts related to the Erdős–Selfridge square-free-moduli problem"
+title: "Ta-Yoshua Lubuimi — Lean 4 Research and Source-Audit Project on the BBMST Square-Free-Moduli Problem"
 type: software
 authors:
   - family-names: "Lubuimi"
@@ -21,3 +21,5 @@ keywords:
   - "covering systems"
   - "square-free moduli"
   - "mathematical software"
+
+# Project title and attribution updated 2026-11-08. The title identifies this software/research artifact and does not claim authorship of the original BBMST theorem.
