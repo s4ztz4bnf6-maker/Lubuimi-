@@ -7,9 +7,11 @@ This repository contains Lean 4 research software, staged formalization work, so
 ## Current status
 
 - Numbered implementation ledger: Steps 1–15 and 17–22 are recorded complete; **Step 16 is the sole open numbered step**.
-- Step 16 repair candidate: branch `fix/step16-dependent-transport-v2-2026-11-08`, current CI head `2ea5983bb8627379873edda743e6b0249116274b`.
-- Focused Step 16 [run 42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145), foundation [run 42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133), and full audit [run 42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128) were **in progress at the latest recorded poll**. No new Step 16 compiler result or axiom audit is yet available.
-- The current evidence ledger and exact acceptance criteria are in the [Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
+- Step 16 repair candidate: branch `fix/step16-dependent-transport-v2-2026-11-08`, tested head `2ea5983bb8627379873edda743e6b0249116274b`; **focused run 42519816145 failed** at dependent-match transport lines 255 and 259 after all five prerequisites compiled.
+- Foundation regression [42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133) **succeeded**.
+- Full ordered audit [42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128) **failed at the prefix-cylinder event-mass module**; later stages were skipped.
+- Step 16 remains **OPEN — FAILED**, not complete. The failed elaboration emits `sorryAx` in dependent target declarations; no accepted Step 16 proof or target axiom audit exists.
+- Full diagnostic, exact logs and status interpretation are in the [Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
 - Steps 1–5 retain their existing mapping/evidence caveat; the five Step 16 prerequisites are not relabelled as Steps 1–5.
 - Integrated theorem proof, exact square-free theorem/CRT correspondence and final transitive theorem audit remain distinct gates.
 
