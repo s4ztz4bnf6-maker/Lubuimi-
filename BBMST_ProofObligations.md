@@ -349,3 +349,13 @@ Two full-audit runs, [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/
 
 No completed status is assigned to Step 16 until the target compile succeeds and the resulting axiom output is inspected. In particular, the presence or absence of `sorryAx` must be established from the successful declarations' transitive axiom traces, not inferred from source-text searches alone.
 undefined
+
+## Latest Step 16 repair diagnostic — 2026-11-08
+
+Repair branch: `fix/step16-dependent-boundary-transport-2026-11-08`, head `59a55e4c5054dcebc99910cf11415646c1fef404`.
+
+Focused run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133266) confirms that the five prerequisite modules compile, but Step 16 still fails. At lines 249 and 261, Lean rejects a `change` to a match on `H.assignment (stageCoordinate hk)), because the elaborated target still matches on `H.assignment (prefixIndex hk (Fin.last k))`; these expressions are not definitionally equal. The next repair must prove the coordinate equality and transport the dependent assignment value explicitly. The `sorryAx` traces in this failed run are error-contaminated downstream declarations, not accepted proof terms and not by themselves proof of a literal source `sorry`.
+
+The ordered run [42518133245](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133245) compiled all modules preceding Step 16 in that workflow and failed at the same target; later steps were skipped.
+
+Steps 1–5 still need their exact work-plan-to-file/declaration mapping before a separate regression run can be honestly labelled with those step numbers.
