@@ -199,8 +199,9 @@ theorem extendPrefix_castSucc
   change
     Function.update (liftPrefix C hprev x) (stageCoordinate hk) t
       (prefixIndex hk (Fin.castSucc i)) = x i
-  rw [hidx]
-  simp [Function.update, hne, hbase]
+  -- Simplification handles the dependent transport; rw cannot form a
+  -- well-typed motive because the coordinate type depends on the index.
+  simpa [hidx, Function.update, hne] using hbase
 
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
