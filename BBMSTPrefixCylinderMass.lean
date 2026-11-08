@@ -220,9 +220,7 @@ theorem containsPrefix_extend_iff
     (t : C.S (stageCoordinate hk)) :
     H.ContainsPrefix hk (extendPrefix C hk x t) ↔
       H.ContainsPrefix (Nat.le_trans (Nat.le_succ k) hk) x ∧
-        (match H.assignment (stageCoordinate hk) with
-         | none => True
-         | some s => t = s) := by
+        (H.assignment (stageCoordinate hk)).elim True (fun s => t = s) := by
   have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
   constructor
   · intro h
@@ -252,25 +250,11 @@ theorem containsPrefix_extend_iff
             simpa [hvalue] using hi'
           simpa [hidx] using hx
     · have hlast := h (Fin.last k)
-      cases hassign : H.assignment (stageCoordinate hk) with
-      | none =>
-          simp [stageCoordinate_eq_prefixIndex, hassign] at hlast ⊢
-      | some s =>
-          have hlast' : t = s := by
-            simpa only [stageCoordinate_eq_prefixIndex, extendPrefix_last,
-              hassign] using hlast
-          exact hlast'
+      simpa only [stageCoordinate, extendPrefix_last] using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
-      | none =>
-          simp [stageCoordinate_eq_prefixIndex, hassign] at hboundary ⊢
-      | some s =>
-          have hboundary' : t = s := by
-            simpa only [stageCoordinate_eq_prefixIndex, hassign] using hboundary
-          simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last,
-            hassign] using hboundary'
+    · simpa only [stageCoordinate] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
