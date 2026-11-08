@@ -53,6 +53,9 @@ theorem eventUnion_mass_le_sum
                     ∑ j ∈ Finset.univ,
                       (if x ∈ events j then w x else 0) :=
                 Finset.single_le_sum
+                  (s := Finset.univ)
+                  (f := fun j : Fin n =>
+                    if x ∈ events j then w x else 0)
                   (fun j hj _ => hnonneg j hj) hi
               simpa [hxi] using hsingle
             · simp [hu]
