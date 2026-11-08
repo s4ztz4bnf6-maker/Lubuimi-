@@ -197,13 +197,17 @@ theorem mergeOldShadows_containsPrefix_iff
   have hleftInside : (oldShadow boundary H).FixedInsidePrefix k := by
     intro i hi
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    simp [oldShadow] at hi
-    exact lt_of_lt_of_eq hi.1 hboundary
+    have hlt : i.val < boundary.val := by
+      by_contra hnot
+      simp [oldShadow, hnot] at hi
+    exact lt_of_lt_of_eq hlt hboundary
   have hrightInside : (oldShadow boundary H').FixedInsidePrefix k := by
     intro i hi
     simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    simp [oldShadow] at hi
-    exact lt_of_lt_of_eq hi.1 hboundary
+    have hlt : i.val < boundary.val := by
+      by_contra hnot
+      simp [oldShadow, hnot] at hi
+    exact lt_of_lt_of_eq hlt hboundary
   have hmergeInside :
       (mergeOldShadows boundary H H').FixedInsidePrefix k := by
     intro i hi
