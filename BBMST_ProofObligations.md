@@ -389,3 +389,8 @@ were still in progress:
 - full ordered audit: [42519176465](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176465), job `128848687751`.
 
 All three were still in dependency installation / manifest generation at the latest poll. There is no compile result yet. The candidate is therefore **OPEN — CI PENDING**, not a successful repair. If Step 16 compiles, the successful log's axiom output must still be inspected for every affected declaration; a compile-only pass is not sufficient. The source-scope, project-axiom, integrated-build, and reproducibility gates remain separate.
+
+
+## Current Step 16 snapshot — 2026-11-08
+
+The authoritative current CI state is recorded in [the Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md). It supersedes earlier “latest” or “pending” status statements in this document for the repair branch head `2ea5983bb8627379873edda743e6b0249116274b`. At the recorded poll, focused Step 16 run `42519816145`, foundation run `42519816133`, and full audit run `42519816128` were still in progress; no new Step 16 compiler result or axiom audit was available. Step 16 remains **OPEN — NOT VERIFIED**. Do not infer success or merge from an in-progress run.
