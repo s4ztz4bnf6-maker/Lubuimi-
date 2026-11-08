@@ -163,7 +163,7 @@ BBMST Theorem 1.1 states that every finite collection of arithmetic progressions
 
 ## 11.4 Steps 17–22 fresh verification status — 2026-11-08
 
-Historical isolated successes remain: Step 17 run 42488903023; Steps 18, 19, 21 and 22 run 42488903065; Step 20 later run 42513785862 on commit 9daa08a. A comparison confirms the relevant Lean source files were unchanged between 9daa08a and 3ffe65b. A separate branch `verification/steps-17-22-rerun-2026-11-08` and six-job workflow were prepared from 3ffe65b; workflow commit `364a07358e1856b5a17a6963f2f223061b92fb5e`. No new Actions run ID/status has yet been verified, so the fresh rerun is **NOT YET CONFIRMED**.
+Historical isolated successes remain: Step 17 run 42488903023; Steps 18, 19, 21 and 22 run 42488903065; Step 20 later run 42513785862 on commit 9daa08a. A comparison confirms the relevant Lean source files were unchanged between 9daa08a and 3ffe65b. A separate branch `verification/steps-17-22-rerun-2026-11-08` and six-job workflow were prepared from 3ffe65b; workflow commit `364a07358e1856b5a17a6963f2f223061b92fb5e`. That branch's own workflow trigger has no confirmed run ID. However, direct reruns of the historical jobs have now completed successfully for all six steps; see Section 12.11 of the status dossier for job IDs and logs. These remain isolated module reruns, not an integrated build.
 
 ## 11.5 Patent screening update — official 2026 sources
 
@@ -175,3 +175,8 @@ No concrete technical application has been identified in this project snapshot. 
 ## 11.6 Route B manuscript preparation
 
 A separate technical-note skeleton is now available at `research/UPSTREAM_SIEVE_INTERFACE_AUDIT_NOTE_SKELETON_2026-11-08.md`. It limits the claim to the pinned upstream Lean axiom interface and the reproducible degenerate-parameter witness. It explicitly excludes claims that the mathematical conjecture is false or that the BBMST square-free theorem has been formally proved. The source pin, witness, arithmetic semantics, and axiom trace must be independently reviewed before any submission.
+
+
+## 11.7 Completed isolated reruns — 2026-11-08
+
+The direct reruns of Steps 17–22 all completed successfully. The logs for each job were checked: the relevant declaration traces show `[propext, Classical.choice, Quot.sound]`, and no `sorryAx` or compiler error was found. Step 20 emitted unused-variable warnings for `hP0_nonneg`, `hP0_sum`, `hδ`, and `hδhalf` in `prefixPairReserve_eq_weightedPairCount`; this appears to be an unnecessarily strong theorem interface for a finite Fubini identity, not a failed proof. The six isolated jobs do not form a single integrated build and do not include Step 16. See `BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md` and dossier Section 12.11.
