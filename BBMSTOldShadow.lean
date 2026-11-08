@@ -202,7 +202,9 @@ theorem mergeOldShadows_containsPrefix_iff
       have hnotFin : ¬ i < boundary := by
         intro h
         exact hnot (by simpa using h)
-      simp [hnot] at hi
+      have hnotVal : ¬ i.val < boundary.val := by
+        simpa using hnotFin
+      simp [hnotVal] at hi
     exact lt_of_lt_of_eq hlt hboundary
   have hrightInside : (oldShadow boundary H').FixedInsidePrefix k := by
     intro i hi
@@ -212,7 +214,9 @@ theorem mergeOldShadows_containsPrefix_iff
       have hnotFin : ¬ i < boundary := by
         intro h
         exact hnot (by simpa using h)
-      simp [hnot] at hi
+      have hnotVal : ¬ i.val < boundary.val := by
+        simpa using hnotFin
+      simp [hnotVal] at hi
     exact lt_of_lt_of_eq hlt hboundary
   have hmergeInside :
       (mergeOldShadows boundary H H').FixedInsidePrefix k := by
