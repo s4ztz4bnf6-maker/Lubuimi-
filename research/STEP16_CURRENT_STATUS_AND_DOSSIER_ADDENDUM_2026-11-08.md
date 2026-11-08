@@ -96,3 +96,31 @@ The focused log prints `sorryAx` in `containsPrefix_extend_free`, `containsPrefi
 **Current Step 16 status: OPEN — FAILED on current CI head `2ea5983bb8627379873edda743e6b0249116274b`.**
 
 The Lean repair source commit remains `e8573b4bacc9f4b333827c7bff6e2216f821c934`; the tested branch head includes subsequent workflow-trigger commits. The next repair must address the dependent match's actual type transport, not merely repeat the same simplifier-based conversion. No code change is made by this documentation update.
+
+
+## 13. Step 16 canonical-boundary repair variants — 2026-11-08
+
+Four materially distinct Step 16 repair variants have now passed both their focused Step 16 workflow and the complete ordered audit. Each full-audit run compiled the entire ordered module chain, including the Step 16 prefix-cylinder module and the downstream prefix-moment, hyperplane-incidence, old-shadow, finite-union and moment-recurrence modules.
+
+| Variant | Lean source commit | Focused Step 16 run | Full ordered audit | Result |
+|---|---|---:|---:|---|
+| A — canonical-index split after extracting the boundary hypothesis | `ae1f4c82e989496ce47bd1d1627028b6477415dc` | [42522236631](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522236631) | [42522236673](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522236673) | PASS |
+| B — canonical-index split before extracting the boundary hypothesis | `3e14432436fb047c628efbf7a4ee1625aab2f7fa` | [42522238764](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522238764) | [42522238807](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522238807) | PASS |
+| C — separate final-coordinate helper lemma | `e084f6e8534d4cb8fdfc7f579be2069bee590a96` | [42522242119](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522242119) | [42522242089](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522242089) | PASS |
+| G — canonical-index split with restricted `simp only` | source `b00ac6e3e38caf9fe53588429d18b35d416a625e`, tested head `9cf319c5567523e157ce58811c00a30f8089939c` | [42522356379](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522356379) | [42522356504](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522356504) | PASS |
+
+### Common verified result
+
+- Every focused run compiled all five actual Step 16 prerequisites and then compiled `BBMSTPrefixCylinderMass.lean`.
+- Every full ordered audit completed successfully through all 22 workflow compile stages.
+- The full logs for all four successful audits were inspected: zero compiler-error lines, zero `sorryAx` occurrences, and successful job conclusions.
+- The target declarations `containsPrefix_extend_iff` and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` printed the standard axiom profile `[propext, Classical.choice, Quot.sound]` in all four audits.
+- The full-audit logs also printed the downstream Step 20 and Step 22 declarations, including `prefixPairReserve_eq_weightedPairCount` and `cKThree_succ`, with the same standard profile.
+
+### Repair mechanism established by the diagnostics
+
+The failed candidate split the dependent assignment at `stageCoordinate hk`, while the boundary hypothesis extracted from `ContainsPrefix` was indexed by `prefixIndex hk (Fin.last k)`. Lean therefore reduced the goal's dependent match without reducing the corresponding match in the hypothesis. The successful variants perform the case split at the exact canonical index `prefixIndex hk (Fin.last k)`; they then normalize `stageCoordinate` and explicitly use `extendPrefix_last` where the reverse implication needs the value of the appended coordinate.
+
+### Main repair branch / PR re-verification
+
+The successful Variant A Lean source was copied to the existing repair branch `fix/step16-dependent-transport-v2-2026-11-08` in commit `ca9d245aa1851a54b65850ddb1130d1ca12e850e`. PR [#63](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/63) remains open and unmerged. On that exact repair-branch head, the focused Step 16 workflow, pre-Step 16 foundation regression and full ordered audit were triggered as runs [42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223), [42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), and [42522812163](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812163). Their final outcomes must be appended when complete. The four already successful isolated variant audits are independent positive evidence and are not to be overwritten by these re-verification runs.
