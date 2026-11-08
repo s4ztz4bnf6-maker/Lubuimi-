@@ -1,4 +1,4 @@
-# BBMST / Erdős–Selfridge research and formalization
+# BBMST Lean Formalization and Source-Audit Project
 
 **Research lead and formalization:** Ta-Yoshua Lubuimi  
 **AI assistance:** ChatGPT (OpenAI), transparently disclosed below  
@@ -15,7 +15,7 @@
 - Step 17: independent Lean compilation succeeded in run [42488903023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903023), at commit `125507564b4b6d89565d0d606ab0bd38951b158d`.
 - Steps 18, 19, 21 and 22: their isolated jobs succeeded in run [42488903065](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903065), at the same commit. The workflow explicitly says that prerequisites before each isolated step are assumed rather than re-certified by those jobs.
 - Step 20: the later isolated job succeeded in run [42513785862](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42513785862), at commit `9daa08aecc68ce9de0e086ca006dbc9980ab5ad0`. An earlier Step 20 job in run 42488903065 failed; the later successful run is the relevant subsequent evidence.
-- Step 16: open. The previous focused run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) failed on the earlier head `e230c4508b17fccfd006392b92d39b70d7f23ca6`. A subsequent targeted repair is recorded at code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`; focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still in progress at the last status check (Lean action active; prerequisite and target compile steps pending). Full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) were also in progress on the same commit; overlapping runs are not independent proof evidence.
+- Step 16: open. The previous focused run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) failed on the earlier head `e230c4508b17fccfd006392b92d39b70d7f23ca6`. A subsequent targeted repair is recorded at code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`; focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) subsequently completed with failure: all five prerequisites passed, but the target compile failed at lines 253 and 257 of `BBMSTPrefixCylinderMass.lean`. Full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) were also in progress on the same commit; overlapping runs are not independent proof evidence.
 
 The successful isolated module logs print the standard Lean profile `[propext, Classical.choice, Quot.sound]` for the declarations shown in those logs. This is evidence about those declarations, not a transitive axiom audit of a final main theorem. In particular, the Step 20 log includes unused-variable warnings for some supplied hypotheses in the prefix-incidence bridge; compilation success does not by itself establish that every intended mathematical premise is actually used. That interface deserves a separate mathematical review.
 
@@ -29,7 +29,7 @@ The research direction, mathematical objectives, acceptance criteria, and final 
 
 ## Publication and software citation
 
-See [`research/PUBLICATION_READINESS_2026-11-08.md`](research/PUBLICATION_READINESS_2026-11-08.md) for the publication roadmap, claim boundaries, AI-disclosure draft, archival plan, and external review checklist. The root [`CITATION.cff`](CITATION.cff) gives citation metadata for this research software artifact; it does not claim authorship of the 2021 BBMST paper.
+See [`research/PUBLICATION_READINESS_2026-11-08.md`](research/PUBLICATION_READINESS_2026-11-08.md) for the publication roadmap and preliminary IP screen. The preparation files are [`research/PUBLICATION_PACKAGE_CHECKLIST_2026-11-08.md`](research/PUBLICATION_PACKAGE_CHECKLIST_2026-11-08.md), [`research/MANUSCRIPT_SKELETON_2026-11-08.md`](research/MANUSCRIPT_SKELETON_2026-11-08.md), and [`research/CONTRIBUTION_PROVENANCE_LEDGER_2026-11-08.md`](research/CONTRIBUTION_PROVENANCE_LEDGER_2026-11-08.md). The root [`CITATION.cff`](CITATION.cff) gives citation metadata for this research software artifact; it does not claim authorship of the 2021 BBMST paper.
 
 ## Primary references
 
