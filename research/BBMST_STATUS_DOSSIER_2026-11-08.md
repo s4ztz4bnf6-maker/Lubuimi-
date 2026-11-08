@@ -150,6 +150,24 @@ Steps 17 and 18 have now also completed successfully in their direct reruns:
 - Step 19 job `128842605996`: **success**.
 - Step 21 job `128842627032`: **success**.
 - Step 22 job `128842642270`: **success**.
-- Step 20 job `128842622425` in run `42513785862`: still **in progress**, compiling its prerequisites; the Step 20 target compile has not yet been confirmed in this rerun.
+- Step 20 job `128842622425` in run `42513785862`: **success**; the Step 20 target `BBMSTPrefixIncidenceBridge.lean` compiled.
 
 The complete logs for the five completed jobs were checked: the expected standard profile was printed for the relevant declarations, no `sorryAx` string occurred, and no compiler `error:` line occurred. These are five successful isolated module reruns, not a complete end-to-end theorem audit. Step 20 remains pending, Step 16 remains failed on `3ffe65b`, and the unrestricted-vs-square-free theorem-scope correction remains a separate hard gate.
+
+
+## 12.11 Steps 17–22 rerun completion — 2026-11-08
+
+All six requested isolated reruns have now completed successfully:
+
+| Step | Rerun job | Run | Result |
+|---|---:|---:|---|
+| 17 | `128842591881` | `42488903023` | **Success** |
+| 18 | `128842605058` | `42488903065` | **Success** |
+| 19 | `128842605996` | `42488903065` | **Success** |
+| 20 | `128842622425` | `42513785862` | **Success** |
+| 21 | `128842627032` | `42488903065` | **Success** |
+| 22 | `128842642270` | `42488903065` | **Success** |
+
+The full logs of all six completed rerun jobs were inspected. Each relevant declaration trace showed the standard profile `[propext, Classical.choice, Quot.sound]`; none of the six logs contained `sorryAx` or a compiler `error:` line. Step 20's log additionally warns that `hP0_nonneg`, `hP0_sum`, `hδ`, and `hδhalf` are unused in `prefixPairReserve_eq_weightedPairCount`. This equality is a finite combinatorial/Fubini identity and appears not to require those analytic hypotheses; the interface should be reviewed and possibly simplified, but the warnings do not themselves indicate a failed proof.
+
+**Scope of this success:** these are six isolated module reruns at their historical workflow commits. A source comparison confirms the Lean target files were unchanged through `3ffe65b`, but the six jobs do not constitute a single clean integrated build on one common commit. Step 16 remains failed on `3ffe65b`, and the separate exact square-free theorem target, CRT correspondence, global axiom replacement, and final transitive audit remain outstanding.
