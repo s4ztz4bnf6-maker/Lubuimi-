@@ -348,3 +348,4 @@ The focused workflow [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/
 Two full-audit runs, [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547), were also active on the same commit. They are concurrent executions of the same audit workflow and must not be counted as independent mathematical replications. The earlier failed run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) remains the diagnostic baseline for the previous source revision only.
 
 No completed status is assigned to Step 16 until the target compile succeeds and the resulting axiom output is inspected. In particular, the presence or absence of `sorryAx` must be established from the successful declarations' transitive axiom traces, not inferred from source-text searches alone.
+undefined
