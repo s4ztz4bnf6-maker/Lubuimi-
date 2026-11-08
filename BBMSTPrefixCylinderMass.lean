@@ -181,30 +181,45 @@ theorem containsPrefix_extend_iff
         (match H.assignment (stageCoordinate hk) with
          | none => True
          | some s => t = s) := by
+  have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
+  have hidx (i : Fin k) :
+      prefixIndex hk (Fin.castSucc i) = prefixIndex hprev i := by
+    apply Fin.ext
+    rfl
+  have hlastidx :
+      prefixIndex hk (Fin.last k) = stageCoordinate hk := by
+    apply Fin.ext
+    rfl
+  have hval (i : Fin k) :
+      extendPrefix C hk x t (Fin.castSucc i) = x i := by
+    simp [extendPrefix, projectPrefix, liftPrefix, prefixIndex,
+      stageCoordinate, Function.update]
   constructor
   · intro h
     constructor
     · intro i
-      have hi := h i.castSucc
-      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
-    · cases hassign : H.assignment (stageCoordinate hk) with
+      have hi := h (Fin.castSucc i)
+      rw [hidx i] at hi
+      simpa only [Hyperplane.ContainsPrefix, hval] using hi
+    · have hlast := h (Fin.last k)
+      rw [hlastidx] at hlast
+      cases hassign : H.assignment (stageCoordinate hk) with
       | none => trivial
       | some s =>
-          have hlast := h (Fin.last k)
-          simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last] using hlast
+          simpa [Hyperplane.ContainsPrefix, hassign, extendPrefix_last]
+            using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
+    · rw [hlastidx]
+      cases hassign : H.assignment (stageCoordinate hk) with
       | none => simp [Hyperplane.ContainsPrefix, hassign]
       | some s =>
-          simp [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last, hboundary]
+          have hs : t = s := by simpa [hassign] using hboundary
+          simpa [Hyperplane.ContainsPrefix, hassign, extendPrefix_last] using hs
     · have hi := hold i
-      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update] using hi
+      rw [hidx i]
+      simpa only [Hyperplane.ContainsPrefix, hval] using hi
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
