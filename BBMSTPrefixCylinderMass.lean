@@ -252,7 +252,7 @@ theorem containsPrefix_extend_iff
       have hlast := h (Fin.last k)
       -- Eliminate the dependent index equality before inspecting the
       -- assignment: its value type depends on the coordinate index.
-      rw [hidx] at hlast
+      cases hidx
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simpa [hassign] using hlast
@@ -268,8 +268,8 @@ theorem containsPrefix_extend_iff
           prefixIndex hk (Fin.last k) = stageCoordinate hk := by
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
-      -- Rewrite the boundary coordinate before reducing the assignment match.
-      rw [hidx]
+      -- Eliminate the dependent index equality before reducing the assignment match.
+      cases hidx
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simp [hassign]
@@ -458,7 +458,24 @@ theorem prefixCylinder_free_mass_reindex
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
           rw [← Finset.sum_coe_sort]
-          rw [hCylinder]
+          let eCylinder :
+              {y : PrefixPoint C (k + 1) hk //
+                y ∈ prefixCylinder C hj H} ≃
+              {y : PrefixPoint C (k + 1) hk //
+                y ∈ prefixCylinder C hk H} :=
+            { toFun := fun y => ⟨y.1, hCylinder ▸ y.2⟩
+              invFun := fun y => ⟨y.1, hCylinder.symm ▸ y.2⟩
+              left_inv := by
+                intro y
+                apply Subtype.ext
+                rfl
+              right_inv := by
+                intro y
+                apply Subtype.ext
+                rfl }
+          apply Fintype.sum_equiv eCylinder
+          intro y
+          rfl
     _ = ∑ p :
         Σ x : {x : PrefixPoint C k
             (Nat.le_trans (Nat.le_succ k) hk) //
@@ -577,7 +594,24 @@ theorem prefixCylinder_fixed_mass_reindex
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
           rw [← Finset.sum_coe_sort]
-          rw [hCylinder]
+          let eCylinder :
+              {y : PrefixPoint C (k + 1) hk //
+                y ∈ prefixCylinder C hj H} ≃
+              {y : PrefixPoint C (k + 1) hk //
+                y ∈ prefixCylinder C hk H} :=
+            { toFun := fun y => ⟨y.1, hCylinder ▸ y.2⟩
+              invFun := fun y => ⟨y.1, hCylinder.symm ▸ y.2⟩
+              left_inv := by
+                intro y
+                apply Subtype.ext
+                rfl
+              right_inv := by
+                intro y
+                apply Subtype.ext
+                rfl }
+          apply Fintype.sum_equiv eCylinder
+          intro y
+          rfl
     _ = ∑ x : {x : PrefixPoint C k
           (Nat.le_trans (Nat.le_succ k) hk) //
           x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
