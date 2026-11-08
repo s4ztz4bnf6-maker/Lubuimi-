@@ -10,7 +10,37 @@
 
 ## 1. Research history: what the records establish
 
-Ta-Yoshua Lubuimi reports having worked on this research programme for months. The currently retrievable GitHub repository history begins on **2026-10-12**. The repository therefore independently verifies at least the period from 12 October through 8 November 2026; it does not, by itself, establish when the underlying mathematical investigation began. Earlier notebooks, local files, chat exports or dated drafts should be incorporated if recovered. No earlier start date is invented here.
+Ta-Yoshua Lubuimi reports having worked on this research programme for months. The currently retrievable GitHub repository history begins on **2026-10-12**, but dated ChatGPT research conversations independently document mathematical work beginning by **5 October 2026**. The repository therefore verifies the formalization/software phase from 12 October onward, while the earlier conversation record documents the exploratory Collatz/Syracuse phase. The researcher reports that the broader work began months earlier; the currently recovered dated evidence establishes at least 5 October, not a precise earlier start date. Earlier notebooks, local files, chat exports or dated drafts should be added if recovered.
+
+### 1.0 Before the repository: Collatz/Syracuse exploration (5–6 October 2026)
+
+The research did not begin with the BBMST repository. Earlier dated conversations document mathematical experimentation on the Collatz problem in its accelerated Syracuse form. This was exploratory mathematical work, not Lean formalization and not a completed proof.
+
+**5 October 2026 — block decomposition and valuation constraints.** The investigation considered representations
+`N_k = 2^{a_k}q_k - 1`, with
+`r_k = v_2(3^{a_k}q_k - 1)`,
+and derived/corrected the block relation
+`3^{a_k}q_k + 2^{r_k} - 1 = 2^{r_k+a_{k+1}}q_{k+1}`.
+The relation was tested against the concrete case `N=7`, yielding
+`(a_0,q_0,r_0,a_1,q_1)=(3,1,1,1,7)`.
+Several earlier index/recursion formulations were corrected in that process. The tail identity and local 2-adic/3-adic constraints did not produce a contradiction. The remaining proposed direction was a global inequality or drift mechanism coupling `a_k`, `r_k` and `a_{k+1}`. No Collatz proof or refutation was obtained.
+
+**6 October 2026 — exact Syracuse identities and budget–lattice audit.** The work was developed into an algebraic minimal-counterexample framework. The recorded identities included
+`u_{n+1}=(3u_n+1)/2^{k_{n+1}}`,
+`u_n=(3^n x_*+A_n)/2^{K_n}`,
+a budget upper bound `x_* ≤ U_n^*`, and a congruence condition
+`x_* ≡ c_n (mod 2^{K_n+1})`.
+The resulting compatibility test was expressed as
+`h_{K_n+1}(c_n) ≤ U_n^*`.
+The named **Budget–Lattice-Exclusion-Prinzip** was an attempted route from simultaneous congruence and size restrictions to exclusion of a nontrivial orbit. Its decisive universal step—showing that every integer-compatible infinite valuation path must eventually violate the budget—remained unproved.
+
+**6 October 2026 — statistical/ergodic direction and the “almost all” gap.** The discussion then compared the proposed pointwise goal with Terence Tao's logarithmic-density result for almost all Collatz orbits. The central logical distinction was made explicit: a density-one or “almost all” statement does not imply a statement for every positive integer. The proposed synthesis of 2-adic valuations, 3-adic phase structure and an archimedean budget did not establish the missing universal implication
+`∀ x > 1, ∃ n, Col^n(x) < x`.
+The contemporaneous conclusion was explicit: exact algebraic, valuation, budget and statistical controls had been explored, but the pointwise exclusion and hence a QED were not available.
+
+**How this relates to the later programme.** The researcher now identifies this earlier experimentation as part of the path that led into the later number-theoretic research programme. The dated 5–6 October conversation records establish the Collatz/Syracuse work and the methodological questions it raised; they do not, by themselves, document a direct mathematical derivation from Collatz to Erdős–Selfridge or BBMST. The first repository evidence for the latter begins on 12 October. The chronology therefore records the Collatz work as genuine intellectual prehistory while keeping the precise transition as a retrospective research-history account rather than inventing a theorem-level connection.
+
+This earlier work should be described in a CV/research statement as **independent exploratory research on Collatz/Syracuse dynamics, valuation constraints, congruence–budget compatibility and the gap between statistical and pointwise conclusions**—not as a solution of the Collatz conjecture.
 
 ### 1.1 12–13 October: reproducible upstream Lean audit
 
