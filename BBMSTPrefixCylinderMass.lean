@@ -249,12 +249,12 @@ theorem containsPrefix_extend_iff
       change
         (match H.assignment (stageCoordinate hk) with
          | none => True
-         | some s => t = s) at hlast
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s) at hlast
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           exact hlast
       | some s =>
-          exact hlast
+          simpa [extendPrefix_last] using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
