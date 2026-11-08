@@ -169,6 +169,15 @@ noncomputable def prefixCylinderMass
 
 #print axioms mem_prefixCylinder
 
+/-- The value of an extension at every old coordinate is unchanged. -/
+theorem extendPrefix_castSucc
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (t : C.S (stageCoordinate hk)) (i : Fin k) :
+    (extendPrefix C hk x t) (Fin.castSucc i) = x i := by
+  simp [extendPrefix, projectPrefix, liftPrefix, prefixIndex,
+    stageCoordinate, Function.update, i.isLt]
+
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
 the restriction, and the boundary constraint is precisely the assignment
@@ -184,40 +193,43 @@ theorem containsPrefix_extend_iff
          | none => True
          | some s => t = s) := by
   have hprev : k ≤ n := Nat.le_trans (Nat.le_succ k) hk
-  have hidx (i : Fin k) :
-      prefixIndex hk (Fin.castSucc i) = prefixIndex hprev i := by
-    apply Fin.ext
-    rfl
   constructor
   · intro h
     constructor
     · intro i
       have hi := h (Fin.castSucc i)
-      have hindex := hidx i
-      cases hindex
-      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update,
-        i.isLt] using hi
+      have hidx : prefixIndex hk (Fin.castSucc i) =
+          prefixIndex hprev i := by
+        apply Fin.ext
+        rfl
+      cases hidx
+      rw [extendPrefix_castSucc (C := C) hk x t i] at hi
+      exact hi
     · have hlast := h (Fin.last k)
-      cases hassign : H.assignment (stageCoordinate hk) with
-      | none => trivial
-      | some s =>
-          simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last] using hlast
+      have hlast' :
+          (match H.assignment (stageCoordinate hk) with
+           | none => True
+           | some s => t = s) := by
+        simpa [Hyperplane.ContainsPrefix, stageCoordinate,
+          extendPrefix_last] using hlast
+      exact hlast'
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
-      | none => simp [Hyperplane.ContainsPrefix, hassign]
-      | some s =>
-          simpa [Hyperplane.ContainsPrefix, prefixIndex, stageCoordinate,
-            hassign, extendPrefix_last] using hboundary
+    · have hboundary' :
+          (match H.assignment (prefixIndex hk (Fin.last k)) with
+           | none => True
+           | some s => t = s) := by
+        simpa [stageCoordinate] using hboundary
+      simpa [Hyperplane.ContainsPrefix, extendPrefix_last] using hboundary'
     · have hi := hold i
-      have hindex := hidx i
-      cases hindex
-      simpa [Hyperplane.ContainsPrefix, prefixIndex, extendPrefix,
-        projectPrefix, liftPrefix, stageCoordinate, Function.update,
-        i.isLt] using hi
+      have hidx : prefixIndex hk (Fin.castSucc i) =
+          prefixIndex hprev i := by
+        apply Fin.ext
+        rfl
+      cases hidx
+      rw [extendPrefix_castSucc (C := C) hk x t i]
+      exact hi
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
@@ -347,9 +359,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · have hlast := (extendPrefix_last C hk x t).symm
-      cases hlast
-      rfl
+    · exact (extendPrefix_last C hk x t).symm
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
