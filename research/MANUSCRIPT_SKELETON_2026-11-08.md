@@ -1,8 +1,8 @@
 # Working manuscript skeleton — BBMST Lean formalization
 
-**Working title:** A Lean 4 formalization of the square-free Erdős–Selfridge theorem: source correspondence and reproducible verification  
+**Working title:** A Lean 4 source audit and staged formalization project for the Erdős–Selfridge square-free-moduli problem  
 **Proposed author:** Ta-Yoshua Lubuimi  
-**Status:** structural draft only — not a submission-ready manuscript and not a claim that the theorem has been formalized completely.
+**Status:** structural draft only — not a submission-ready manuscript and not a claim that the BBMST square-free theorem has been formalized completely.
 
 > **Editorial hold:** Do not fill the abstract with a completion claim until the exact final theorem has compiled from a clean checkout, its full transitive axiom profile has been inspected, and the source-to-formal-statement correspondence has been independently reviewed.
 
@@ -81,3 +81,7 @@ D. AI and software disclosure details.
 - Step 16 target compile failed on commit 3ffe65b933222b135d4fa27cd8e6efa358aa8089 in run 42515743524, after all five prerequisites passed.
 - Concurrent full-audit runs 42515744015 and 42515750547 stopped at Step 16; later stages were skipped.
 - Integrated build, final theorem axiom audit, theorem-scope/source-fidelity review, and independent review remain outstanding.
+
+## Critical scope hold — 2026-11-08
+
+The pinned upstream `erdos_selfridge` declaration is unrestricted (no square-free hypothesis) and depends on two explicit axioms. It is not the theorem proved in BBMST 2021. The manuscript must not describe that declaration as the formalization of BBMST Theorem 1.1. A separate exact square-free theorem statement and its CRT/geometric correspondence must be formalized and transitively audited before the abstract or title makes a completion claim. See `BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`.
