@@ -461,7 +461,7 @@ theorem prefixCylinder_fixed_mass_reindex
           (extendPrefix C (by simpa [Nat.add_assoc] using hj) x s) := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by omega
+  have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
   let e := prefixCylinderExtensionEquivFixed C hk H s hfixed
   unfold prefixCylinderMass
   calc
@@ -568,7 +568,7 @@ noncomputable def hyperplaneSuffixFactor
     (j : ℕ) → (hj : a + j ≤ n) → ℚ
   | 0, _ => 1
   | j + 1, hj =>
-      hyperplaneSuffixFactor a δ H j (by omega) *
+      hyperplaneSuffixFactor a δ H j (Nat.le_trans (Nat.le_succ (a + j)) (by simpa [Nat.add_assoc] using hj)) *
         (if (H.assignment (stageCoordinate (by simpa [Nat.add_assoc] using hj))).isSome
          then distortionFactor C δ (stageCoordinate (by simpa [Nat.add_assoc] using hj))
          else 1)
