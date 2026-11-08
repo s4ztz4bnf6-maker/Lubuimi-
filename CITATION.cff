@@ -1,14 +1,17 @@
 cff-version: 1.2.0
-message: "If you use the APW4 research and formalization record, please cite it as follows."
+message: "If you use the APW4 research record and associated software artifacts, please cite this repository."
 title: "The APW4 Energy–Incidence Argument and Its Lean 4 Formalization"
 type: software
 authors:
   - family-names: "Lubuimi"
     given-names: "Ta-Yoshua"
 abstract: >-
-  Research and formalization record for the APW4 energy–incidence argument,
-  including the diagonal and off-diagonal transport results, the strict
-  energy lower-bound result, and associated Lean 4 verification artifacts.
+  Research record for the APW4 energy–incidence argument and its associated
+  Lean 4 artifacts. The mathematical dossier records diagonal transport,
+  off-diagonal transport, and the strict energy lower-bound result as
+  established. The repository contains declaration-scoped Lean verification
+  artifacts; the citation does not imply that every historical APW4 proof
+  component has been formalized in Lean.
 repository-code: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
 url: "https://github.com/s4ztz4bnf6-maker/Lubuimi-/tree/docs/apw4-publication-package-2026-11-08"
 keywords:
