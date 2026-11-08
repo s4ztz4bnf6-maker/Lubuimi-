@@ -86,7 +86,7 @@ theorem sum_extensions_eq_old_event_mass
             extendPrefix_last C hk x t
           simpa [F, baseMass, prefixFibreData, prefixUniformFibre,
             BBMSTUniformFibreInstantiation.toFibreData,
-            restrictPrefix_extendPrefix, hlast] using hlocal
+            restrictPrefix_extendPrefix, hlast] using hlocal.symm
     _ = baseMass := hlocalSum
 
 /-- For a prescribed value of the newly exposed coordinate, the mass of
