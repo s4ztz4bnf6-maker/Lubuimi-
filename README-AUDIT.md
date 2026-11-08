@@ -140,3 +140,8 @@ See [`research/BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`](research/BBMST_SOURCE_TO
 ## Reproducibility note
 
 At code snapshot `3ffe65b`, `lean-toolchain` pins Lean 4.28.0 and `lakefile.lean` requests Mathlib tag `v4.28.0`, but `lake-manifest.json` is not present. Current CI runs `lake update`; a release therefore still needs a reviewed, committed manifest pinning exact dependency revisions and a clean-checkout build against that lockfile. See the publication checklist.
+
+
+## Completed Steps 17–22 isolated reruns — 2026-11-08
+
+Direct reruns of the historical isolated jobs have now succeeded for all six steps: 17 (job `128842591881`), 18 (`128842605058`), 19 (`128842605996`), 20 (`128842622425`), 21 (`128842627032`), and 22 (`128842642270`). The logs show the standard declaration profile `[propext, Classical.choice, Quot.sound]` and no `sorryAx` or compiler error. Step 20 includes unused-variable warnings for four supplied hypotheses in a finite Fubini identity; see the source-to-Lean map and status dossier. These remain isolated jobs on their historical workflow commits, not one integrated build. Step 16 remains failed on `3ffe65b`, and the final square-free theorem scope and transitive audit remain open.
