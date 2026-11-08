@@ -1,0 +1,67 @@
+# Publication package preparation checklist
+
+**Project:** BBMST Lean Formalization and Source-Audit Project  
+**Research lead / formalization developer:** Ta-Yoshua Lubuimi  
+**Status date:** 2026-11-08  
+**Status:** preparation document; no completed theorem or publication is claimed.
+
+## Purpose
+
+Prepare the paper, software release, provenance record, and reproducibility package in parallel with the remaining Lean work. This document is deliberately a checklist, not a manuscript or a declaration that the proof is complete.
+
+## Release gates
+
+| Gate | Required evidence | Current state |
+|---|---|---|
+| G0 — Step 16 | Target module compiles on a pinned commit; inspect all relevant `#print axioms`; no `sorryAx` | **OPEN** — run 42515743524 failed on commit 3ffe65b |
+| G1 — integrated build | Clean checkout builds the complete intended dependency chain, not merely isolated modules | Not established |
+| G2 — final theorem audit | Name the exact final theorem; record its transitive axiom profile; exclude project-specific axioms and placeholders | Not established |
+| G3 — mathematical fidelity | Match each formal hypothesis and conclusion to the exact published square-free-moduli theorem; audit all premise use | Not established |
+| G4 — reproducibility | Immutable source snapshot, pinned toolchain/dependencies, clean build instructions, archived logs and audit output | In preparation |
+| G5 — independent review | Independent mathematician/formalization reviewer checks theorem scope, proof correspondence, and contribution claims | Not started |
+| G6 — release | Version tag, validated citation metadata, selected licence, archival DOI, final manuscript | Not ready |
+
+A successful G0 is necessary but not sufficient for G1–G6. In particular, successful compilation of Step 16 alone does not establish the final theorem's transitive axiom profile or source fidelity.
+
+## Manuscript package to prepare
+
+1. **Title and abstract:** use a working title only until the exact formalized theorem and contributions are fixed.
+2. **Theorem statement:** quote the precise square-free-moduli statement, including finiteness, pairwise distinctness, square-freeness, and modulus lower bound; do not describe it as the unrestricted Erdős–Selfridge conjecture.
+3. **Source correspondence:** table mapping each paper lemma/equation to the project definition/theorem, Lean file/declaration, and verified commit/run.
+4. **Proof architecture:** finite probability spaces and fibre masses; prefix recursion; hyperplane/prefix-cylinder geometry; moment bounds; rational certificates; final sieve and CRT steps. Include only components that survive the final audit.
+5. **Formal verification:** exact Lean/Mathlib versions, clean build commands, dependency pins, named final theorem, transitive `#print axioms`, and links to successful logs.
+6. **Limitations:** explicitly identify reconstructed definitions, assumptions, external certificates, unformalized steps, and any divergence from the published proof.
+7. **AI declaration:** state tools/models and concrete uses; distinguish AI suggestions from human mathematical decisions and kernel-checked terms. Reconcile model variants from the actual history before submission.
+8. **Author contributions:** document human research direction, theorem selection, source interpretation, proof review, Lean development, and final responsibility. Do not assign authorship to ChatGPT.
+9. **References and acknowledgements:** cite BBMST and all imported mathematical/software sources accurately.
+10. **Appendices:** declaration map, build transcript, audit output, certificate inputs/outputs/hashes, and a concise artifact README.
+
+## Human contribution and milestone evidence
+
+Maintain a separate provenance ledger with one row per contribution. Each row should contain: date; mathematical or engineering claim; first source commit; author-origin evidence (notes, issue, draft, or commit); exact definition and proof; relation to BBMST or other prior art; Lean declaration; CI run; and reviewer status. A commit proves that code existed at that revision; it does not by itself prove who originated the underlying mathematical idea or that the idea is novel.
+
+The currently defensible attribution is that Ta-Yoshua Lubuimi led the research direction and developed the formalization, subject to the detailed contribution ledger and source history. The original BBMST theorem and its published arguments remain attributed to their authors. AI assistance is disclosed as assistance, not authorship.
+
+## Separate publication routes
+
+- **Route A — formalization paper:** hold submission until G0–G5 pass and the paper's exact theorem statement is independently checked.
+- **Route B — interface audit note:** may be prepared separately around the pinned upstream source, the exact axiom interface, the finite witness, and the reproduction log. It must not claim a counterexample to BBMST or a disproof of the number-theoretic theorem. Independent review is required.
+
+## Patent / IP decision checkpoint
+
+The current outputs are mathematical and formal-verification artifacts. A theorem, proof, or abstract mathematical method is not a patent strategy by itself. A patent screening becomes relevant only if a distinct, concrete technical implementation solves a technical problem with a specific technical effect. If such an implementation is identified, consult patent counsel before public disclosure and keep patent inventorship separate from academic authorship and software copyright. See the preliminary legal screen in `PUBLICATION_READINESS_2026-11-08.md`.
+
+## Immediate next actions
+
+- [ ] Diagnose Step 16 from the exact dependent-match error; do not make a speculative patch.
+- [ ] Poll and archive the exact full-audit result on the same source commit.
+- [ ] Build the source-to-Lean correspondence table.
+- [ ] Populate the human contribution/provenance ledger from commit history and dated research notes.
+- [ ] Verify the target journal's current AI policy at submission time.
+- [ ] Select a licence only after deciding the intended reuse terms.
+- [ ] Prepare release scripts and a clean-checkout reproducibility workflow.
+- [ ] Obtain independent mathematical review before any strong theorem or novelty claim.
+
+## Publication timing
+
+The repository can be prepared now. A **complete-proof publication claim** cannot be made today on the current CI evidence: Step 16 failed, and the full-audit workflow skipped later stages. If the narrow interface-audit route is pursued, it needs a separately bounded claim and its own review; it is not a substitute for Route A.
