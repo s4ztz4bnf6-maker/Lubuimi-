@@ -337,3 +337,14 @@ The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has comple
 The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
 
 The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
+
+
+## 12.6 Latest Step 16 repair snapshot (2026-11-08)
+
+The next source snapshot is commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`. Its only source change relative to the previous Step 16 attempt is in `BBMSTPrefixCylinderMass.lean`: the boundary case split is now made on `H.assignment (stageCoordinate hk)`, and `stageCoordinate` is unfolded in the two boundary simplifications. This reflects the definition-level observation that `stageCoordinate hk` is the stage's appended coordinate, rather than introducing a separate transport lemma prematurely.
+
+The focused workflow [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still in progress at the last check. Checkout and Lean/Lake setup had completed; `leanprover/lean-action@v1` was active; the five prerequisites and Step 16 target compile had not yet run. Therefore this source adjustment is **not yet verified**.
+
+Two full-audit runs, [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547), were also active on the same commit. They are concurrent executions of the same audit workflow and must not be counted as independent mathematical replications. The earlier failed run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) remains the diagnostic baseline for the previous source revision only.
+
+No completed status is assigned to Step 16 until the target compile succeeds and the resulting axiom output is inspected. In particular, the presence or absence of `sorryAx` must be established from the successful declarations' transitive axiom traces, not inferred from source-text searches alone.

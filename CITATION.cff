@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this research software, please cite it using the metadata below."
+title: "Lean 4 research and formalization artifacts for the Erdős–Selfridge square-free-moduli problem"
+type: software
+authors:
+  - family-names: "Lubuimi"
+    given-names: "Ta-Yoshua"
+abstract: >-
+  Research software and Lean 4 formalization artifacts for the study, source
+  audit, and formal verification programme related to the Erdős–Selfridge
+  problem with square-free moduli. The repository includes staged Lean
+  developments, reproducible audit workflows, and research documentation.
+  The metadata identifies the research software contribution and does not
+  claim authorship of the original 2021 theorem.
+repository-code: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
+url: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
+keywords:
+  - "Lean 4"
+  - "formal verification"
+  - "Erdős–Selfridge problem"
+  - "covering systems"
+  - "square-free moduli"
+  - "mathematical software"

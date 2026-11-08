@@ -5,7 +5,8 @@
 **Snapshot:** 2026-11-08  
 **Repository:** https://github.com/s4ztz4bnf6-maker/Lubuimi-  
 **Branch:** `audit/step20-isolated-2026-11-08`  
-**Snapshot head:** `e230c4508b17fccfd006392b92d39b70d7f23ca6`
+**Previous failed code head:** `e230c4508b17fccfd006392b92d39b70d7f23ca6`  
+**Latest code snapshot under test:** `3ffe65b933222b135d4fa27cd8e6efa358aa8089`
 
 ## Executive status
 
@@ -73,3 +74,12 @@ Do not announce the overall proof as complete until Step 16 has passed on the fi
 Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) completed with failure on `e230c4508b17fccfd006392b92d39b70d7f23ca6`. The five prerequisites succeeded; the target did not. The remaining issue is dependent-index transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)`. The compiler diagnostics and `sorryAx` declarations are recorded in Section 12.5 of `BBMST_ProofObligations.md`.
 
 **No third patch is authorized by this status update.** The next code change must follow from inspection of the exact definitions and a derived equality/transport lemma, and must be limited to the demonstrated failing target.
+
+
+## Latest Step 16 rerun — commit 3ffe65b (status snapshot)
+
+A follow-up source repair was committed as [`3ffe65b`](https://github.com/s4ztz4bnf6-maker/Lubuimi-/commit/3ffe65b933222b135d4fa27cd8e6efa358aa8089). The change is confined to `BBMSTPrefixCylinderMass.lean`: it performs the boundary assignment case split at `stageCoordinate hk` and unfolds that definition while simplifying the last-coordinate condition.
+
+The focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still in progress at the last poll: checkout and Lean/Lake setup succeeded; the Lean action was active; the five prerequisites and Step 16 target compile were pending. The full audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) were also active on the same source commit. These overlapping runs are not independent confirmations.
+
+Accordingly, the new repair remains **OPEN — NOT YET VERIFIED**. The previous failure at `e230c450` is historical evidence for that earlier revision, not a verdict on `3ffe65b`. A final update must record the actual result and axiom output of run 42515743524.

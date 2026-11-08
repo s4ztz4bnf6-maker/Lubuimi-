@@ -4,7 +4,8 @@
 **AI assistance:** ChatGPT (OpenAI), transparently disclosed below  
 **Current status snapshot:** 2026-11-08  
 **Active branch:** `audit/step20-isolated-2026-11-08`  
-**Current head:** `e230c4508b17fccfd006392b92d39b70d7f23ca6`
+**Code snapshot reviewed:** `3ffe65b933222b135d4fa27cd8e6efa358aa8089`  
+**Documentation branch:** `docs/publication-readiness-2026-11-08`
 
 > **Status at a glance:** In the project's staged 1–22 work plan, steps 1–15 and 17–22 are recorded as completed; step 16 is the sole currently open stage. This is a stage-status statement, not a claim that the complete Erdős–Selfridge theorem or the full BBMST argument has already passed a single end-to-end, axiom-free audit.
 
@@ -14,7 +15,7 @@
 - Step 17: independent Lean compilation succeeded in run [42488903023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903023), at commit `125507564b4b6d89565d0d606ab0bd38951b158d`.
 - Steps 18, 19, 21 and 22: their isolated jobs succeeded in run [42488903065](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42488903065), at the same commit. The workflow explicitly says that prerequisites before each isolated step are assumed rather than re-certified by those jobs.
 - Step 20: the later isolated job succeeded in run [42513785862](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42513785862), at commit `9daa08aecc68ce9de0e086ca006dbc9980ab5ad0`. An earlier Step 20 job in run 42488903065 failed; the later successful run is the relevant subsequent evidence.
-- Step 16: open. The latest focused run is [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215), for head `e230c4508b17fccfd006392b92d39b70d7f23ca6`. It completed with failure: the five prerequisites passed, but Step 16 produced three dependent-index/type errors and the target axiom trace still contains `sorryAx` in dependent declarations.
+- Step 16: open. The previous focused run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) failed on the earlier head `e230c4508b17fccfd006392b92d39b70d7f23ca6`. A subsequent targeted repair is recorded at code commit `3ffe65b933222b135d4fa27cd8e6efa358aa8089`; focused run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still in progress at the last status check (Lean action active; prerequisite and target compile steps pending). Full-audit runs [42515744015](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515744015) and [42515750547](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515750547) were also in progress on the same commit; overlapping runs are not independent proof evidence.
 
 The successful isolated module logs print the standard Lean profile `[propext, Classical.choice, Quot.sound]` for the declarations shown in those logs. This is evidence about those declarations, not a transitive axiom audit of a final main theorem. In particular, the Step 20 log includes unused-variable warnings for some supplied hypotheses in the prefix-incidence bridge; compilation success does not by itself establish that every intended mathematical premise is actually used. That interface deserves a separate mathematical review.
 
@@ -25,6 +26,10 @@ It means that Step 16 is the only uncompleted item in this staged implementation
 ## Research authorship and AI-use disclosure
 
 The research direction, mathematical objectives, acceptance criteria, and final decisions are attributed to **Ta-Yoshua Lubuimi**. ChatGPT (OpenAI) was used as an AI-assisted research and formalization tool: to explore and compare alternative proof strategies, interpret Lean diagnostics, suggest candidate local repairs, help navigate source material, and assist with drafting and maintaining technical documentation. This collaboration supported iterative experimentation and the development of promising proof routes. It is not represented as an independent proof, a substitute for mathematical review, or a guarantee of novelty. The accepted Lean proof terms are checked by Lean's kernel; human responsibility remains for the correctness and source-faithfulness of the mathematical statements, assumptions, and interpretation of the results.
+
+## Publication and software citation
+
+See [`research/PUBLICATION_READINESS_2026-11-08.md`](research/PUBLICATION_READINESS_2026-11-08.md) for the publication roadmap, claim boundaries, AI-disclosure draft, archival plan, and external review checklist. The root [`CITATION.cff`](CITATION.cff) gives citation metadata for this research software artifact; it does not claim authorship of the 2021 BBMST paper.
 
 ## Primary references
 
@@ -108,3 +113,8 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## Latest Step 16 source snapshot
+
+The code snapshot reviewed for this documentation branch is `3ffe65b933222b135d4fa27cd8e6efa358aa8089`. It contains a single-file boundary-proof adjustment in `BBMSTPrefixCylinderMass.lean`: the case split is performed directly on `H.assignment (stageCoordinate hk)`, with `stageCoordinate` unfolded only when simplifying the boundary expression. The focused CI run [42515743524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515743524) was still running at the last check. No compile success is claimed for this revision.
