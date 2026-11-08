@@ -56,8 +56,9 @@ theorem eventUnion_mass_le_sum
                   (s := Finset.univ)
                   (f := fun j : Fin n =>
                     if x ∈ events j then w x else 0)
-                  (fun j hj _ => hnonneg j hj) hi
-              simpa [hxi] using hsingle
+                  (fun j hj => hnonneg j hj) hi
+              have hExists : ∃ a : Fin n, x ∈ events a := ⟨i, hxi⟩
+              simpa [Finset.mem_biUnion, hExists] using hsingle
             · simp [hu]
               apply Finset.sum_nonneg
               intro i hi
