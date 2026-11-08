@@ -225,27 +225,39 @@ theorem containsPrefix_extend_iff
       have hi := h (Fin.castSucc i)
       have h_idx := prefixIndex_castSucc hk i
       cases h_idx
-      simpa only [extendPrefix_castSucc] using hi
+      have hvalue := extendPrefix_castSucc C hk x t i
+      simpa only [hvalue] using hi
     · have hlast := h (Fin.last k)
-      have hboundary' :
-          (match H.assignment (stageCoordinate hk) with
-           | none => True
-           | some s => t = s) := by
-        simpa [stageCoordinate, extendPrefix_last] using hlast
-      exact hboundary'
+      change
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
+         | some s => (extendPrefix C hk x t) (Fin.last k) = s) at hlast
+      cases hassign : H.assignment (stageCoordinate hk) with
+      | none => simp [hassign]
+      | some s =>
+          have hvalue :
+              (extendPrefix C hk x t) (Fin.last k) = s := by
+            simpa [hassign] using hlast
+          simpa [hassign, extendPrefix_last] using hvalue
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · have hboundary' :
-          (match H.assignment (prefixIndex hk (Fin.last k)) with
-           | none => True
-           | some s => t = s) := by
-        simpa [stageCoordinate] using hboundary
-      simpa [extendPrefix_last] using hboundary'
+    · change
+        (match H.assignment (stageCoordinate hk) with
+         | none => True
+         | some s => t = s)
+          at hboundary
+      cases hassign : H.assignment (stageCoordinate hk) with
+      | none => simp [hassign]
+      | some s =>
+          have hvalue : t = s := by
+            simpa [hassign] using hboundary
+          simpa [hassign, extendPrefix_last] using hvalue
     · have hi := hold i
       have h_idx := prefixIndex_castSucc hk i
       cases h_idx
-      simpa only [extendPrefix_castSucc] using hi
+      have hvalue := extendPrefix_castSucc C hk x t i
+      simpa only [hvalue] using hi
 
 
 /-- In the free-coordinate case, the next cylinder contains exactly all
@@ -375,7 +387,7 @@ noncomputable def prefixCylinderExtensionEquivFree
     apply Sigma.ext
     · apply Subtype.ext
       exact restrictPrefix_extendPrefix C hk x t
-    · exact HEq.of_eq (extendPrefix_last C hk x t)
+    · exact heq_of_eq (extendPrefix_last C hk x t)
 
 /-- The mass of the next free-coordinate cylinder, reindexed by its exact
 old-cylinder/final-coordinate equivalence. This is the missing finite
@@ -440,8 +452,8 @@ theorem prefixCylinder_free_mass_reindex
         ∑ t : C.S (stageCoordinate hk),
           PAt C (A := A) a ha P0 δ (j + 1) hj
             (extendPrefix C hk x t) := by
-              rw [Finset.sum_attach]
-              simp
+              rw [← Finset.sum_attach]
+              simp [Nat.add_assoc]
 
 
 /-- If the newly exposed coordinate is fixed to s, the next cylinder is
