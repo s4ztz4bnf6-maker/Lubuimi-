@@ -48,3 +48,10 @@ Do not describe a subjective sense that AI “corrupted” the process in this t
 ## Current decision
 
 No claim of a complete proof, a new theorem, patentable invention, or publication-ready formalization is supported by the current evidence. The strongest present claims are the staged Lean results at their individually cited commits and the narrowly scoped upstream interface audit, each with the limitations recorded above.
+
+
+## 2026-11-08 scope and verification update
+
+A source-level review of the pinned upstream file confirms that the declaration named `erdos_selfridge` is unrestricted (its signature has no `CS_squarefree` premise) and invokes the explicit axioms `sieve_criterion` and `sf_sieve_lt_one`. Do not attribute a completed proof of the BBMST square-free theorem to this declaration. The exact theorem-scope correction and provisional source correspondence are recorded in `BBMST_SOURCE_TO_LEAN_MAP_2026-11-08.md`.
+
+Fresh reruns of historical CI jobs have been initiated for Steps 17–22. At the latest documented poll, Steps 19, 21 and 22 had rerun successfully; Steps 17, 18 and 20 were still running. Record each completed result only with its job ID, workflow run, source commit, actual log and printed axiom profile. These isolated module reruns do not establish a full theorem proof.
