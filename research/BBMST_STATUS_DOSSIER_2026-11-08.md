@@ -139,3 +139,17 @@ The GitHub rerun endpoint accepted direct reruns of the previously successful is
 The earlier Step 20 failure job `128842606683` remains visible as the historical failed attempt in run 42488903065; the later Step 20 workflow run 42513785862 is the one being rerun. Logs for the three still-running jobs were not yet available at the last poll. Do not report them as passed until the job completes and its compile/axiom output is inspected. The three completed reruns show the standard profile `[propext, Classical.choice, Quot.sound]` in their declaration traces and no `sorryAx` in the captured output.
 
 These jobs rerun the historical workflow commits. The relevant Lean source files are unchanged through `3ffe65b`, but there is still no single integrated run of Steps 17–22 on one common commit, and none of these jobs incorporates Step 16.
+
+
+## 12.10 Completed rerun update — latest verified logs, 2026-11-08
+
+Steps 17 and 18 have now also completed successfully in their direct reruns:
+
+- Step 17 job `128842591881` in run `42488903023`: **success**; the `BBMSTPrefixMomentBridge` declarations were printed with `[propext, Classical.choice, Quot.sound]`.
+- Step 18 job `128842605058` in run `42488903065`: **success**; the `BBMSTHyperplaneFibreIncidence` declarations were printed with `[propext, Classical.choice, Quot.sound]`.
+- Step 19 job `128842605996`: **success**.
+- Step 21 job `128842627032`: **success**.
+- Step 22 job `128842642270`: **success**.
+- Step 20 job `128842622425` in run `42513785862`: still **in progress**, compiling its prerequisites; the Step 20 target compile has not yet been confirmed in this rerun.
+
+The complete logs for the five completed jobs were checked: the expected standard profile was printed for the relevant declarations, no `sorryAx` string occurred, and no compiler `error:` line occurred. These are five successful isolated module reruns, not a complete end-to-end theorem audit. Step 20 remains pending, Step 16 remains failed on `3ffe65b`, and the unrestricted-vs-square-free theorem-scope correction remains a separate hard gate.
