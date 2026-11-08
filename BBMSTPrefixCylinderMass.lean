@@ -203,6 +203,25 @@ theorem extendPrefix_castSucc
   -- well-typed motive because the coordinate type depends on the index.
   simpa [hidx, Function.update, hne] using hbase
 
+/-- Extracting the final-coordinate condition from prefix containment.
+The assignment is split at the canonical final index, so the dependent
+Option match is eliminated before any transport through stageCoordinate. -/
+theorem containsPrefix_last_condition
+    {k : ℕ} (hk : k + 1 ≤ n)
+    (H : Hyperplane C)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (t : C.S (stageCoordinate hk))
+    (h : H.ContainsPrefix hk (extendPrefix C hk x t)) :
+    (match H.assignment (stageCoordinate hk) with
+     | none => True
+     | some s => t = s) := by
+  have hlast := h (Fin.last k)
+  cases hassign : H.assignment (prefixIndex hk (Fin.last k)) with
+  | none =>
+      simpa [hassign, stageCoordinate] using hlast
+  | some s =>
+      simpa [hassign, stageCoordinate, extendPrefix_last] using hlast
+
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
 the restriction, and the boundary constraint is precisely the assignment
@@ -251,26 +270,15 @@ theorem containsPrefix_extend_iff
           have hx : x i = Eq.mpr (congrArg C.S hidx) s := by
             simpa [hvalue] using hi'
           simpa [hidx] using hx
-    · have hlast := h (Fin.last k)
-      cases hassign : H.assignment (stageCoordinate hk) with
-      | none =>
-          simp [stageCoordinate_eq_prefixIndex, hassign] at hlast ⊢
-      | some s =>
-          have hlast' : t = s := by
-            simpa only [stageCoordinate_eq_prefixIndex, extendPrefix_last,
-              hassign] using hlast
-          exact hlast'
+    · exact containsPrefix_last_condition (C := C) hk H x t h
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · cases hassign : H.assignment (stageCoordinate hk) with
+    · cases hassign : H.assignment (prefixIndex hk (Fin.last k)) with
       | none =>
-          simp [stageCoordinate_eq_prefixIndex, hassign] at hboundary ⊢
+          simpa [hassign, stageCoordinate] using hboundary
       | some s =>
-          have hboundary' : t = s := by
-            simpa only [stageCoordinate_eq_prefixIndex, hassign] using hboundary
-          simpa [stageCoordinate_eq_prefixIndex, extendPrefix_last,
-            hassign] using hboundary'
+          simpa [hassign, stageCoordinate] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
