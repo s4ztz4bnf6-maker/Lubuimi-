@@ -36,3 +36,12 @@ The published BBMST theorem concerns arithmetic progressions with pairwise disti
 A successful module compile is not a complete theorem proof. Each reported result is tied to an exact commit and CI job. Final acceptance requires a successful integrated build, the exact intended theorem statement, transitive `#print axioms` output, no `sorryAx` or project-specific axioms in the final dependency closure, source-faithfulness review, and reproducible dependency pins.
 
 ChatGPT is disclosed as an AI-assisted research tool, not as an author or independent verifier. The original BBMST theorem remains attributed to its published authors.
+
+
+## Latest integrated verification — 2026-11-08
+
+**Current verified code commit:** [436a2e387bb774ee2d31d5dc8908ec3cfdb06150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/commit/436a2e387bb774ee2d31d5dc8908ec3cfdb06150).
+
+Step 16 variant B, the five-prerequisite foundation regression, and the full ordered module audit all completed successfully on that exact same commit: [Step 16 run 42522617423](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617423), [foundation run 42522617399](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617399), [full ordered audit 42522617494](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494). Step 16 is no longer an open compilation blocker in this tested chain. The exact final square-free BBMST theorem, its CRT/source correspondence, clean dependency lock, final transitive theorem audit and independent review remain separate publication gates.
+
+The authoritative commit-bound report, axiom counts, upstream exceptions, attribution rules, publication roadmap and academic/financial next steps are recorded in [the integrated-build PASS addendum](research/INTEGRATED_BUILD_PASS_AND_PUBLICATION_ROADMAP_2026-11-08.md). This dated addendum supersedes earlier stale “Step 16 open/failed” status snapshots while preserving them as historical diagnostics.
