@@ -252,14 +252,15 @@ theorem containsPrefix_extend_iff
       have hlast := h (Fin.last k)
       -- Eliminate the dependent index equality before inspecting the
       -- assignment: its value type depends on the coordinate index.
-      cases hidx
+      rw [hidx] at hlast
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
-          simp [hassign] at hlast
+          simpa [hassign] using hlast
       | some s =>
           have hvalue :
-              (extendPrefix C hk x t) (Fin.last k) = s := hlast
-          simpa [hassign, extendPrefix_last] using hvalue
+              (extendPrefix C hk x t) (Fin.last k) = s := by
+            simpa [hassign] using hlast
+          simpa [extendPrefix_last] using hvalue
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
@@ -267,16 +268,15 @@ theorem containsPrefix_extend_iff
           prefixIndex hk (Fin.last k) = stageCoordinate hk := by
         apply Fin.ext
         simp [prefixIndex, stageCoordinate]
-      -- Eliminate the dependent index equality before reducing the
-      -- assignment match.
-      cases hidx
+      -- Rewrite the boundary coordinate before reducing the assignment match.
+      rw [hidx]
       cases hassign : H.assignment (stageCoordinate hk) with
       | none =>
           simp [hassign]
       | some s =>
           have hvalue : t = s := by
             simpa [hassign] using hboundary
-          simpa [hassign, extendPrefix_last] using hvalue
+          simpa [extendPrefix_last] using hvalue
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
@@ -447,6 +447,9 @@ theorem prefixCylinder_free_mass_reindex
   let k := a + j
   have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
   let e := prefixCylinderExtensionEquivFree C hk H hfree
+  have hCylinder : prefixCylinder C hj H = prefixCylinder C hk H := by
+    ext y
+    simp [prefixCylinder, k, Nat.add_assoc]
   unfold prefixCylinderMass
   calc
     (∑ y ∈ prefixCylinder C hj H,
@@ -455,7 +458,7 @@ theorem prefixCylinder_free_mass_reindex
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
           rw [← Finset.sum_coe_sort]
-          simp [k, Nat.add_assoc, prefixCylinder]
+          rw [hCylinder]
     _ = ∑ p :
         Σ x : {x : PrefixPoint C k
             (Nat.le_trans (Nat.le_succ k) hk) //
@@ -490,8 +493,12 @@ theorem prefixCylinder_free_mass_reindex
         ∑ t : C.S (stageCoordinate hk),
           PAt C (A := A) a ha P0 δ (j + 1) hj
             (extendPrefix C hk x t) := by
-              rw [Finset.sum_coe_sort]
-              simp [Nat.add_assoc]
+              exact (Finset.sum_subtype
+                (prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H)
+                (fun x => Iff.rfl)
+                (fun x => ∑ t : C.S (stageCoordinate hk),
+                  PAt C (A := A) a ha P0 δ (j + 1) hj
+                    (extendPrefix C hk x t))).symm
 
 
 /-- If the newly exposed coordinate is fixed to s, the next cylinder is
@@ -559,6 +566,9 @@ theorem prefixCylinder_fixed_mass_reindex
   let k := a + j
   have hk : k + 1 ≤ n := by simpa [k, Nat.add_assoc] using hj
   let e := prefixCylinderExtensionEquivFixed C hk H s hfixed
+  have hCylinder : prefixCylinder C hj H = prefixCylinder C hk H := by
+    ext y
+    simp [prefixCylinder, k, Nat.add_assoc]
   unfold prefixCylinderMass
   calc
     (∑ y ∈ prefixCylinder C hj H,
@@ -566,8 +576,8 @@ theorem prefixCylinder_fixed_mass_reindex
       ∑ y : {y : PrefixPoint C (k + 1) hk //
           y ∈ prefixCylinder C hk H},
         PAt C (A := A) a ha P0 δ (j + 1) hj y.1 := by
-          rw [← Finset.sum_attach]
-          simp [k, prefixCylinder]
+          rw [← Finset.sum_coe_sort]
+          rw [hCylinder]
     _ = ∑ x : {x : PrefixPoint C k
           (Nat.le_trans (Nat.le_succ k) hk) //
           x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H},
@@ -595,8 +605,11 @@ theorem prefixCylinder_fixed_mass_reindex
     _ = ∑ x ∈ prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H,
         PAt C (A := A) a ha P0 δ (j + 1) hj
           (extendPrefix C hk x s) := by
-            rw [Finset.sum_coe_sort]
-            simp
+            exact (Finset.sum_subtype
+              (prefixCylinder C (Nat.le_trans (Nat.le_succ k) hk) H)
+              (fun x => Iff.rfl)
+              (fun x => PAt C (A := A) a ha P0 δ (j + 1) hj
+                (extendPrefix C hk x s))).symm
 
 
 /-- One-step conservation of the hyperplane-cylinder mass when the
