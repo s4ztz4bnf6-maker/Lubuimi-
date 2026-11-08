@@ -206,10 +206,9 @@ theorem extendPrefix_castSucc
 /-- Exact geometric decomposition of a hyperplane cylinder when one
 coordinate is appended: all old-coordinate constraints are inherited by
 the restriction, and the boundary constraint is precisely the assignment
-at the newly exposed coordinate. -/
-/-- The stage coordinate is the final coordinate of the extended prefix.
-This equality is stated explicitly so dependent assignment values can be
-transported between the two presentations. -/
+at the newly exposed coordinate. The stage coordinate is the final
+coordinate of the extended prefix; this equality is stated explicitly so
+dependent assignment values can be transported between the two presentations. -/
 theorem stageCoordinate_eq_prefixIndex
     {k : ℕ} (hk : k + 1 ≤ n) :
     stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
@@ -253,17 +252,19 @@ theorem containsPrefix_extend_iff
             simpa [hvalue] using hi'
           simpa [hidx] using hx
     · have hlast := h (Fin.last k)
-      rw [← stageCoordinate_eq_prefixIndex hk] at hlast
-      cases hassign : H.assignment (stageCoordinate hk) with
+      cases hassign : H.assignment (prefixIndex hk (Fin.last k)) with
       | none =>
-          exact hlast
+          simpa [hassign, stageCoordinate] using hlast
       | some s =>
-          simpa [extendPrefix_last] using hlast
+          simpa [hassign, stageCoordinate, extendPrefix_last] using hlast
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · rw [stageCoordinate_eq_prefixIndex hk] at hboundary
-      simpa [extendPrefix_last] using hboundary
+    · cases hassign : H.assignment (prefixIndex hk (Fin.last k)) with
+      | none =>
+          simpa [hassign, stageCoordinate, extendPrefix_last] using hboundary
+      | some s =>
+          simpa [hassign, stageCoordinate, extendPrefix_last] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
