@@ -6,10 +6,12 @@ This repository contains Lean 4 research software, staged formalization work, so
 
 ## Current status
 
-- Steps 17–22: six isolated reruns have succeeded; see the [status dossier](research/BBMST_STATUS_DOSSIER_2026-11-08.md).
-- Step 16: **open**. The latest repair candidate is on `fix/step16-dependent-boundary-transport-2026-11-08`; its focused CI run [42518133266](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42518133266) failed at two dependent-coordinate `change` steps after all five prerequisites compiled.
-- Steps 1–5: a fresh rerun is pending confirmation of the authoritative step-to-file mapping. The five Step 16 prerequisites are not being relabelled as Steps 1–5.
-- Integrated build, final transitive axiom audit, exact square-free theorem target/CRT correspondence, locked dependency manifest and independent review remain open.
+- Numbered implementation ledger: Steps 1–15 and 17–22 are recorded complete; **Step 16 is the sole open numbered step**.
+- Step 16 repair candidate: branch `fix/step16-dependent-transport-v2-2026-11-08`, current CI head `2ea5983bb8627379873edda743e6b0249116274b`.
+- Focused Step 16 [run 42519816145](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816145), foundation [run 42519816133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816133), and full audit [run 42519816128](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519816128) were **in progress at the latest recorded poll**. No new Step 16 compiler result or axiom audit is yet available.
+- The current evidence ledger and exact acceptance criteria are in the [Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md).
+- Steps 1–5 retain their existing mapping/evidence caveat; the five Step 16 prerequisites are not relabelled as Steps 1–5.
+- Integrated theorem proof, exact square-free theorem/CRT correspondence and final transitive theorem audit remain distinct gates.
 
 ## Scientific scope
 
