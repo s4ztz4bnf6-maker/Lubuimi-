@@ -254,7 +254,7 @@ theorem containsPrefix_extend_iff
   · rintro ⟨hold, hboundary⟩
     intro i
     refine Fin.lastCases ?_ (fun i => ?_) i
-    · simpa only [stageCoordinate] using hboundary
+    · simpa only [stageCoordinate, extendPrefix_last] using hboundary
     · have hi := hold i
       have hidx := prefixIndex_castSucc hk i
       cases hassign : H.assignment (prefixIndex hprev i) with
