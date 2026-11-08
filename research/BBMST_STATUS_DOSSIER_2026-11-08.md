@@ -203,3 +203,15 @@ Interpretation is deliberately narrow: this is a failure to identify the *whole 
 The next planned proof step is to isolate the assignment case split at a single boundary index, establish the coordinate equality, and explicitly transport the dependent `C.S i` value before applying `extendPrefix_last`. This remains a design plan; no candidate patch has been compiled or accepted. The repair branch and all Lean source files remain unchanged by this dossier update.
 
 **Status:** Step 16 **OPEN — FAILED on 59a55e4**. Steps 1–5 remain unmapped to authoritative targets and have not been relabelled or rerun. The documentation-only update is on the publication-readiness branch; no integrated build, final transitive axiom audit, or theorem-scope gate is passed by this update.
+
+
+## Candidate transport repair — CI pending (2026-11-08)
+
+Repair commit: [`27090476ac778d1e512a2939920749770026e27a`](https://github.com/s4ztz4bnf6-maker/Lubuimi-/commit/27090476ac778d1e512a2939920749770026e27a). The only Lean source changed is `BBMSTPrefixCylinderMass.lean`. It adds the definitional coordinate equality `stageCoordinate_eq_prefixIndex` and rewrites the two boundary hypotheses in opposite directions to expose the dependent transport explicitly.
+
+Three workflows were started on this exact commit:
+- focused Step 16: [42519176511](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176511);
+- pre-Step-16 foundation regression: [42519176485](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176485);
+- ordered full audit: [42519176465](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42519176465).
+
+At the latest poll, all three remained in dependency installation / Lake manifest generation. **No Lean compile result is available yet.** Step 16 remains **OPEN — CANDIDATE PATCH, CI PENDING**. The candidate must not be called a successful repair until the focused target compile succeeds and its successful declaration axiom output is inspected. The active audit branch remains untouched; this update is documentation-only.
