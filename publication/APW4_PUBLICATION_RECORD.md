@@ -162,3 +162,12 @@ The author supplied the consolidated main manuscript *APW4: Diagonaltransport, g
 The mathematical status is explicit and unchanged: DT is proved; HT is proved; the global upper energy estimate is proved; the strict lower-bound implication is proved under the historical APW4 hypotheses; and the contradiction follows. The Lean/CI section describes only the named declarations, commit, and runs actually listed. A distinction between mathematical proof status and the scope of a particular Lean audit is not a downgrade of the mathematical results.
 
 This entry records the supplied manuscript as the current editorial baseline. It does not silently replace historical definitions, alter the source indexing, or claim that the listed seven Lean declarations alone encode every mathematical proof exposition.
+
+
+## 10. Publication roadmap and external formalization standards — 9 November 2026
+
+The current publication sequence and optional Palomar formalization route are recorded in [APW4_PUBLICATION_ROADMAP_AND_TAO_ALIGNMENT_2026-11-09.md](APW4_PUBLICATION_ROADMAP_AND_TAO_ALIGNMENT_2026-11-09.md).
+
+The roadmap distinguishes mathematical proof status from the scope of the seven named Lean declarations and their cited CI runs. It also records that Terence Tao's discussion of Palomar and formal verification is a useful methodological reference, not a personal endorsement or a universal certification standard. No claim of Tao approval or worldwide priority is made. Any priority claim requires a precise novelty statement, literature comparison, and independent expert assessment.
+
+The manuscript's mathematical results remain as stated in Sections 2–5 above. This editorial addition does not reopen, downgrade, or redefine DT, HT, the global upper estimate, the strict lower-bound implication, or the resulting contradiction.
