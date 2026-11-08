@@ -9,44 +9,44 @@ This branch preserves the APW4-specific mathematical record and its publication 
 ## Mathematical result recorded
 
 The APW4 energy has the exact decomposition
-`\mathcal E_{APW4}=D_{APW4}+C_{APW4}`.
-The mathematical dossier records the diagonal transport (DT),
-`D_{APW4}\le D_k^{BBMST}`,
+$\mathcal E_{APW4}=D_{APW4}+C_{APW4}$.
+The mathematical proof record establishes the diagonal transport (DT),
+$D_{APW4}\le D_k^{BBMST}$,
 and the off-diagonal transport (HT),
-`C_{APW4}\le\mathcal R_{BIB}`.
+$C_{APW4}\le\mathcal R_{BIB}$.
 Consequently,
-`\mathcal E_{APW4}\le D_k^{BBMST}+\mathcal R_{BIB}`.
+$\mathcal E_{APW4}\le D_k^{BBMST}+\mathcal R_{BIB}$.
 
-The dossier also records the strict lower-bound result, under its historical APW4 hypotheses,
-`B(M)=2M-\sigma(M)\le0\Rightarrow
-\mathcal E_{APW4}>D_k^{BBMST}+\mathcal R_{BIB}`.
+The strict lower-bound proof, under its historical APW4 hypotheses, establishes
+$B(M)=2M-\sigma(M)\le0\Rightarrow
+\mathcal E_{APW4}>D_k^{BBMST}+\mathcal R_{BIB}$.
 Together these two inequalities yield the contradiction in the stated parameter regime.
 
-These mathematical results are recorded as established in the research dossier. This branch does not replace the original proof records with newly invented definitions or substitute a canonical finite model for the historical APW4 objects.
+These are recorded as established mathematical results, with their proof expositions and historical definitions belonging to the author's APW4 proof record. This branch does not replace those proofs with newly invented definitions or substitute a canonical finite model for the historical APW4 objects.
 
 ## Formal artifacts in this repository
 
 The APW4 code snapshot on which the canonical APW4 checks were run is commit
-`64f38063ef179b3ea9aa0891b5fc04a4b0d7eb97`
-on branch `audit/apw4-diagonal-majorization-2026-11-04`.
+64f38063ef179b3ea9aa0891b5fc04a4b0d7eb97
+on branch audit/apw4-diagonal-majorization-2026-11-04.
 
 Recorded successful workflows on that exact commit:
 - [APW4 canonical majorization](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/41895530029)
 - [Lean audit](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/41895530064)
 
-The declarations and their reported standard axiom profile are listed in [the APW4 publication record](publication/APW4_PUBLICATION_RECORD.md). These logs establish exactly the declarations they compiled and audited; they are not silently extended to declarations outside that dependency closure.
+The declarations and their reported standard axiom profile are listed in [the APW4 publication record](publication/APW4_PUBLICATION_RECORD.md). These logs establish exactly the declarations they compiled and audited; they are not silently extended to declarations outside that dependency closure. This scope statement concerns only the cited machine-checking evidence; it does not downgrade or reopen the mathematical proof results stated above.
 
 A separate BBMST full ordered module audit is recorded on commit
-`436a2e387bb774ee2d31d5dc8908ec3cfdb06150`
+436a2e387bb774ee2d31d5dc8908ec3cfdb06150
 with runs [42522617423](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617423), [42522617399](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617399), and [42522617494](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494). This is a distinct code snapshot and workflow record for the documented ordered module chain, not one integrated run of all 22 numbered project steps. It must not be described as a direct kernel verification of the historical APW4 DT/HT instantiation unless the exact theorem-to-module dependency map establishes that correspondence.
 
-## Publication files
+## Publication files and PDF status
 
 - [APW4 publication record](publication/APW4_PUBLICATION_RECORD.md)
 - [Manuscript verification memorandum](publication/APW4_MANUSCRIPT_VERIFICATION_2026-11-08.md)
 - [Citation metadata](CITATION.cff)
 
-The author prepares and publishes the paper PDF separately. No PDF is generated or committed by this branch at this stage.
+**Publication update, 8 November 2026:** The author has informed this record that the complete manuscript PDF has now been independently finalized, published, and secured by the author. The PDF is not mirrored in this repository. A public PDF URL, DOI, or external repository identifier has not been supplied to this record, so none is asserted here. The manuscript's publication and custody remain the author's work and responsibility.
 
 ## Attribution
 
