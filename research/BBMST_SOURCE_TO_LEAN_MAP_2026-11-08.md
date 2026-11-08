@@ -82,3 +82,8 @@ The prior six Step 17–22 reruns remain isolated successes on historical workfl
 ## 8. Step-number mapping limitation
 
 The present source-to-Lean map documents the later mathematical modules, but does not identify authoritative target files/declarations for numbered Steps 1–5. Do not infer that they are the five prerequisites of Step 16. A fresh Steps 1–5 regression must be tied to the original numbered work-plan mapping before it is scheduled or reported.
+
+
+## Current Step 16 snapshot — 2026-11-08
+
+The authoritative current CI state is recorded in [the Step 16 current-status addendum](research/STEP16_CURRENT_STATUS_AND_DOSSIER_ADDENDUM_2026-11-08.md). It supersedes earlier “latest” or “pending” status statements in this document for the repair branch head `2ea5983bb8627379873edda743e6b0249116274b`. At the recorded poll, focused Step 16 run `42519816145`, foundation run `42519816133`, and full audit run `42519816128` were still in progress; no new Step 16 compiler result or axiom audit was available. Step 16 remains **OPEN — NOT VERIFIED**. Do not infer success or merge from an in-progress run.
