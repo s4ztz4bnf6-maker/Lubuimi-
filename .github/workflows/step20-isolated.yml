@@ -1,0 +1,39 @@
+name: Isolated Step 20 incidence bridge audit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  step20:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and generate lake manifest
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.28.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+      - name: Install dependencies and restore Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+      - name: Compile Step 20 prerequisites (excluding Step 16)
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTSieveAlignedCore.olean BBMSTSieveAlignedCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTUniformFibreInstantiation.olean BBMSTUniformFibreInstantiation.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTStageMomentCore.olean BBMSTStageMomentCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureRecursion.olean BBMSTPrefixMeasureRecursion.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMomentBridge.olean BBMSTPrefixMomentBridge.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTHyperplaneFibreIncidence.olean BBMSTHyperplaneFibreIncidence.lean
+          lake env lean -o .lake/build/lib/lean/BBMSTOldShadow.olean BBMSTOldShadow.lean
+      - name: Compile Step 20 concrete prefix-to-hyperplane incidence bridge
+        run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixIncidenceBridge.olean BBMSTPrefixIncidenceBridge.lean
