@@ -64,14 +64,14 @@ Accordingly, replace the manuscript's phrase “the entire architecture has been
 
 ## 5. The separate 22-module BBMST workflow
 
-The successful ordered workflow is tied to a different source snapshot:
+The successful full ordered audit is tied to a different source snapshot:
 
 - Commit: `436a2e387bb774ee2d31d5dc8908ec3cfdb06150`
 - Step 16: [42522617423](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617423)
 - Foundation regression: [42522617399](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617399)
 - Full ordered audit: [42522617494](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494)
 
-This workflow establishes the successful ordered module-build chain recorded for that BBMST project snapshot. It is not the APW4 canonical CI run and must not be cited as direct verification of the historical APW4 DT, HT, or strict lower-bound instantiation without a precise theorem-to-module dependency map.
+The full ordered audit compiled the documented dependency-ordered module sequence on that BBMST project snapshot. It is not a single integrated execution of all 22 numbered project steps: the records distinguish the ordered module chain from the separately checked historical isolated steps. It is not the APW4 canonical CI run and must not be cited as direct verification of the historical APW4 DT, HT, or strict lower-bound instantiation without a precise theorem-to-module dependency map.
 
 The full ordered audit also records four explicit upstream exceptions: `degenerate_axiom_acceptance`, `erdos_selfridge`, `sieve_criterion`, and `sf_sieve_lt_one`. The standard profile applies to the listed APW4 declarations and the specified Step 16/foundation declarations, not indiscriminately to every declaration in the full upstream-integrated audit.
 
