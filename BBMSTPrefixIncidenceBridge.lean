@@ -245,9 +245,12 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
         simpa [fixedCoords] using hq
       have hlt : q.val < boundary.val := by
         by_contra hnot
-        have hnone :
-            (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
-          simp [BBMSTOldShadow.oldShadow, not_lt.mp hnot]
+                  have hge : boundary.val ≤ q.val :=
+            Nat.le_of_not_gt hnot
+          have hnone :
+              (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
+            change (if q.val < boundary.val then H.assignment q else none) = none
+            rw [if_neg (not_lt.mpr hge)]
         simp [hnone] at hsome
       exact lt_of_lt_of_eq hlt hboundaryVal
     have hprefix := (containsPrefix_iff_full
@@ -288,9 +291,12 @@ theorem prefixCompatibleHyperplanes_iff_oldShadow
         simpa [fixedCoords] using hq
       have hlt : q.val < boundary.val := by
         by_contra hnot
-        have hnone :
-            (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
-          simp [BBMSTOldShadow.oldShadow, not_lt.mp hnot]
+                  have hge : boundary.val ≤ q.val :=
+            Nat.le_of_not_gt hnot
+          have hnone :
+              (BBMSTOldShadow.oldShadow boundary H).assignment q = none := by
+            change (if q.val < boundary.val then H.assignment q else none) = none
+            rw [if_neg (not_lt.mpr hge)]
         simp [hnone] at hsome
       exact lt_of_lt_of_eq hlt hboundaryVal
     have hproject :
