@@ -43,3 +43,8 @@ The hyperplane incidence obligations from the failed integrated build remain sep
 No historical APW4 definition is replaced by a convenient model object. The diagonal mass, off-diagonal mass and BIB pair reserve remain distinct until their explicit historical index-preserving maps and capacity bounds are proved in the relevant formalization.
 
 APW4 research and authorship: **Ta-Yoshua Lubuimi**. AI tools are assistants only, not authors or independent mathematical verifiers.
+
+
+## 6. Follow-up: documentation audit run completed
+
+Run `42723539932` has now completed successfully. Its audit job completed the audited upstream source compilation and focused degenerate-witness tests. The run checked the then-current documentation-branch commit `2be6cec71a783eb1293d32a70df4646a5616f71a`; subsequent documentation commits advanced PR #79's head. Therefore this successful run is recorded only for that exact earlier snapshot and is not evidence for the latest PR #79 head, nor is it an integrated BBMST/APW4 paranoid build.
