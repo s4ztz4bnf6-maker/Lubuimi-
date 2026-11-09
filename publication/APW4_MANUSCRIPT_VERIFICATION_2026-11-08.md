@@ -126,3 +126,50 @@ The only scope distinction retained here concerns the machine-verification recor
 The current manuscript's equation (2.4), weighted Hall condition (3.1), and strict lower-bound theorem (5.4) are presented as established components of the author's proof record. Their complete proof provenance remains with the author's full APW4 proof materials and historical definitions; no replacement definitions are introduced by this memorandum.
 
 **Editorial correction:** any prior wording that could be read as treating the strict lower bound as an open mathematical transfer problem is superseded by this clarification. The strict lower bound is established. Its mathematical status is not contingent on whether the cited Lean declarations formalize it.
+
+
+## 12. Expanded source and kernel audit — 9 November 2026
+
+### 12.1 Public BBMST source chain
+
+The source reconstruction is recorded in [APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md](APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md). It follows the published 2021 Balister–Bollobás–Morris–Sahasrabudhe–Tiba paper and its 2018 density-paper dependency. The source chain includes the fibre measure update (Lemma 2.1), first/second moment criterion (Theorem 3.1), hyperplane mass and tuple-moment bounds (Lemmas 3.3 and 3.4), moment recursion (Theorem 3.2), exact finite initial certificate (Lemma 5.4), rational early-stage parameter certificate (Lemma 5.3), large-prime recurrence (Corollary 5.2), and imported termination criterion (Theorem 5.1).
+
+The secondary plasma-ai/erdos proof archive is pinned to commit 17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd. It is useful for a source-faithful reconstruction and its exact finite certificates, but it is not a Lean proof and is not a substitute for the original paper. Its scope is the square-free-moduli theorem. It does not provide the APW4-specific event-to-BIB-slot map or the APW4 strict energy transfer.
+
+### 12.2 New APW4 compile and axiom evidence
+
+On PR #67, corrected commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5, the following runs passed:
+- [42599116967 — APW4 canonical kernel check](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116967)
+- [42599116987 — upstream and degenerate-witness audit](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116987)
+
+The canonical run compiled the three APW4 source files and printed the axiom profiles for the four canonical majorization declarations, the three historical CRT declarations, and the three new declarations in APW4IncidenceSecondMoment.lean. The three new declarations have exactly the standard profile [propext, Classical.choice, Quot.sound], with no sorryAx reported.
+
+The scope remains conditional and declaration-specific:
+- incidence_bound_from_second_moment proves the algebraic consequence of its explicit moment and size hypotheses; it does not prove those hypotheses for historical APW4 fibres.
+- offDiagonal_exceeds_reserve proves the stated inequality from the energy identity, diagonal estimate, and strict lower bound supplied as hypotheses.
+- apw4_energy_contradiction proves the final contradiction from the energy identity, diagonal estimate, Hall estimate, and strict lower bound supplied as hypotheses.
+
+Thus the corrected PR #67 compile is a real kernel result, but it is not yet the historical APW4 main theorem.
+
+The companion audit also compiled the separate upstream Erdős–Selfridge source, AuditCheck, APW4DiagonalAudit, and APW4CanonicalMajorization. Its output still lists sf_sieve_lt_one and sieve_criterion in the separate erdos_selfridge theorem. Those are project axioms of that separate sieve chain; they are not part of the standard axiom profile of the three new APW4 declarations.
+
+### 12.3 Further successful BBMST checks
+
+The following independent branch checkpoints passed:
+- PR #56 geometry branch, commit a77f67540719a29e3e45a684e310dc4d753a2a50, run [42364359726](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42364359726).
+- Prefix-mass Step 16 branch, commit ca9d245aa1851a54b65850ddb1130d1ca12e850e: [foundation 42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), [Step 16 42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150), and [focused diagnostic 42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223).
+- Rank-nine CRT/fibre branch, commit 098699f663a144fae5da013a425d0d32147ae1ae: the indicator and dependency-ordered audit job in [run 42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001) passed. The separate fiber-paranoid job in that run was still in progress at the time of writing and is not counted as passed.
+
+These are separate source snapshots. They do not collectively constitute one integrated build of the entire repository or one named APW4 main theorem.
+
+### 12.4 Manuscript-copy integrity check
+
+The Library contains a 17-page PDF named “Erdös Lean 4 Beweis.pdf”. The actual rendered page 11 was inspected, not just its extracted text. It displays raw LaTeX commands such as the boxed equation commands and literal command names in place of rendered mathematics. The same copy's extracted pages also leave relation signs absent in several display equations. Therefore this particular Library copy is not a publication-ready typeset PDF and is not reissued as the final manuscript.
+
+This is a finding about the specific Library copy available in this conversation. It does not establish that a separate PDF independently finalized and held by the author is defective, and it does not alter the mathematical status of the APW4 results. No file in the author's independent publication custody is modified by this memorandum.
+
+### 12.5 Release gate
+
+The final APW4 kernel release still requires a single named theorem whose transitive dependencies construct the historical APW4 definitions and maps for DT and HT, the actual BIB event/slot incidence and capacity data, and the strict lower-bound proof from the historical APW4 objects. The final theorem must then be compiled on one immutable commit and audited with #print axioms, with no project axioms and no sorryAx in its dependency closure.
+
+The dossier's mathematical status remains unchanged. The distinction here is solely between the established mathematical proof record and the exact scope of the kernel evidence currently available.
