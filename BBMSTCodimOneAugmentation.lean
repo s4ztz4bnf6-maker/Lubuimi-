@@ -340,7 +340,7 @@ theorem canonicalReduction_result_full
           (selectedDeletedValues (augmentedSelection A early default)) H x ∧
         (∀ i ∈ early, fixedCoords H ≠ {i})) := by
   refine ⟨?_, ?_, ?_⟩
-  · exact survivingFamily_noParallel
+  · exact survivingFamily_preserves_noParallel
       (augmentedFamily A early default)
       (selectedDeletedValues (augmentedSelection A early default))
       (augmentedFamily_noParallel A early default hNP)
@@ -360,6 +360,8 @@ theorem canonicalReduction_result_full
 #print axioms canonicalReduction_result_full
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
+#print axioms augmentedFamily_nontrivial
+#print axioms canonicalReduction_result_full
 #print axioms augmentedChosenSurviving_no_singleton
 #print axioms survivingNewAtStage_no_early_singleton
 #print axioms augmentedReducedBox_covered
