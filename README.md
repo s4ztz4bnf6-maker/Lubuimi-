@@ -176,3 +176,10 @@ Candidate fixes are now on PR #69 at commits f4f6fb5210d080a08fbf72682a29718d95a
 Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) failed in integrated-paranoid at BBMSTMomentRecurrence.lean:136, BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361, and BBMSTHyperplaneFibreIncidence.lean:347/454. The audit job had passed the upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate and finite-stage moment stages and was still compiling geometry.
 
 The product-induction argument order and dependent prefix/stage-coordinate proofs were refined on current PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is pending. Earlier successful checks and the mathematical APW4 status remain unchanged.
+
+
+### Fourth CI update — 10 November 2026
+
+Audit run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed only at BBMSTPrefixMeasureRecursion.lean:338/361. The integrated job also failed at the rational product argument order, prefix recursion and hyperplane stage-coordinate identities.
+
+Candidate fixes are on PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. Exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is in progress. Earlier successful APW4 checks and the mathematical proof status remain unchanged.
