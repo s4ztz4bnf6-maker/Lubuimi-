@@ -132,7 +132,7 @@ theorem stageFactorProduct_le_two_over_size_product
         intro j hj
         exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
           (hδ j) (hδhalf j) (hsize j))
-      have hnum : 0 ≤ (2 : ℚ) * z := by positivity
+      have hnum : 0 ≤ (2 : ℚ) * z := mul_nonneg (by norm_num) hz
       have hright : 0 ≤ 1 + 2 * z / size (a + 1 + m) := by
         have hdiv : 0 ≤ (2 : ℚ) * z / size (a + 1 + m) :=
           div_nonneg hnum (le_of_lt (hsize m))
