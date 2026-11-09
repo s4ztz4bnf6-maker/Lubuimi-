@@ -185,3 +185,12 @@ The complete updated source and verification record is consolidated in [APW4_Wis
 The Library also contains a three-page PDF named “Erdös Lean Deutsch.pdf”. Its typesetting is readable, but its content is an executive summary: it states the energy decomposition, DT, HT, and the strict lower bound without reproducing the historical fibre map, the weighted Hall incidence construction, or the intermediate arithmetic derivation. It also gives a compressed BIB-reserve expression whose identification with the reserve used in Dossier v1.5 is not established by that summary.
 
 Accordingly, neither available Library PDF is reissued as the complete final manuscript: the three-page file is a summary, while the accessible 17-page file has raw LaTeX commands visible on its rendered page 11. This concerns only these two Library copies and does not make any claim about a separate author-held publication copy. The mathematical APW4 status remains the one recorded in Dossier v1.5 §25.
+
+
+## 15. Integrated 34-module BBMST/APW4 audit
+
+PR #69 consolidates 34 BBMST/APW4 source modules from the prior prefix-mass, rank-nine CRT/fibre, codimension-one geometry, and APW4 branches into one isolated Lean 4.35.0 package. Every module is an explicit library root, the ResearchKernelAudit aggregator imports all modules, and CI explicitly runs lake build ResearchKernelAudit followed by lake check --paranoid. This corrects the earlier empty-check configuration.
+
+The current integrated workflow is [run 42600825252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600825252). At the time of this memorandum, the integrated paranoid job was still restoring the Mathlib cache and the separate audit job was compiling the BBMST source chain. No integrated paranoid success is claimed yet.
+
+Even if the integrated module package passes, it will establish compilation and kernel checking of those 34 modules, not the historical APW4 main theorem: the current APW4 contradiction still receives DT, HT, and the strict lower bound as hypotheses. The separate universal erdos_selfridge chain remains audited separately with its project axioms visible.
