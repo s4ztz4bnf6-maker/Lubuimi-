@@ -1168,3 +1168,44 @@ Der erfolgreiche Lean-4.28.0-Kernel-Compile aus PR #67 bleibt davon unabhängig 
 Vor dem integrierten CI-Lauf wurden alle 33 im Aggregator ResearchKernelAudit importierten Quellmodule einzeln über den GitHub-Quellstand abgerufen und auf direkte Deklarationszeilen der Form axiom, sorry oder admit geprüft. Der Scan fand in keinem der 33 Module eine solche direkte Deklaration.
 
 Das ist ausdrücklich nur ein statischer Quelltextscan. Er ersetzt weder Lean-Kompilierung noch die transitive Axiomprüfung. Die tatsächlichen Abhängigkeiten werden durch die laufenden Build-/Paranoid-Prüfungen und die vorhandenen #print axioms-Ausgaben geprüft. Der separate upstream erdos_selfridge-Strang wird nicht in diesen 33-Modulscan hineingerechnet; dort sind sf_sieve_lt_one und sieve_criterion weiterhin als Projektaxiome ausgewiesen.
+
+
+## 43. Original BBMST supplementary programs and outputs
+
+Die Originalautoren stellen zusätzlich zur 2021er Veröffentlichung eine eigene Supplement-Seite bereit: [Balister et al., supplementary material](https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html). Sie verlinkt:
+- coverlp.c: lineare Optimierung einer geeigneten Anfangswahrscheinlichkeit auf \([3]\times[5]\times[7]\times[11]\), ausdrücklich unter Verwendung des Gurobi Optimizers;
+- coverresults.txt: Konfigurationen mit Schranken oberhalb 9.018;
+- coverbounds.c: portables C-Programm zur Optimierung der sechzehn Parameter \(\delta_6,\ldots,\delta_{21}\) und zur Prüfung der ausreichenden Schranken aus dem ersten Programm;
+- coverasymp.c: Berechnung einer hinreichenden Schranke für \(f_{21}\) in Corollary 5.2 sowie Reproduktion von Tabelle 1 der 2018er Dichtearbeit;
+- coverasymres.txt: zugehörige Programmausgabe.
+
+Die C-Quelltexte sind über die Originalseite verlinkt, wurden in dieser Prüfung jedoch nicht zeilenweise auditiert oder neu kompiliert: Der Webzugriff stellte sie als text/x-csrc bereit und lieferte keinen Quelltextkörper. Die Beschreibung ihrer Funktion stammt daher ausschließlich aus dem Index der Originalautoren. Die Textausgaben und die bibliographischen Angaben waren abrufbar. Die Supplement-Programme sind keine Lean-Beweise und ersetzen nicht die analytische große-Primzahl-Abschätzung aus der 2018er Arbeit.
+
+Diese Ergänzung schließt eine bibliographische Lücke in der BBMST-Rekonstruktion: Anfangsverteilung, frühe \(\delta\)-Optimierung und \(f_{21}\)-Tail-Schranke besitzen publizierte Original-Supplements. Sie schließen nicht die APW4-spezifischen historischen Abbildungen \((x,u)\mapsto(k,I,J)\), die Ereignis-zu-BIB-Platz-Inzidenz, die gewichteten Hall-Kapazitäten oder die vollständige Zwischenrechnung von Satz 5.1. Aus den BBMST-Programmen folgt keine dieser APW4-Identifikationen.
+
+## 44. Aktualisierte Lean-4.35.0-Integration: reale Fehler und Reparaturversuch
+
+Der erste integrierte Lauf [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591) auf Commit a45ce4a604ff2ddcaed7b03b4cd86d450ee9f30d endete mit failure. Der upstream-/dependency-ordered Auditjob war erfolgreich; der integrierte Paranoidjob scheiterte beim Build an zwei konkreten Modulen:
+
+1. BBMSTMomentRecurrence.lean:118: Die Auswahl Finset.prod_le_prod verlangte MulLeftMono ℚ, das für \(\mathbb Q\) nicht zur Verfügung steht. Der Beweis benötigt stattdessen die Ringversion für nichtnegative Faktoren.
+2. BBMSTGeometryStageCore.lean:104: Ein abhängiger Gleichheitstransport reduzierte x (prefixIndex hk j) = cast s nicht auf die erwartete Gleichung x i = s.
+
+Der Log gab für zwei von der fehlgeschlagenen Momentenrekursion abhängige Deklarationen sorryAx aus. Dieser Befund wird nicht übergangen; die Integration war damit nicht bestanden.
+
+Auf Branch integration/bbmst-apw4-kernel-2026-11-09 wurden anschließend zwei gezielte Quellkorrekturen vorgenommen:
+- Commit b2d8c43002772d442c8f4b82f0b1877312acd558: Wechsel auf Finset.prod_le_prod₀, also die für nichtnegative Faktoren geeignete Ordnungslemma-Schnittstelle;
+- Commit c713aa4bd483d541df43aea36fda15e3fb1467c1: explizite Fallzerlegung des Indexgleichheitsbeweises (cases hidx) vor dem Reduzieren des abhängigen Casts.
+
+Die durch diese Commits ausgelösten integrierten Läufe [42602474355](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602474355) und [42602465766](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602465766) waren beim letzten Statusabruf noch in_progress; ein positiver Build- oder Paranoidbefund für Commit c713aa4… liegt deshalb noch nicht vor. Der Lauf 42602452786 wurde durch den unmittelbar folgenden Commit abgebrochen und wird nicht gezählt.
+
+Der separate APW4-only All-roots-Lauf [42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) war beim letzten Statusabruf ebenfalls noch in_progress. Der integrierte APW4/BBMST-Hauptsatz ist daher nicht als Lean-4.35.0-paranoid-geprüft auszuweisen.
+
+**Verifizierungsstatus:** Die erfolgreichen Lean-4.28.0-Läufe PR #67 (42599116967, 42599116987) und PR #56 (42601107408) bleiben gültige, commitgebundene Ergebnisse. Sie werden nicht durch den fehlgeschlagenen ersten Integrationslauf aufgehoben. Umgekehrt dürfen sie nicht zu einem bestandenen integrierten 4.35.0-Projektcheck hochgerechnet werden.
+
+## 45. Manuskriptintegrität und Publikationsgrenze
+
+Die am 8. November hochgeladene 17-seitige PDF-Kopie Erdös Lean 4 Beweis.pdf wurde vollständig textuell durchgesehen. Auf Seite 11 fehlen in der zentralen Ungleichung die Relation und auf weiteren Seiten sind in mehreren Displayformeln Gleichheits- oder Ungleichheitszeichen nicht zuverlässig gesetzt bzw. extrahiert. Das betrifft nicht nur ein kosmetisches Problem: Die strikte Richtung in Satz 5.1 muss im gesetzten Manuskript sichtbar und korrekt sein. Die zugängliche PDF-Kopie wird deshalb nicht als veröffentlichungsfertige Endfassung erneut ausgegeben.
+
+Inhaltlich dokumentiert die PDF Satz 5.1 als abgeschlossenen mathematischen APW4-Baustein und verweist auf die historische APW4-Form. Sie druckt die vollständige Zwischenrechnung des arithmetischen Untergrenzenschlusses jedoch nicht aus. Die Dossierkorrektur v1.5, Nachtrag 1.3, §25 bleibt maßgeblich und hält den mathematischen Satz für bewiesen. Dieser Status wird hier ausdrücklich nicht zurückgestuft. Zugleich wird die fehlende ausgeschriebene Herleitung nicht durch eine erfundene Rechnung ersetzt.
+
+Eine neue, saubere Begleitfassung kann die exakten Energieidentitäten, DT-/HT-Schnittstellen, den vollständigen endlichen Zweitmoment-Eliminationsbeweis, die rekonstruierte BBMST-Quellenkette und den realen CI-Stand vollständig darstellen. Solange die historischen APW4-Definitionen und die vollständige Zwischenrechnung von Satz 5.1 nicht als Originalbeweistext vorliegen, darf eine solche Begleitfassung aber nicht als selbstständiges, in sich geschlossenes APW4-Beweismanuskript ausgegeben werden. Das ist eine Frage der Vollständigkeit der Beweisexposition, nicht eine Herabstufung des im Dossier §25 festgehaltenen mathematischen Resultats.
