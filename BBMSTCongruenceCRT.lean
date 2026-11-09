@@ -331,6 +331,17 @@ local instance instNewClassUncoveredFibreFintype
   classical
   exact Fintype.ofFinite _
 
+/-- Explicitly expose the canonical dependent-sum finite instance.
+The per-fibre instances above make the Sigma instance available. -/
+local instance instNewClassUncoveredFibresFintype
+    {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) :
+    Fintype (NewClassUncoveredFibres oldData newData hMq) := by
+  classical
+  unfold NewClassUncoveredFibres
+  infer_instance
+
 /-- Explicit finite instance for the incidence subtype. -/
 local instance instUncoveredNewIncidenceFintype
     {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
