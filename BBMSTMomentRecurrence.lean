@@ -115,13 +115,25 @@ theorem stageFactorProduct_le_two_over_size_product
     stageFactorProduct a m δ size z ≤
       ∏ j ∈ Finset.range m, (1 + 2 * z / size (a + 1 + j)) := by
   unfold stageFactorProduct
-  apply Finset.prod_le_prod
-  · intro j hj
-    exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j))
-  · intro j hj
-    exact stageFactor_le_two_over_size δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j)
+  induction m with
+  | zero =>
+      simp
+  | succ m ih =>
+      rw [Finset.prod_range_succ, Finset.prod_range_succ]
+      have hprodR :
+          0 ≤ ∏ j ∈ Finset.range m,
+            (1 + 2 * z / size (a + 1 + j)) := by
+        apply Finset.prod_nonneg
+        intro j hj
+        have hzj : 0 ≤ 2 * z / size (a + 1 + j) :=
+          div_nonneg (mul_nonneg (by norm_num) hz) (le_of_lt (hsize j))
+        linarith
+      have hfactorL : 0 ≤ stageFactor δ size z (a + 1 + m) :=
+        le_of_lt (stageFactor_pos δ size z (a + 1 + m) hz
+          (hδ m) (hδhalf m) (hsize m))
+      have hstep := stageFactor_le_two_over_size δ size z (a + 1 + m) hz
+        (hδ m) (hδhalf m) (hsize m)
+      exact mul_le_mul ih hstep hprodR hfactorL
 
 /-- The initial polynomial is nonnegative for nonnegative coefficients
 and nonnegative z. -/
