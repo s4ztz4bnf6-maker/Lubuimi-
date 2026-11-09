@@ -35,12 +35,9 @@ theorem stageFactorProduct_succ
     (a m : ℕ) (δ size : ℕ → ℚ) (z : ℚ) :
     stageFactorProduct a (m + 1) δ size z =
       stageFactorProduct a m δ size z *
-        stageFactor δ size z (a + m + 1) := by
+        stageFactor δ size z (a + 1 + m) := by
   unfold stageFactorProduct
   rw [Finset.prod_range_succ]
-  congr 1
-  congr 1
-  omega
 
 /-- Exact recurrence c_{k+1}(z) = c_k(z) times the next-coordinate factor. -/
 theorem cK_succ
@@ -48,7 +45,7 @@ theorem cK_succ
     (δ size : ℕ → ℚ) (z : ℚ) :
     cK a (m + 1) c δ size z =
       cK a m c δ size z *
-        stageFactor δ size z (a + m + 1) := by
+        stageFactor δ size z (a + 1 + m) := by
   unfold cK
   rw [stageFactorProduct_succ]
   ring
@@ -119,13 +116,9 @@ theorem stageFactorProduct_le_two_over_size_product
       simp [stageFactorProduct]
   | succ m ih =>
       rw [stageFactorProduct_succ, Finset.prod_range_succ]
-      have hindex : a + 1 + m = a + m + 1 := by omega
-      have hδm : 0 ≤ δ (a + m + 1) := by
-        simpa [hindex] using hδ m
-      have hδhalf_m : δ (a + m + 1) ≤ (1 / 2 : ℚ) := by
-        simpa [hindex] using hδhalf m
-      have hsize_m : 0 < size (a + m + 1) := by
-        simpa [hindex] using hsize m
+      have hδm : 0 ≤ δ (a + 1 + m) := hδ m
+      have hδhalf_m : δ (a + 1 + m) ≤ (1 / 2 : ℚ) := hδhalf m
+      have hsize_m : 0 < size (a + 1 + m) := hsize m
       have hleft : 0 ≤ stageFactorProduct a m δ size z := by
         unfold stageFactorProduct
         apply Finset.prod_nonneg
@@ -139,16 +132,13 @@ theorem stageFactorProduct_le_two_over_size_product
         linarith
       calc
         stageFactorProduct a m δ size z *
-            stageFactor δ size z (a + m + 1)
+            stageFactor δ size z (a + 1 + m)
             ≤ stageFactorProduct a m δ size z *
-                (1 + 2 * z / size (a + m + 1)) :=
+                (1 + 2 * z / size (a + 1 + m)) :=
               mul_le_mul_of_nonneg_left
                 (stageFactor_le_two_over_size δ size z
-                  (a + m + 1) hz hδm hδhalf_m hsize_m)
+                  (a + 1 + m) hz hδm hδhalf_m hsize_m)
                 hleft
-        _ = stageFactorProduct a m δ size z *
-              (1 + 2 * z / size (a + 1 + m)) := by
-              rw [hindex]
         _ ≤ (∏ j ∈ Finset.range m,
               (1 + 2 * z / size (a + 1 + j))) *
               (1 + 2 * z / size (a + 1 + m)) :=
@@ -216,7 +206,7 @@ theorem cKOne_succ
     (δ size : ℕ → ℚ) :
     cKOne a (m + 1) c δ size =
       cKOne a m c δ size *
-        (1 + 1 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+        (1 + 1 / ((1 - δ (a + 1 + m)) * size (a + 1 + m))) := by
   simpa [cKOne, stageFactor] using
     cK_succ a m c δ size (1 : ℚ)
 
@@ -225,7 +215,7 @@ theorem cKThree_succ
     (δ size : ℕ → ℚ) :
     cKThree a (m + 1) c δ size =
       cKThree a m c δ size *
-        (1 + 3 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+        (1 + 3 / ((1 - δ (a + 1 + m)) * size (a + 1 + m))) := by
   simpa [cKThree, stageFactor] using
     cK_succ a m c δ size (3 : ℚ)
 
