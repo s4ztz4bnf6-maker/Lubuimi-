@@ -1123,3 +1123,19 @@ Daher gilt:
 - Die siebzehnseitige Datei ist in der zugänglichen Library-Kopie an mindestens einer gerenderten Seite typografisch beschädigt (wörtliche LaTeX-Befehle).
 - Keine der beiden Library-Dateien wird als fertiges Vollmanuskript erneut veröffentlicht oder inhaltlich ergänzt, solange die vollständige historische Beweisexposition und eine saubere typeset Quelldatei nicht vorliegen.
 - Diese Dateibefunde betreffen nur die beiden konkreten Library-Kopien und ändern den mathematischen APW4-Status aus §25 nicht.
+
+
+## 39. Präzisierung: Balister Theorem 1.1 und die formale CRT-Inzidenz
+
+Die öffentliche Rekonstruktion von BBMST Theorem 1.1 beschreibt die exakte endliche CRT-Äquivalenz zwischen einer Überdeckung durch paarweise verschiedene quadratfreie Restklassen mit Moduli \(d_i>1\) und einer nichtparallelen, nichttrivialen Hyperflächenüberdeckung in einem Produkt über ungeraden Primzahlen. Die Bedingung \(d_i>1\) entspricht einer nichtleeren Fixkoordinatenmenge und darf nicht entfallen.
+
+Die formale CRT-Kette liegt im rank-nine-Branch:
+- BBMSTArithmeticCRT.crtEquiv, crt_cover_iff_every_fibre und not_cover_of_uncovered_fibre;
+- BBMSTCongruenceCRT.congruence_cover_iff_every_fibre, uncovered_residue_of_uncovered_fibre, actual_cross_layer_moduli_disjoint, projected_modulus_has_at_most_two_sources, fibre_capacity_at_base und full_fibre_cover_forces_capacity;
+- BBMSTFiniteProjection.fiberEquiv und fiber_mass_sum.
+
+Besonders relevant ist BBMSTCongruenceCRT.global_allocation_lower_bound zusammen mit incidence_card_eq_sum_of_class_supports und complete_cover_implies_global_support_inequality. Diese Sätze liefern eine exakte ungewichtete endliche Inzidenz-/Doppeltzählungsbilanz: Eine vollständige Zuordnung aller Paare aus alten unbedeckten Basisresten und neuen Koordinatenresten erzwingt eine Mindestzahl von Inzidenzen, die zugleich als Summe der Stützmengen der neuen Klassen gezählt wird.
+
+Das ist ein mathematisch echter Inzidenzbaustein und eine mögliche strukturelle Vorstufe für Kapazitätsargumente. Er ist aber nicht mit dem APW4-gewichteten Hall-Satz gleichzusetzen: Die Deklarationen konstruieren weder die APW4-gewichteten Ereignisse noch die BIB-Platzkapazitäten noch die historische APW4-Ereignis-zu-Platz-Abbildung. Insbesondere folgt aus einer ungewichteten Kardinalitätsbilanz nicht automatisch die gewichtete Reserve \(\mathcal R_{\mathrm{BIB}}\).
+
+Der dependency-ordered Auditjob von CI 42595925001 hat die CRT-, Kongruenzklassen- und Faser-Module erfolgreich kompiliert und die benannten Axiomprofile ausgegeben. Der getrennte fiber-paranoid-Job endete als cancelled und wird nicht als erfolgreicher Paranoid-Check gezählt.
