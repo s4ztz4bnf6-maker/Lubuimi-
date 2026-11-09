@@ -533,3 +533,14 @@ x_{j+1}=2^{-a_j}(3x_j+1),\qquad x_0=0.
 Since 2 is a primitive root modulo \(3^k\), the transition matrix has explicit rational entries: for each unit y, take the unique \(r\in\{1,\ldots,2\cdot3^{k-1}\}\) with \(2^ry\equiv3x+1\), and set \(P_k(x,y)=2^{-r}/(1-2^{-2\cdot3^{k-1}})\). The terminal mass vector is \(m_k=\delta_0P_k^k\), and the collision energy is its squared Euclidean norm.
 
 At k=2, in unit-residue order 1,2,4,5,7,8 modulo 9, the exact mass vector is \((8,16,11,4,2,22)/63\), giving \(E_2=5/21\), diagonal mass \(D_2=1/9\), and collision mass \(8/63\). This is a finite rational matrix/second-moment object that is well suited to an APW4-style finite moment argument. It is still a Syracuse-specific model; mapping it to the historical APW4 BIB places and proving the corresponding capacity inequality remain open. No APW4 theorem is changed by this extension.
+
+
+## Addendum — Lean integration record, 10 November 2026
+
+This addendum updates only the formalization chronology; it does not alter the mathematical statements or proofs in the manuscript.
+
+The integrated BBMST/APW4 PR #69 head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` was checked by workflow run `42722133436`, which completed with failure in both audit and integrated-paranoid jobs. The audit job passed the upstream source, degenerate-witness, zero-safe fibre, weighted update, uniform-coordinate, finite-stage moment, geometry and uniform-stage source-moment steps, then failed at the source-indexed prefix recursion. The integrated-paranoid build also failed. The detailed line-level record is in `APW4_CI_RUN_42722133436_DIAGNOSTIC_2026-11-10.md`; the append-only cross-project status record is in `APW4_CI_STATUS_SNAPSHOT_2026-11-10.md`.
+
+The documentation PR #79 has its own separate workflow `42723539932`; it is a degenerate-witness audit, not the integrated-paranoid build. Its status must be read from the exact run record and not conflated with PR #69.
+
+Previously successful declaration-scoped APW4 checks remain valid for their exact commits and declarations. This integration failure neither invalidates those earlier checks nor changes the author's mathematical APW4 proof record. No successful full integrated `lake check --paranoid` is claimed here.
