@@ -307,10 +307,72 @@ theorem fiber_fourth_moment
             (f x) (f x') (f x'') (f x''')
             (w x) (w x') (w x'') (w x''')
 
+/-- Exact fourth-moment expansion for an arbitrary finite incidence family.
+Unlike a single-map fibre identity, this keeps each incidence set separate;
+the innermost sum is the weighted mass of the fourfold intersection. -/
+theorem fourth_incidence_moment
+    {X I : Type*} [Fintype X] [Fintype I]
+    (C : I → Finset X) (w : I → ℚ) :
+    (∑ x : X, (∑ i : I, if x ∈ C i then w i else 0) ^ 4) =
+      ∑ i : I, ∑ j : I, ∑ k : I, ∑ l : I, ∑ x : X,
+        (((if x ∈ C i then w i else 0) *
+          (if x ∈ C j then w j else 0)) *
+          (if x ∈ C k then w k else 0)) *
+          (if x ∈ C l then w l else 0) := by
+  classical
+  calc
+    (∑ x : X, (∑ i : I, if x ∈ C i then w i else 0) ^ 4)
+        = ∑ x : X, ∑ i : I, ∑ j : I, ∑ k : I, ∑ l : I,
+            (((if x ∈ C i then w i else 0) *
+              (if x ∈ C j then w j else 0)) *
+              (if x ∈ C k then w k else 0)) *
+              (if x ∈ C l then w l else 0) := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact sum_fourth_expand
+            (fun i : I => if x ∈ C i then w i else 0)
+    _ = ∑ i : I, ∑ x : X, ∑ j : I, ∑ k : I, ∑ l : I,
+          (((if x ∈ C i then w i else 0) *
+            (if x ∈ C j then w j else 0)) *
+            (if x ∈ C k then w k else 0)) *
+            (if x ∈ C l then w l else 0) := by
+          rw [Finset.sum_comm]
+    _ = ∑ i : I, ∑ j : I, ∑ x : X, ∑ k : I, ∑ l : I,
+          (((if x ∈ C i then w i else 0) *
+            (if x ∈ C j then w j else 0)) *
+            (if x ∈ C k then w k else 0)) *
+            (if x ∈ C l then w l else 0) := by
+          congr 1
+          funext i
+          rw [Finset.sum_comm]
+    _ = ∑ i : I, ∑ j : I, ∑ k : I, ∑ x : X, ∑ l : I,
+          (((if x ∈ C i then w i else 0) *
+            (if x ∈ C j then w j else 0)) *
+            (if x ∈ C k then w k else 0)) *
+            (if x ∈ C l then w l else 0) := by
+          congr 1
+          funext i
+          congr 1
+          funext j
+          rw [Finset.sum_comm]
+    _ = ∑ i : I, ∑ j : I, ∑ k : I, ∑ l : I, ∑ x : X,
+          (((if x ∈ C i then w i else 0) *
+            (if x ∈ C j then w j else 0)) *
+            (if x ∈ C k then w k else 0)) *
+            (if x ∈ C l then w l else 0) := by
+          congr 1
+          funext i
+          congr 1
+          funext j
+          congr 1
+          funext k
+          rw [Finset.sum_comm]
+
 #print axioms sum_cube_expand
 #print axioms sum_fourth_expand
 #print axioms sum_weighted_quad_indicator
 #print axioms fiber_fourth_moment
+#print axioms fourth_incidence_moment
 
 #print axioms secondMomentDenominator_pos
 #print axioms safeStageContribution_zero
