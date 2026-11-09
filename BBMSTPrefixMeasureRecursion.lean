@@ -172,6 +172,9 @@ theorem restrictPrefix_extendPrefix
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
     prefixIndex, stageCoordinate, Function.update, i.isLt]
+  all_goals
+    intro h
+    omega
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -203,7 +206,9 @@ theorem prefixPointCovered_iff
   have hExtend :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
-  simp [prefixPointCovered, prefixCoveredValues, hExtend]
+  simp only [prefixPointCovered, prefixCoveredValues, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  simpa [hExtend]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
