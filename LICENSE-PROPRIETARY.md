@@ -38,3 +38,10 @@ For written permission or licensing questions, contact the copyright holder thro
 ---
 
 This is a proprietary rights notice, not a standard open-source license and not a substitute for jurisdiction-specific legal advice. If the repository contains contributions or materials whose rights are held by others, obtain the necessary permissions before applying this notice to those materials.
+
+
+## Commercial licensing and remuneration
+
+The repository also publishes [LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md). It clarifies that public access is not commercial permission and that any commercial exploitation of the author's original materials requires prior express written permission under a separate agreement. A paid license may include an upfront fee, royalties, minimum guarantees, reporting, and audit provisions, with the actual terms negotiated for the proposed use.
+
+This policy does not create an automatic contractual royalty for every unauthorized use. Any contractual payment obligation depends on a signed agreement; infringement remedies are determined by applicable law and facts.
