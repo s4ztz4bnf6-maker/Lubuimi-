@@ -348,7 +348,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
-  split_ifs <;> ring
+  split_ifs <;> simp_all <;> ring
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
