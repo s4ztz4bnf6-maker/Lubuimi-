@@ -142,3 +142,39 @@ A full APW4 kernel release therefore requires, on one immutable release commit:
 6. a clean CI run on that exact commit, with no project axioms and no sorryAx in the target theorem's transitive dependency closure.
 
 This requirement does not alter the dossier's stated mathematical APW4 status. It defines the evidence needed before claiming complete kernel verification.
+
+
+## 7. Theorem 1.2: geometric reduction before the fibre-moment argument
+
+The public reconstruction's [Theorem 1.2](https://github.com/plasma-ai/erdos/blob/17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/theorem_1_2.md) makes the reduction preceding the moment argument explicit.
+
+Starting from a nonparallel nontrivial cover of an odd-prime box:
+
+1. Extend every hyperplane freely in additional coordinates if needed, so the last prime index is at least 21.
+2. For each early coordinate \(2\le i\le21\) without an existing singleton fixed-coordinate hyperplane, add one canonical singleton hyperplane. Nonparallelism ensures uniqueness when one already exists; adding a missing singleton preserves nonparallelism.
+3. Delete the unique selected value from each early coordinate. Since these are odd primes, each original coordinate has at least three values and the reduced coordinate has at least two.
+4. Restrict each old hyperplane to the reduced coordinate sets. Discard the added singleton hyperplanes and any empty intersections. Surviving hyperplanes retain their fixed-coordinate sets.
+5. The reduced family still covers the reduced product, is nonparallel, and has no singleton fixed-coordinate set in the early block.
+6. The fibre sieve and the finite certificates from Sections 2–5 then contradict the assumed cover.
+
+The converse integer/geometric correspondence is Theorem 1.1: the finite CRT map sends a square-free modulus \(d=\prod_{j\in F}p_j\) and residue class modulo \(d\) to the hyperplane fixing exactly the coordinates in \(F\). Distinct moduli correspond to distinct nonempty fixed sets. The source uses the standard finite CRT and unique prime factorization.
+
+### Exact Lean correspondence already present in PR #56
+
+The geometric reduction is not merely planned. The following source declarations in PR #56 implement its separate steps:
+
+- BBMSTCodimOneAugmentation.augmentedFamily_preserves_cover
+- BBMSTCodimOneAugmentation.augmentedFamily_noParallel
+- BBMSTCodimOneAugmentation.augmentedFamily_has_codimOne
+- BBMSTCodimOneAugmentation.augmentedReducedBox_covered
+- BBMSTCodimOneAugmentation.canonicalReduction_result
+- BBMSTCodimOneFamily.chooseEarlySelection
+- BBMSTCodimOneFamily.selectedDeletedValues_spec
+- BBMSTCodimOneFamily.survives_iff_meets_reduced_box_of_coordinateSystem
+- BBMSTPrimeCoordinateInstantiation.reduced_coordinate_card_ge_two
+
+The last declaration uses odd primality to show that deleting one value leaves at least two values in each reduced coordinate. The combined canonicalReduction_result gives the source-level cover of the reduced product by surviving hyperplanes with no early singleton fixed-coordinate set.
+
+These modules compiled on commit a77f67540719a29e3e45a684e310dc4d753a2a50 in [CI run 42364359726](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42364359726). The output records the standard axiom profile for the named declarations. This closes the geometric reduction checkpoint represented by Theorem 1.2 under the explicit coordinate-system and nonparallel-cover hypotheses.
+
+It does not yet integrate that reduction with the full fibre-moment/tail chain in one build, and it does not prove the APW4-specific DT/HT or strict-energy transfer. The distinction between a formally checked source reduction and the later APW4 energy argument remains mandatory.
