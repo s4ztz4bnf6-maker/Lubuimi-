@@ -348,7 +348,7 @@ theorem actualStageFirstMoment_eq
   classical
   simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, Finset.card_univ]
+    coveredProportion, uniformWeight, Finset.card_univ]
 
 /-- The first moment is bounded by the expected number of new
 hyperplanes whose old-coordinate shadow contains the base point, divided
@@ -447,7 +447,7 @@ theorem actualStageSecondMoment_eq
   classical
   simp [uniformStageSecondMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageSecondMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, Finset.card_univ]
+    coveredProportion, uniformWeight, Finset.card_univ]
 
 /-- The second moment is bounded by the second moment of the number
 of new hyperplanes whose old-coordinate shadows contain the base point,
