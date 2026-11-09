@@ -17,6 +17,7 @@ on:
     paths:
       - "APW4CanonicalMajorization.lean"
       - "APW4HistoricalCRTCore.lean"
+      - "APW4IncidenceSecondMoment.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - "lake-manifest.json"
