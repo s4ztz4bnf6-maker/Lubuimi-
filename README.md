@@ -215,3 +215,8 @@ New exact-head run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/ac
 ### Latest APW4 integration status — 10 November 2026
 
 Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) failed in both jobs on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product error is no longer present. The remaining errors are in `BBMSTPrefixMeasureRecursion.lean:171/184/209/337/360` and `BBMSTHyperplaneFibreIncidence.lean:347/450`; dependent error-recovery declarations showed `sorryAx`. No successful integrated build or paranoid pass is claimed. New candidate head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` is being checked in run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436), which was in progress at the latest retrieval. Earlier positive checks and APW4 mathematical results remain unchanged. See Dossier v1.6, Addendum 1.9.
+
+
+### New APW4 bridge candidate — terminal-residue collision energy
+
+The Collatz/Syracuse project now defines a finite-place incidence map from each length-k valuation word to a terminal unit residue modulo 3^k. Its weighted second moment has an exact diagonal/off-diagonal split, with diagonal 3^-k and off-diagonal collision mass at least 1/(2·3^k). This is a concrete APW4-style structure, but its collision term is not identified with the historical BIB reserve. An index-preserving map to original APW4 event/place objects and a capacity/Hall proof remain necessary. See Dossier v1.6, Addendum 1.10.
