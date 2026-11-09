@@ -19,7 +19,7 @@ The exact failure record is retained in `APW4_CI_RUN_42722133436_DIAGNOSTIC_2026
 
 PR #79 is a documentation-only update branch at head `2be6cec71a783eb1293d32a70df4646a5616f71a`. Its workflow run `42723539932` is the `Lean degenerate-witness audit` workflow, not the integrated-paranoid BBMST/APW4 source build.
 
-At the latest inspection, run `42723539932` was still `in_progress`. Its audit job had completed the upstream source compile and focused degenerate-witness tests successfully, but that does not verify the changed APW4 manuscripts or establish an integrated APW4 Lean result. The run must be reported separately and not conflated with PR #69.
+At the first inspection, run `42723539932` was still `in_progress`; it subsequently completed successfully on the then-current documentation-branch commit `2be6cec71a783eb1293d32a70df4646a5616f71a`. Its audit job completed the upstream source compile and focused degenerate-witness tests. Subsequent documentation commits advanced PR #79's head, so this successful run does not verify the latest PR #79 head and does not establish an integrated APW4 Lean result. The run must be reported separately and not conflated with PR #69.
 
 ## 3. Earlier mathematical and formalization records remain unchanged
 
