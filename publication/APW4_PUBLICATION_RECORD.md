@@ -280,3 +280,25 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## 13. Author status and CI continuation — 10 November 2026
+
+**Author:** Ta-Yoshua Lubuimi. The authoritative German manuscript remains the publication-branch source at release/apw4-publication-2026-11-09, file publication/APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md. The author-held final PDF remains independently finalized, published and secured; this repository does not claim to host that PDF binary.
+
+The mathematical status in the authoritative manuscript and Dossier v1.6 is preserved: the exact APW4 energy decomposition, DT, weighted HT, global upper energy estimate and strict lower-bound implication are recorded as completed results under the complete original APW4 hypotheses. The historical definitions and index/fibre/atom mappings remain unchanged. No canonical model object is substituted for a historical APW4 object without a concrete index-preserving identification.
+
+Earlier successful commit-bound verification remains valid for its named declarations and source snapshots:
+- APW4 declaration/audit runs 42599116967 and 42599116987;
+- BBMST module audit 42522617494;
+- geometry checkpoint 42601107408.
+
+Latest PR #69 integration status:
+- Run 42715535258 was cancelled in its initial attempt; its integrated retry on an older merge commit failed in BBMSTPrefixMeasureRecursion and BBMSTHyperplaneFibreIncidence.
+- Run 42716161232 reached lake build ResearchKernelAudit, elaborated several APW4 modules with standard axiom profiles, then failed at BBMSTMomentRecurrence.lean:118 with MulLeftMono ℚ. Its audit retry compiled the upstream source and several finite fibre/geometry modules but failed in BBMSTPrefixMeasureRecursion.lean at lines 174, 333 and 356; error-recovery output showed sorryAx in dependent declarations.
+- Candidate cleanup commit 263b9b53f6888d4a149d341653043b09d745eab6 removed unreachable trailing reflexivity tactics in the prefix recursion proofs.
+- New run [42718994622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42718994622) is currently running on that candidate commit. At the time of this record update, both integrated-paranoid and audit had completed setup and Mathlib cache restoration and entered compilation. No final result is claimed yet.
+
+The documentation/status update is tracked in [PR #79](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/79). It preserves the successful historical CI evidence and records the current integration obligations without downgrading the mathematical proof status.
+
+Rights remain governed by LICENSE-PROPRIETARY.md and LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md. Public access and scholarly citation do not grant a general reproduction, modification, redistribution or commercial-use license for the author's original copyrightable materials. Third-party materials remain governed by their own licenses.
