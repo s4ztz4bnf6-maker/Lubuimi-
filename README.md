@@ -198,3 +198,10 @@ New exact-head run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/ac
 ### Cross-project APW4–Syracuse research interface — 10 November 2026
 
 The separate Collatz/Syracuse project now records Lubuimi's finite valuation-word cylinder partition: every exact finite positive valuation word of total exponent A is one odd residue class modulo 2^(A+1), with relative odd-start mass 2^-A. Finite cutoff B gives exact children of weights 2^-1,...,2^-B plus one tail cylinder of weight 2^-B, preserving total mass. This is a concrete candidate source-mass structure for APW4-inspired work, not yet a transport theorem. The required index-preserving map to historical APW4 event/BIB objects, original-weight preservation, and Hall/capacity proof remain open. No APW4 result or status is changed. Details are in Dossier v1.6, Addendum 1.8.
+
+
+### Sixth CI update — 10 November 2026
+
+Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed at prefix recursion lines 171/184/209/337/360. The integrated job also failed at the prefix recursion and hyperplane moment denominators; the rational product error has been cleared.
+
+Candidate head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 contains the next proof refinements. Exact-head CI is pending; no integrated paranoid pass is claimed.
