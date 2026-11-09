@@ -205,3 +205,8 @@ The separate Collatz/Syracuse project now records Lubuimi's finite valuation-wor
 Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed at prefix recursion lines 171/184/209/337/360. The integrated job also failed at the prefix recursion and hyperplane moment denominators; the rational product error has been cleared.
 
 Candidate head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 contains the next proof refinements. Exact-head CI is pending; no integrated paranoid pass is claimed.
+
+
+### Seventh CI update — 10 November 2026
+
+New exact-head run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) is running on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both jobs are still in setup/manifest generation; compilation has not yet produced a result.
