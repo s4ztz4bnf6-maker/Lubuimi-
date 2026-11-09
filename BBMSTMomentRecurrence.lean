@@ -35,12 +35,9 @@ theorem stageFactorProduct_succ
     (a m : ℕ) (δ size : ℕ → ℚ) (z : ℚ) :
     stageFactorProduct a (m + 1) δ size z =
       stageFactorProduct a m δ size z *
-        stageFactor δ size z (a + m + 1) := by
+        stageFactor δ size z (a + 1 + m) := by
   unfold stageFactorProduct
   rw [Finset.prod_range_succ]
-  congr 1
-  congr 1
-  omega
 
 /-- Exact recurrence c_{k+1}(z) = c_k(z) times the next-coordinate factor. -/
 theorem cK_succ
@@ -48,7 +45,7 @@ theorem cK_succ
     (δ size : ℕ → ℚ) (z : ℚ) :
     cK a (m + 1) c δ size z =
       cK a m c δ size z *
-        stageFactor δ size z (a + m + 1) := by
+        stageFactor δ size z (a + 1 + m) := by
   unfold cK
   rw [stageFactorProduct_succ]
   ring
@@ -203,7 +200,7 @@ theorem cKOne_succ
     (δ size : ℕ → ℚ) :
     cKOne a (m + 1) c δ size =
       cKOne a m c δ size *
-        (1 + 1 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+        (1 + 1 / ((1 - δ (a + 1 + m)) * size (a + 1 + m))) := by
   simpa [cKOne, stageFactor] using
     cK_succ a m c δ size (1 : ℚ)
 
@@ -212,7 +209,7 @@ theorem cKThree_succ
     (δ size : ℕ → ℚ) :
     cKThree a (m + 1) c δ size =
       cKThree a m c δ size *
-        (1 + 3 / ((1 - δ (a + m + 1)) * size (a + m + 1))) := by
+        (1 + 3 / ((1 - δ (a + 1 + m)) * size (a + 1 + m))) := by
   simpa [cKThree, stageFactor] using
     cK_succ a m c δ size (3 : ℚ)
 
