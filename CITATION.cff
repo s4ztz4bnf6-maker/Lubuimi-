@@ -13,7 +13,7 @@ abstract: >-
   artifacts; the citation does not imply that every historical APW4 proof
   component has been formalized in Lean.
 repository-code: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
-url: "https://github.com/s4ztz4bnf6-maker/Lubuimi-/tree/docs/apw4-source-kernel-audit-2026-11-09"
+url: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
 keywords:
   - "APW4"
   - "energy-incidence"
