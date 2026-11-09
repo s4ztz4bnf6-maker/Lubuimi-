@@ -311,7 +311,7 @@ theorem fiber_fourth_moment
 Unlike a single-map fibre identity, this keeps each incidence set separate;
 the innermost sum is the weighted mass of the fourfold intersection. -/
 theorem fourth_incidence_moment
-    {X I : Type*} [Fintype X] [Fintype I]
+    {X I : Type*} [Fintype X] [Fintype I] [DecidableEq X]
     (C : I → Finset X) (w : I → ℚ) :
     (∑ x : X, (∑ i : I, if x ∈ C i then w i else 0) ^ 4) =
       ∑ i : I, ∑ j : I, ∑ k : I, ∑ l : I, ∑ x : X,
