@@ -171,7 +171,8 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega
+    prefixIndex, stageCoordinate, Function.update, i.isLt,
+    Nat.ne_of_lt i.isLt]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -200,8 +201,10 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  simp [prefixPointCovered, prefixCoveredValues,
-    extendPrefix_restrictPrefix]
+  have hExtend :
+      extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
+    extendPrefix_restrictPrefix C hk y
+  simp [prefixPointCovered, prefixCoveredValues, hExtend]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
@@ -348,6 +351,15 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
+  have hcovered :
+      prefixCoveredValues C hk xprev =
+        prefixCoveredValues C (by omega) (restrictPrefix C (by omega) y) := by
+    dsimp [xprev, k]
+  have hstage :
+      stageCoordinate hk = stageCoordinate (by omega) := by
+    apply Fin.ext
+    rfl
+  rw [hcovered, hstage]
   split_ifs <;> ring
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
@@ -382,8 +394,8 @@ theorem PAt_nonneg
       let F := prefixFibreData C (A := A) (k := k) hk xprev
         (PAt C (A := A) a ha P0 δ j hprev xprev) hbase
       have hpoint : y (Fin.last k) ∈ F.points := by
-        simp [F, prefixFibreData, prefixUniformFibre,
-          BBMSTUniformFibreInstantiation.toFibreData]
+         change y (Fin.last k) ∈ Finset.univ
+         exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y (by
           simpa [k, xprev] using hbase)
@@ -518,8 +530,8 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
       hP0_nonneg hδ hδhalf j hprev xprev
   let F := prefixFibreData C (A := A) (k := k) hk xprev baseMass hbase
   have hpoint : y (Fin.last k) ∈ F.points := by
-    simp [F, prefixFibreData, prefixUniformFibre,
-      BBMSTUniformFibreInstantiation.toFibreData]
+         change y (Fin.last k) ∈ Finset.univ
+         exact Finset.mem_univ _
   have hlocal := prefixFibre_updatedWeight_eq_PAt
     (C := C) (A := A) a ha P0 δ j
     hk y (by
@@ -676,7 +688,7 @@ theorem PAt_le_initial_mul_distortionProduct
             P0 (initialPrefixOf C ha (by omega) y) *
               distortionProduct C a δ (j + 1) hj := by
                 rw [hinitial]
-                simp [distortionProduct, k, hk]
+                simp [distortionProduct, k]
                 ring
 
 #print axioms initialPrefixOf_restrictPrefix
