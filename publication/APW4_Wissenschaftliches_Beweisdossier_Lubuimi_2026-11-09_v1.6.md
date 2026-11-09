@@ -1,7 +1,7 @@
 # APW4 / BBMST / BIB
-**Dossierfassung 1.1 – konsolidierter Nachtrag vom 06.11.2026**
-## Wissenschaftliches Beweisdossier und unabhängiger Formalisierungs-Audit
-**Stichtag: 6. November 2026**
+**Wissenschaftliches Beweisdossier v1.6 – konsolidierte Fassung vom 9. November 2026**
+## Beweisstand, Quellenrekonstruktion und unabhängiger Formalisierungs-Audit
+**Stichtag: 9. November 2026**
 
 ### Zweck und Statusdisziplin
 
@@ -1150,3 +1150,78 @@ Der Branch integration/bbmst-apw4-kernel-2026-11-09 führt 34 BBMST-/APW4-Module
 Der aktuelle integrierte Lauf ist [CI 42600825252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600825252). Zum Zeitpunkt dieses Nachtrags war der isolierte 4.35.0-Paranoidjob noch beim Mathlib-Cache bzw. beim Build; der separate Auditjob hatte den Upstream-Compile abgeschlossen und arbeitete die BBMST-Modulkette ab. Es wird noch kein Erfolg für den integrierten Paranoid-Check behauptet.
 
 Die Integration ist ein Prüf- und Konsolidierungsbranch. Sie ändert weder die historischen Definitionen noch den mathematischen Status aus §25. Selbst ein erfolgreicher Build aller 34 Module würde die APW4-spezifischen DT-/HT- und strikten Untergrenzenprämissen nicht automatisch konstruieren: der gegenwärtige APW4-Endwiderspruch nimmt diese weiterhin als Eingabehypothesen. Der universelle erdos_selfridge-Strang wird separat auditiert und behält seine ausgewiesenen Projektaxiome.
+
+
+---
+
+# XII. Nachtrag 1.5 – Review-Korrektur und letzter Repository-Stand
+**Aktualisierung: 9. November 2026**
+**Autor: Ta-Yoshua Lubuimi**
+
+## 41. Verbindliche mathematische Statuskorrektur
+
+Dossier v1.5, Nachtrag 1.3, §25 bleibt die maßgebliche Statusfeststellung: Die strikte APW4-Energieuntergrenze wird als mathematisch abgeschlossen geführt. Sie wird weder durch spätere redaktionelle Durchsicht noch durch den begrenzten Umfang einzelner Lean-Deklarationen zurückgestuft.
+
+Die Aussage ist stets unter den vollständigen historischen APW4-Hypothesen zu lesen:
+[
+B(M)=2M-sigma(M)le 0
+quadLongrightarrowquad
+mathcal E_{mathrm{APW4}}>
+D_k^{mathrm{BBMST}}+mathcal R_{mathrm{BIB}}.
+]
+Sie darf nicht als reine Aussage über die Teilersummenfunktion für beliebige (M) formuliert werden. Insbesondere zeigt das quadratfreie Beispiel
+[
+M=15015=3cdot5cdot7cdot11cdot13,quad
+sigma(M)=32256,quad B(M)=-2226
+]
+dass das Vorzeichen (B(M)le0) allein keine allgemeine Ausschlussaussage liefert. Das Beispiel hebt den in §25 festgehaltenen APW4-Status nicht auf; es verlangt, dass die zusätzlichen historischen APW4-Voraussetzungen im Hauptsatz vollständig genannt und die zugehörige Herleitung im Beweistext ausgeschrieben werden.
+
+## 42. Review-korrigierte Manuskriptfassung
+
+Die am 9. November 2026 über PR #71 nach main übernommene Datei
+`publication/APW4_REVISED_MAIN_MANUSCRIPT_REVIEW_2026-11-09.md`
+ist die review-korrigierte redaktionelle Arbeitsfassung. Sie beweist vollständig:
+- die exakte Energiezerlegung einschließlich der Zählung geordneter Off-Diagonalpaare;
+- die abstrakte endliche kapazitätsbeschränkte Transportimplikation;
+- den gewichteten Hall-/Max-Flow-Min-Cut-Schluss unter der ausdrücklich formulierten Hall-Bedingung;
+- die BIB-Paarzählidentität;
+- den endlichen Inzidenz-Zweitmomentensatz unter den expliziten Voraussetzungen (H1) und (H2);
+- den bedingten algebraischen Energie-Widerspruch.
+
+Die Fassung ersetzt nicht die historischen APW4-Definitionen und behauptet nicht, dass die abstrakten Transportlemmata bereits aus den historischen APW4-Daten instanziiert wurden. Für eine selbstständig prüfbare historische Hauptsatzfassung müssen die tatsächlichen APW4-Faserobjekte, DT-Transportmassen und Zielkapazitäten, HT-Ereignisse, BIB-Plätze, Inzidenzen, Kapazitäten sowie die vollständige strikte Untergrenzenherleitung aus dem maßgeblichen Originalbeweistext eingefügt werden. Diese Expositionspflicht ist von der in §25 dokumentierten mathematischen Statusfeststellung getrennt.
+
+## 43. Korrigierter integrierter CI-Status von PR #69
+
+PR #69 ist offen und nicht erfolgreich integriert. Die dokumentierte Chronologie lautet:
+- Run `42601494591`: integrierter Build fehlgeschlagen, unter anderem wegen des abhängigen Index-/Cast-Schritts in `BBMSTGeometryStageCore.lean`.
+- Run `42602474355`: integrierter Build fehlgeschlagen; `BBMSTMomentRecurrence.lean:118` meldet `Finset.prod_le_prod₀` als nicht verfügbare Konstante; zwei davon abhängige Deklarationen zeigen `sorryAx`.
+- Run `42602465766`: kein erfolgreicher integrierter Abschluss.
+- APW4-only All-roots run `42600819647`: cancelled.
+
+Die am PR-#69-Branch vorgenommenen Reparaturen sind Kandidaten und gelten erst nach einem erfolgreichen Ersatzlauf mit positiver Deklarationsabdeckung, bestandenem Paranoid-Check und geprüften Axiomspuren als verifiziert. Ein solcher Erfolg wird in diesem Nachtrag nicht behauptet.
+
+## 44. Gültige positive CI-Befunde bleiben commit- und deklarationsgebunden
+
+Die folgenden Befunde bleiben gültig:
+- PR #67, Commit `33a66a8491f65616f9572a6efc8fbc91a65d6ed5`, Runs `42599116967` und `42599116987`: die benannten APW4-Inzidenz- und bedingten Widerspruchsdeklarationen berichten das Standardprofil `[propext, Classical.choice, Quot.sound]`; der Endwiderspruch nimmt DT, HT und die strikte Untergrenze als Hypothesen entgegen.
+- PR #56, Commit `a77f67540719a29e3e45a684e310dc4d753a2a50`, Run `42601107408`: die benannte vollständige geometrische Theorem-1.2-Reduktion und ihre Hilfsdeklarationen berichten das Standardprofil ohne `sorryAx).
+- Prefix-Mass Step 16, Commit `ca9d245aa1851a54b65850ddb1130d1ca12e850e`, Runs `42522812092`, `42522812150`, `42522812223`: die benannten Foundation-, Step-16- und Diagnoseprüfungen waren erfolgreich.
+- Rank-nine CRT/fibre commit `098699f663a144fae5da013a425d0d32147ae1ae`: der dependency-ordered Auditjob `42595925001` bestand; der separate fiber-paranoid-Job endete cancelled und wird nicht als bestanden gezählt.
+
+Diese Ergebnisse stammen aus getrennten Quellständen und Workflows. Sie sind keine integrierte Verifikation des historischen APW4-Hauptsatzes.
+
+## 45. Dokumentationsmerge PR #71
+
+PR #71 wurde am 9. November 2026 in `main` gemergt; Merge-Commit:
+`e3367c818a8d682dc943a21c4031cbc966a070a9`.
+Es handelt sich um eine Dokumentations- und Review-Korrektur, nicht um eine neue Lean-Quelländerung und nicht um einen neuen Kernel-/CI-Erfolg. Die dort ergänzte externe Review-Antwort hält die Beweisgrenzen, den quadratfreien Testwert (M=15015), die conditional nature des APW4-Endschlusses und die fehlgeschlagene integrierte PR-#69-Prüfung fest.
+
+## 46. Abschließendes Urteil zum Stand 9. November 2026
+
+**Mathematischer Status:** Energiezerlegung, DT, HT, globale obere Energieschranke und strikte Untergrenze werden gemäß dem maßgeblichen APW4-Arbeitsstand und Dossier §25 als abgeschlossene mathematische Ergebnisse geführt. Der Widerspruch folgt, wenn die vollständigen historischen APW4-Hypothesen erfüllt sind.
+
+**Expositionsstatus:** Die review-korrigierte Hauptfassung beweist die abstrakten endlichen Transport- und Inzidenzlemmata. Die vollständige historische Instanziierung von DT und HT sowie die vollständige ausgeschriebene Herleitung der strikten Untergrenze müssen im selbstständig prüfbaren Manuskript aus den maßgeblichen APW4-Primärbeweisen dokumentiert werden. Eine Statusnotiz ersetzt diese Beweisexposition nicht.
+
+**Lean-Status:** Die benannten Teildeklarationen haben echte erfolgreiche Kernel-/Axiomprüfungen. Der integrierte PR #69 ist fehlgeschlagen; ein vollständiger historischer APW4-Hauptsatz mit sämtlichen historischen Prämissen in seiner transitiven Lean-Abhängigkeit ist nicht nachgewiesen. Der separate universelle `erdos_selfridge`-Siebstrang behält seine Projektaxiome `sf_sieve_lt_one` und `sieve_criterion`.
+
+**Attribution:** Sämtliche APW4-Forschung und Urheberschaft sind Ta-Yoshua Lubuimi zugeordnet. KI-Werkzeuge sind Hilfsmittel, keine Autoren und keine unabhängigen mathematischen Prüfer.
