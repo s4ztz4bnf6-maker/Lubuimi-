@@ -54,7 +54,9 @@ theorem incidence_bound_from_second_moment
     linarith
   have hDenPos : 0 < r ^ 2 - τ * μ := by
     linarith
-  exact (le_div_iff₀ hDenPos).2 hLinear
+  have hLinear' : m₀ * (r ^ 2 - τ * μ) ≤ τ * (r - μ) := by
+    nlinarith [hLinear]
+  exact (le_div_iff₀ hDenPos).2 hLinear'
 
 /--
 The exact off-diagonal consequence of the APW4 energy decomposition and
