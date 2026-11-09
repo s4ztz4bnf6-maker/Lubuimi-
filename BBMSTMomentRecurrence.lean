@@ -115,7 +115,7 @@ theorem stageFactorProduct_le_two_over_size_product
     stageFactorProduct a m δ size z ≤
       ∏ j ∈ Finset.range m, (1 + 2 * z / size (a + 1 + j)) := by
   unfold stageFactorProduct
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro j hj
     exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
       (hδ j) (hδhalf j) (hsize j))
