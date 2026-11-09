@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - "audit/apw4-diagonal-majorization-2026-11-04"
+      - "audit/apw4-incidence-second-moment-2026-11-09"
     paths:
       - "APW4CanonicalMajorization.lean"
       - "APW4HistoricalCRTCore.lean"
+      - "APW4IncidenceSecondMoment.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - "lake-manifest.json"
@@ -47,3 +49,4 @@ jobs:
         run: |
           lake env lean APW4CanonicalMajorization.lean
           lake env lean APW4HistoricalCRTCore.lean
+          lake env lean APW4IncidenceSecondMoment.lean
