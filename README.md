@@ -136,7 +136,7 @@ A square-free arithmetic example is recorded: \(M=15015\) has \(\sigma(M)=32256\
 
 The author's consolidated German main manuscript is published at:
 
-- [APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](./APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
+- [APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](publication/APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
 
 This is the authoritative editorial text supplied by Ta-Yoshua Lubuimi for the APW4 energy–incidence architecture. The update restores only the mathematical notation damaged in text transfer (including equality signs, ordered-pair notation, and the strict inequality). It does not alter definitions, hypotheses, proof architecture, or the recorded mathematical status.
 
