@@ -302,3 +302,10 @@ Latest PR #69 integration status:
 The documentation/status update is tracked in [PR #79](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/79). It preserves the successful historical CI evidence and records the current integration obligations without downgrading the mathematical proof status.
 
 Rights remain governed by LICENSE-PROPRIETARY.md and LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md. Public access and scholarly citation do not grant a general reproduction, modification, redistribution or commercial-use license for the author's original copyrightable materials. Third-party materials remain governed by their own licenses.
+
+
+## 14. Second CI update — 10 November 2026
+
+Run 42718994622 failed in both integrated-paranoid and audit jobs. The integrated build reached Lean 4.35.0 and failed at the rational finite-product monotonicity in BBMSTMomentRecurrence.lean:118, dependent-prefix obligations in BBMSTPrefixMeasureRecursion.lean:171/333/356, and finite-coordinate cardinality equalities in BBMSTHyperplaneFibreIncidence.lean:347/454. No completed lake check --paranoid result exists for that run. The audit job passed its upstream source, degenerate-witness tests, zero-safe fibre, weighted update, finite-stage moment and geometry stages, then failed in the prefix recursion; dependent error-recovery declarations displayed sorryAx.
+
+Candidate source repairs are committed on PR #69 at f4f6fb5210d080a08fbf72682a29718d95af4a1e and 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. Run 42720062719 is in progress on the exact current PR head. Earlier successful APW4 checks and the mathematical proof status are unchanged.
