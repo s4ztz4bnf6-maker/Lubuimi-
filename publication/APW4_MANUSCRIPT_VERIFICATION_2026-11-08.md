@@ -208,3 +208,26 @@ The updated PR #56 branch now contains the full source-level reduction output:
 The successful [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) compiled the updated family and augmentation modules. Its axiom output for canonicalReduction_result_full and the new helper declarations is exactly [propext, Classical.choice, Quot.sound], with no sorryAx. This is the formalized geometric reduction of Balister et al. Theorem 1.2 under the explicit product-coordinate and nonparallel-cover hypotheses.
 
 This result does not by itself integrate the geometric reduction with every prefix/fibre-moment/tail module, and it does not construct APW4's historical DT/HT or strict energy transfer.
+
+
+## 17. Supplemental source review and integrated CI correction — 9 November 2026
+
+The original authors' supplementary page was located: https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html. It links the Gurobi-backed LP search for the initial distribution on [3]×[5]×[7]×[11], the output of configurations with bounds above 9.018, the portable C optimizer for δ₆,…,δ₂₁, and the program for the f₂₁ tail bound / 2018 density-paper Table 1. The C-source bodies were not line-audited because the server serves text/x-csrc; their stated purposes are recorded from the original authors' index page. This is primary-source evidence for the BBMST finite computational stage, not an APW4-specific historical transfer.
+
+The first integrated PR #69 run [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591) completed with failure. Its separate audit job passed, but the integrated Lean 4.35.0 build failed at:
+- BBMSTMomentRecurrence.lean:118, where Finset.prod_le_prod requested MulLeftMono ℚ;
+- BBMSTGeometryStageCore.lean:104, where a dependent equality cast did not reduce to the target coordinate equality.
+
+The log additionally emitted sorryAx for two declarations downstream of the failed moment lemma. Therefore the first integrated run is a genuine failed check, not a success.
+
+Two targeted fixes were committed:
+- b2d8c43002772d442c8f4b82f0b1877312acd558 changes the product monotonicity lemma to Finset.prod_le_prod₀ with nonnegative-factor hypotheses;
+- c713aa4bd483d541df43aea36fda15e3fb1467c1 makes the dependent index equality explicit before reducing the cast.
+
+Runs [42602474355](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602474355) and [42602465766](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602465766) were still in progress at the last status query. The APW4-only Lean 4.35.0 all-roots run [42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) was also still in progress. No 4.35.0 paranoid success is claimed.
+
+## 18. Uploaded manuscript PDF: full content review
+
+The 17-page uploaded PDF was read page by page. The text extraction shows that the comparison symbols in the key strict inequality on page 11 are missing; the same extraction reveals missing relation symbols in other display equations. In particular, Satz 5.1's strict direction is not reliably visible in the available PDF copy. The manuscript also states that the complete historical arithmetic proof is used but does not print the intermediate derivation.
+
+The mathematical status in Dossier v1.5, Addendum 1.3, §25 is unchanged: the strict APW4 lower-bound implication remains recorded as mathematically established. The document-level observation does not reopen that theorem. It does mean that the uploaded PDF itself cannot be reissued as a publication-ready, self-contained proof manuscript. A corrected companion report may present the fully reconstructed BBMST chain, the finite incidence elimination proof, and exact CI results, but must not claim that these supply the missing APW4-specific historical DT/HT maps or the omitted arithmetic derivation.
