@@ -346,10 +346,9 @@ theorem actualStageFirstMoment_eq
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  let i := stageCoordinate k hk hk0
-  letI : Fintype (C.S i) := C.fintypeS i
   have hcard :
-      (Finset.univ : Finset (C.S i)).card = Fintype.card (C.S i) := by
+      (Finset.univ : Finset (C.S (stageCoordinate k hk hk0))).card =
+        Fintype.card (C.S (stageCoordinate k hk hk0)) := by
     simp
   simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
