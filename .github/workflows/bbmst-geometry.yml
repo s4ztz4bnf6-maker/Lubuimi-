@@ -60,5 +60,7 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneFamily.olean BBMSTCodimOneFamily.lean
       - name: Compile codimension-one augmentation
         run: lake env lean -o .lake/build/lib/lean/BBMSTCodimOneAugmentation.olean BBMSTCodimOneAugmentation.lean
+      - name: Recompile complete Theorem 1.2 reduction and emit its axiom profile
+        run: lake env lean BBMSTCodimOneAugmentation.lean
       - name: Compile prime-sized coordinate instantiation
         run: lake env lean -o .lake/build/lib/lean/BBMSTPrimeCoordinateInstantiation.olean BBMSTPrimeCoordinateInstantiation.lean
