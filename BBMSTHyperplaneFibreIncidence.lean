@@ -346,13 +346,9 @@ theorem actualStageFirstMoment_eq
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  have hcoord :
-      stageCoordinate k hk hk0 = (⟨k - 1, by omega⟩ : Fin n) := by
-    apply Fin.ext
-    rfl
   simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, hcoord]
+    coveredProportion, uniformWeight, stageCoordinate, Finset.card_univ]
 
 /-- The first moment is bounded by the expected number of new
 hyperplanes whose old-coordinate shadow contains the base point, divided
@@ -449,13 +445,9 @@ theorem actualStageSecondMoment_eq
           ((((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
-  have hcoord :
-      stageCoordinate k hk hk0 = (⟨k - 1, by omega⟩ : Fin n) := by
-    apply Fin.ext
-    rfl
   simp [uniformStageSecondMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageSecondMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, hcoord]
+    coveredProportion, uniformWeight, stageCoordinate, Finset.card_univ]
 
 /-- The second moment is bounded by the second moment of the number
 of new hyperplanes whose old-coordinate shadows contain the base point,
