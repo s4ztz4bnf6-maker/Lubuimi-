@@ -1094,3 +1094,12 @@ Die geprüfte Library-Kopie wird deshalb nicht als finales typeset Manuskript er
 ---
 
 **Schlussurteil Nachtrag 1.4:** Der öffentliche BBMST-Quellenpfad ist jetzt konkret und quellengebunden rekonstruiert; mehrere weitere BBMST- und APW4-Teilmodule haben erfolgreiche Kernelprüfungen. Der mathematische APW4-Abschluss gemäß §25 bleibt bestehen. Eine vollständige, integrierte Kernelverifikation des historischen APW4-Hauptsatzes ist weiterhin nicht nachgewiesen und wird erst nach Konstruktion aller historischen Prämissen im Dependency-Closure des Endsatzes behauptet.
+
+
+## 36. Präzisierung der Balister-Theorem-1.2-Reduktion
+
+Die öffentliche Beweisrekonstruktion zu Theorem 1.2 macht die geometrische Reduktion vor dem Faser-Momentenargument vollständig explizit: fehlende frühe Singleton-Hyperflächen ergänzen, Nichtparallelität erhalten, je einen ausgewählten Koordinatenwert entfernen, Hyperflächen auf das reduzierte Produkt einschränken und die überlebende Überdeckung ohne frühe Singleton-Fixmengen erhalten.
+
+Dieser Reduktionsschritt ist im aktuellen PR-#56-Quellstand durch BBMSTCodimOneReduction, BBMSTCodimOneFamily, BBMSTCodimOneAugmentation und BBMSTPrimeCoordinateInstantiation konkret formalisiert. Insbesondere liefert canonicalReduction_result die reduzierte Überdeckung samt Singleton-Freiheit; reduced_coordinate_card_ge_two stellt für ungerade Primkoordinaten sicher, dass nach Entfernung eines Wertes mindestens zwei Werte bleiben. Der gesamte benannte Geometrie-Checkpoint wurde auf Commit a77f67540719a29e3e45a684e310dc4d753a2a50 in CI 42364359726 erfolgreich kompiliert.
+
+Damit ist die in v1.5 noch offene Lean-Reduktionsstufe aus §27 für diese explizite geometrische Schnittstelle geschlossen. Nicht geschlossen ist damit die Integration dieser Reduktion mit sämtlichen Faser-Momenten- und Tail-Modulen in einem gemeinsamen Build; erst recht ist dadurch noch nicht der APW4-spezifische DT-/HT-/Energie-Transfer bewiesen. Die mathematische APW4-Abschlussaussage aus §25 bleibt unverändert.
