@@ -16,15 +16,16 @@ namespace APW4IncidenceSecondMoment
 
 /--
 Eliminate the auxiliary incidence total from
-T ≥ r m₀, T² ≤ τ (T + μ m₀ (m₀ - 1)), τ ≤ 2r, m₀ ≥ 1,
-and r² > τ μ. This is the exact rational bound in equation (6) of the
-finite-incidence note. The condition μ < r from H2 is not needed here.
+T ≥ r m₀, T² ≤ τ (T + μ m₀ (m₀ - 1)), τ ≤ 2r m₀, m₀ ≥ 1,
+and r² > τ μ. The weaker size condition τ ≤ 2r m₀ suffices because
+T + r m₀ - τ ≥ 2r m₀ - τ ≥ 0. The condition μ < r from H2 is not
+needed here.
 -/
 theorem incidence_bound_from_second_moment
     (T r μ τ m₀ : ℝ)
     (hr : 0 ≤ r)
     (hT : r * m₀ ≤ T)
-    (hTau : τ ≤ 2 * r)
+    (hTau : τ ≤ 2 * r * m₀)
     (hm₀ : 1 ≤ m₀)
     (hSecond :
       T ^ 2 ≤ τ * (T + μ * m₀ * (m₀ - 1)))
