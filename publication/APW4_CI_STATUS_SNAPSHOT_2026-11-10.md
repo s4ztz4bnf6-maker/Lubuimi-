@@ -62,3 +62,8 @@ New exact-head workflow `42724292554` was queued and had both audit and integrat
 A further source commit advanced PR #69 from `c09495547c2120b98973065e8cb8bfae2f6b18b8` to `aa111f1969ad54155be124025523fbd529f02968` (message: “Normalize dependent base-mass proof and remove unreachable update tactic”). It makes two targeted changes in `BBMSTPrefixMeasureRecursion.lean`: it uses the already-typed nonnegativity hypothesis directly as `hbase' := hbase`, passes `hbase` directly into `prefixFibre_updatedWeight_eq_PAt`, and removes the `split_ifs <;> ring` tactic after the preceding rewrite.
 
 The workflow `42724292554`, which had been triggered for predecessor head `c094955...`, was cancelled when the branch advanced. This cancellation is not a proof failure and does not invalidate any earlier result. New exact-head workflow `42724405267` is now running on `aa111f...`; at latest inspection, its audit job was installing Lean and the integrated-paranoid job was queued. No result is claimed until this new exact-head workflow completes.
+
+
+## 9. Hyperplane cardinality repair and latest pending head
+
+PR #69 advanced again to head `53baa35961428ed27c42fc117e5a69fa28960067` (commit message: “Keep stage-coordinate indices folded in hyperplane cardinality normalization”). This commit changes `BBMSTHyperplaneFibreIncidence.lean` only. Workflow `42724405267`, which targeted predecessor head `aa111f...`, was cancelled after the branch advanced; this is not a proof failure. The new exact-head workflow `42724495575` was pending at the latest inspection. The current candidate head and pending run are not yet verified. The earlier prefix fixes and the new hyperplane cardinality edit must pass together in one exact-head full audit.
