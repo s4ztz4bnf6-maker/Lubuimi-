@@ -366,3 +366,8 @@ Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6
 Run 42721579786 failed in both jobs on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product/factor error is no longer present. The remaining failures are in BBMSTPrefixMeasureRecursion.lean at lines 171, 184, 209, 337 and 360, and in BBMSTHyperplaneFibreIncidence.lean at lines 347 and 450. The audit job passed the upstream, zero-safe fibre, weighted update, uniform-coordinate, finite moment and geometry stages before the prefix recursion failure. Error-recovery output showed sorryAx in dependent declarations; no integrated build or paranoid pass is claimed.
 
 The next PR #69 candidate head is `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Run 42722133436 is active on that exact head; the audit job is restoring Mathlib cache and the integrated job is compiling. No final result is claimed yet. The APW4 mathematical proof record and prior successful commit-bound checks remain unchanged.
+
+
+## 21. Ninth research update — Lubuimi terminal-residue collision energy
+
+The separate Syracuse project now supplies an exact finite-place weighted incidence model. Each length-k exact valuation word maps to a terminal unit residue modulo 3^k; the associated second moment splits as E_k = 3^-k + C_k^coll, with C_k^coll ≥ 1/(2·3^k). This is a genuine diagonal/off-diagonal structure in the Syracuse model and a candidate APW4 interface. It is not identified with the historical APW4 BIB reserve without an index-preserving map, historical-weight preservation and a proved capacity/Hall inequality. The result is documented separately and is not a premise of the APW4 proof. APW4 theorem status remains unchanged.
