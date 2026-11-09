@@ -495,3 +495,8 @@ This is a genuine candidate source-mass structure for an APW4-inspired bridge. I
 Run 42721579786 completed with failure in both jobs. The audit job passed upstream source, degenerate-witness, zero-safe fibre, weighted update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed in BBMSTPrefixMeasureRecursion.lean at lines 171/184/209/337/360. The integrated job had the same prefix errors and unresolved hyperplane moment denominator equalities at BBMSTHyperplaneFibreIncidence.lean:347/450. The earlier rational product monotonicity error no longer appears.
 
 Candidate source head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 adds explicit prefix-index equality, removes an invalid rewrite, and normalizes universal finite-cardinality denominators. The next exact-head CI result is pending. No paranoid pass is claimed.
+
+
+### Seventh CI update — 10 November 2026
+
+Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Audit is generating the Lean manifest and integrated-paranoid is installing Lean 4.35.0. No compile result is available yet.
