@@ -499,4 +499,4 @@ Candidate source head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 adds explicit pre
 
 ### Seventh CI update — 10 November 2026
 
-Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Audit is generating the Lean manifest and integrated-paranoid is installing Lean 4.35.0. No compile result is available yet.
+Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Integrated-paranoid has completed Lean setup, sandbox and Mathlib cache restoration and is compiling the integrated modules. Audit has completed manifest generation and upstream-source fetch and is restoring Mathlib cache. No final result is available yet.
