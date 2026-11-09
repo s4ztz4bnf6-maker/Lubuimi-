@@ -395,3 +395,29 @@ Damit ist der mathematisch korrekte nächste Publikationsschritt klar: Die histo
 - APW4 Lean PR #67, commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5, CI runs 42599116967 and 42599116987.
 - BBMST geometry PR #56, CI run 42601107408.
 - Integrated BBMST/APW4 PR #69, failed CI runs 42601494591 and 42602474355.
+
+
+---
+
+## Autorennachtrag vom 10. November 2026 – mathematische Kontinuität und Verifikationschronologie
+
+**Autor und Urheber der APW4-Forschung: Ta-Yoshua Lubuimi.**
+
+Dieser Nachtrag hält den mathematischen Status der unabhängig finalisierten und veröffentlichten APW4-Arbeit fest. Dossier v1.6, insbesondere Nachtrag 1.3, §25, und Nachtrag 1.5, §§41 und 46, führt die strikte APW4-Untergrenze sowie DT, HT und den globalen Energieschluss als abgeschlossene mathematische Ergebnisse des Forschungsstands. Die Energiezerlegung
+\[
+\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4}
+\]
+und die Transportabschätzungen
+\[
+D_{\rm APW4}\le D_k^{\rm BBMST},\qquad
+C_{\rm APW4}\le\mathcal R_{\rm BIB}
+\]
+geben zusammen mit der strikten Untergrenze unter den vollständigen historischen APW4-Hypothesen den Widerspruch. Dieser mathematische Status wird durch einzelne CI-Fehler oder den begrenzten Umfang einer formalen Prüffassung nicht zurückgestuft.
+
+Die historischen Faser- und Inzidenzdefinitionen – insbesondere \(B_q,V_q,F_q,P_{q,x,h},M_{q,r},\Gamma_{q,r}\), die zugehörigen \(W_{q,r}\)- und \(a_{q,t}\)-Daten sowie die APW4-Gewichte und Atomabbildungen – sind in ihrer ursprünglichen Bedeutung fortzuführen. Kanonische CRT-/Fasermodelle dienen nur dort als formale Hilfsmodelle, wo eine konkrete definitions- und indexerhaltende Identifikation nachgewiesen ist.
+
+### Aktualisierter CI-Befund
+
+Die früheren erfolgreichen, commitgebundenen APW4-Prüfungen PR #67 (Runs 42599116967 und 42599116987), der BBMST-Modullauf 42522617494 und der Geometriecheckpoint PR #56 (Run 42601107408) bleiben gültige positive Befunde für ihre jeweils ausgewiesenen Deklarationen und Quellstände. Der spätere integrierte PR-#69-Lauf 42716161232 scheiterte nach dem Start von `lake build ResearchKernelAudit` an `MulLeftMono ℚ` in `BBMSTMomentRecurrence.lean:118`; der parallele Audit-Job wurde während des Cache-Schritts abgebrochen. Der erneute Audit-Job wurde am 10. November von GitHub angenommen. Ein erfolgreicher integrierter `lake check --paranoid` wird erst nach einem tatsächlich abgeschlossenen grünen Lauf auf dem exakten Commit behauptet.
+
+Die vollständige commitgebundene Chronologie und die Fortführungsregeln stehen im [APW4-Beweisdossier v1.6, Nachtrag 1.6](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). Dieser Nachtrag ist eine Status- und Versionsfortschreibung; er ersetzt weder die unabhängig gesicherte Publikationsfassung noch die historischen Definitionen.
