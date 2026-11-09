@@ -170,9 +170,8 @@ theorem restrictPrefix_extendPrefix
     (s : C.S (stageCoordinate hk)) :
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
-  simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt]
-  all_goals omega
+  simp_all [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
+    prefixIndex, stageCoordinate, Function.update]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -186,7 +185,7 @@ theorem extendPrefix_restrictPrefix
     have hle : i.val ≤ k := Nat.le_of_lt hi
     have hhi : i.val < k + 1 := i.isLt
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi]
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hhi]
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
@@ -204,14 +203,11 @@ theorem prefixPointCovered_iff
   have hExtend :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
-  change (y (Fin.last k) ∈
-      Finset.univ.filter (fun s =>
-        ∃ H ∈ newAtStage A (k + 1),
-          H.ContainsPrefix hk
-            (extendPrefix C hk (restrictPrefix C hk y) s))) ↔
-    ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  simp [hExtend]
+  have hcoord : stageCoordinate hk = prefixIndex hk (Fin.last k) := by
+    apply Fin.ext
+    rfl
+  rw [hcoord]
+  simp [prefixPointCovered, prefixCoveredValues, hExtend]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
