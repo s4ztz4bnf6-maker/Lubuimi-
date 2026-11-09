@@ -509,3 +509,14 @@ Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6
 Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) completed unsuccessfully on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product/factor comparison is no longer the reported blocker. The audit job compiled the upstream source and the zero-safe fibre, finite weighted update, uniform-coordinate, finite-stage moment and geometry modules, then failed in `BBMSTPrefixMeasureRecursion.lean` at lines 171, 184, 209, 337 and 360. The integrated job additionally failed at `BBMSTHyperplaneFibreIncidence.lean:347/450`. Error-recovery output showed `sorryAx` in dependent declarations, and no successful integrated build or `lake check --paranoid` result is claimed.
 
 The next candidate head is `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`; run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) is still in progress. These are integration diagnostics only. Earlier successful commit-bound checks and the APW4 mathematical proof status remain unchanged.
+
+
+---
+
+## Cross-project extension — Lubuimi Terminal-Residue Collision Energy
+
+A new Syracuse incidence model now maps every length-k exact valuation word \(\alpha\), with total exponent A and offset C_k, to the terminal unit residue \(\tau_k(\alpha)=C_k2^{-A}\pmod{3^k}\). Every orbit realizing that word has terminal state congruent to this residue. With source weight \(w_\alpha=2^{-A}\), the finite place masses \(m_k(t)\) sum to one and their second moment has the exact decomposition
+\[
+E_k=D_k+C_k^{\rm coll},\qquad D_k=3^{-k},\qquad C_k^{\rm coll}\ge\frac1{2\cdot3^k}.
+\]
+This is a genuine diagonal/off-diagonal weighted incidence identity in the Syracuse model and a more concrete candidate interface for APW4 transport than the prefix tree alone. The collision term is a newly defined Syracuse quantity, not the historical APW4 BIB reserve. A historical index-preserving map, original-weight preservation and a capacity/Hall inequality are still required before the APW4 theorem can be applied. This note is not part of the APW4 proof and does not change its status.
