@@ -48,3 +48,10 @@ APW4 research and authorship: **Ta-Yoshua Lubuimi**. AI tools are assistants onl
 ## 6. Follow-up: documentation audit run completed
 
 Run `42723539932` has now completed successfully. Its audit job completed the audited upstream source compilation and focused degenerate-witness tests. The run checked the then-current documentation-branch commit `2be6cec71a783eb1293d32a70df4646a5616f71a`; subsequent documentation commits advanced PR #79's head. Therefore this successful run is recorded only for that exact earlier snapshot and is not evidence for the latest PR #79 head, nor is it an integrated BBMST/APW4 paranoid build.
+
+
+## 7. New PR #69 repair candidate — 10 November 2026
+
+PR #69 has advanced from the previously failed head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` to candidate head `c09495547c2120b98973065e8cb8bfae2f6b18b8` (commit message: “Repair dependent prefix inverse lemmas and covered predicate rewrite”). The commit changes only `BBMSTPrefixMeasureRecursion.lean` with explicit simplification/refl closure, a direct dependent-index equality proof, a rewritten `prefixPointCovered_iff`, and explicit stage/covered-predicate transports in the updated-weight identity. It also replaces two fibre-membership simplifications with the direct fact that every point belongs to `Finset.univ`.
+
+New exact-head workflow `42724292554` was queued and had both audit and integrated-paranoid jobs in progress at the latest inspection. No success or failure is claimed yet. The candidate repairs are not considered verified until both jobs complete, the prefix and downstream hyperplane steps are inspected, and the full paranoid/axiom requirements pass. The prior failure at head `95669...` remains part of the chronology and is not erased.
