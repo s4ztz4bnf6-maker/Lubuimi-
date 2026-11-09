@@ -329,16 +329,11 @@ local instance instUncoveredNewIncidenceFintype
   unfold UncoveredNewIncidence
   exact Fintype.ofFinite _
 
-/-- Explicit finite instance for the incidence family re-indexed by new class. -/
-local instance instNewClassUncoveredFibresFintype
-    {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
-    (oldData : O → OldClass M) (newData : N → NewClass M q)
-    (hMq : M.Coprime q) :
-    Fintype (NewClassUncoveredFibres oldData newData hMq) := by
-  classical
-  unfold NewClassUncoveredFibres
-  exact Fintype.ofFinite _
-
+/-- The re-indexed incidence family is a dependent sum. We deliberately
+use Mathlib's canonical Sigma Fintype instance here: installing a separate
+Fintype.ofFinite instance changes the instance argument expected by
+Fintype.card_sigma and introduces a spurious sorryAx after elaboration
+recovery. -/
 /-- Re-indexing incidences by their new-class coordinate is an equivalence.
 This is the exact finite double-counting interface: the left side counts
 incidences by base residue; the right side counts them by new class. -/
