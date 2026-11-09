@@ -39,13 +39,14 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
   ext j
   simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and,
     Finset.mem_singleton]
+  change (if h : i = j then some (h ▸ s) else none).isSome = true ↔ j = i
   by_cases h : i = j
   · subst j
-    simp only [singletonAt, dif_pos trivial, Option.isSome_some, true_iff]
+    simp
   · constructor
     · intro hsome
       have hfalse : False := by
-        simpa [singletonAt, h] using hsome
+        simpa [h] using hsome
       exact hfalse.elim
     · intro hji
       exact (h hji.symm).elim
