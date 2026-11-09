@@ -342,3 +342,8 @@ The product-induction argument order and dependent prefix/stage-coordinate proof
 The audit job of run 42720062719 passed the upstream source, degenerate-witness tests, zero-safe parameter/fibre cores, finite weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moments, then failed in BBMSTPrefixMeasureRecursion.lean at lines 338 and 361. The integrated job failed at the rational product argument order, prefix recursion and hyperplane stage-coordinate identities.
 
 The next candidate head 5b645d776ebbf7a71b7370f1b0078c711f9af651 contains proof-script refinements for those obligations. Run 42720690874 is in progress on that exact head. The mathematical APW4 proof status remains unchanged.
+
+
+## 17. Fifth CI update — 10 November 2026
+
+New run 42721579786 is running on PR #69 head 4ecac363ca6a06b5a41c750edac8eba2303b64cf after candidate fixes to the rational product, prefix recursion, updated-weight identity and hyperplane coordinate cardinalities. Both integrated-paranoid and audit jobs are active. No final compile or paranoid result is claimed yet.
