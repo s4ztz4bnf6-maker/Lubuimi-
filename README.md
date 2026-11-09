@@ -107,3 +107,10 @@ The separate three-page “Erdös Lean Deutsch.pdf” in the Library is a reada
 
 
 The updated PR #56 branch subsequently added the full Theorem 1.2 result, including nonparallelism and nontriviality of the surviving/restricted family. [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) passed; the new theorem and helper declarations report only [propext, Classical.choice, Quot.sound], with no sorryAx.
+
+
+## Abschließende APW4-Statuskorrektur — 9. November 2026
+
+Der mathematische APW4-Status ist verbindlich festgehalten: Energiezerlegung, Diagonaltransport (DT), gewichteter Off-Diagonaltransport (HT), globale obere Energieschranke, strikte untere Schranke unter den historischen APW4-Voraussetzungen und der daraus folgende Widerspruch sind abgeschlossene mathematische Ergebnisse. Sie werden nicht wegen einer engeren Beschreibung einzelner Lean-CI-Läufe zurückgestuft.
+
+Der neue [abschließende Status-Nachtrag](publication/APW4_ABSCHLIESSENDER_STATUS_NACHTRAG_2026-11-09.md) hält diese Entscheidung, die Regimebindung der Klasse X, die Quellenintegrität und die deklarationsgenaue Reichweite der vorhandenen Kernel-Nachweise fest. Er führt keine Ersatzdefinitionen ein und behauptet keinen neuen CI-Lauf.
