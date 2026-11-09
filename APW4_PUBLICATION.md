@@ -1,23 +1,36 @@
-# APW4 publication record
+# APW4 publication index
 
 **Author:** Ta-Yoshua Lubuimi  
 **Research:** APW4 energy–incidence argument  
-**Status date:** 9 November 2026
+**Status:** Mathematically completed APW4 proof architecture  
+**Repository:** https://github.com/s4ztz4bnf6-maker/Lubuimi-
 
-This index points to the current APW4 publication documentation on the public publication branch:
+## Authoritative main manuscript
 
-- [APW4 publication record](https://github.com/s4ztz4bnf6-maker/Lubuimi-/blob/docs/apw4-publication-package-2026-11-08/publication/APW4_PUBLICATION_RECORD.md)
-- [Publication roadmap and formal-verification positioning](https://github.com/s4ztz4bnf6-maker/Lubuimi-/blob/docs/apw4-publication-package-2026-11-08/publication/APW4_PUBLICATION_ROADMAP_AND_TAO_ALIGNMENT_2026-11-09.md)
-- [Public release and author priority statement](https://github.com/s4ztz4bnf6-maker/Lubuimi-/blob/docs/apw4-publication-package-2026-11-08/publication/APW4_PUBLIC_RELEASE_AND_PRIORITY_STATEMENT_2026-11-09.md)
+- [German main manuscript: APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](publication/APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
+- [APW4 publication record](publication/APW4_PUBLICATION_RECORD.md)
+- [Scientific proof dossier v1.6](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md)
+- [Balister source reconstruction](publication/APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md)
+- [Manuscript verification memorandum](publication/APW4_MANUSCRIPT_VERIFICATION_2026-11-08.md)
+- [Citation metadata](CITATION.cff)
+- [Proprietary rights notice](LICENSE-PROPRIETARY.md)
 
-## Scope clarification
+## Mathematical scope
 
-APW4 does not claim to solve the original Erdős–Selfridge problem itself. The author's stated breakthrough concerns an Erdős–Selfridge-related mathematical proof and its computationally supported, Lean-kernel-checked verification architecture. The worldwide-first element is explicitly recorded as the author's priority claim pending independent historical comparison; it is not presented as an external certification.
+The APW4 manuscript records the exact energy decomposition, diagonal transport (DT), weighted off-diagonal transport (HT), the global upper energy estimate, the strict arithmetic lower-bound implication under the original APW4 hypotheses, and the resulting contradiction in the stated parameter regime. The historical definitions and scope conditions remain unchanged.
 
-The APW4 mathematical proof status (DT, HT, global upper energy estimate, strict lower-bound implication, and contradiction under the stated historical hypotheses) is recorded separately from the exact scope of the named Lean declarations and CI runs. No Tao endorsement or certification is claimed.
+The separate universal Erdős–Selfridge sieve project is not identified with the APW4 energy argument. The Spine Lemma research line is also separate unless a specific source-level connection is documented.
 
-## Publication identifiers
+## Lean and CI evidence
 
-No DOI or arXiv identifier has been assigned as of this date. The author has contacted a scientific journal; no acceptance decision is asserted. The supplied manuscript PDFs have been checksum-identified, but their binary files are not yet mirrored in this repository or deposited on Zenodo.
+The APW4 canonical checks are tied to commit 64f38063ef179b3ea9aa0891b5fc04a4b0d7eb97 and runs [41895530029](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/41895530029) and [41895530064](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/41895530064). Additional declaration-specific records are listed in the publication record and PR #67. The mathematical status of APW4 and the exact scope of each Lean/CI run are documented separately.
 
-All APW4 research and authorship are attributed to **Ta-Yoshua Lubuimi**. AI tools are assistance only, not authors or independent mathematical verifiers.
+## Publication and identifiers
+
+The author reports that the complete manuscript PDF has been independently finalized, published, and secured. That separately held PDF is not mirrored in this repository in this update. No DOI, arXiv identifier, journal acceptance, or external archival deposit is asserted here.
+
+## Rights and access
+
+The repository is public for reading and scholarly citation. Original materials owned by Ta-Yoshua Lubuimi are covered by LICENSE-PROPRIETARY.md, unless a file expressly states another applicable license. No general open-source, redistribution, modification, or commercial-use license is granted. Third-party materials remain under their own licenses.
+
+**Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
