@@ -56,3 +56,12 @@ This CI failure is not a mathematical counterexample to the APW4 manuscript. The
 The historical DT/HT bridge must be represented source-faithfully. The APW4 diagonal mass, off-diagonal mass and BIB pair reserve remain distinct until the manuscript's explicit index-preserving identifications are carried through. Do not replace historical objects with canonical model objects merely to make a Lean module compile.
 
 **Attribution:** APW4 research and authorship: Ta-Yoshua Lubuimi. AI tools are assistants only, not coauthors or independent mathematical verifiers.
+
+
+## Addendum 1.7 — exact CI status as of 10 November 2026
+
+The integrated PR #69 head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` was checked by run `42722133436`; both the audit and integrated-paranoid jobs failed. The audit compiled the upstream source, focused degenerate-witness tests, zero-safe fibre and weighted update chain, uniform-coordinate instantiation, finite-stage moment bounds, finite-coordinate geometry and uniform-stage source moment, then failed at the source-indexed prefix recursion. The integrated-paranoid job failed during the full package build. The line-level diagnostic is in `APW4_CI_RUN_42722133436_DIAGNOSTIC_2026-11-10.md`.
+
+The documentation branch's run `42723539932` completed successfully for the earlier documentation head `2be6cec71a783eb1293d32a70df4646a5616f71a`; subsequent docs commits are not covered by that run. It was a degenerate-witness audit, not the integrated-paranoid build. The current append-only status snapshot is `APW4_CI_STATUS_SNAPSHOT_2026-11-10.md`.
+
+Earlier successful APW4 and BBMST checks remain valid for their exact commits and declaration scopes. The mathematical APW4 proof record is unchanged. No full integrated Lean 4.35.0 paranoid success is claimed.
