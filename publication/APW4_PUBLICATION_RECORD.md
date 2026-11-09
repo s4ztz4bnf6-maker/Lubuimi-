@@ -189,3 +189,40 @@ As of 9 November 2026:
 - the two supplied manuscript PDFs have been checksum-identified, but their binary files are not yet mirrored in this repository or deposited on Zenodo.
 
 See [APW4 public release and priority statement](APW4_PUBLIC_RELEASE_AND_PRIORITY_STATEMENT_2026-11-09.md) for the exact claim, file checksums, and evidence boundaries.
+
+
+## 12. Balister source reconstruction and 9 November kernel update
+
+The source-faithful public BBMST reconstruction is recorded separately in [APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md](APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md). The primary sources are Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli* (2021), DOI 10.2140/ant.2021.15.609, and their 2018 density paper, arXiv:1811.03547. A secondary proof archive at plasma-ai/erdos, immutable commit 17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd, provides explicit reconstructions of the published stage/fibre measure chain and exact finite certificates.
+
+The 2021 BBMST chain is now mapped through Lemma 2.1, Theorem 3.1, Lemmas 3.3 and 3.4, Theorem 3.2, Lemmas 5.3 and 5.4, Corollary 5.2, and the imported large-prime termination criterion in Theorem 5.1. This is source reconstruction of the square-free-moduli BBMST theorem. It is not, by itself, the APW4-specific proof of DT, HT, or the strict energy lower bound.
+
+### 12.1 New APW4 declaration-level kernel run
+
+PR #67, corrected commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5:
+- [APW4 canonical kernel run 42599116967](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116967)
+- [Upstream and degenerate-witness audit 42599116987](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116987)
+
+The canonical run compiled APW4CanonicalMajorization.lean, APW4HistoricalCRTCore.lean, and APW4IncidenceSecondMoment.lean. The new declarations incidence_bound_from_second_moment, offDiagonal_exceeds_reserve, and apw4_energy_contradiction each report exactly [propext, Classical.choice, Quot.sound], with no sorryAx in their reported dependency lists.
+
+The final contradiction declaration is conditional: it receives the energy decomposition, diagonal transport, Hall transport, and strict lower bound as hypotheses. The finite incidence bound likewise receives the stated moment inequalities and numerical conditions. Neither declaration proves that the historical APW4 constructions satisfy those premises. The companion audit still reports sf_sieve_lt_one and sieve_criterion as project axioms in the separate erdos_selfridge chain.
+
+### 12.2 Additional BBMST kernel checkpoints
+
+- PR #56, commit a77f67540719a29e3e45a684e310dc4d753a2a50, passed [geometry run 42364359726](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42364359726). The run covers the named codimension-one restriction, family-selection, augmentation, and prime-coordinate declarations.
+- Prefix-mass Step 16 on commit ca9d245aa1851a54b65850ddb1130d1ca12e850e passed [foundation run 42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), [Step 16 run 42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150), and [focused diagnostic 42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223).
+- The rank-nine CRT/fibre audit on commit 098699f663a144fae5da013a425d0d32147ae1ae passed its indicator and dependency-ordered audit job in [run 42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001). Its separate fiber-paranoid job had not yet completed at the time of this update.
+
+These are genuine positive checks for their named source files and declarations. They are separate branches, commits, and workflows, not a single integrated build of all project sources. No full historical APW4 main-theorem kernel verification is asserted.
+
+### 12.3 Mathematical status and formal release criterion
+
+The mathematical status from Dossier v1.5, Addendum 1.3, Section 25 remains unchanged: the strict APW4 lower-bound implication is retained as an established mathematical result. This documentation update does not reopen or downgrade it.
+
+A complete APW4 kernel release still requires one named theorem whose dependency closure constructs the historical APW4 DT map, the historical BIB event/slot incidence and weighted Hall transport, and the strict lower-bound proof from the historical APW4 data. The named theorem must then be compiled and audited with #print axioms on one immutable release commit, with no project axioms and no sorryAx in its transitive dependency closure. The existing abstract final-step theorem does not satisfy that integration requirement.
+
+The separate universal erdos_selfridge theorem remains a distinct formalization obligation because its current dependency profile still contains sf_sieve_lt_one and sieve_criterion. These project axioms are not silently reclassified as APW4 dependencies.
+
+### 12.4 Manuscript artifact handling
+
+The accessible Library copy named “Erdös Lean 4 Beweis.pdf” was visually inspected on 9 November. Page 11 renders literal LaTeX commands (including the displayed equation environment and command names) instead of typeset mathematics. This finding applies only to that accessible copy, not to any separate publication file independently held by the author. The inspected copy is not reissued or described as the final typeset manuscript. No manuscript binary is changed by this record.
