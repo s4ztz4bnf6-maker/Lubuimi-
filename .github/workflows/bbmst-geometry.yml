@@ -1,6 +1,6 @@
 name: BBMST geometry core kernel check
 # Keep the restriction, family, and augmentation modules in the PR kernel check.
-# The augmentation step also verifies coverage preservation and no-parallel closure.
+# The augmentation step also verifies coverage preservation, nontriviality, and no-parallel closure.
 # Axiom traces cover reduced-product nonemptiness and the canonical augmentation.
 
 on:
