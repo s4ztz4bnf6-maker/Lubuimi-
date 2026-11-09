@@ -101,7 +101,8 @@ theorem containsPrefix_iff_full
             x (prefixIndex hk j) =
               Eq.mpr (congrArg C.S hidx) s := by
           simpa [projectPrefix] using hj
-        simpa [hidx] using hj'
+        cases hidx
+        simpa using hj'
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
