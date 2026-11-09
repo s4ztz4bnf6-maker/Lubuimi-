@@ -1528,3 +1528,49 @@ Dies ist eine exakte gewichtete Inzidenz- und Diagonal/Off-Diagonal-Zerlegung im
 Die Größe \(C_k^{\mathrm{coll}}\) ist jedoch eine neu definierte Syracuse-Kollisionsmasse und **nicht** ohne weiteren Beweis die historische APW4-BIB-Reserve. Die Anwendung des APW4-Theorems erfordert weiterhin eine indexerhaltende Abbildung der Wortpaare auf die ursprünglichen APW4-Off-Diagonal-Ereignisse/BIB-Plätze, Erhaltung der historischen Gewichte und eine bewiesene Kapazitäts-/Hall-Schranke. Die neue Identität liefert eine konkrete Quelle/Platz-Struktur, aber noch nicht diese historische Identifikation.
 
 **Status:** Mathematisch hergeleitet und in `Lubuimi_Terminal_Residue_Collision_Energy_2026-11-10.md` dokumentiert; noch nicht Lean-formalisiert. Die APW4-Energiezerlegung und alle etablierten APW4-Sätze bleiben unverändert.
+
+
+---
+
+# XVIII. Nachtrag 1.11 – Endliche Markov-Matrix der Terminalrest-Inzidenz
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 62. Exakte endliche Übergangsmatrix
+
+Die Gewichte der Bewertungswörter faktorisiert als \(w_\alpha=\prod_{j<k}2^{-a_j}\). Unter dem natürlichen Wahrscheinlichkeitsmaß auf ungeraden Startwerten sind die Exponenten daher unabhängig mit \(\mathbb P(a_j=b)=2^{-b}\). Für festes \(k\) und Modul \(3^k\) definiere
+\[
+x_j=C_j2^{-A_j}\pmod{3^k},\qquad x_0=0.
+\]
+Aus der Offsetrekursion folgt exakt
+\[
+x_{j+1}=2^{-a_j}(3x_j+1)\pmod{3^k},\qquad x_k=\tau_k(\alpha).
+\]
+
+Setze \(\phi_k=2\cdot3^{k-1}\). Da \(2\) primitive Wurzel modulo \(3^k\) ist, gibt es für jedes \(x\in\mathbb Z/3^k\mathbb Z\) und jede Einheit \(y\) genau ein \(r_k(x,y)\in\{1,\ldots,\phi_k\}\) mit \(2^{r_k(x,y)}y\equiv3x+1\pmod{3^k}\). Die Übergangswahrscheinlichkeit ist damit die endliche rationale Zahl
+\[
+P_k(x,y)=\frac{2^{-r_k(x,y)}}{1-2^{-\phi_k}},\qquad y\in(\mathbb Z/3^k\mathbb Z)^\times,
+\]
+und \(P_k(x,y)=0\) für nichtinvertierbare \(y\). Die Zeilensumme ist exakt eins, weil die Exponenten derselben Restklasse modulo \(\phi_k\) eine geometrische Reihe bilden. Die primitive-Wurzel-Eigenschaft folgt aus \(v_3(2^{2\cdot3^j}-1)=j+1\).
+
+Der Terminalrest-Vektor ist daher
+\[
+\boxed{m_k=\delta_0P_k^k},\qquad E_k=\|\delta_0P_k^k\|_2^2.
+\]
+Damit ist die zuvor definierte countable weighted incidence auf eine explizite endliche rationale Matrix zurückgeführt.
+
+## 63. Exakter zweiter Level
+
+Für \(k=2\), in der Reihenfolge der Einheiten \(1,2,4,5,7,8\pmod9\), ergibt die Matrixrechnung
+\[
+m_2=\frac1{63}(8,16,11,4,2,22).
+\]
+Daraus folgen
+\[
+E_2=\frac5{21},\qquad D_2=\frac19,\qquad C_2^{\mathrm{coll}}=\frac8{63}.
+\]
+Dies ist ein konkreter exakter Momentenwert und liefert einen unmittelbar formaliserbaren Testfall für die finite APW4-artige Momentenarchitektur.
+
+## 64. Grenze der Übertragung
+
+Die endliche Matrix, ihre Massen und der zweite Moment sind Syracuse-eigene Objekte. Sie liefern eine konkrete Quelle/Platz-/Gewichtsstruktur für die Entwicklung eines APW4-artigen Transportes. Die Identifikation mit den historischen APW4-BIB-Plätzen, die Erhaltung der dortigen Originalgewichte und eine Kapazitäts-/Hall-Ungleichung sind weiterhin gesondert zu beweisen. Bis dahin wird die Matrix nicht als historische BIB-Instanz ausgegeben. Der APW4-Beweisstand bleibt unverändert.
