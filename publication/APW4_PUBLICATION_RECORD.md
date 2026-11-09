@@ -354,3 +354,8 @@ New run 42721579786 is running on PR #69 head 4ecac363ca6a06b5a41c750edac8eba230
 Run 42721579786 passed the audited upstream source, degenerate-witness tests, zero-safe parameter/fibre core, finite weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moment, then failed in BBMSTPrefixMeasureRecursion.lean at lines 171, 184, 209, 337 and 360. The integrated job also failed in prefix recursion and at hyperplane moment denominators BBMSTHyperplaneFibreIncidence.lean:347/450. The rational finite-product error is no longer present.
 
 The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Its exact-head CI result is pending. No completed paranoid pass is claimed.
+
+
+## 19. Seventh CI update — 10 November 2026
+
+Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both audit and integrated-paranoid jobs are active in setup/manifest generation. No compile or paranoid result is available yet.
