@@ -346,7 +346,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
-    simpa [xprev, k] using hbase
+    exact hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
@@ -369,7 +369,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
     apply Fin.ext
     rfl
   rw [hcovered, hstage]
-  split_ifs <;> ring
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
@@ -406,8 +405,7 @@ theorem PAt_nonneg
          change y (Fin.last k) ∈ Finset.univ
          exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
-        (C := C) (A := A) a ha P0 δ j hj y (by
-          simpa [k, xprev] using hbase)
+        (C := C) (A := A) a ha P0 δ j hj y hbase
       rw [← hlocal]
       exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
         (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
