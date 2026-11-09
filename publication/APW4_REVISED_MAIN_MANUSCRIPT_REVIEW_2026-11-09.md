@@ -479,3 +479,12 @@ Die vorherigen erfolgreichen commitgebundenen Prüfungen bleiben bestehen. Diese
 ### Fifth CI update — 10 November 2026
 
 Following the candidate refinements to the rational product, prefix extension/restriction, covered-value equivalence, updated-weight recursion and hyperplane stage-cardinality proofs, exact-head run 42721579786 has started on PR #69 head 4ecac363ca6a06b5a41c750edac8eba2303b64cf. Integrated-paranoid and audit are both active; compilation results are pending.
+
+
+---
+
+## Cross-project research note — Lubuimi's finite valuation-word cylinder partition
+
+The separate Collatz/Syracuse project now contains a mathematically derived finite valuation-word cylinder partition: each exact finite positive exponent word of total exponent \(A\) corresponds to one odd residue class modulo \(2^{A+1}\), with relative odd-start mass \(2^{-A}\). A finite cutoff \(B\) refines each prefix into exact children of weights \(2^{-1},\ldots,2^{-B}\) and one tail cylinder of weight \(2^{-B}\), giving exact finite mass conservation.
+
+This is a genuine candidate source-mass structure for an APW4-inspired bridge. It is not yet an APW4 transport theorem: an index-preserving map to the historical APW4 event/BIB objects, preservation of their original weights, and a proved capacity/Hall condition remain necessary. The disjoint Syracuse cylinders are not identified with historical BIB incidences without such a proof. This cross-project note does not modify the APW4 theorem or its mathematical status.
