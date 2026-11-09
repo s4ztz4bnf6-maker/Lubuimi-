@@ -210,3 +210,8 @@ Candidate head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 contains the next proof 
 ### Seventh CI update — 10 November 2026
 
 New exact-head run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) is running on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Integrated-paranoid has completed setup/cache restoration and entered compilation. Audit has fetched the upstream source and is restoring Mathlib cache; compilation has not yet produced a final result.
+
+
+### Latest APW4 integration status — 10 November 2026
+
+Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) failed in both jobs on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product error is no longer present. The remaining errors are in `BBMSTPrefixMeasureRecursion.lean:171/184/209/337/360` and `BBMSTHyperplaneFibreIncidence.lean:347/450`; dependent error-recovery declarations showed `sorryAx`. No successful integrated build or paranoid pass is claimed. New candidate head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` is being checked in run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436), which was in progress at the latest retrieval. Earlier positive checks and APW4 mathematical results remain unchanged. See Dossier v1.6, Addendum 1.9.
