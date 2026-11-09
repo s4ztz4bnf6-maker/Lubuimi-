@@ -114,3 +114,14 @@ The updated PR #56 branch subsequently added the full Theorem 1.2 result, includ
 Der mathematische APW4-Status ist verbindlich festgehalten: Energiezerlegung, Diagonaltransport (DT), gewichteter Off-Diagonaltransport (HT), globale obere Energieschranke, strikte untere Schranke unter den historischen APW4-Voraussetzungen und der daraus folgende Widerspruch sind abgeschlossene mathematische Ergebnisse. Sie werden nicht wegen einer engeren Beschreibung einzelner Lean-CI-Läufe zurückgestuft.
 
 Der neue [abschließende Status-Nachtrag](publication/APW4_ABSCHLIESSENDER_STATUS_NACHTRAG_2026-11-09.md) hält diese Entscheidung, die Regimebindung der Klasse X, die Quellenintegrität und die deklarationsgenaue Reichweite der vorhandenen Kernel-Nachweise fest. Er führt keine Ersatzdefinitionen ein und behauptet keinen neuen CI-Lauf.
+
+
+## Authoritative German main manuscript — 9 November 2026
+
+The author's consolidated German main manuscript is published at:
+
+- [APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](./APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
+
+This is the authoritative editorial text supplied by Ta-Yoshua Lubuimi for the APW4 energy–incidence architecture. The update restores only the mathematical notation damaged in text transfer (including equality signs, ordered-pair notation, and the strict inequality). It does not alter definitions, hypotheses, proof architecture, or the recorded mathematical status.
+
+The repository's existing LICENSE-PROPRIETARY.md applies to this original manuscript. Copyright remains with Ta-Yoshua Lubuimi; public access and scholarly citation do not grant a general reuse license. The manuscript source is mirrored on main and release/apw4-publication-2026-11-09. The author's separately held final PDF is not represented as mirrored here.
