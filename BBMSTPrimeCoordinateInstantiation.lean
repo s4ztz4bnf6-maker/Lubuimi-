@@ -28,8 +28,7 @@ def primeCoordinateSystem
   fintypeS := fun _ => inferInstance
   card_ge_two := by
     intro i
-    simp
-    exact (hp i).two_le
+    simpa only [Fintype.card_fin] using (hp i).two_le
 
 /-- The coordinate cardinalities are exactly the supplied primes. -/
 theorem primeCoordinateSystem_card
