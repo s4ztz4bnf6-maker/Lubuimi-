@@ -171,7 +171,7 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> rfl
+    prefixIndex, stageCoordinate, Function.update, i.isLt]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -185,7 +185,7 @@ theorem extendPrefix_restrictPrefix
     have hle : i.val ≤ k := Nat.le_of_lt hi
     have hhi : i.val < k + 1 := i.isLt
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi] <;> rfl
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi]
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
