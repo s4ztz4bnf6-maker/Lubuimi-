@@ -162,3 +162,10 @@ APW4 research and authorship remain attributed to **Ta-Yoshua Lubuimi**. The mat
 - PR #69 integrated run [42716161232](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42716161232) reached the integrated build but failed at `BBMSTMomentRecurrence.lean:118` (`MulLeftMono ℚ`); its audit retry compiled the upstream source and several BBMST cores but failed in BBMSTPrefixMeasureRecursion.lean at lines 174, 333 and 356; dependent declarations showed sorryAx. A source cleanup was committed as candidate repair 263b9b53f6888d4a149d341653043b09d745eab6, not yet verified. No integrated paranoid pass is claimed.
 - New candidate-fix run [42718994622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42718994622) is currently running on commit 263b9b53f6888d4a149d341653043b09d745eab6. Both integrated-paranoid and audit completed setup/cache restoration and entered compilation; neither has a final result yet.
 - The full status chronology is in [Dossier v1.6, Addendum 1.6](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md).
+
+
+### Second CI update — 10 November 2026
+
+Run [42718994622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42718994622) failed in both jobs: the integrated build reported MulLeftMono ℚ at BBMSTMomentRecurrence.lean:118, prefix recursion errors at lines 171/333/356, and hyperplane cardinality equalities at lines 347/454. The audit job passed its upstream and finite fibre/geometry stages but failed in the prefix recursion. No integrated lake check --paranoid pass is claimed.
+
+Candidate fixes are now on PR #69 at commits f4f6fb5210d080a08fbf72682a29718d95af4a1e and 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. New exact-head run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) is in progress. The APW4 mathematical proof status and earlier successful commit-bound checks remain unchanged.
