@@ -309,3 +309,22 @@ Rights remain governed by LICENSE-PROPRIETARY.md and LICENSE-COMMERCIAL-USE-AND-
 Run 42718994622 failed in both integrated-paranoid and audit jobs. The integrated build reached Lean 4.35.0 and failed at the rational finite-product monotonicity in BBMSTMomentRecurrence.lean:118, dependent-prefix obligations in BBMSTPrefixMeasureRecursion.lean:171/333/356, and finite-coordinate cardinality equalities in BBMSTHyperplaneFibreIncidence.lean:347/454. No completed lake check --paranoid result exists for that run. The audit job passed its upstream source, degenerate-witness tests, zero-safe fibre, weighted update, finite-stage moment and geometry stages, then failed in the prefix recursion; dependent error-recovery declarations displayed sorryAx.
 
 Candidate source repairs are committed on PR #69 at f4f6fb5210d080a08fbf72682a29718d95af4a1e and 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. Run 42720062719 is in progress on the exact current PR head. Earlier successful APW4 checks and the mathematical proof status are unchanged.
+
+
+### Historical transport maps and weighted Hall interface
+
+The diagonal transport uses the historical index-preserving map
+\[
+(x,u)\longmapsto(k,I_{x,u},J_{x,u}).
+\]
+For off-diagonal events \(\gamma=(\ell,\ell')\), the demand is
+\[
+d(\gamma)=\omega_\ell\omega_{\ell'}.
+\]
+The weighted Hall condition for every finite event family \(X\) is
+\[
+\sum_{\gamma\in X}d(\gamma)
+\le
+\sum_{b\in\Gamma_{\mathrm{BIB}}(X)}c_{\mathrm{BIB}}(b).
+\]
+These maps and capacities retain their original APW4 meanings. The canonical finite-fibre model is not a substitute for them.
