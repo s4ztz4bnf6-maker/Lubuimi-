@@ -454,3 +454,10 @@ These maps and capacities retain their original APW4 meanings. The canonical fin
 Run 42720062719 failed in its integrated-paranoid job. The rational product induction now elaborated further but exposed an argument-order mismatch in mul_le_mul at BBMSTMomentRecurrence.lean:136. Remaining errors were in BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361 and BBMSTHyperplaneFibreIncidence.lean:347/454. The audit job had passed the upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate and finite-stage moment steps and was still running through the geometry stage at the time of this update.
 
 The argument order and the dependent prefix/stage-coordinate proofs were refined in the next PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. Exact-head run 42720690874 is pending. The APW4 mathematical proof status remains unchanged.
+
+
+### Fourth CI update — 10 November 2026
+
+The audit job of run 42720062719 completed with failure only at BBMSTPrefixMeasureRecursion.lean:338/361 after successfully compiling the upstream source, degenerate-witness tests, zero-safe parameter/fibre core, weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moments. The integrated job also failed at BBMSTMomentRecurrence.lean:136, prefix recursion lines 176/187/211/338/361 and hyperplane moment equalities at lines 347/454.
+
+The next source head 5b645d776ebbf7a71b7370f1b0078c711f9af651 corrects these candidate proof steps. Run 42720690874 is in progress. The mathematical APW4 status remains unchanged.
