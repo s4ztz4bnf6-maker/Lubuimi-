@@ -461,3 +461,16 @@ The argument order and the dependent prefix/stage-coordinate proofs were refined
 The audit job of run 42720062719 completed with failure only at BBMSTPrefixMeasureRecursion.lean:338/361 after successfully compiling the upstream source, degenerate-witness tests, zero-safe parameter/fibre core, weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moments. The integrated job also failed at BBMSTMomentRecurrence.lean:136, prefix recursion lines 176/187/211/338/361 and hyperplane moment equalities at lines 347/454.
 
 The next source head 5b645d776ebbf7a71b7370f1b0078c711f9af651 corrects these candidate proof steps. Run 42720690874 is in progress. The mathematical APW4 status remains unchanged.
+
+
+---
+
+## Technischer Fortführungsnachtrag vom 10. November 2026 – PR #69, Run 42720062719
+
+**Autor und Urheber: Ta-Yoshua Lubuimi.**
+
+Dieser Nachtrag aktualisiert ausschließlich den Formalisierungs- und Integrationsstatus. Der mathematische APW4-Beweisstand und die historische Bedeutung der Originaldefinitionen werden nicht verändert.
+
+Der integrierte Lean-4.35.0-Build auf PR-Head `6c34cd1d4f7487c200a04a4f1cc90010ceb19643` (Merge-Commit `ac80e32831b12aaeb117242d62395bd421aaf713`) scheiterte in Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719). Der aktuelle Momentenfehler liegt in `BBMSTMomentRecurrence.lean:136:32`: Die Induktion verwendet die Nichtnegativität des bisherigen Produkts, wo die Nichtnegativität des nächsten einzelnen Faktors benötigt wird. Weitere konkrete Elaborationfehler liegen in `BBMSTPrefixMeasureRecursion.lean:176, 187, 211, 338, 361` und `BBMSTHyperplaneFibreIncidence.lean:347, 454`. Der separate Audit-Job durchlief die Upstream- und mehrere finite Faser-/Geometrie-Module, scheiterte aber ebenfalls an der Präfixrekursion. Wegen des fehlgeschlagenen Builds ist kein erfolgreicher `lake check --paranoid` für diesen Commit nachgewiesen.
+
+Die vorherigen erfolgreichen commitgebundenen Prüfungen bleiben bestehen. Dieser technische Fehlerbericht präzisiert die nächsten Reparaturaufgaben und stellt keine mathematische Widerlegung des APW4-Energieschlusses dar. Die vollständige Chronologie ist im [Beweisdossier v1.6, Nachtrag 1.7](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md) dokumentiert.
