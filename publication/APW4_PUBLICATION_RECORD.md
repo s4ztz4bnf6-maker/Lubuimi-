@@ -231,3 +231,14 @@ The accessible Library copy named “Erdös Lean 4 Beweis.pdf” was visually i
 ## 13. Current consolidated dossier
 
 The consolidated dossier is now version 1.6, dated 9 November 2026: [APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). It preserves the mathematical status of the strict lower bound from v1.5, Addendum 1.3, Section 25, and appends the public Balister source reconstruction, the new PR #67 kernel results, the BBMST geometry and prefix-mass checkpoints, and the exact remaining integrated-kernel release criteria.
+
+
+## 14. Integrated 34-module audit and full Theorem 1.2 reduction
+
+The updated PR #56 Theorem 1.2 reduction passed CI run 42601107408. The new canonicalReduction_result_full and its helper declarations report only [propext, Classical.choice, Quot.sound], with no sorryAx.
+
+PR #69 consolidates 34 BBMST/APW4 modules from the prefix-mass, rank-nine CRT/fibre, codimension-one geometry, and APW4 branches into an isolated Lean 4.35.0 package. Every module is explicitly listed as a library root; the aggregator is the default target; CI executes lake build ResearchKernelAudit followed by lake check --paranoid. The current integrated workflow is [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591), still in progress at the time of this update. The previous run 42600825252 was cancelled after source updates and is not counted.
+
+The separate APW4-only Lean 4.35.0 all-roots check is [42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647), also still in progress. Earlier checks that reported zero declarations or failed because imported module roots were not listed are excluded.
+
+No integrated paranoid success or complete APW4 main-theorem kernel verification is claimed yet. The PR #67 conditional APW4 endgame still takes the historical DT, HT, and strict lower-bound premises as inputs. The mathematical APW4 status from Dossier v1.5 §25 is unchanged.
