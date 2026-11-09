@@ -295,12 +295,69 @@ theorem canonicalReduction_result
   exact ⟨H, hH, hContains,
     augmentedChosenSurviving_no_singleton A early default hNP hH⟩
 
+
+/-- If the original family is nontrivial, the augmented family is also
+nontrivial: old members retain their property and every added singleton
+hyperplane is nontrivial. -/
+theorem augmentedFamily_nontrivial
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hNontrivial : ∀ ⦃H⦄, H ∈ A → (fixedCoords H).Nonempty) :
+    ∀ ⦃H⦄, H ∈ augmentedFamily A early default →
+      (fixedCoords H).Nonempty := by
+  classical
+  intro H hH
+  rcases Finset.mem_union.mp (by simpa [augmentedFamily] using hH) with hOld | hAdded
+  · exact hNontrivial hOld
+  · rcases Finset.mem_image.mp (by simpa [addedFamily] using hAdded) with
+      ⟨i, hi, rfl⟩
+    exact singletonAt_nontrivial i (default i)
+
+/-- Full source-level form of the BBMST Theorem 1.2 reduction. In addition
+to the reduced cover and absence of early singleton fixed sets, the theorem
+records that the surviving family remains nonparallel and every restricted
+surviving hyperplane remains nontrivial. -/
+theorem canonicalReduction_result_full
+    (A : Finset (Hyperplane C)) (early : Finset (Fin n))
+    (default : ∀ i : Fin n, C.S i)
+    (hCover : ∀ y : ProductPoint C,
+      ∃ H, H ∈ A ∧ H.Contains y)
+    (hNP : NoParallel A)
+    (hNontrivial : ∀ ⦃H⦄, H ∈ A → (fixedCoords H).Nonempty) :
+    NoParallel (survivingFamily (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default))) ∧
+    (∀ ⦃H⦄, H ∈ survivingFamily (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default)) →
+      (Finset.univ.filter
+        (fun i => (restrictHyperplane
+          (selectedDeletedValues (augmentedSelection A early default)) H).assignment i
+          |>.isSome)).Nonempty) ∧
+    (∀ x : ReducedPoint
+      (selectedDeletedValues (augmentedSelection A early default)),
+      ∃ H, H ∈ survivingFamily (augmentedFamily A early default)
+        (selectedDeletedValues (augmentedSelection A early default)) ∧
+        ContainsReducedPoint
+          (selectedDeletedValues (augmentedSelection A early default)) H x ∧
+        (∀ i ∈ early, fixedCoords H ≠ {i})) := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact survivingFamily_noParallel
+      (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default))
+      (augmentedFamily_noParallel A early default hNP)
+  · intro H hH
+    exact survivingRestricted_nontrivial
+      (augmentedFamily A early default)
+      (selectedDeletedValues (augmentedSelection A early default))
+      (augmentedFamily_nontrivial A early default hNontrivial) hH
+  · exact canonicalReduction_result A early default hCover hNP
+
 #print axioms singletonAt_fixedCoords
 #print axioms singletonAt_nontrivial
 #print axioms augmentedFamily_preserves_cover
 #print axioms augmentedFamily_covers_of_original_cover
 #print axioms augmentedReducedProduct_nonempty
 #print axioms canonicalReduction_result
+#print axioms canonicalReduction_result_full
 #print axioms augmentedFamily_has_codimOne
 #print axioms augmentedFamily_noParallel
 #print axioms augmentedChosenSurviving_no_singleton
