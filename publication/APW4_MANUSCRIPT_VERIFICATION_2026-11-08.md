@@ -191,7 +191,7 @@ Accordingly, neither available Library PDF is reissued as the complete final man
 
 PR #69 consolidates 34 BBMST/APW4 source modules from the prior prefix-mass, rank-nine CRT/fibre, codimension-one geometry, and APW4 branches into one isolated Lean 4.35.0 package. Every module is an explicit library root, the ResearchKernelAudit aggregator imports all modules, and CI explicitly runs lake build ResearchKernelAudit followed by lake check --paranoid. This corrects the earlier empty-check configuration.
 
-The current integrated workflow is [run 42600825252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600825252). At the time of this memorandum, the integrated paranoid job was still restoring the Mathlib cache and the separate audit job was compiling the BBMST source chain. No integrated paranoid success is claimed yet.
+The earlier integrated run 42600825252 was cancelled after source updates and is not counted. The current integrated workflow is [run 42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591), including the full Theorem 1.2 source reduction from PR #56. At the time of this memorandum, both the integrated paranoid job and the separate audit job were still running. No integrated paranoid success is claimed yet.
 
 Even if the integrated module package passes, it will establish compilation and kernel checking of those 34 modules, not the historical APW4 main theorem: the current APW4 contradiction still receives DT, HT, and the strict lower bound as hypotheses. The separate universal erdos_selfridge chain remains audited separately with its project axioms visible.
 
