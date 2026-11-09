@@ -371,3 +371,8 @@ The next PR #69 candidate head is `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Ru
 ## 21. Ninth research update — Lubuimi terminal-residue collision energy
 
 The separate Syracuse project now supplies an exact finite-place weighted incidence model. Each length-k exact valuation word maps to a terminal unit residue modulo 3^k; the associated second moment splits as E_k = 3^-k + C_k^coll, with C_k^coll ≥ 1/(2·3^k). This is a genuine diagonal/off-diagonal structure in the Syracuse model and a candidate APW4 interface. It is not identified with the historical APW4 BIB reserve without an index-preserving map, historical-weight preservation and a proved capacity/Hall inequality. The result is documented separately and is not a premise of the APW4 proof. APW4 theorem status remains unchanged.
+
+
+## 22. Tenth research update — finite Markov representation
+
+The terminal-residue mass vector is now expressed as `m_k = δ_0 P_k^k` for an explicit finite rational stochastic matrix on residues modulo `3^k`, derived from the independent geometric valuation exponents and the affine offset cocycle. At `k=2`, the exact vector on units `1,2,4,5,7,8 mod 9` is `(8,16,11,4,2,22)/63`, giving energy `5/21`, diagonal `1/9`, and off-diagonal collision mass `8/63`. This is a concrete finite matrix/second-moment interface for APW4-inspired transport. The historical BIB mapping and capacity/Hall inequality remain unproved; the APW4 proof itself is unchanged.
