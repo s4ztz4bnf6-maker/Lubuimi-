@@ -180,6 +180,54 @@ noncomputable def survivingFamily
   classical
   exact A.filter fun H => Survives removed H
 
+/-- Restricting a nonparallel family to the surviving subfamily preserves
+nonparallelism: the surviving family is a subset of the original family and
+the fixed-coordinate set is unchanged. -/
+theorem survivingFamily_noParallel
+    (A : Finset (Hyperplane C))
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (hNP : NoParallel A) :
+    NoParallel (survivingFamily A removed) := by
+  classical
+  intro H hH H' hH' hFix
+  have hHfilter : H ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH
+  have hH'filter : H' ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH'
+  exact hNP (Finset.mem_filter.mp hHfilter).1
+    (Finset.mem_filter.mp hH'filter).1 hFix
+
+/-- Nontriviality of every original member is inherited by the surviving
+subfamily. -/
+theorem survivingFamily_nontrivial
+    (A : Finset (Hyperplane C))
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (hNontrivial : ∀ ⦃H⦄, H ∈ A → (fixedCoords H).Nonempty)
+    {H : Hyperplane C}
+    (hH : H ∈ survivingFamily A removed) :
+    (fixedCoords H).Nonempty := by
+  classical
+  have hHfilter : H ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH
+  exact hNontrivial (Finset.mem_filter.mp hHfilter).1
+
+/-- A surviving hyperplane remains nontrivial after restriction to the
+reduced coordinate types. -/
+theorem survivingRestricted_nontrivial
+    (A : Finset (Hyperplane C))
+    (removed : ∀ i : Fin n, Option (C.S i))
+    (hNontrivial : ∀ ⦃H⦄, H ∈ A → (fixedCoords H).Nonempty)
+    {H : Hyperplane C}
+    (hH : H ∈ survivingFamily A removed) :
+    (Finset.univ.filter
+      (fun i => (restrictHyperplane removed H).assignment i |>.isSome)).Nonempty := by
+  classical
+  have hHfilter : H ∈ A.filter (fun H => Survives removed H) := by
+    simpa [survivingFamily] using hH
+  exact restricted_nontrivial removed H
+    (Finset.mem_filter.mp hHfilter).2
+    (hNontrivial (Finset.mem_filter.mp hHfilter).1)
+
 theorem survivingFamily_noParallel
     (A : Finset (Hyperplane C))
     (removed : ∀ i : Fin n, Option (C.S i))
