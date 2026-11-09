@@ -240,3 +240,14 @@ Der mathematische APW4-Beweisstand wird verbindlich als abgeschlossen geführt: 
 Der [abschließende Status-Nachtrag](APW4_ABSCHLIESSENDER_STATUS_NACHTRAG_2026-11-09.md) dokumentiert diese Einordnung. Die mathematische Abgeschlossenheit wird nicht mit der Reichweite einzelner CI-Läufe verwechselt: Die vorhandenen Lean-Nachweise gelten für die konkret benannten Deklarationen, Commits und Abhängigkeitshüllen. Das ist keine Rückstufung der mathematischen Resultate und keine pauschale Behauptung, jede historische Beweisstufe sei durch jeden genannten CI-Lauf formalisiert.
 
 **Publikationsstatus:** Der Autor hat die vollständige Finalisierung, Publikation und unabhängige Sicherung des Manuskripts mitgeteilt. Ein DOI oder öffentlich verifizierbarer externer Identifier wird nicht erfunden und bleibt einzutragen, sobald er vorliegt.
+
+
+## Authoritative German main manuscript — 9 November 2026
+
+The author's consolidated German main manuscript is published at:
+
+- [APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](./APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
+
+This is the authoritative editorial text supplied by Ta-Yoshua Lubuimi for the APW4 energy–incidence architecture. The update restores only the mathematical notation damaged in text transfer (including equality signs, ordered-pair notation, and the strict inequality). It does not alter definitions, hypotheses, proof architecture, or the recorded mathematical status.
+
+The repository's existing LICENSE-PROPRIETARY.md applies to this original manuscript. Copyright remains with Ta-Yoshua Lubuimi; public access and scholarly citation do not grant a general reuse license. The manuscript source is mirrored on main and release/apw4-publication-2026-11-09. The author's separately held final PDF is not represented as mirrored here.
