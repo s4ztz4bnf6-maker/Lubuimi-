@@ -103,7 +103,7 @@ The separate three-page “Erdös Lean Deutsch.pdf” in the Library is a reada
 
 ## Integrated 33-module BBMST/APW4 audit — PR #69
 
-[PR #69](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/69) consolidates 33 previously separate BBMST/APW4 Lean modules into an isolated Lean 4.35.0 package. Every module is an explicit library root; the workflow builds the aggregate ResearchKernelAudit and then runs lake check --paranoid. The first zero-declaration check was rejected and the package configuration corrected. The earlier integrated run 42600825252 was cancelled after source updates. The current run [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591) includes the full Theorem 1.2 reduction and was still in progress when this README update was prepared. No integrated paranoid success is claimed until the log reports a positive declaration count and the job passes.
+[PR #69](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/69) consolidates 33 previously separate BBMST/APW4 Lean modules into an isolated Lean 4.35.0 package. Every module is an explicit library root; the workflow builds the aggregate ResearchKernelAudit and then runs lake check --paranoid. The first zero-declaration check was rejected and the package configuration corrected. The earlier integrated run 42600825252 was cancelled after source updates. The integrated run [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591) is completed with failure. Its audit job passed, but the integrated-paranoid build failed in BBMSTMomentRecurrence.lean and BBMSTGeometryStageCore.lean; the log also reported sorryAx in two dependent moment declarations. Two targeted corrections were committed as b2d8c43002772d442c8f4b82f0b1877312acd558 and c713aa4bd483d541df43aea36fda15e3fb1467c1. The new runs [42602474355](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602474355) and [42602465766](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602465766) were still in progress at the last status check. No integrated paranoid success is claimed.
 
 
 The updated PR #56 branch subsequently added the full Theorem 1.2 result, including nonparallelism and nontriviality of the surviving/restricted family. [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) passed; the new theorem and helper declarations report only [propext, Classical.choice, Quot.sound], with no sorryAx.
@@ -116,3 +116,14 @@ An APW4-only Lean 4.35.0 paranoid package now lists all four APW4 modules as exp
 
 
 A static source scan of all 33 integrated BBMST/APW4 modules found no direct axiom, sorry, or admit declarations. This is only a lexical check; transitive dependencies still require the active Lean builds, paranoid check, and #print axioms audit.
+
+
+## Original BBMST supplementary material
+
+The authors' own [supplementary page](https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html) links the initial-distribution LP search (Gurobi), its configuration output, the portable optimizer for the 16 parameters δ₆,…,δ₂₁, and the large-prime f₂₁/table-reproduction program. The [source reconstruction note](publication/APW4_BALISTER_SOURCE_RECONSTRUCTION_2026-11-09.md) records these links and the access limitation: the C source bodies were not line-audited because the server serves text/x-csrc. This supplement strengthens the source reconstruction of BBMST; it does not define the APW4-specific event/BIB map or supply the APW4 strict-lower-bound derivation.
+
+## Current 4.35.0 audit status
+
+The corrected integrated branch has two source fixes and two new CI runs, 42602474355 and 42602465766, still pending at the last check. The separate APW4-only all-roots run 42600819647 was also still running. The previous integrated run 42601494591 failed and is not counted as passed. See Dossier v1.6, §§43–45 for the exact diagnostics and scope.
+
+The uploaded 17-page PDF is not reissued as a final manuscript: its rendered/extracted page 11 loses the strict comparison symbol in Satz 5.1, and the complete arithmetic intermediate derivation is not printed in the document. A clean companion report can accurately present the verified energy identities, finite incidence elimination, BBMST source reconstruction and CI evidence, but it must not be advertised as a self-contained APW4 proof until the historical DT/HT identifications and the full Satz-5.1 derivation are reproduced.
