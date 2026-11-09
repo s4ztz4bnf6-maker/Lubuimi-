@@ -1465,3 +1465,29 @@ The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. It n
 ## 56. Exact-head retry 42722133436
 
 GitHub has started [run 42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both jobs are still active. The integrated-paranoid job has completed Lean 4.35.0 setup, sandbox installation and Mathlib cache restoration and is now executing the integrated module compilation. The audit job has completed manifest generation and upstream-source fetch and is restoring the Mathlib cache. This is an in-progress retry, not a pass.
+
+
+---
+
+# XVI. Nachtrag 1.9 – PR-#69-Fortschritt nach Run 42721579786
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 57. Neuer Integrationslauf und verschobene Fehlergrenze
+
+Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) wurde auf PR-#69-Head `4ecac363ca6a06b5a41c750edac8eba2303b64cf` ausgeführt. Beide Jobs sind abgeschlossen und fehlgeschlagen. Die Diagnose zeigt aber einen echten technischen Fortschritt gegenüber Run 42720062719: Der frühere rationale Produkt-/Faktorvergleich wird in diesem Lauf nicht mehr als Fehler gemeldet. Der Audit-Job durchlief erneut Upstream-Quelle, Degenerationsprüfungen, zero-safe Parameter-/Faserkern, endliches gewichtetes Update, Uniformkoordinaten, endliche Momentenschranken, endliche Geometrie und Uniformstufen-Momenteninstanziierung.
+
+Die verbleibenden Fehler liegen jetzt vor allem in zwei abhängigen Schnittstellen:
+
+- `BBMSTPrefixMeasureRecursion.lean:171:55, 184:2, 209:6, 337:45, 360:36`: ungelöste Präfix-/Faserziele, ein Rewrite ohne passendes Vorkommen und eine Taktik nach bereits geschlossenem Ziel. Die fehlerbedingt abhängigen Deklarationen zeigen `sorryAx`; sie gelten nicht als gültige axiomsaubere Satzprofile.
+- `BBMSTHyperplaneFibreIncidence.lean:347:68, 450:73`: ungelöste endliche Koordinaten-/Faserkardinalitätsgleichheiten; abhängige Momentendeklarationen zeigen im Fehler-Recovery `sorryAx`.
+
+Der separate Audit-Job scheiterte an der Präfixrekursion, bevor die abhängigen späteren Bridges ausgeführt werden konnten. Der integrierte Job scheiterte an denselben Präfixzielen und den Hyperflächen-Faseridentitäten. Daher gibt es für Run 42721579786 keinen erfolgreichen integrierten Build und keinen abgeschlossenen `lake check --paranoid`-Nachweis.
+
+## 58. Aktueller Kandidat
+
+Der nächste Kandidaten-Head ist `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) läuft auf diesem Stand. Zum letzten Abruf war der Audit-Job nach Checkout und Quellabruf beim Mathlib-Cache; der integrierte Job hatte Setup und Cache abgeschlossen und arbeitete an der integrierten Kompilierung. Es wird noch kein Ergebnis behauptet.
+
+## 59. Kontinuität
+
+Die erfolgreichen früheren APW4-/BBMST-Prüfungen bleiben für ihre jeweiligen Commits und Deklarationen gültig. Run 42721579786 ist eine neue technische Diagnose und zeigt, dass die rationale Produktstelle überwunden wurde; die noch offenen abhängigen Präfix- und Hyperflächenbeweise sind klar eingegrenzt. Der mathematische APW4-Beweisstand – Energiezerlegung, DT, HT, globale obere Energieschranke und strikte Untergrenze unter den vollständigen historischen Hypothesen – bleibt unverändert.
