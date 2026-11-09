@@ -178,3 +178,10 @@ The dossier's mathematical status remains unchanged. The distinction here is sol
 ## 13. Consolidated dossier pointer
 
 The complete updated source and verification record is consolidated in [APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). Its Addendum 1.4 preserves the mathematical APW4 status from v1.5, Section 25, and records the new source reconstruction and CI evidence without treating the conditional Lean end-step as a proof of its historical premises.
+
+
+## 14. Second PDF copy: summary versus complete manuscript
+
+The Library also contains a three-page PDF named “Erdös Lean Deutsch.pdf”. Its typesetting is readable, but its content is an executive summary: it states the energy decomposition, DT, HT, and the strict lower bound without reproducing the historical fibre map, the weighted Hall incidence construction, or the intermediate arithmetic derivation. It also gives a compressed BIB-reserve expression whose identification with the reserve used in Dossier v1.5 is not established by that summary.
+
+Accordingly, neither available Library PDF is reissued as the complete final manuscript: the three-page file is a summary, while the accessible 17-page file has raw LaTeX commands visible on its rendered page 11. This concerns only these two Library copies and does not make any claim about a separate author-held publication copy. The mathematical APW4 status remains the one recorded in Dossier v1.5 §25.
