@@ -335,3 +335,10 @@ These maps and capacities retain their original APW4 meanings. The canonical fin
 Run 42720062719 failed in integrated-paranoid at BBMSTMomentRecurrence.lean:136, BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361 and BBMSTHyperplaneFibreIncidence.lean:347/454. The separate audit job had passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate and finite-stage moment stages and was still progressing through geometry.
 
 The product-induction argument order and dependent prefix/stage-coordinate proofs were refined on PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New run 42720690874 is pending on that exact head. The mathematical APW4 proof status and earlier successful commit-bound checks remain unchanged.
+
+
+## 16. Fourth CI update — 10 November 2026
+
+The audit job of run 42720062719 passed the upstream source, degenerate-witness tests, zero-safe parameter/fibre cores, finite weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moments, then failed in BBMSTPrefixMeasureRecursion.lean at lines 338 and 361. The integrated job failed at the rational product argument order, prefix recursion and hyperplane stage-coordinate identities.
+
+The next candidate head 5b645d776ebbf7a71b7370f1b0078c711f9af651 contains proof-script refinements for those obligations. Run 42720690874 is in progress on that exact head. The mathematical APW4 proof status remains unchanged.
