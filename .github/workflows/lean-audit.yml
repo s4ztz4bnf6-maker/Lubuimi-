@@ -96,7 +96,7 @@ jobs:
           lake-package-directory: kernel-audit
           build: false
           use-mathlib-cache: true
-      - name: Compile and check all integrated BBMST/APW4 modules
+      - name: Compile and check all integrated BBMST/APW4 modules, including full Theorem 1.2 reduction
         working-directory: kernel-audit
         run: |
           lake build ResearchKernelAudit
