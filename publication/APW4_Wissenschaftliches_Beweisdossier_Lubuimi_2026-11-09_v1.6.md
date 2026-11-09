@@ -1612,3 +1612,12 @@ Die Fehler-Recovery-Ausgaben enthalten `sorryAx` in abhängigen Deklarationen. S
 ## 68. Kontinuität des Forschungsstands
 
 Der Produkt-/Faktorfehler aus früheren Integrationsläufen ist weiterhin nicht der aktuelle Blocker. Die aktuellen Fehler sind auf abhängige Präfixindizes, Casts, gefilterte Mitgliedschaft, eine `PAt`-Induktionsannahme und Fintype-Nenner beschränkt. Frühere erfolgreiche APW4-/BBMST-Prüfungen bleiben für ihre Commits und Umfänge gültig. Der mathematische APW4-Beweisstand bleibt unverändert.
+
+
+## Addendum 1.7 — exact CI status as of 10 November 2026
+
+The integrated PR #69 head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` was checked by run `42722133436`; both the audit and integrated-paranoid jobs failed. The audit compiled the upstream source, focused degenerate-witness tests, zero-safe fibre and weighted update chain, uniform-coordinate instantiation, finite-stage moment bounds, finite-coordinate geometry and uniform-stage source moment, then failed at the source-indexed prefix recursion. The integrated-paranoid job failed during the full package build. The line-level diagnostic is in `APW4_CI_RUN_42722133436_DIAGNOSTIC_2026-11-10.md`.
+
+The documentation branch's run `42723539932` completed successfully for the earlier documentation head `2be6cec71a783eb1293d32a70df4646a5616f71a`; subsequent docs commits are not covered by that run. It was a degenerate-witness audit, not the integrated-paranoid build. The current append-only status snapshot is `APW4_CI_STATUS_SNAPSHOT_2026-11-10.md`.
+
+Earlier successful APW4 and BBMST checks remain valid for their exact commits and declaration scopes. The mathematical APW4 proof record is unchanged. No full integrated Lean 4.35.0 paranoid success is claimed.
