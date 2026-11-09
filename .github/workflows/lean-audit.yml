@@ -67,3 +67,31 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteUnionBound.olean BBMSTFiniteUnionBound.lean
       - name: Compile BBMST c_k(z) moment recurrence
         run: lake env lean -o .lake/build/lib/lean/BBMSTMomentRecurrence.olean BBMSTMomentRecurrence.lean
+
+  integrated-paranoid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.35.0 and assemble the integrated BBMST/APW4 package
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          cp BBMST*.lean APW4*.lean kernel-audit/
+          cd kernel-audit
+          lake update
+      - name: Install bubblewrap sandbox
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bubblewrap
+      - name: Restore Mathlib cache for integrated package
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: kernel-audit
+          build: false
+          use-mathlib-cache: true
+      - name: Compile and check all integrated BBMST/APW4 modules
+        working-directory: kernel-audit
+        run: lake check --paranoid
