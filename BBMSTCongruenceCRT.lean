@@ -319,6 +319,18 @@ local instance instOldUncoveredFintype {M : ℕ} [NeZero M] {O : Type*}
   unfold OldUncovered
   exact Fintype.ofFinite _
 
+/-- Explicit finite instance for each new-class fibre. This leaves the
+dependent-sum type to Mathlib's canonical Sigma Fintype instance, which is
+the instance used by Fintype.card_sigma. -/
+local instance instNewClassUncoveredFibreFintype
+    {M q : ℕ} [NeZero M] {O N : Type*}
+    (oldData : O → OldClass M) (newData : N → NewClass M q)
+    (hMq : M.Coprime q) (j : N) :
+    Fintype {x : OldUncovered oldData //
+      newBaseContains hMq (newData j) x.1} := by
+  classical
+  exact Fintype.ofFinite _
+
 /-- Explicit finite instance for the incidence subtype. -/
 local instance instUncoveredNewIncidenceFintype
     {M q : ℕ} [NeZero M] {O N : Type*} [Fintype N]
@@ -401,6 +413,7 @@ theorem incidence_card_eq_sum_of_class_supports
       ∑ j : N,
         Fintype.card {x : OldUncovered oldData //
           newBaseContains hMq (newData j) x.1} := by
+  classical
   rw [incidence_card_reindex]
   -- In this Mathlib version card_sigma is a theorem, not a function taking β.
   simpa only [NewClassUncoveredFibres] using
