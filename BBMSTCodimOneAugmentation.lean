@@ -37,13 +37,13 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     fixedCoords (singletonAt i s) = {i} := by
   classical
   ext j
-  simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and,
-    singletonAt, Option.isSome_some, Option.isSome_none,
-    Finset.mem_singleton]
+  simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and]
+  change ((singletonAt i s).assignment j).isSome ↔ j = i
   by_cases h : i = j
   · subst j
-    simp
-  · simp [h, eq_comm]
+    simp [singletonAt]
+  · have hji : j ≠ i := fun hji => h hji.symm
+    simp only [singletonAt, dif_neg h, Option.isSome_none, hji, iff_false]
 
 theorem singletonAt_nontrivial (i : Fin n) (s : C.S i) :
     (fixedCoords (singletonAt i s)).Nonempty := by
