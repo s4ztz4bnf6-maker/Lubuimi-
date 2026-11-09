@@ -231,3 +231,20 @@ The accessible Library copy named “Erdös Lean 4 Beweis.pdf” was visually i
 ## 13. Current consolidated dossier
 
 The consolidated dossier is now version 1.6, dated 9 November 2026: [APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). It preserves the mathematical status of the strict lower bound from v1.5, Addendum 1.3, Section 25, and appends the public Balister source reconstruction, the new PR #67 kernel results, the BBMST geometry and prefix-mass checkpoints, and the exact remaining integrated-kernel release criteria.
+
+
+## 14. Public repository release — 9 November 2026
+
+The consolidated public documentation package was merged into `main` through [PR #70](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/70), merge commit `73dc02f4ec9899ad08f12239d0cfdbbf2cec6523`. It includes Dossier v1.6, the Balister source reconstruction, publication metadata, manuscript verification memorandum, roadmap, and author priority statement. The package is indexed from the repository README.
+
+The earlier documentation PR #68 was closed as superseded. This does not delete its branch history or change the mathematical record.
+
+## 15. Integrated 34-module audit — current run
+
+PR #69 integrates 34 BBMST/APW4 modules in an isolated Lean 4.35.0 package. The previous run 42600825252 ended cancelled. Replacement run [42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591) is currently in progress; the audit and integrated-paranoid jobs have not yet completed. No pass is claimed until the completed logs confirm successful compilation, a positive declaration count, and the axiom audit.
+
+This formal status is separate from the established APW4 mathematical results recorded in Sections 2–5. The strict lower-bound implication remains a completed mathematical result under the historical APW4 hypotheses; the current PR #67 end theorem is a conditional formalization, and the integrated package must not be represented as proving historical premises unless the resulting theorem dependency closure actually constructs them.
+
+## 16. Public release and attribution
+
+APW4 research and authorship remain attributed to **Ta-Yoshua Lubuimi**. The original BBMST source results remain attributed to their five original authors. The author-held final manuscript is recorded as independently finalized, published, and secured by the author; this repository does not claim to host its PDF binary or to possess a DOI/arXiv identifier.
