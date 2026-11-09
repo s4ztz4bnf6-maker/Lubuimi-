@@ -39,6 +39,23 @@ B(M)\leq |U|\leq\sum_{x\bmod M}g(x)^k.
 \tag{1}
 \]
 
+
+### Stronger base-survivor floor when the old layer has at most eight primes
+
+Schroeder's rank-nine paper states the following independent quantitative corollary: every finite distinct odd family with moduli greater than one and LCM supported on at most eight primes leaves natural density at least \(1/1,002,375\) uncovered (Corollary C.2). If the old layer has LCM \(L_{\rm old}\mid M\), its uncovered set is periodic with period \(L_{\rm old}\), so its density is exactly \(|U|/M\) when viewed modulo \(M\). Hence, under the rank-eight support hypothesis,
+\[
+|U|\geq \frac{M}{1,002,375}.
+\]
+Combining this source-reported bound with the elementary divisor union bound gives
+\[
+U_8(M):=\max\left\{B(M),\frac{M}{1,002,375}\right\}
+\leq |U|\leq\sum_{x\bmod M}g(x)^k.
+\tag{1a}
+\]
+This is a useful uniform floor when \(B(M)\leq0\), as can happen for highly abundant eight-prime bases. It is an external input from the rank-nine paper; the companion package was not independently rebuilt in this audit. For the first-eight-prime base in Section 5, \(B(M)/M=1,896,446/30,808,063\), so the elementary \(B(M)\) bound is much stronger than the external \(1/1,002,375\) floor.
+
+Accordingly, when the old layer has at most eight prime factors, the exact deficit criterion (5) can be strengthened by replacing \(B(M)\) with \(U_8(M)\). This does not itself bound \(\Delta_k\).
+
 ## 2. Generalized CRT compatibility
 
 For a tuple of present projected classes
