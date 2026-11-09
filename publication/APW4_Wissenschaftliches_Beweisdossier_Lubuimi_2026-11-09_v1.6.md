@@ -1444,3 +1444,19 @@ Diese Zylinderpartition ist ein eigenständiger mathematischer Satz aus dem Coll
 Damit ist aber noch kein APW4-Transport bewiesen. Für eine echte Anwendung müssen weiterhin eine indexerhaltende Abbildung in die historischen APW4-Quellindizes, Off-Diagonal-Ereignisse und BIB-Plätze, die Erhaltung der ursprünglichen Gewichte sowie eine konkrete Kapazitäts-/Hall-Ungleichung nachgewiesen werden. Insbesondere darf die disjunkte Zylinderpartition nicht ohne Beweis als historische BIB-Inzidenz oder Kollisionsreserve interpretiert werden.
 
 **Status:** Die finite Zylinderpartition und ihre Tail-Massenidentität werden als mathematisch hergeleitete Resultate des separaten Collatz-Projekts geführt. Sie sind noch kein Lean-auditierter APW4-Baustein und ändern weder die historischen APW4-Definitionen noch den globalen APW4-Beweisstand. Die APW4-Energiezerlegung, DT, HT, die globale obere Schranke und die strikte Untergrenze bleiben unverändert.
+
+
+## 55. Run 42721579786 — audit frontier and next candidate
+
+Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) has completed with failure in both jobs.
+
+The audit job successfully completed the audited upstream source, degenerate-witness tests, zero-safe parameter/fibre core, finite weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source-moment instantiation. It then failed in BBMSTPrefixMeasureRecursion.lean:
+- line 171: restriction-after-extension still had a dependent update/Fin-index equality;
+- line 184: extension-after-restriction still had a dependent prefix index equality;
+- line 209: the covered-value equivalence attempted a rewrite whose pattern was not present;
+- line 337: the updated-weight recursion equality remained unsolved;
+- line 360: a reflexivity tactic ran after the goal was already closed.
+
+The integrated job failed on the same prefix obligations and on the two hyperplane stage-moment equalities at BBMSTHyperplaneFibreIncidence.lean:347 and :450. The rational finite-product induction no longer appears among the errors; its earlier MulLeftMono ℚ issue has been cleared by the positive-factor induction and argument-order correction. Because the integrated build still fails, no completed lake check --paranoid result exists.
+
+The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. It now makes the prefix index equality explicit in the extension proof, removes the invalid stageCoordinate rewrite, and explicitly normalizes universal finite-cardinality denominators in the hyperplane moment identities. The updated-weight proof uses an explicit universal-membership fact before splitting the covered/uncovered cases. The next exact-head CI result is pending; no success is claimed.
