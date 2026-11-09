@@ -210,3 +210,75 @@ OpenAI's 6 October 2026 release describes 721 manuscripts in 373 families, with 
 Sources: [OpenAI release](https://openai.com/index/sharing-ai-progress-in-mathematics/), [public mathematics repository](https://github.com/openai/math), [catalogue](https://github.com/openai/math/blob/main/CONTENTS.md).
 
 The public Erdős Problem 7 history page still lists the square-free BBMST result and earlier restrictions, but does not yet incorporate the September 2026 rank-seven/eight/nine preprints. It should therefore be treated as a problem-definition and classical-history source, not as a complete current literature survey: https://www.erdosproblems.com/history/7.
+
+
+---
+
+## 2026-11-09 literature and source recheck
+
+### The five standing sources
+
+1. **Quanta, 3 August 2026.** “Why the Legendary Erdős Problems Are Falling to AI” discusses the unit-distance counterexample and subsequent human improvement of that proof. It is useful context on AI-assisted discovery, but it is not evidence for Erdős Problem 7.  
+   https://www.quantamagazine.org/why-the-legendary-erdos-problems-are-falling-to-ai-20260803/
+
+2. **Tao / Hales, 9 October 2026.** The guest post explicitly requires both kernel checking and a human audit of statement fidelity and definitions, and recommends inspecting unauthorized axioms. This is the relevant verification standard for our Lean work; it does not endorse any particular odd-covering result.  
+   https://terrytao.wordpress.com/2026/10/09/what-mathematicians-should-know-about-the-lean-theorem-proverquestions-of-reliability-and-ai/
+
+3. **ProofAtlas.** The live problem page still labels the universal full-p depth-two minimax and normalized arbitrary-rank continuation as open. Its displayed mathematical status is explicitly checked 28 August 2026, before the September rank-seven/eight/nine preprints. It remains a route map, not a current literature authority or proof source.  
+   https://www.proofatlas.ai/collaboration/odd-distinct-covering-system-conjecture/
+
+4. **MAA, 1 June 2026.** “AI solves an 80 year-old Erdős problem” concerns the unit-distance problem, not odd distinct covering systems.  
+   https://maa.org/math-values/ai-solves-an-80-year-old-erdos-problem/
+
+5. **OpenAI, 6 October 2026.** The release explains its manuscript, Lean-formalization, citation, and reasoning-summary process. I also searched the public openai/math CONTENTS.md directly: it advertises 721 manuscripts in 373 result families, but has no Erdős–Selfridge / odd-covering entry. This is only a bounded public-catalogue check; it says nothing about unpublished internal work.  
+   https://openai.com/index/sharing-ai-progress-in-mathematics  
+   https://github.com/openai/math/blob/main/CONTENTS.md
+
+### New primary papers and their exact scope
+
+- **Schroeder, rank seven (1 September), rank eight (6 September), rank nine (13 September; v1.0.1 revised 15 September 2026).** The rank-nine paper is the strongest total-prime-support result found in this review: every finite odd distinct cover would have at least nine distinct primes in its LCM, with arbitrary prime-power exponents. The stated LCM lower bound is 9,704,539,845. The v1.0.1 companion lists 24,918 Lean sources and says the package update checks source identity and packaging but does not claim a new full kernel replay. The PDF reports 28,001 exact integer inequalities and the public Lean theorem names; those claims remain author-reported here because the archive could not be materialized and rebuilt in this environment.  
+  https://michaelschroeder.ai/research/SevenPrimeSupport/companion  
+  https://michaelschroeder.ai/research/EightPrimeSupport/companion  
+  https://michaelschroeder.ai/research/NinePrimeSupport/companion  
+  DOI: 10.5281/zenodo.22759614
+
+- **Schroeder, at most three prime divisors per modulus (9 September; revised 15 September 2026).** Theorem 1.1 rules out a cover if each individual modulus has at most three distinct prime factors; prime powers, residues, and the total prime support are unrestricted. Its companion says Theorem 1.1 is formalized end to end in Lean with axioms {propext, Classical.choice, Quot.sound}. The separate extension that every hypothetical cover has a modulus with at least four distinct prime factors, all at most 10^9, is a paper-level result outside that Lean formalization. Together with rank nine, this gives two independent necessary conditions, not a contradiction.  
+  https://michaelschroeder.ai/research/ThreePrimeDivisors/companion  
+  DOI: 10.5281/zenodo.22760638
+
+- **Filaseta–Kalogirou–Klein, arXiv:2610.34541 (25 October 2026).** For a distinct covering whose minimum modulus is a prime q≥11, Theorem 2 gives reciprocal-modulus sum at least 1+10^-28. Theorem 3 rules out a cover consisting only of distinct multiples of q. The more general Theorem 4 assumes every modulus not divisible by q exceeds 10^28/q. These are useful distortion-method bounds but are conditional on the minimum-modulus branch; they do not apply to every odd distinct system.  
+  https://arxiv.org/abs/2610.34541
+
+- **Mian–Siddique, arXiv:2607.25628 (28 July 2026).** The formalized exclusion is lcm>10,000 for every odd distinct cover. The paper reports 63 theorems with axioms {propext, Classical.choice, Quot.sound} and no sorry, native_decide, or solver in the trusted base. This is a smaller but independent kernel-checked baseline; it is subsumed numerically by the rank-nine claim if the latter is correct.  
+  https://arxiv.org/abs/2607.25628  
+  https://github.com/ibrahimmian36/centurion
+
+- **Öztürk, three August 2026 preprints.** The symmetry-reduced fixed-LCM procedure reports no cover through lcm 405,404 (and a direct-solver range through 10,394). “Closed-form nonexistence certificates” reports a no-cover range below 11,486,475. “Certified coverage bounds” reports machine-checked certificates for all 3,978 odd-abundant candidates through 2,000,000. These are distinct computational/certificate contributions, all labelled preprints and not peer-reviewed on their ResearchGate records. Their finite ranges are much smaller than the rank-nine LCM lower bound, but their exact survivor-grid and peeling methods may still be useful as local certificate machinery.  
+  https://www.researchgate.net/publication/412316619_A_symmetry-reduced_decision_procedure_and_computational_results_for_odd_covering_systems_the_Erdos-Selfridge_problem_Erdos_Problem_7  
+  https://www.researchgate.net/publication/412442828_Closed-form_nonexistence_certificates_for_odd_covering_systems  
+  https://www.researchgate.net/publication/412318119_Certified_coverage_bounds_and_a_nonexistence_range_for_odd_covering_systems_the_Erdos-Selfridge_problem_Erdos_Problem_7
+
+- **Hackmon, April 2026.** The preprint reports noncoverage for prime support at most four and an unconditional five-prime result for 98.2% of exponent configurations, leaving a separate CRT maximality condition for the remaining 1.8%. This is a partial exponent-profile result, not a uniform five-prime theorem.  
+  https://rxiv.org/pdf/2604.0035v1.pdf
+
+- **Bispels–Cohen–Harrington–Lowrance–Pontes–Schaumann–Wong, Discrete Mathematics 349 (July 2026), 115013.** This studies a variant allowing one odd modulus to repeat while all other moduli remain distinct. It is adjacent to, not a solution of, the all-distinct conjecture.  
+  DOI: 10.1016/j.disc.2026.115013
+
+### Newly surfaced full-solution claim: Esposito
+
+Zenodo record 10.5281/zenodo.18440762, “Global Nonexistence of Odd Distinct Covering Systems,” by Giovanni Esposito, claims a complete proof from a finite obstruction modulo 11025 and a “Distinctness Allocation Lemma.” The record is a version-1.0 preprint dated 31 January 2026 and exposes one PDF, with no Lean package or checker listed in its metadata.
+
+The PDF binary was not accessible in this environment, so the complete paper is **not audited**. The abstract-level allocation premise is nevertheless not accepted as stated: distinctness does not make a kernel divisor d single-use across q-adic heights. For example, with M=3 and q=7, the distinct moduli 21=7·3 and 147=7²·3 can carry the classes 1 mod 21 and 100 mod 147. Both project to 1 mod 3, but their q-adic first digits are 1 and 2. A valid allocation lemma must retain the height label b and control repeated d across different q^b d. The abstract also needs a relative-capacity statement for the particular old-uncovered set U; a whole-base noncoverage statement alone does not imply that a new projected family cannot cover U. The full paper may contain refinements not visible in the metadata. Do not call the preprint false, but do not treat its abstract as a proof.  
+https://zenodo.org/records/18440762
+
+### Independent rank-nine audit boundary, rechecked
+
+The PDF's written chain was re-read at the source level: prime-digit replacement, countable completion, capped current-loss kernel, convex/nested comparison, subprobability tails, charged forbidden fibres at 7, the fixed 165-projection at 11, exact geometric remainders, vertex interpolation, and the 28,001-entry closing certificate. The elementary reductions and the directions of the stated comparison inequalities appear coherent on this inspection; the finite certificate is the decisive computational input.
+
+The compact 13.6 MB archive and the original six-part 132,377,867-byte archive are advertised by the companion. The manifest publishes SHA-256 c7aafd219c89979379ca4541e2c1f527ae90f70e68ed9eede8b133391c1e9af5. The downloader source checks all six part hashes and the combined hash. The archive could not be downloaded into this working environment, so no source hashes were recomputed, no clean Lean 4.32.0-rc1 / Mathlib build was run, and no kernel replay or 28,001-entry certificate regeneration was performed. The v1.0.1 companion itself explicitly says it does not claim a new full kernel replay. The rank-nine result therefore remains a strong source-reported preprint theorem, not an independent verification by this project.
+
+### Project consequence
+
+The strongest current external constraints are: (i) global prime support at least nine, and (ii) at least one modulus with at least four distinct prime factors, with the separate paper-level cutoff that all four or more factors can be chosen at most 10^9. Neither condition excludes a candidate satisfying both.
+
+Our one-prime CRT work now has an exact compatible-intersection tensor and a quantitative deficit target, but no uniform lower bound for that deficit. The single central gap remains a residue-sensitive, height-sensitive inequality uniform over all prime supports and all prime-power exponents. The conjecture remains open in this project.
