@@ -1365,3 +1365,12 @@ The integrated job confirmed that the source-level candidate fixes had moved the
 The product-induction argument order has now been corrected. The prefix proof has been refined with explicit dependent-coordinate handling, direct expansion of the covered-value equivalence, and proof-irrelevance equalities. The hyperplane moment identities now use an explicit equality of the two stage-coordinate indices.
 
 These changes are committed on PR #69 at current head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) has been queued and is pending. No success is claimed until its integrated and audit jobs complete. The earlier successful APW4 checks and the mathematical status in this dossier remain unchanged.
+
+
+## 53. Completed audit result for run 42720062719
+
+The audit job of run 42720062719 has now completed with failure in BBMSTPrefixMeasureRecursion.lean at lines 338 and 361. Importantly, it passed the audited upstream source, focused degenerate-witness tests, zero-safe parameter and fibre cores, finite weighted update, uniform-coordinate instantiation, finite-stage first/second moment bounds, finite-coordinate geometry, and uniform-stage source-moment instantiation. The remaining audit failure is therefore localized to the source-indexed prefix recursion proof.
+
+The integrated job of the same run failed at BBMSTMomentRecurrence.lean:136 (argument order for the two nonnegativity premises of mul_le_mul), prefix recursion lines 176/187/211/338/361, and hyperplane-coordinate moment equalities at BBMSTHyperplaneFibreIncidence.lean:347/454.
+
+The next source head 5b645d776ebbf7a71b7370f1b0078c711f9af651 corrects the product argument order, makes the prefix covered-value equivalence explicit, resolves the dependent prefix-index proof goals, and identifies the two stage-coordinate indices. Run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is in progress on that exact head. No success is claimed yet.
