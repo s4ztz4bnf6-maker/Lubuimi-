@@ -41,8 +41,7 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     Finset.mem_singleton]
   by_cases h : i = j
   · subst j
-    simp only [singletonAt, dif_pos rfl, Option.isSome_some,
-      true_iff, eq_self_iff_true]
+    simp only [singletonAt, dif_pos trivial, Option.isSome_some, true_iff]
   · constructor
     · intro hsome
       have hfalse : False := by
