@@ -89,11 +89,10 @@ theorem containsPrefix_iff_full
           simp [fixedCoords, hassign]
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
-        have hidx : prefixIndex hk j = i := Fin.ext rfl
-        -- Eliminate the index equality before using the dependent fibre value.
-        -- This rewrites both the assignment equation and the target coordinate
-        -- into the same fibre, avoiding an ill-typed congrArg on the dependent
-        -- product point.
+        have hidx : i = prefixIndex hk j := (Fin.ext rfl).symm
+        -- Eliminate the equality in the direction that rewrites the dependent
+        -- prefix coordinate to the full coordinate before simplifying the
+        -- assignment match.
         cases hidx
         have hj := hPrefix j
         simpa [Hyperplane.ContainsPrefix, hassign, projectPrefix] using hj
