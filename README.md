@@ -151,3 +151,13 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## APW4 status update — 10 November 2026
+
+APW4 research and authorship remain attributed to **Ta-Yoshua Lubuimi**. The mathematical results recorded in Dossier v1.6, Addendum 1.3 §25 and Addendum 1.5 §§41/46 — the strict lower bound, DT, HT, and the global energy conclusion under the historical APW4 hypotheses — remain the established mathematical status of the author's proof record. Later CI failures do not retroactively invalidate earlier successful commit-bound checks.
+
+- Successful declaration-scoped APW4 checks: [42599116967](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116967) and [42599116987](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116987).
+- Successful BBMST module audit: [42522617494](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494).
+- PR #69 integrated run [42716161232](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42716161232) reached the integrated build but failed at `BBMSTMomentRecurrence.lean:118` (`MulLeftMono ℚ`); its parallel audit job was cancelled during cache restoration. No integrated paranoid pass is claimed. The cancelled audit job has been queued for retry.
+- The full status chronology is in [Dossier v1.6, Addendum 1.6](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md).
