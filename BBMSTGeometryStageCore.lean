@@ -89,13 +89,29 @@ theorem containsPrefix_iff_full
           simp [fixedCoords, hassign]
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
-        have hidx : i = prefixIndex hk j := (Fin.ext rfl).symm
-        -- Eliminate the equality in the direction that rewrites the dependent
-        -- prefix coordinate to the full coordinate before simplifying the
-        -- assignment match.
-        cases hidx
+        have hidx : prefixIndex hk j = i := Fin.ext rfl
+        have hassign' :
+            H.assignment (prefixIndex hk j) =
+              some (Eq.mpr (congrArg C.S hidx) s) := by
+          cases hidx
+          exact hassign
         have hj := hPrefix j
-        simpa [Hyperplane.ContainsPrefix, hassign, projectPrefix] using hj
+        simp [hassign'] at hj
+        have hj' :
+            x (prefixIndex hk j) =
+              Eq.mpr (congrArg C.S hidx) s := by
+          simpa [projectPrefix] using hj
+        -- The index map is dependent in its codomain, so eliminate the
+        -- equality rather than applying congrArg to the dependent point.
+        have hpoint : x (prefixIndex hk j) = x i := by
+          cases hidx
+          rfl
+        have hvalue :
+            Eq.mpr (congrArg C.S hidx) s = s := by
+          cases hidx
+          rfl
+        rw [hpoint, hvalue] at hj'
+        exact hj'
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
