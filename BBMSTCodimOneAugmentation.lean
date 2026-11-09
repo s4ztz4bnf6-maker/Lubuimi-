@@ -37,7 +37,8 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     fixedCoords (singletonAt i s) = {i} := by
   classical
   ext j
-  simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and,
+    Finset.mem_singleton]
   change (if h : i = j then some (h ▸ s) else none).isSome = true ↔ j = i
   by_cases h : i = j
   · subst j
