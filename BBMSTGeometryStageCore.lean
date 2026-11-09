@@ -90,28 +90,31 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
+        have htype : C.S (prefixIndex hk j) = C.S i :=
+          congrArg C.S hidx
         have hassign' :
             H.assignment (prefixIndex hk j) =
-              some (Eq.mpr (congrArg C.S hidx) s) := by
+              some (Eq.mpr htype s) := by
           cases hidx
           exact hassign
-        have hj := hPrefix j
-        simp [hassign'] at hj
         have hj' :
-            x (prefixIndex hk j) =
-              Eq.mpr (congrArg C.S hidx) s := by
-          simpa [projectPrefix] using hj
-        -- The index map is dependent in its codomain, so eliminate the
-        -- equality rather than applying congrArg to the dependent point.
-        have hpoint : x (prefixIndex hk j) = x i := by
+            x (prefixIndex hk j) = Eq.mpr htype s := by
+          simpa [Hyperplane.ContainsPrefix, hassign', projectPrefix] using
+            hPrefix j
+        have hj'' :
+            Eq.mp htype (x (prefixIndex hk j)) = s := by
+          calc
+            Eq.mp htype (x (prefixIndex hk j)) =
+                Eq.mp htype (Eq.mpr htype s) :=
+              congrArg (Eq.mp htype) hj'
+            _ = s := by
+              cases hidx
+              rfl
+        have hpoint :
+            Eq.mp htype (x (prefixIndex hk j)) = x i := by
           cases hidx
           rfl
-        have hvalue :
-            Eq.mpr (congrArg C.S hidx) s = s := by
-          cases hidx
-          rfl
-        rw [hpoint, hvalue] at hj'
-        exact hj'
+        exact hpoint.symm.trans hj''
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>

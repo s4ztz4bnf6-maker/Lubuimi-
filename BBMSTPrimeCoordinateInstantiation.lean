@@ -35,7 +35,8 @@ theorem primeCoordinateSystem_card
     (p : Fin n → ℕ) (hp : ∀ i, Nat.Prime (p i))
     (i : Fin n) :
     Fintype.card ((primeCoordinateSystem p hp).S i) = p i := by
-  simpa [primeCoordinateSystem] using Fintype.card_fin (p i)
+  change Fintype.card (Fin (p i)) = p i
+  exact Fintype.card_fin (p i)
 
 /-- Every prime-sized coordinate has at least two values. -/
 theorem primeCoordinateSystem_card_ge_two

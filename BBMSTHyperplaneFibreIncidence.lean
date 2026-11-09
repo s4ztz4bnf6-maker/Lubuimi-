@@ -346,15 +346,13 @@ theorem actualStageFirstMoment_eq
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  let i := stageCoordinate k hk hk0
-  letI : Fintype (C.S i) := C.fintypeS i
   have hcard :
-      (Finset.univ : Finset (C.S i)).card = Fintype.card (C.S i) := by
-    simp
+      (Finset.univ : Finset (C.S (stageCoordinate k hk hk0))).card =
+        Fintype.card (C.S (stageCoordinate k hk hk0)) := by
+    exact Finset.card_univ
   simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
     coveredProportion, uniformWeight, stageCoordinate, hcard]
-
 /-- The first moment is bounded by the expected number of new
 hyperplanes whose old-coordinate shadow contains the base point, divided
 by the size of the new coordinate. This is the precise union-bound
@@ -450,10 +448,13 @@ theorem actualStageSecondMoment_eq
           ((((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
+  have hcard :
+      (Finset.univ : Finset (C.S (stageCoordinate k hk hk0))).card =
+        Fintype.card (C.S (stageCoordinate k hk hk0)) := by
+    exact Finset.card_univ
   simp [uniformStageSecondMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageSecondMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate]
-
+    coveredProportion, uniformWeight, stageCoordinate, hcard]
 /-- The second moment is bounded by the second moment of the number
 of new hyperplanes whose old-coordinate shadows contain the base point,
 divided by |S_k|. This is the t=2 union-bound step before the intersection
