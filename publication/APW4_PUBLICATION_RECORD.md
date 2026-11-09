@@ -381,3 +381,11 @@ The terminal-residue mass vector is now expressed as `m_k = δ_0 P_k^k` for an e
 ## 23. Eleventh CI update — PR #69 run 42722133436
 
 Run 42722133436 completed with failure on PR head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` (merge commit `a73cc25` into `ca9d245aa1851a54b65850ddb1130d1ca12e850e`). Audit passed upstream and multiple zero-safe fibre, weighted update, uniform-coordinate, finite moment and geometry stages, then failed in prefix recursion. The integrated job failed in prefix recursion and hyperplane fibre cardinalities. Exact diagnostics include a dependent coordinate cast at line 171; a `Fin k`/`Fin (k+1)`/`Fin n` index mismatch at lines 187/191; unresolved filtered-set membership at line 204; dependent `PAt_nonneg` induction transport at line 336; redundant tactic at line 359; and Fintype denominator mismatches at hyperplane lines 347 and 446. Error-recovery output contains sorryAx. No integrated build or paranoid pass is claimed. The exact repair order is in Dossier v1.6, Addendum 1.12. APW4 mathematical status and earlier successful commit-bound checks remain unchanged.
+
+
+## Current integration and bridge status — 10 November 2026
+
+- [Append-only APW4 CI status snapshot](publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md): records exact PR #69 failure 42722133436 and the separate documentation-branch audit 42723539932, including the fact that later documentation commits advanced PR #79 beyond the commit checked by that run.
+- [APW4–Syracuse Cylinder–Energy Bridge research programme](publication/LUBUIMI_APW4_SYRACUSE_CYLINDER_ENERGY_BRIDGE_RESEARCH_PROGRAMME_2026-11-10.md): separates the established APW4 and Syracuse results from the unproved transport bridge.
+
+The current PR #69 integrated source head has not passed the full Lean 4.35.0 integrated-paranoid build. This is a formalization status, not a change to the mathematical APW4 proof record. The diagonal mass, off-diagonal mass and BIB pair reserve remain distinct until the historical index-preserving map and capacity inequalities are proved in the relevant formalization.
