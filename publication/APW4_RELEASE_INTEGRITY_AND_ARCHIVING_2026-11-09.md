@@ -41,3 +41,10 @@ Git commit history provides versioned repository records, but it is not a substi
 This record concerns publication metadata, rights notices, repository visibility, branch state, and archival evidence. It does not rerun Lean, alter the mathematical proof, or extend the scope of any CI result.
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
+
+
+## 6. Commercial rights and limits of copyright
+
+The repository now links a separate [commercial licensing and remuneration policy](../LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md). It requires prior written permission and a separately negotiated agreement for commercial exploitation of the author's copyrightable original materials. A negotiated agreement may include an upfront fee, royalties, minimum guarantees, reporting, and audit rights.
+
+This is not an automatic royalty claim over every use of a mathematical theorem or idea. Copyright generally protects original expression, including source code and manuscript wording, not mathematical facts, abstract ideas, methods, or independently developed implementations as such. Any contractual payment obligation must arise from an actual agreement; infringement remedies depend on applicable law and facts. Specialist legal advice is needed for any patent or other registrable-right question, particularly after publication.
