@@ -1152,3 +1152,12 @@ Der Branch integration/bbmst-apw4-kernel-2026-11-09 führt 34 BBMST-/APW4-Module
 Der frühere integrierte Lauf 42600825252 wurde durch die aktualisierten Quellstände abgebrochen und wird nicht als Ergebnis gezählt. Der aktuelle integrierte Lauf ist [CI 42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591). Er enthält den vollständigen Theorem-1.2-Quellstand aus PR #56. Zum Zeitpunkt dieses Nachtrags waren sowohl der isolierte 4.35.0-Paranoidjob als auch der separate Auditjob noch in Arbeit. Es wird noch kein Erfolg für den integrierten Paranoid-Check behauptet.
 
 Die Integration ist ein Prüf- und Konsolidierungsbranch. Sie ändert weder die historischen Definitionen noch den mathematischen Status aus §25. Selbst ein erfolgreicher Build aller 34 Module würde die APW4-spezifischen DT-/HT- und strikten Untergrenzenprämissen nicht automatisch konstruieren: der gegenwärtige APW4-Endwiderspruch nimmt diese weiterhin als Eingabehypothesen. Der universelle erdos_selfridge-Strang wird separat auditiert und behält seine ausgewiesenen Projektaxiome.
+
+
+## 41. APW4-only Lean 4.35.0 all-roots paranoid check
+
+Zusätzlich zum integrierten PR #69 wurde ein isolierter APW4-Prüfstand mit Lean 4.35.0 angelegt. Er enthält APW4CanonicalMajorization, APW4DiagonalAudit, APW4HistoricalCRTCore und APW4IncidenceSecondMoment. Alle vier Module sind ausdrücklich Library-Roots; APW4Audit ist Default-Target; der Workflow führt lake build APW4Audit und anschließend lake check --paranoid aus.
+
+Der aktuelle All-roots-Lauf ist [CI 42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) und war zum Zeitpunkt dieses Nachtrags noch in der Paranoid-Prüfstufe. Ein früherer Lauf, der „checked 0 declarations“ meldete, wurde als leerer/Schein-Check verworfen. Ein weiterer Lauf vor expliziter Root-Deklaration scheiterte an fehlenden importierten Modul-Roots; auch dieser wird nicht als Lean-Quellfehler oder als erfolgreicher Check gewertet. Erst der aktuelle All-roots-Lauf entscheidet.
+
+Der erfolgreiche Lean-4.28.0-Kernel-Compile aus PR #67 bleibt davon unabhängig ein gültiger Befund für seine drei Quelldateien und die dort ausgegebenen Axiomprofile. Der neue 4.35.0-Paranoidlauf ist eine zusätzliche, strengere Prüfung, nicht die Voraussetzung für die bereits bestätigten 4.28.0-Ergebnisse.
