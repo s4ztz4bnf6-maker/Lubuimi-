@@ -1161,3 +1161,10 @@ Zusätzlich zum integrierten PR #69 wurde ein isolierter APW4-Prüfstand mit Lea
 Der aktuelle All-roots-Lauf ist [CI 42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) und war zum Zeitpunkt dieses Nachtrags noch in der Paranoid-Prüfstufe. Ein früherer Lauf, der „checked 0 declarations“ meldete, wurde als leerer/Schein-Check verworfen. Ein weiterer Lauf vor expliziter Root-Deklaration scheiterte an fehlenden importierten Modul-Roots; auch dieser wird nicht als Lean-Quellfehler oder als erfolgreicher Check gewertet. Erst der aktuelle All-roots-Lauf entscheidet.
 
 Der erfolgreiche Lean-4.28.0-Kernel-Compile aus PR #67 bleibt davon unabhängig ein gültiger Befund für seine drei Quelldateien und die dort ausgegebenen Axiomprofile. Der neue 4.35.0-Paranoidlauf ist eine zusätzliche, strengere Prüfung, nicht die Voraussetzung für die bereits bestätigten 4.28.0-Ergebnisse.
+
+
+## 42. Statischer Platzhalter-/Axiomscan der 33 integrierten Quellmodule
+
+Vor dem integrierten CI-Lauf wurden alle 33 im Aggregator ResearchKernelAudit importierten Quellmodule einzeln über den GitHub-Quellstand abgerufen und auf direkte Deklarationszeilen der Form axiom, sorry oder admit geprüft. Der Scan fand in keinem der 33 Module eine solche direkte Deklaration.
+
+Das ist ausdrücklich nur ein statischer Quelltextscan. Er ersetzt weder Lean-Kompilierung noch die transitive Axiomprüfung. Die tatsächlichen Abhängigkeiten werden durch die laufenden Build-/Paranoid-Prüfungen und die vorhandenen #print axioms-Ausgaben geprüft. Der separate upstream erdos_selfridge-Strang wird nicht in diesen 33-Modulscan hineingerechnet; dort sind sf_sieve_lt_one und sieve_criterion weiterhin als Projektaxiome ausgewiesen.
