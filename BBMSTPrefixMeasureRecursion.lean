@@ -68,7 +68,11 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
     (x : PrefixPoint C k hk) :
     projectPrefix hk (liftPrefix C hk x) = x := by
   funext j
-  simp [projectPrefix, liftPrefix, prefixIndex, j.isLt]
+  dsimp [projectPrefix, liftPrefix, prefixIndex]
+  simp only [dif_pos j.isLt]
+  have hj : (⟨j.val, j.isLt⟩ : Fin k) = j := Fin.ext rfl
+  cases hj
+  rfl
 
 /-- The coordinate introduced after a prefix of length k. -/
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
@@ -160,7 +164,7 @@ theorem extendPrefix_last
     (s : C.S (stageCoordinate hk)) :
     (extendPrefix C hk x s) (Fin.last k) = s := by
   simp [extendPrefix, projectPrefix, prefixIndex, stageCoordinate,
-    Function.update]
+    Function.update] <;> rfl
 
 
 /-- Restricting an appended prefix recovers the original prefix. -/
@@ -171,7 +175,7 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega
+    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega <;> rfl
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -185,8 +189,10 @@ theorem extendPrefix_restrictPrefix
     have hle : i.val ≤ k := Nat.le_of_lt hi
     have hhi : i.val < k + 1 := i.isLt
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi]
-  · have hiEq : i.val = k := by omega
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi] <;> rfl
+  · have hiEq : i.val = k :=
+      Nat.le_antisymm (Nat.lt_succ_iff.mp i.isLt)
+        (Nat.le_of_not_gt hi)
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
     exact extendPrefix_last C hk (restrictPrefix C hk y) (y (Fin.last k))
@@ -200,8 +206,16 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  simp [prefixPointCovered, prefixCoveredValues,
-    extendPrefix_restrictPrefix]
+  unfold prefixPointCovered prefixCoveredValues
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  have hext :
+      extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
+    extendPrefix_restrictPrefix C hk y
+  constructor
+  · rintro ⟨H, hH, hmem⟩
+    exact ⟨H, hH, by simpa [hext] using hmem⟩
+  · rintro ⟨H, hH, hmem⟩
+    exact ⟨H, hH, by simpa [hext] using hmem⟩
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
@@ -382,8 +396,8 @@ theorem PAt_nonneg
       let F := prefixFibreData C (A := A) (k := k) hk xprev
         (PAt C (A := A) a ha P0 δ j hprev xprev) hbase
       have hpoint : y (Fin.last k) ∈ F.points := by
-        simp [F, prefixFibreData, prefixUniformFibre,
-          BBMSTUniformFibreInstantiation.toFibreData]
+        change y (Fin.last k) ∈ Finset.univ
+        exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y (by
           simpa [k, xprev] using hbase)
@@ -518,8 +532,8 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
       hP0_nonneg hδ hδhalf j hprev xprev
   let F := prefixFibreData C (A := A) (k := k) hk xprev baseMass hbase
   have hpoint : y (Fin.last k) ∈ F.points := by
-    simp [F, prefixFibreData, prefixUniformFibre,
-      BBMSTUniformFibreInstantiation.toFibreData]
+    change y (Fin.last k) ∈ Finset.univ
+    exact Finset.mem_univ _
   have hlocal := prefixFibre_updatedWeight_eq_PAt
     (C := C) (A := A) a ha P0 δ j
     hk y (by
@@ -586,7 +600,7 @@ theorem initialPrefixOf_restrictPrefix
     Nat.lt_trans hi (Nat.lt_succ_self (a + j))
   have hi'' : i.val < a + (j + 1) := by omega
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex, hi, hi', hi'']
+    liftPrefix, prefixIndex, hi, hi', hi''] <;> rfl
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
