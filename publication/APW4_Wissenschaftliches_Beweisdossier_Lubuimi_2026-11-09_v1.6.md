@@ -1574,3 +1574,41 @@ Dies ist ein konkreter exakter Momentenwert und liefert einen unmittelbar formal
 ## 64. Grenze der Übertragung
 
 Die endliche Matrix, ihre Massen und der zweite Moment sind Syracuse-eigene Objekte. Sie liefern eine konkrete Quelle/Platz-/Gewichtsstruktur für die Entwicklung eines APW4-artigen Transportes. Die Identifikation mit den historischen APW4-BIB-Plätzen, die Erhaltung der dortigen Originalgewichte und eine Kapazitäts-/Hall-Ungleichung sind weiterhin gesondert zu beweisen. Bis dahin wird die Matrix nicht als historische BIB-Instanz ausgegeben. Der APW4-Beweisstand bleibt unverändert.
+
+
+---
+
+# XIX. Nachtrag 1.12 – Run 42722133436: präzise abhängige Indexdiagnose
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 65. Exakter Commit und Ergebnis
+
+Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) lief auf PR-#69-Head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`, Merge-Commit `a73cc25` in Basis `ca9d245aa1851a54b65850ddb1130d1ca12e850e`. Audit und integrated-paranoid sind beide fehlgeschlagen.
+
+Der Audit-Job durchlief Upstream-Quelle, Degenerationsprüfungen, zero-safe Parameter-/Faserkern, endliches gewichtetes Update, Uniformkoordinaten, endliche Momentenschranken, endliche Geometrie und Uniformstufen-Momenteninstanziierung. Danach scheiterte er an der Präfixrekursion. Der integrierte Job scheiterte an denselben Präfixzielen und an den Hyperflächen-Faserkardinalitäten.
+
+## 66. Neue konkrete Lean-Diagnose
+
+- `BBMSTPrefixMeasureRecursion.lean:171:55`: `restrictPrefix_extendPrefix` lässt einen abhängigen Koordinaten-Cast ungelöst; nach dem Entfalten bleibt eine Gleichheit zwischen einem per `Eq.mp` transportierten Präfixwert und dem ursprünglichen Wert.
+- `:187:39` und `:187:45`: Im Beweis von `extendPrefix_restrictPrefix` wird `hi : i.val < k` als Beweis für `Fin (k+1)` verwendet; zusätzlich wird das Ergebnis `prefixIndex hk ... : Fin n` fälschlich mit `i : Fin (k+1)` verglichen. Die korrekte Hilfsgleichheit muss zwei `Fin n`-Indizes vergleichen: `prefixIndex hk ⟨i.val, by omega⟩` und `prefixIndex (Nat.le_trans ...) i`.
+- `:191:67`: `hidx` ist wegen der vorigen Typfehler kein gültiger Satzbeweis; der nachfolgende `simp`-Eintrag ist deshalb ungültig.
+- `:204:59`: `prefixPointCovered_iff` reduziert die Mitgliedschaft in `Finset.univ.filter` nicht explizit; daher bleibt die Äquivalenz offen und `hExtend` wird von `simp` nicht verwendet. Zuerst `Finset.mem_filter`/`Finset.mem_univ` freilegen, danach `rw [hExtend]`.
+- `:336:45`: Im Induktionsschritt von `PAt_nonneg` lässt sich die Nichtnegativität `hbase` nicht automatisch auf den mit lokalem `hk` und `hprev` gebildeten abhängigen Term transportieren. Die Gleichheit der Beweisargumente bzw. der abhängigen Präfixwerte muss explizit normalisiert werden.
+- `:359:36`: Nach `rw [hcovered, hstage]` ist das Ziel bereits geschlossen; die nachfolgende Taktik ist redundant und muss entfernt werden.
+- `BBMSTHyperplaneFibreIncidence.lean:347:68` und `:446:73`: Die Nenner `Finset.univ.card` und `Fintype.card (C.S i)` werden nicht unter derselben lokalen `Fintype`-Instanz normalisiert; die Koordinatentypen müssen vor dem Rewrite vereinheitlicht werden.
+
+Die Fehler-Recovery-Ausgaben enthalten `sorryAx` in abhängigen Deklarationen. Sie sind keine gültigen axiomsauberen Satzprofile. Es gibt für diesen Lauf weder einen erfolgreichen integrierten Build noch einen erfolgreichen `lake check --paranoid`-Nachweis.
+
+## 67. Reparaturreihenfolge
+
+1. Eine separate Hilfslemma für den abhängigen `Fin`-Index-/Koordinaten-Cast beweisen und in `restrictPrefix_extendPrefix` verwenden.
+2. In `extendPrefix_restrictPrefix` die `Fin (k+1)`-Einbettung mit `by omega` aufbauen und die beiden resultierenden `Fin n`-Indizes vergleichen.
+3. In `prefixPointCovered_iff` die gefilterte Finset-Mitgliedschaft explizit reduzieren und dann `hExtend` umschreiben.
+4. In `PAt_nonneg` die abhängigen Proof- und Präfixargumente explizit transportieren; redundant gewordene Taktiken entfernen.
+5. In der Hyperflächeninzidenz die Fintype-Instanz und den Koordinatentyp auf beiden Nennerseiten identisch machen.
+6. Auf einem neuen unveränderlichen PR-Head Build, Paranoid-Check und vollständigen Axiom-Audit nacheinander ausführen.
+
+## 68. Kontinuität des Forschungsstands
+
+Der Produkt-/Faktorfehler aus früheren Integrationsläufen ist weiterhin nicht der aktuelle Blocker. Die aktuellen Fehler sind auf abhängige Präfixindizes, Casts, gefilterte Mitgliedschaft, eine `PAt`-Induktionsannahme und Fintype-Nenner beschränkt. Frühere erfolgreiche APW4-/BBMST-Prüfungen bleiben für ihre Commits und Umfänge gültig. Der mathematische APW4-Beweisstand bleibt unverändert.
