@@ -259,3 +259,14 @@ The revised text separates the dossier's recorded mathematical status from the a
 The 6 November incidence note explicitly does not establish a bridge from \(B(M)=2M-\sigma(M)\) to APW4 energy or BIB reserve. A square-free example \(M=15015\) has \(B(M)=-2226\) and \(\sum_{d\mid M,d>1}1/d=821/715>1\). Thus \(B(M)\le0\) alone is not an exclusion theorem. The strict lower bound remains recorded as mathematically completed in v1.5, Addendum 1.3, §25; the accessible source set still does not reproduce its full derivation and historical hypotheses.
 
 The successful PR #67 runs remain declaration-scoped. The integrated PR #69 run 42602474355 failed at BBMSTMomentRecurrence.lean:118 because Finset.prod_le_prod₀ is unavailable; dependent declarations show sorryAx. The APW4-only all-roots run 42600819647 was cancelled. No complete historical APW4 main theorem is claimed to have passed a single integrated Lean kernel audit.
+
+
+## Authoritative German main manuscript — 9 November 2026
+
+The author's consolidated German main manuscript is published at:
+
+- [APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss](./APW4_DIAGONALTRANSPORT_GEWICHTETER_OFFDIAGONALTRANSPORT_ENERGIESCHLUSS_2026-11-09.md)
+
+This is the authoritative editorial text supplied by Ta-Yoshua Lubuimi for the APW4 energy–incidence architecture. The update restores only the mathematical notation damaged in text transfer (including equality signs, ordered-pair notation, and the strict inequality). It does not alter definitions, hypotheses, proof architecture, or the recorded mathematical status.
+
+The repository's existing LICENSE-PROPRIETARY.md applies to this original manuscript. Copyright remains with Ta-Yoshua Lubuimi; public access and scholarly citation do not grant a general reuse license. The manuscript source is mirrored on main and release/apw4-publication-2026-11-09. The author's separately held final PDF is not represented as mirrored here.
