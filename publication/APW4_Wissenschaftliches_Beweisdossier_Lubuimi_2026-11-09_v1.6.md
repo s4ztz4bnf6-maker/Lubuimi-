@@ -1374,3 +1374,39 @@ The audit job of run 42720062719 has now completed with failure in BBMSTPrefixMe
 The integrated job of the same run failed at BBMSTMomentRecurrence.lean:136 (argument order for the two nonnegativity premises of mul_le_mul), prefix recursion lines 176/187/211/338/361, and hyperplane-coordinate moment equalities at BBMSTHyperplaneFibreIncidence.lean:347/454.
 
 The next source head 5b645d776ebbf7a71b7370f1b0078c711f9af651 corrects the product argument order, makes the prefix covered-value equivalence explicit, resolves the dependent prefix-index proof goals, and identifies the two stage-coordinate indices. Run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is in progress on that exact head. No success is claimed yet.
+
+
+---
+
+# XIV. Nachtrag 1.7 – Exakter Status des PR-#69-Runs 42720062719
+
+**Aktualisierung: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 52. Commitgebundener Befund
+
+Der PR-#69-Lauf [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) wurde auf dem PR-Head `6c34cd1d4f7487c200a04a4f1cc90010ceb19643` ausgeführt; der integrierte Workflow checkte den Merge-Commit `ac80e32831b12aaeb117242d62395bd421aaf713` aus. Beide Jobs sind inzwischen fehlgeschlagen. Das ist ein konkreter Stand der aktuellen Integrationskandidatur und keine Rücknahme früherer positiver Prüfungen oder des mathematischen APW4-Beweisstands.
+
+### Integrierter Lean-4.35.0-Build
+
+Setup, Sandbox und Mathlib-Cache waren erfolgreich. Der eigentliche Build erreichte die integrierten BBMST/APW4-Module und meldete:
+
+- `BBMSTMomentRecurrence.lean:136:32`: Typfehler im Induktionsschritt. `hprodR` beweist die Nichtnegativität des bisherigen endlichen Produkts, erwartet wird aber die Nichtnegativität des nächsten einzelnen Faktors `stageFactor δ size z (a + 1 + m)`. Die zuvor korrigierte globale rationale Multiplikationsmonotonie ist damit nicht mehr der gemeldete Fehler; die lokale Positivitätsannahme muss für den aktuellen Faktor separat bereitgestellt werden.
+- `BBMSTPrefixMeasureRecursion.lean:176, 187, 211, 338, 361`: abhängige Präfix-/Faserbeweise enthalten ein `introN` ohne verbleibende Binder, ungelöste Gleichheitsziele, eine nicht passende `assumption` sowie eine Taktik nach bereits geschlossenem Ziel. Fehler-Recovery weist bei abhängigen Deklarationen `sorryAx` aus; diese Deklarationen sind deshalb nicht als axiomsauber elaboriert zu zählen.
+- `BBMSTHyperplaneFibreIncidence.lean:347, 454`: zwei nicht geschlossene Gleichheiten der endlichen Koordinaten-/Faserkardinalitäten. Abhängige Momentendeklarationen zeigen im Fehler-Recovery `sorryAx`.
+
+Da `lake build ResearchKernelAudit` scheiterte, liegt für diesen Lauf kein erfolgreicher Abschluss von `lake check --paranoid` vor.
+
+### Separater Audit-Job
+
+Der Audit-Job kompilierte die Upstream-Quelle, die fokussierten Degenerationsprüfungen, den zero-safe Parameter- und Faserkern, das endliche gewichtete Update, die Uniformkoordinateninstanziierung, die endlichen Momentenschranken, den endlichen Geometriekern und die Uniformstufen-Momenteninstanziierung. Er scheiterte anschließend in `BBMSTPrefixMeasureRecursion.lean` an den oben genannten abhängigen Präfixbeweisen. Die späteren, davon abhängigen Workflow-Schritte wurden übersprungen. Das ist ein positiver Teilbefund für die tatsächlich abgeschlossenen Module, aber kein erfolgreicher Gesamt-Audit.
+
+## 53. Konkrete nächste Reparaturziele
+
+1. In `BBMSTMomentRecurrence` die Positivität des aktuellen Faktors direkt aus `stageFactor_pos` bzw. den dortigen Parameterhypothesen ableiten und erst dann `mul_le_mul` anwenden; die Produktinduktion darf nicht die Nichtnegativität des Gesamtprodukts als Ersatz für die Positivität des nächsten Faktors verwenden.
+2. In `BBMSTPrefixMeasureRecursion` die abhängigen Subtypen-/Koordinatengleichheiten explizit über die tatsächlichen Projektionen und proof irrelevance transportieren; vor jedem `intro` den aktuellen Zieltyp prüfen. Danach die Folgeidentitäten und die nichtnegativen normierten Präfixmassen erneut kompilieren.
+3. In `BBMSTHyperplaneFibreIncidence` die Kardinalitätsgleichheiten über die konkrete Äquivalenz der Koordinatenfasern zeigen, nicht allein über syntaktisch ähnliche `Fin`-Indizes.
+4. Auf einem unveränderlichen neuen PR-Head zuerst den vollständigen Build, danach `lake check --paranoid` und anschließend die transitiven `#print axioms`-Ausgaben prüfen. Keine fehlerbedingt ausgegebenen `sorryAx`-Profile als gültige Satzprofile behandeln.
+
+## 54. Kontinuität des Beweisstands
+
+Die früheren erfolgreichen Läufe `42599116967`, `42599116987`, `42522617494` und `42601107408` bleiben für ihre jeweiligen Commits, Module, Deklarationen und Prüfumfänge gültig. Run `42720062719` löscht oder entwertet diese Resultate nicht. Ebenso bleibt der mathematische APW4-Forschungsstand aus §§47–50 – Energiezerlegung, DT, HT, globale obere Energieschranke und strikte Untergrenze unter den vollständigen historischen Hypothesen – unverändert. Die aktuelle Aufgabe ist die technische Integration der bereits vorhandenen Beweisbausteine.
