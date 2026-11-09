@@ -1351,3 +1351,17 @@ Because lake build ResearchKernelAudit failed, the shell did not proceed to a co
 The exact current PR #69 head is 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. New run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) has started on that head and is in progress. No result is claimed until both jobs finish and their logs are inspected.
 
 The earlier successful runs 42599116967, 42599116987, 42522617494 and 42601107408 remain valid for their exact checked commits and scopes. The mathematical APW4 results recorded in this dossier — energy identity, DT, HT, global upper energy estimate and strict lower-bound contradiction under the complete historical hypotheses — remain unchanged.
+
+
+## 52. Candidate run 42720062719 and current source head
+
+Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) is the next verification snapshot. Its integrated-paranoid job completed with failure; its audit job was still running at the time of this update.
+
+The integrated job confirmed that the source-level candidate fixes had moved the diagnostics:
+- BBMSTMomentRecurrence.lean:136 — argument order mismatch in the positive-factor product induction (the nonnegative left factor and right product were supplied in the wrong order to mul_le_mul);
+- BBMSTPrefixMeasureRecursion.lean:176, 187, 211, 338 and 361 — remaining dependent prefix-coordinate and recursion proof obligations;
+- BBMSTHyperplaneFibreIncidence.lean:347 and 454 — stage-coordinate cardinality equalities.
+
+The product-induction argument order has now been corrected. The prefix proof has been refined with explicit dependent-coordinate handling, direct expansion of the covered-value equivalence, and proof-irrelevance equalities. The hyperplane moment identities now use an explicit equality of the two stage-coordinate indices.
+
+These changes are committed on PR #69 at current head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) has been queued and is pending. No success is claimed until its integrated and audit jobs complete. The earlier successful APW4 checks and the mathematical status in this dossier remain unchanged.
