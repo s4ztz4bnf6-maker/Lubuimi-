@@ -598,7 +598,7 @@ theorem initialPrefixOf_restrictPrefix
     Nat.lt_trans hi (Nat.lt_succ_self (a + j))
   have hi'' : i.val < a + (j + 1) := by omega
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex, hi, hi', hi''] <;> rfl
+    liftPrefix, prefixIndex, hi, hi', hi'']
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
@@ -688,7 +688,7 @@ theorem PAt_le_initial_mul_distortionProduct
             P0 (initialPrefixOf C ha (by omega) y) *
               distortionProduct C a δ (j + 1) hj := by
                 rw [hinitial]
-                simp [distortionProduct, k, hk]
+                simp [distortionProduct, k]
                 ring
 
 #print axioms initialPrefixOf_restrictPrefix
