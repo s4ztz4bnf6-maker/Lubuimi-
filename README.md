@@ -225,3 +225,8 @@ The Collatz/Syracuse project now defines a finite-place incidence map from each 
 ### Finite Markov matrix — next APW4 bridge layer
 
 The Syracuse terminal-residue collision energy is now represented by an explicit finite rational Markov matrix `P_k`: the terminal mass vector is `δ₀ P_k^k`, and the collision energy is its squared ℓ² norm. At k=2 the exact distribution is `(8,16,11,4,2,22)/63`, with energy `5/21`, diagonal `1/9`, and off-diagonal collision mass `8/63`. This gives a concrete finite-moment interface for APW4-style techniques. The matrix remains a Syracuse-specific construction; historical BIB identification and capacity/Hall transfer remain open. See Dossier v1.6, Addendum 1.11.
+
+
+### PR #69 latest run — 42722133436
+
+Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) failed on head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Audit passed upstream and several zero-safe fibre, weighted update, uniform-coordinate, moment and geometry modules before failing in prefix recursion; integrated-paranoid also failed in hyperplane fibre cardinalities. The current concrete issues are dependent Fin-index/cast transport, filtered-set membership rewriting, `PAt_nonneg` induction transport, redundant tactic, and mismatched local Fintype denominator normalization. Error recovery includes `sorryAx`; no paranoid pass. Earlier positive checks and APW4 mathematical results remain preserved. See Dossier v1.6, Addendum 1.12.
