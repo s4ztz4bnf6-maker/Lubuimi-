@@ -220,3 +220,8 @@ Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4272
 ### New APW4 bridge candidate — terminal-residue collision energy
 
 The Collatz/Syracuse project now defines a finite-place incidence map from each length-k valuation word to a terminal unit residue modulo 3^k. Its weighted second moment has an exact diagonal/off-diagonal split, with diagonal 3^-k and off-diagonal collision mass at least 1/(2·3^k). This is a concrete APW4-style structure, but its collision term is not identified with the historical BIB reserve. An index-preserving map to original APW4 event/place objects and a capacity/Hall proof remain necessary. See Dossier v1.6, Addendum 1.10.
+
+
+### Finite Markov matrix — next APW4 bridge layer
+
+The Syracuse terminal-residue collision energy is now represented by an explicit finite rational Markov matrix `P_k`: the terminal mass vector is `δ₀ P_k^k`, and the collision energy is its squared ℓ² norm. At k=2 the exact distribution is `(8,16,11,4,2,22)/63`, with energy `5/21`, diagonal `1/9`, and off-diagonal collision mass `8/63`. This gives a concrete finite-moment interface for APW4-style techniques. The matrix remains a Syracuse-specific construction; historical BIB identification and capacity/Hall transfer remain open. See Dossier v1.6, Addendum 1.11.
