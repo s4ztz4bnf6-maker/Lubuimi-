@@ -347,3 +347,10 @@ The next candidate head 5b645d776ebbf7a71b7370f1b0078c711f9af651 contains proof-
 ## 17. Fifth CI update — 10 November 2026
 
 New run 42721579786 is running on PR #69 head 4ecac363ca6a06b5a41c750edac8eba2303b64cf after candidate fixes to the rational product, prefix recursion, updated-weight identity and hyperplane coordinate cardinalities. Both integrated-paranoid and audit jobs are active. No final compile or paranoid result is claimed yet.
+
+
+## 18. Sixth CI update — 10 November 2026
+
+Run 42721579786 passed the audited upstream source, degenerate-witness tests, zero-safe parameter/fibre core, finite weighted update, uniform-coordinate instantiation, finite-stage moments, finite-coordinate geometry and uniform-stage source moment, then failed in BBMSTPrefixMeasureRecursion.lean at lines 171, 184, 209, 337 and 360. The integrated job also failed in prefix recursion and at hyperplane moment denominators BBMSTHyperplaneFibreIncidence.lean:347/450. The rational finite-product error is no longer present.
+
+The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Its exact-head CI result is pending. No completed paranoid pass is claimed.
