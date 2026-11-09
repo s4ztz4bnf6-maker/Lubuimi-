@@ -132,3 +132,12 @@ The uploaded 17-page PDF is not reissued as a final manuscript: its rendered/ext
 ## New companion manuscript
 
 [APW4: Energy–Incidence Closure, Finite Moment Arithmetic, and Source-Faithful Formalization](publication/APW4_Energy_Incidence_Companion_Manuscript_2026-11-09.md) is the clean companion report prepared on 9 November. It gives the complete energy algebra, the finite second-moment elimination proof, the BBMST source reconstruction and supplements, and the exact declaration-scoped Lean status. It explicitly preserves the mathematical status of the strict APW4 lower bound in dossier v1.5 §25 while not pretending that the historical intermediate derivation or the full APW4 main-theorem kernel dependency closure has been reproduced. It is therefore a companion research/verification manuscript, not a replacement for a self-contained proof of the historical APW4 theorem.
+
+
+## APW4 proof concordance and latest audit
+
+- [Chronological APW4 proof concordance](publication/APW4_Chronological_Proof_Concordance_2026-11-09.md)
+- [APW4 scientific proof dossier v1.7](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.7.md)
+- [APW4 energy-incidence companion manuscript v1.1](publication/APW4_Energy_Incidence_Companion_Manuscript_2026-11-09_v1.1.md)
+
+The latest integrated Lean 4.35.0 PR #69 logs are recorded as failed in dossier v1.7; the APW4 mathematical lower-bound status from v1.5 §25 is preserved.
