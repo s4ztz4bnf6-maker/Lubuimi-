@@ -1306,3 +1306,25 @@ Der Fehler in `BBMSTMomentRecurrence.lean` ist ein Lean-Order-Instanzproblem bei
 ## 50. Fortführungsregel
 
 Die nächste Arbeit baut auf den vorhandenen mathematischen Ergebnissen und historischen Definitionen auf. Es wird nicht erneut die Energiezerlegung, DT, HT oder die strikte Untergrenze als offene Mathematik behandelt, nur weil eine bestimmte Lean-Integration noch Arbeit benötigt. Die Formalisierung soll die bereits vorhandenen Beweise quellengetreu abbilden und die erfolgreichen Teilprüfungen in einen gemeinsamen Release-Commit überführen.
+
+
+## 51. Final result of candidate run 42718994622 and next exact commit
+
+Run [42718994622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42718994622) has now completed with failure in both jobs. The failure is localized and is not a mathematical refutation of APW4.
+
+**Integrated-paranoid job.** Lean 4.35.0 setup, sandbox installation and Mathlib cache restoration succeeded. The integrated build then reported:
+- BBMSTMomentRecurrence.lean:118 — failed synthesis of MulLeftMono ℚ;
+- BBMSTPrefixMeasureRecursion.lean:171, 333 and 356 — unsolved dependent-prefix/recursion goals and an unreachable trailing tactic;
+- BBMSTHyperplaneFibreIncidence.lean:347 and 454 — unresolved equalities of finite-coordinate cardinalities.
+
+Because lake build ResearchKernelAudit failed, the shell did not proceed to a completed lake check --paranoid result. The command is present in the workflow script/log, but no successful paranoid result exists.
+
+**Audit job.** The audited upstream source, focused degenerate-witness tests, zero-safe parameter/fibre cores, finite weighted update, uniform-coordinate instantiation, finite-stage moment bounds, finite-coordinate geometry and uniform-stage source-moment instantiation all completed. The job then failed in BBMSTPrefixMeasureRecursion.lean at line 171 (dependent coordinate equality), line 333 (the updated PAt recursion equality) and line 356 (a tactic after the goal was already closed). Error-recovery output showed sorryAx in dependent declarations; those are failed elaborations and are not valid axiom profiles.
+
+**Candidate repairs after that run.** Two source-level changes have been committed on PR #69:
+- f4f6fb5210d080a08fbf72682a29718d95af4a1e replaces the rational Finset product monotonicity call with an induction intended to use positivity of the factors, avoiding the unavailable global MulLeftMono ℚ instance.
+- 6c34cd1d4f7487c200a04a4f1cc90010ceb19643 adds explicit dependent-prefix proof handling and proof-irrelevance equalities in the prefix recursion.
+
+The exact current PR #69 head is 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. New run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) has started on that head and is in progress. No result is claimed until both jobs finish and their logs are inspected.
+
+The earlier successful runs 42599116967, 42599116987, 42522617494 and 42601107408 remain valid for their exact checked commits and scopes. The mathematical APW4 results recorded in this dossier — energy identity, DT, HT, global upper energy estimate and strict lower-bound contradiction under the complete historical hypotheses — remain unchanged.
