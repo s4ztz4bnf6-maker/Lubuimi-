@@ -376,3 +376,8 @@ The separate Syracuse project now supplies an exact finite-place weighted incide
 ## 22. Tenth research update — finite Markov representation
 
 The terminal-residue mass vector is now expressed as `m_k = δ_0 P_k^k` for an explicit finite rational stochastic matrix on residues modulo `3^k`, derived from the independent geometric valuation exponents and the affine offset cocycle. At `k=2`, the exact vector on units `1,2,4,5,7,8 mod 9` is `(8,16,11,4,2,22)/63`, giving energy `5/21`, diagonal `1/9`, and off-diagonal collision mass `8/63`. This is a concrete finite matrix/second-moment interface for APW4-inspired transport. The historical BIB mapping and capacity/Hall inequality remain unproved; the APW4 proof itself is unchanged.
+
+
+## 23. Eleventh CI update — PR #69 run 42722133436
+
+Run 42722133436 completed with failure on PR head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` (merge commit `a73cc25` into `ca9d245aa1851a54b65850ddb1130d1ca12e850e`). Audit passed upstream and multiple zero-safe fibre, weighted update, uniform-coordinate, finite moment and geometry stages, then failed in prefix recursion. The integrated job failed in prefix recursion and hyperplane fibre cardinalities. Exact diagnostics include a dependent coordinate cast at line 171; a `Fin k`/`Fin (k+1)`/`Fin n` index mismatch at lines 187/191; unresolved filtered-set membership at line 204; dependent `PAt_nonneg` induction transport at line 336; redundant tactic at line 359; and Fintype denominator mismatches at hyperplane lines 347 and 446. Error-recovery output contains sorryAx. No integrated build or paranoid pass is claimed. The exact repair order is in Dossier v1.6, Addendum 1.12. APW4 mathematical status and earlier successful commit-bound checks remain unchanged.
