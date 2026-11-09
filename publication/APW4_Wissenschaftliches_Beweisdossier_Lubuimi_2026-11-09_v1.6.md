@@ -1279,6 +1279,29 @@ sowie die dazugehörigen historischen Gewichte, Blockindizes, Matrizen und Summe
 
 Die kanonischen endlichen Faser- und CRT-Module sind formale Bausteine. Sie sind weder eine Neudefinition der historischen Objekte noch ein Grund, ältere mathematische Herleitungen aus dem Manuskript zu verwerfen. Bei jeder weiteren Konsolidierung werden die bereits verwendeten Originaldefinitionen und die getrennten Diagonal-, Off-Diagonal- und BIB-Massen beibehalten.
 
+
+
+### Original transport interfaces retained from the publication manuscript
+
+The diagonal transport uses the historical index-preserving map
+\[
+(x,u)\longmapsto(k,I_{x,u},J_{x,u}).
+\]
+The meanings of \(I_{x,u}\) and \(J_{x,u}\), the source index sets, and the BBMST weights are those of the author's original APW4 manuscript; they are not redefined by the canonical finite-fibre Lean model.
+
+For the weighted off-diagonal transport, each event \(\gamma=(\ell,\ell')\) carries demand
+\[
+d(\gamma)=\omega_\ell\omega_{\ell'}.
+\]
+For every finite event family \(X\), the historical weighted Hall condition is
+\[
+\sum_{\gamma\in X}d(\gamma)
+\le
+\sum_{b\in\Gamma_{\mathrm{BIB}}(X)}c_{\mathrm{BIB}}(b).
+\]
+The finite weighted Max-Flow-Min-Cut theorem supplies the transport. The event, BIB-place, incidence and capacity definitions are those fixed by the original APW4 source material; no replacement event or capacity model is introduced here.
+
+
 ## 49. Commitgebundene CI-Chronologie bis 10. November
 
 ### Gültige frühere Erfolge
