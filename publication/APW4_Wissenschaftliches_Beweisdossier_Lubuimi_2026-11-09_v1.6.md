@@ -1491,3 +1491,40 @@ Der nächste Kandidaten-Head ist `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Run
 ## 59. Kontinuität
 
 Die erfolgreichen früheren APW4-/BBMST-Prüfungen bleiben für ihre jeweiligen Commits und Deklarationen gültig. Run 42721579786 ist eine neue technische Diagnose und zeigt, dass die rationale Produktstelle überwunden wurde; die noch offenen abhängigen Präfix- und Hyperflächenbeweise sind klar eingegrenzt. Der mathematische APW4-Beweisstand – Energiezerlegung, DT, HT, globale obere Energieschranke und strikte Untergrenze unter den vollständigen historischen Hypothesen – bleibt unverändert.
+
+
+---
+
+# XVII. Nachtrag 1.10 – Lubuimi Terminal-Residue Collision Energy
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 60. Exakte finite-place Inzidenz aus Syracuse-Bewertungswörtern
+
+Die allgemeine Lubuimi-Zylinderpartition liefert jetzt eine präzisere, eigenständig bewiesene Inzidenzstruktur. Für jedes Wort \(\alpha=(a_0,\ldots,a_{k-1})\) mit Gesamtbewertung \(A\) und Offset \(C_k\) ist der Terminalrest
+\[
+\tau_k(\alpha)=C_k2^{-A}\pmod{3^k}
+\]
+wohldefiniert und eine Einheit modulo \(3^k\). Jeder Startwert, der genau das Wort \(\alpha\) realisiert, hat \(n_k\equiv\tau_k(\alpha)\pmod{3^k}\). Die Quellengewichte sind \(w_\alpha=2^{-A}\), und die endliche Platzmenge ist \(U_k=(\mathbb Z/3^k\mathbb Z)^\times\), mit \(|U_k|=2\cdot3^{k-1}\).
+
+Für die aggregierten Platzmassen \(m_k(t)=\sum_{\tau_k(\alpha)=t}w_\alpha\) ist \(\sum_t m_k(t)=1\). Der Terminalrest-Zweite-Moment besitzt die exakte Zerlegung
+\[
+E_k=\sum_{t\in U_k}m_k(t)^2=D_k+C_k^{\mathrm{coll}},
+\]
+mit exakt berechenbarer Diagonalmasse
+\[
+D_k=\sum_\alpha w_\alpha^2=(\sum_{a\ge1}4^{-a})^k=3^{-k}.
+\]
+Cauchy–Schwarz auf der endlichen Platzmenge erzwingt
+\[
+\boxed{C_k^{\mathrm{coll}}\ge\frac1{2\cdot3^k}.}
+\]
+Für \(k=1\) sind die beiden Platzmassen modulo 3 gleich \(2/3\) und \(1/3\), also \(E_1=5/9\), \(D_1=1/3\) und \(C_1^{\mathrm{coll}}=2/9\).
+
+## 61. Konkreter APW4-Anschluss – und was noch fehlt
+
+Dies ist eine exakte gewichtete Inzidenz- und Diagonal/Off-Diagonal-Zerlegung im Syracuse-Modell. Anders als die bloße Zylinderfiltration besitzt sie nun eine endliche Platzmenge und eine konkrete Abbildung von Quellwörtern auf Plätze. Damit liegt ein belastbarer mathematischer Kandidat für einen APW4-artigen Transport vor.
+
+Die Größe \(C_k^{\mathrm{coll}}\) ist jedoch eine neu definierte Syracuse-Kollisionsmasse und **nicht** ohne weiteren Beweis die historische APW4-BIB-Reserve. Die Anwendung des APW4-Theorems erfordert weiterhin eine indexerhaltende Abbildung der Wortpaare auf die ursprünglichen APW4-Off-Diagonal-Ereignisse/BIB-Plätze, Erhaltung der historischen Gewichte und eine bewiesene Kapazitäts-/Hall-Schranke. Die neue Identität liefert eine konkrete Quelle/Platz-Struktur, aber noch nicht diese historische Identifikation.
+
+**Status:** Mathematisch hergeleitet und in `Lubuimi_Terminal_Residue_Collision_Energy_2026-11-10.md` dokumentiert; noch nicht Lean-formalisiert. Die APW4-Energiezerlegung und alle etablierten APW4-Sätze bleiben unverändert.
