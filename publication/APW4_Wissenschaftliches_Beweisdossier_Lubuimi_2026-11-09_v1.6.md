@@ -1063,7 +1063,7 @@ Die Logs geben für die benannten Präfix-Zylinder- und Präfix-Massen-Deklarati
 
 Auf Branch research/rank9-crt-fiber-audit-2026-10-30, Commit 098699f663a144fae5da013a425d0d32147ae1ae, bestand der Indikatorlauf 42595925019 und der Auditjob von Workflow 42595925001. Der Auditjob kompilierte die endliche Indikatorbrücke, die endlichen Siebstufenmodule, die abhängige Faserschnittstelle, die endliche CRT-Faserzerlegung, den arithmetischen ZMod-CRT-Satz und die tatsächliche Kongruenzklassen-CRT-Darstellung.
 
-Der separate fiber-paranoid-Job in Lauf 42595925001 war zum Zeitpunkt dieses Nachtrags noch in Arbeit. Für diesen Job wird bis zum Abschluss und zur Auswertung seiner Logs kein Erfolg behauptet.
+Der separate fiber-paranoid-Job in Lauf 42595925001 endete schließlich als cancelled. Er wird nicht als erfolgreicher Paranoid-Check gezählt; erfolgreich war nur der dependency-ordered Auditjob.
 
 ## 34. Aktualisierte Abschlussmatrix
 
