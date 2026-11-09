@@ -329,7 +329,8 @@ local instance instNewClassUncoveredFibreFintype
     Fintype {x : OldUncovered oldData //
       newBaseContains hMq (newData j) x.1} := by
   classical
-  exact Fintype.ofFinite _
+  letI : Fintype (OldUncovered oldData) := instOldUncoveredFintype oldData
+  infer_instance
 
 /-- Explicitly expose the canonical dependent-sum finite instance.
 The per-fibre instances above make the Sigma instance available. -/
