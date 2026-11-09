@@ -358,4 +358,4 @@ The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Its 
 
 ## 19. Seventh CI update — 10 November 2026
 
-Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both audit and integrated-paranoid jobs are active in setup/manifest generation. No compile or paranoid result is available yet.
+Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Integrated-paranoid has completed setup, sandbox and Mathlib cache restoration and entered integrated compilation. Audit has fetched the upstream source and is restoring Mathlib cache. No compile or paranoid result is available yet.
