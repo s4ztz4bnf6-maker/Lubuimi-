@@ -7,4 +7,5 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4.git" 
 
 @[default_target]
 lean_lib APW4Audit where
-  roots := #[`APW4Audit]
+  roots := #[`APW4Audit, `APW4CanonicalMajorization, `APW4DiagonalAudit,
+    `APW4HistoricalCRTCore, `APW4IncidenceSecondMoment]
