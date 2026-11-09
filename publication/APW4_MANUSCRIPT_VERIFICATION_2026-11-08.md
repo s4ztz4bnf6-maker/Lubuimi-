@@ -158,7 +158,7 @@ The companion audit also compiled the separate upstream Erdős–Selfridge sourc
 The following independent branch checkpoints passed:
 - PR #56 geometry branch, commit a77f67540719a29e3e45a684e310dc4d753a2a50, run [42364359726](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42364359726).
 - Prefix-mass Step 16 branch, commit ca9d245aa1851a54b65850ddb1130d1ca12e850e: [foundation 42522812092](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812092), [Step 16 42522812150](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812150), and [focused diagnostic 42522812223](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522812223).
-- Rank-nine CRT/fibre branch, commit 098699f663a144fae5da013a425d0d32147ae1ae: the indicator and dependency-ordered audit job in [run 42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001) passed. The separate fiber-paranoid job in that run was still in progress at the time of writing and is not counted as passed.
+- Rank-nine CRT/fibre branch, commit 098699f663a144fae5da013a425d0d32147ae1ae: the indicator and dependency-ordered audit job in [run 42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001) passed. The separate fiber-paranoid job in that run ultimately ended as cancelled and is not counted as passed; only the dependency-ordered audit job passed.
 
 These are separate source snapshots. They do not collectively constitute one integrated build of the entire repository or one named APW4 main theorem.
 
