@@ -187,13 +187,13 @@ The Library also contains a three-page PDF named “Erdös Lean Deutsch.pdf”.
 Accordingly, neither available Library PDF is reissued as the complete final manuscript: the three-page file is a summary, while the accessible 17-page file has raw LaTeX commands visible on its rendered page 11. This concerns only these two Library copies and does not make any claim about a separate author-held publication copy. The mathematical APW4 status remains the one recorded in Dossier v1.5 §25.
 
 
-## 15. Integrated 34-module BBMST/APW4 audit
+## 15. Integrated 33-module BBMST/APW4 audit
 
-PR #69 consolidates 34 BBMST/APW4 source modules from the prior prefix-mass, rank-nine CRT/fibre, codimension-one geometry, and APW4 branches into one isolated Lean 4.35.0 package. Every module is an explicit library root, the ResearchKernelAudit aggregator imports all modules, and CI explicitly runs lake build ResearchKernelAudit followed by lake check --paranoid. This corrects the earlier empty-check configuration.
+PR #69 consolidates 33 BBMST/APW4 source modules from the prior prefix-mass, rank-nine CRT/fibre, codimension-one geometry, and APW4 branches into one isolated Lean 4.35.0 package. Every module is an explicit library root, the ResearchKernelAudit aggregator imports all modules, and CI explicitly runs lake build ResearchKernelAudit followed by lake check --paranoid. This corrects the earlier empty-check configuration.
 
 The earlier integrated run 42600825252 was cancelled after source updates and is not counted. The current integrated workflow is [run 42601494591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601494591), including the full Theorem 1.2 source reduction from PR #56. At the time of this memorandum, both the integrated paranoid job and the separate audit job were still running. No integrated paranoid success is claimed yet.
 
-Even if the integrated module package passes, it will establish compilation and kernel checking of those 34 modules, not the historical APW4 main theorem: the current APW4 contradiction still receives DT, HT, and the strict lower bound as hypotheses. The separate universal erdos_selfridge chain remains audited separately with its project axioms visible.
+Even if the integrated module package passes, it will establish compilation and kernel checking of those 33 modules, not the historical APW4 main theorem: the current APW4 contradiction still receives DT, HT, and the strict lower bound as hypotheses. The separate universal erdos_selfridge chain remains audited separately with its project axioms visible.
 
 
 ## 16. Full BBMST Theorem 1.2 reduction: successful kernel check
