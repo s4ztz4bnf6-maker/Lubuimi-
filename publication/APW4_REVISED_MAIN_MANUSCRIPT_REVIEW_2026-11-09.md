@@ -520,3 +520,16 @@ A new Syracuse incidence model now maps every length-k exact valuation word \(\a
 E_k=D_k+C_k^{\rm coll},\qquad D_k=3^{-k},\qquad C_k^{\rm coll}\ge\frac1{2\cdot3^k}.
 \]
 This is a genuine diagonal/off-diagonal weighted incidence identity in the Syracuse model and a more concrete candidate interface for APW4 transport than the prefix tree alone. The collision term is a newly defined Syracuse quantity, not the historical APW4 BIB reserve. A historical index-preserving map, original-weight preservation and a capacity/Hall inequality are still required before the APW4 theorem can be applied. This note is not part of the APW4 proof and does not change its status.
+
+
+---
+
+## Finite Markov matrix for the Syracuse terminal-residue incidence
+
+The valuation-word cylinder weights factor as \(w_\alpha=\prod_j2^{-a_j}\), so the exponent coordinates are independent geometric variables with probabilities \(2^{-b}\). For fixed k, the offset state \(x_j=C_j2^{-A_j}\pmod{3^k}\) satisfies
+\[
+x_{j+1}=2^{-a_j}(3x_j+1),\qquad x_0=0.
+\]
+Since 2 is a primitive root modulo \(3^k\), the transition matrix has explicit rational entries: for each unit y, take the unique \(r\in\{1,\ldots,2\cdot3^{k-1}\}\) with \(2^ry\equiv3x+1\), and set \(P_k(x,y)=2^{-r}/(1-2^{-2\cdot3^{k-1}})\). The terminal mass vector is \(m_k=\delta_0P_k^k\), and the collision energy is its squared Euclidean norm.
+
+At k=2, in unit-residue order 1,2,4,5,7,8 modulo 9, the exact mass vector is \((8,16,11,4,2,22)/63\), giving \(E_2=5/21\), diagonal mass \(D_2=1/9\), and collision mass \(8/63\). This is a finite rational matrix/second-moment object that is well suited to an APW4-style finite moment argument. It is still a Syracuse-specific model; mapping it to the historical APW4 BIB places and proving the corresponding capacity inequality remain open. No APW4 theorem is changed by this extension.
