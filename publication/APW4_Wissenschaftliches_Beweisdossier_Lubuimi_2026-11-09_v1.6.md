@@ -1139,3 +1139,14 @@ Besonders relevant ist BBMSTCongruenceCRT.global_allocation_lower_bound zusammen
 Das ist ein mathematisch echter Inzidenzbaustein und eine mögliche strukturelle Vorstufe für Kapazitätsargumente. Er ist aber nicht mit dem APW4-gewichteten Hall-Satz gleichzusetzen: Die Deklarationen konstruieren weder die APW4-gewichteten Ereignisse noch die BIB-Platzkapazitäten noch die historische APW4-Ereignis-zu-Platz-Abbildung. Insbesondere folgt aus einer ungewichteten Kardinalitätsbilanz nicht automatisch die gewichtete Reserve \(\mathcal R_{\mathrm{BIB}}\).
 
 Der dependency-ordered Auditjob von CI 42595925001 hat die CRT-, Kongruenzklassen- und Faser-Module erfolgreich kompiliert und die benannten Axiomprofile ausgegeben. Der getrennte fiber-paranoid-Job endete als cancelled und wird nicht als erfolgreicher Paranoid-Check gezählt.
+
+
+## 40. Integrierter BBMST/APW4-Prüfzweig PR #69
+
+Um die bisher getrennten Quellstände nicht länger nur anhand separater CI-Protokolle zu vergleichen, wurde PR #69 eröffnet: [Integrate BBMST geometry, fibre, CRT, prefix-mass and APW4 audit modules](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/69).
+
+Der Branch integration/bbmst-apw4-kernel-2026-11-09 führt 34 BBMST-/APW4-Module aus den zuvor getrennten Präfix-Massen-, rank-nine-CRT-/Faser-, Geometrie- und APW4-Arbeitsständen in einer isolierten Lean-4.35.0-Prüfpaketstruktur zusammen. Der Aggregator ResearchKernelAudit importiert alle Module; zusätzlich sind alle 34 Quelldateien ausdrücklich als Library-Roots eingetragen. Die Workflow-Stufe führt zuerst lake build ResearchKernelAudit und danach lake check --paranoid aus. Damit wird verhindert, dass ein Aggregat ohne geprüfte Deklarationen fälschlich als erfolgreiche Paranoid-Prüfung gilt.
+
+Der aktuelle integrierte Lauf ist [CI 42600825252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600825252). Zum Zeitpunkt dieses Nachtrags war der isolierte 4.35.0-Paranoidjob noch beim Mathlib-Cache bzw. beim Build; der separate Auditjob hatte den Upstream-Compile abgeschlossen und arbeitete die BBMST-Modulkette ab. Es wird noch kein Erfolg für den integrierten Paranoid-Check behauptet.
+
+Die Integration ist ein Prüf- und Konsolidierungsbranch. Sie ändert weder die historischen Definitionen noch den mathematischen Status aus §25. Selbst ein erfolgreicher Build aller 34 Module würde die APW4-spezifischen DT-/HT- und strikten Untergrenzenprämissen nicht automatisch konstruieren: der gegenwärtige APW4-Endwiderspruch nimmt diese weiterhin als Eingabehypothesen. Der universelle erdos_selfridge-Strang wird separat auditiert und behält seine ausgewiesenen Projektaxiome.
