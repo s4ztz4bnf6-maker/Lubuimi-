@@ -183,3 +183,8 @@ The product-induction argument order and dependent prefix/stage-coordinate proof
 Audit run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed only at BBMSTPrefixMeasureRecursion.lean:338/361. The integrated job also failed at the rational product argument order, prefix recursion and hyperplane stage-coordinate identities.
 
 Candidate fixes are on PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. Exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is in progress. Earlier successful APW4 checks and the mathematical proof status remain unchanged.
+
+
+### Third CI update — 10 November 2026
+
+Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) completed with failure in both jobs on PR #69 head `6c34cd1d4f7487c200a04a4f1cc90010ceb19643` (integrated merge commit `ac80e32831b12aaeb117242d62395bd421aaf713`). The integrated build reports a factor-positivity type mismatch at `BBMSTMomentRecurrence.lean:136:32`, dependent-prefix errors at `BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361`, and finite-coordinate cardinality equalities at `BBMSTHyperplaneFibreIncidence.lean:347/454`. The audit job passed upstream and several finite fibre/geometry stages, then failed in the prefix recursion. The build failure means no successful `lake check --paranoid` result is available for this run. Earlier successful commit-bound checks and the mathematical APW4 proof record remain unchanged. Full diagnosis and repair targets are in Dossier v1.6, Addendum 1.7.
