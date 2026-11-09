@@ -183,7 +183,7 @@ noncomputable def survivingFamily
 /-- Restricting a nonparallel family to the surviving subfamily preserves
 nonparallelism: the surviving family is a subset of the original family and
 the fixed-coordinate set is unchanged. -/
-theorem survivingFamily_noParallel
+theorem survivingFamily_preserves_noParallel
     (A : Finset (Hyperplane C))
     (removed : ∀ i : Fin n, Option (C.S i))
     (hNP : NoParallel A) :
@@ -382,6 +382,9 @@ theorem chosenSurviving_no_singleton
 #print axioms survives_iff_meets_reduced_box_of_coordinateSystem
 #print axioms survives_iff_meets_reduced_box_of_card_ge_three
 #print axioms survivingFamily_noParallel
+#print axioms survivingFamily_preserves_noParallel
+#print axioms survivingFamily_nontrivial
+#print axioms survivingRestricted_nontrivial
 #print axioms survivingFamily_no_singleton
 #print axioms chooseEarlySelection
 #print axioms selectedDeletedValues_spec
