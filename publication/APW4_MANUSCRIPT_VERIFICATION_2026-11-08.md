@@ -194,3 +194,17 @@ PR #69 consolidates 34 BBMST/APW4 source modules from the prior prefix-mass, ran
 The current integrated workflow is [run 42600825252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600825252). At the time of this memorandum, the integrated paranoid job was still restoring the Mathlib cache and the separate audit job was compiling the BBMST source chain. No integrated paranoid success is claimed yet.
 
 Even if the integrated module package passes, it will establish compilation and kernel checking of those 34 modules, not the historical APW4 main theorem: the current APW4 contradiction still receives DT, HT, and the strict lower bound as hypotheses. The separate universal erdos_selfridge chain remains audited separately with its project axioms visible.
+
+
+## 16. Full BBMST Theorem 1.2 reduction: successful kernel check
+
+The updated PR #56 branch now contains the full source-level reduction output:
+- survivingFamily_preserves_noParallel;
+- survivingFamily_nontrivial;
+- survivingRestricted_nontrivial;
+- augmentedFamily_nontrivial;
+- canonicalReduction_result_full.
+
+The successful [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) compiled the updated family and augmentation modules. Its axiom output for canonicalReduction_result_full and the new helper declarations is exactly [propext, Classical.choice, Quot.sound], with no sorryAx. This is the formalized geometric reduction of Balister et al. Theorem 1.2 under the explicit product-coordinate and nonparallel-cover hypotheses.
+
+This result does not by itself integrate the geometric reduction with every prefix/fibre-moment/tail module, and it does not construct APW4's historical DT/HT or strict energy transfer.
