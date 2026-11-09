@@ -25,7 +25,7 @@ the initial all-one cylinder theorem is
 \[
 (\forall j<N,\ a_j=1)\iff n_0\equiv-1\pmod{2^{N+1}},
 \]
-with exact initial run length \(v_2(n_0+1)-1\). The declaration CollatzSyracuseAudit.lubuimi_initial_valuation_one_cylinder passed two full exact-commit workflows, 42721006544 and 42721305220, with transitive axiom profile [propext, Classical.choice, Quot.sound] and no sorryAx found by the complete-log scan.
+with exact initial run length \(v_2(n_0+1)-1\). The declaration CollatzSyracuseAudit.lubuimi_initial_valuation_one_cylinder passed four full exact-commit workflows, 42721006544, 42721305220, 42721911555 and 42722186081, with transitive axiom profile [propext, Classical.choice, Quot.sound] and no sorryAx found by the complete-log scan.
 
 ### General finite valuation-word cylinders
 For a finite word \(\alpha=(a_0,\ldots,a_{k-1})\), \(a_i\ge1\), total exponent \(A=\sum a_i\), the mathematical companion theorem states that its exact cylinder is one odd residue class modulo \(2^{A+1}\), with relative odd-start density \(2^{-A}\). Its finite cutoff refinement partitions each parent into exact children \(b=1,\ldots,B\) and one tail atom \(a_k\ge B+1\), of relative masses \(2^{-1},\ldots,2^{-B},2^{-B}\). The general theorem and tail partition are not yet claimed as Lean-formalized.
