@@ -110,3 +110,6 @@ The updated PR #56 branch subsequently added the full Theorem 1.2 result, includ
 
 
 Formalization boundary for the CRT source: the rank-nine branch proves the actual one-prime ZMod CRT/fibre equivalence and finite unweighted allocation lemmas. It does not yet contain one end-to-end Lean theorem encoding every square-free divisor class as a nonparallel hyperplane family via unique factorization. The source reconstruction note records this distinction explicitly; neither is identified with APW4's weighted Hall transport.
+
+
+An APW4-only Lean 4.35.0 paranoid package now lists all four APW4 modules as explicit roots and runs an explicit build before the paranoid check. Its all-roots run [42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) was still in the final check step at the time of this update. The earlier zero-declaration check is rejected as vacuous.
