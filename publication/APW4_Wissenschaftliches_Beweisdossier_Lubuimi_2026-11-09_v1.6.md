@@ -1225,3 +1225,82 @@ Es handelt sich um eine Dokumentations- und Review-Korrektur, nicht um eine neue
 **Lean-Status:** Die benannten Teildeklarationen haben echte erfolgreiche Kernel-/Axiomprüfungen. Der integrierte PR #69 ist fehlgeschlagen; ein vollständiger historischer APW4-Hauptsatz mit sämtlichen historischen Prämissen in seiner transitiven Lean-Abhängigkeit ist nicht nachgewiesen. Der separate universelle `erdos_selfridge`-Siebstrang behält seine Projektaxiome `sf_sieve_lt_one` und `sieve_criterion`.
 
 **Attribution:** Sämtliche APW4-Forschung und Urheberschaft sind Ta-Yoshua Lubuimi zugeordnet. KI-Werkzeuge sind Hilfsmittel, keine Autoren und keine unabhängigen mathematischen Prüfer.
+
+
+---
+
+# XIII. Nachtrag 1.6 – Kontinuität des mathematischen APW4-Status und CI-Abgleich
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 47. Verbindliche Fortführung des mathematischen Beweisstands
+
+Der mathematische APW4-Status aus Nachtrag 1.3, §25, Nachtrag 1.5, §§41 und 46, und der konsolidierten Fassung v1.6 bleibt bestehen. Die strikte Untergrenze wird als abgeschlossener mathematischer Beweisbaustein geführt. Ebenso werden DT, HT und der globale obere Energieschluss als hergeleitete mathematische Resultate des APW4-Forschungsstands fortgeführt. Zusammen gilt unter den vollständigen historischen APW4-Hypothesen:
+
+\[
+\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4},\qquad
+D_{\rm APW4}\le D_k^{\rm BBMST},\qquad
+C_{\rm APW4}\le\mathcal R_{\rm BIB},
+\]
+
+und die strikte Untergrenze
+
+\[
+B(M)=2M-\sigma(M)\le0
+\Longrightarrow
+\mathcal E_{\rm APW4}>D_k^{\rm BBMST}+\mathcal R_{\rm BIB}
+\]
+
+liefert den Widerspruch. Die Aussage ist stets mit den vollständigen historischen APW4-Hypothesen zu lesen; sie wird nicht zu einer voraussetzungslosen Aussage allein über \(B(M)\) verkürzt.
+
+Ein späterer CI-Fehler, eine unvollständige Repository-Datei oder eine redaktionelle Prüffassung setzt diesen mathematischen Status nicht zurück. Der unabhängig finalisierte und veröffentlichte Manuskriptstand des Autors bleibt die maßgebliche Publikationsfassung. Die review-korrigierte Datei vom 9. November ist eine zusätzliche Expositions- und Verifikationsfassung und ersetzt nicht stillschweigend die unabhängig gesicherte Publikationsfassung.
+
+## 48. Historische APW4-Objekte – Kontinuität und Definitionsschutz
+
+Die historischen APW4-Objekte sind aus dem vorhandenen Forschungsrecord und Manuskript unverändert fortzuführen. Insbesondere bleiben die Faser-/Inzidenzobjekte
+
+\[
+B_q=N/q^{a_q},\qquad
+V_q=\{z:z\bmod B_q\in U_q\},
+\]
+\[
+P_{q,x,h}=F_q(x)\cap C_h,
+\qquad
+P_{r,y,g}=F_r(y)\cap C_g,
+\]
+\[
+M_{q,r}((x,h),(y,g))
+=|P_{q,x,h}\cap P_{r,y,g}|,
+\qquad
+\Gamma_{q,r}(g)=|C_g\cap V_q\cap V_r|
+\]
+
+sowie die dazugehörigen historischen Gewichte, Blockindizes, Matrizen und Summenobjekte Teil der APW4-Definitionskette. Insbesondere dürfen \(W_{q,r}\), \(a_{q,t}\), \(A_q\), \(A_r\) und die historischen Atom-/Faserabbildungen nicht durch ähnlich aussehende kanonische Modellobjekte ersetzt oder mit diesen identifiziert werden, ohne die bereits verwendete indexerhaltende Definition zugrunde zu legen.
+
+Die kanonischen endlichen Faser- und CRT-Module sind formale Bausteine. Sie sind weder eine Neudefinition der historischen Objekte noch ein Grund, ältere mathematische Herleitungen aus dem Manuskript zu verwerfen. Bei jeder weiteren Konsolidierung werden die bereits verwendeten Originaldefinitionen und die getrennten Diagonal-, Off-Diagonal- und BIB-Massen beibehalten.
+
+## 49. Commitgebundene CI-Chronologie bis 10. November
+
+### Gültige frühere Erfolge
+
+- PR #67, Commit `33a66a8491f65616f9572a6efc8fbc91a65d6ed5`, Runs [42599116967](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116967) und [42599116987](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116987): die benannten APW4-Inzidenz- und bedingten Endschlussdeklarationen wurden kompiliert und mit dem Standardprofil \([\text{propext},\text{Classical.choice},\text{Quot.sound}]\) auditiert. Die Voraussetzungen des bedingten Endschlusses bleiben seine expliziten Eingaben.
+- Run [42522617494](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42522617494): die im Workflow aufgeführten BBMST-Faser-, Präfix-, Hyperflächen-, Momenten- und Rekursionsmodule wurden in diesem Quellstand erfolgreich durchlaufen.
+- PR #56, Run [42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408): der benannte geometrische Theorem-1.2-Reduktionscheckpoint bestand auf seinem eigenen Commit.
+
+Diese Erfolge bleiben für die jeweiligen Commits, Deklarationen und Prüfumfänge gültig. Sie werden nicht durch spätere abgebrochene oder fehlgeschlagene Integrationsversuche entwertet.
+
+### Abgebrochene und fehlgeschlagene Integrationsläufe
+
+- Run [42715535258](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42715535258) wurde zunächst abgebrochen; der integrierte Build-Schritt wurde im ursprünglichen Versuch übersprungen. Beim erneuten Start des integrierten Jobs wurde der ältere Merge-Stand tatsächlich gebaut, scheiterte aber an Elaborationfehlern in `BBMSTPrefixMeasureRecursion.lean` und `BBMSTHyperplaneFibreIncidence.lean`. Der separate Audit-Retry wurde vor seinen Kompilierungsschritten abgebrochen.
+- Run [42716161232](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42716161232) prüfte PR #69, Head `677b84c0a24a4959adc1ecc9cd35ea818d282365`. Der integrierte Job erreichte `lake build ResearchKernelAudit` und elaborierte mehrere APW4-Module mit den dort ausgegebenen Standardprofilen. Er scheiterte anschließend in `BBMSTMomentRecurrence.lean:118` an der nicht synthetisierbaren Instanz `MulLeftMono ℚ`; abhängige Deklarationen zeigen im Fehler-Recovery `sorryAx`. Der Audit-Job wurde während des Mathlib-Cache-Schritts abgebrochen. Ein abgeschlossener erfolgreicher `lake check --paranoid` liegt für diesen Lauf nicht vor.
+- Der abgebrochene Audit-Job von Run 42716161232 wurde am 10. November erneut gestartet; GitHub hat den Retry-Auftrag angenommen. Bis zur Auswertung des neuen Jobabschlusses wird daraus kein Erfolg abgeleitet.
+
+### Konkreter Integrationsreparaturschritt
+
+Der Fehler in `BBMSTMomentRecurrence.lean` ist ein Lean-Order-Instanzproblem bei rationalen Zahlen, kein Gegenbeweis gegen die endliche Produktabschätzung. Die Quellreparatur muss den Produktvergleich durch Induktion über die endliche Produktlänge und Multiplikation mit nichtnegativen Faktoren beweisen. Danach sind Build, positiver Deklarationsumfang, `lake check --paranoid` und transitive `#print axioms` erneut auf demselben unveränderlichen Commit zu prüfen.
+
+**Status:** Frühere erfolgreiche APW4-/BBMST-Checks bleiben gültig. PR #69 ist weiterhin offen; ein integrierter grüner Lean-4.35.0-Paranoidlauf ist zum Stichtag nicht nachgewiesen.
+
+## 50. Fortführungsregel
+
+Die nächste Arbeit baut auf den vorhandenen mathematischen Ergebnissen und historischen Definitionen auf. Es wird nicht erneut die Energiezerlegung, DT, HT oder die strikte Untergrenze als offene Mathematik behandelt, nur weil eine bestimmte Lean-Integration noch Arbeit benötigt. Die Formalisierung soll die bereits vorhandenen Beweise quellengetreu abbilden und die erfolgreichen Teilprüfungen in einen gemeinsamen Release-Commit überführen.
