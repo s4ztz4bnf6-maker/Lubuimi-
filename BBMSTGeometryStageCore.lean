@@ -90,25 +90,13 @@ theorem containsPrefix_iff_full
         have hiLt : i.val < k := hInside i hiFixed
         let j : Fin k := ⟨i.val, hiLt⟩
         have hidx : prefixIndex hk j = i := Fin.ext rfl
-        have hassign' :
-            H.assignment (prefixIndex hk j) =
-              some (Eq.mpr (congrArg C.S hidx) s) := by
-          cases hidx
-          exact hassign
+        -- Eliminate the index equality before using the dependent fibre value.
+        -- This rewrites both the assignment equation and the target coordinate
+        -- into the same fibre, avoiding an ill-typed congrArg on the dependent
+        -- product point.
+        cases hidx
         have hj := hPrefix j
-        simp [hassign'] at hj
-        have hj' :
-            x (prefixIndex hk j) =
-              Eq.mpr (congrArg C.S hidx) s := by
-          simpa [projectPrefix] using hj
-        have hpoint : x (prefixIndex hk j) = x i :=
-          congrArg x hidx
-        have hvalue :
-            Eq.mpr (congrArg C.S hidx) s = s := by
-          cases hidx
-          rfl
-        rw [hpoint, hvalue] at hj'
-        exact hj'
+        simpa [Hyperplane.ContainsPrefix, hassign, projectPrefix] using hj
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
