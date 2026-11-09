@@ -500,3 +500,12 @@ Candidate source head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 adds explicit pre
 ### Seventh CI update — 10 November 2026
 
 Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Integrated-paranoid has completed Lean setup, sandbox and Mathlib cache restoration and is compiling the integrated modules. Audit has completed manifest generation and upstream-source fetch and is restoring Mathlib cache. No final result is available yet.
+
+
+---
+
+## Technical continuation — PR #69 runs 42721579786 and 42722133436
+
+Run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) completed unsuccessfully on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product/factor comparison is no longer the reported blocker. The audit job compiled the upstream source and the zero-safe fibre, finite weighted update, uniform-coordinate, finite-stage moment and geometry modules, then failed in `BBMSTPrefixMeasureRecursion.lean` at lines 171, 184, 209, 337 and 360. The integrated job additionally failed at `BBMSTHyperplaneFibreIncidence.lean:347/450`. Error-recovery output showed `sorryAx` in dependent declarations, and no successful integrated build or `lake check --paranoid` result is claimed.
+
+The next candidate head is `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`; run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) is still in progress. These are integration diagnostics only. Earlier successful commit-bound checks and the APW4 mathematical proof status remain unchanged.
