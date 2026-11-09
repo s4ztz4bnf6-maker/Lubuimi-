@@ -107,3 +107,6 @@ The separate three-page “Erdös Lean Deutsch.pdf” in the Library is a reada
 
 
 The updated PR #56 branch subsequently added the full Theorem 1.2 result, including nonparallelism and nontriviality of the surviving/restricted family. [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) passed; the new theorem and helper declarations report only [propext, Classical.choice, Quot.sound], with no sorryAx.
+
+
+Formalization boundary for the CRT source: the rank-nine branch proves the actual one-prime ZMod CRT/fibre equivalence and finite unweighted allocation lemmas. It does not yet contain one end-to-end Lean theorem encoding every square-free divisor class as a nonparallel hyperplane family via unique factorization. The source reconstruction note records this distinction explicitly; neither is identified with APW4's weighted Hall transport.
