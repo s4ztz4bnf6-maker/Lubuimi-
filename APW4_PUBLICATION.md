@@ -14,6 +14,7 @@
 - [Manuscript verification memorandum](publication/APW4_MANUSCRIPT_VERIFICATION_2026-11-08.md)
 - [Citation metadata](CITATION.cff)
 - [Proprietary rights notice](LICENSE-PROPRIETARY.md)
+- [Release integrity and archival record](publication/APW4_RELEASE_INTEGRITY_AND_ARCHIVING_2026-11-09.md)
 
 ## Mathematical scope
 
