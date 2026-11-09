@@ -178,3 +178,40 @@ The last declaration uses odd primality to show that deleting one value leaves a
 A stronger source-level result is now added on the updated PR #56 branch: survivingFamily_preserves_noParallel, survivingFamily_nontrivial, survivingRestricted_nontrivial, augmentedFamily_nontrivial, and canonicalReduction_result_full. The latter packages the reduced cover, nonparallelism of the surviving family, nontriviality after restriction, and absence of early singleton fixed-coordinate sets. This is the complete output needed to match the geometric content of Theorem 1.2 under the explicit coordinate-system and nonparallel-cover hypotheses. It is committed on the updated PR #56 branch; its new CI run 42601107408 was still in progress when this note was revised. The new theorem is not counted as kernel-verified until that run succeeds and its axiom trace is inspected.
 
 Even after that checkpoint, the geometric reduction is not yet integrated with the full fibre-moment/tail chain in one build, and it does not prove the APW4-specific DT/HT or strict-energy transfer. The distinction between a formally checked source reduction and the later APW4 energy argument remains mandatory.
+
+
+## 8. Theorem 1.1: exact CRT equivalence and finite allocation
+
+The public reconstruction's [Theorem 1.1](https://github.com/plasma-ai/erdos/blob/17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/theorem_1_1.md) gives both directions of the correspondence between distinct square-free integer progressions and nonparallel nontrivial hyperplanes in an odd-prime product.
+
+For an initial segment of odd primes \(q_1,\ldots,q_m\), put \(M=\prod_jq_j\). The finite CRT equivalence maps
+\[
+\mathbb Z/M\mathbb Z \longrightarrow \prod_j\mathbb Z/q_j\mathbb Z.
+\]
+A square-free divisor \(d=\prod_{j\in F}q_j>1\) and a residue class modulo \(d\) correspond exactly to the hyperplane fixing the coordinates in the nonempty set \(F\). Unique factorization gives distinct fixed sets for distinct moduli. The condition \(d>1\) is essential: it excludes the trivial progression \(\mathbb Z\) and corresponds to a nonempty fixed-coordinate set. The theorem is for square-free moduli; it does not settle arbitrary odd moduli.
+
+### Exact Lean correspondence in the rank-nine branch
+
+The following declarations are already present in the rank-nine CRT/fibre branch:
+
+- BBMSTArithmeticCRT.crtEquiv
+- BBMSTArithmeticCRT.crt_cover_iff_every_fibre
+- BBMSTArithmeticCRT.not_cover_of_uncovered_fibre
+- BBMSTCongruenceCRT.congruence_cover_iff_every_fibre
+- BBMSTCongruenceCRT.uncovered_residue_of_uncovered_fibre
+- BBMSTCongruenceCRT.actual_cross_layer_moduli_disjoint
+- BBMSTCongruenceCRT.projected_modulus_has_at_most_two_sources
+- BBMSTCongruenceCRT.fibre_capacity_at_base
+- BBMSTCongruenceCRT.full_fibre_cover_forces_capacity
+- BBMSTCongruenceCRT.global_allocation_lower_bound
+- BBMSTCongruenceCRT.incidence_card_eq_sum_of_class_supports
+- BBMSTCongruenceCRT.complete_cover_implies_global_support_inequality
+- BBMSTCongruenceCRT.no_complete_cover_of_global_support_budget
+- BBMSTFiniteProjection.fiberEquiv
+- BBMSTFiniteProjection.fiber_mass_sum
+
+The global allocation theorem is a finite double-counting/injective-allocation result: if every old-uncovered base residue and every new-coordinate residue is assigned a compatible new class, then the incidence count is at least \(|U|\,|S_q|\). The same incidence set is counted by summing the support sizes of projected new classes. This is a genuine unweighted incidence budget and a useful source-level precursor for later capacity arguments.
+
+It is not the APW4 weighted Hall theorem. It does not construct APW4 event weights, BIB slot capacities, or the APW4 historical event-to-slot relation. The unweighted cardinality inequality must not be silently identified with the weighted reserve \(\mathcal R_{\mathrm{BIB}}\).
+
+The rank-nine audit run [42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001) successfully compiled the arithmetic CRT, congruence-class CRT, finite fibre decomposition, and associated named axiom traces. Its separate fiber-paranoid job ended as cancelled and is not counted as a successful paranoid check.
