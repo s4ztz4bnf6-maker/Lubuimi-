@@ -488,3 +488,10 @@ Following the candidate refinements to the rational product, prefix extension/re
 The separate Collatz/Syracuse project now contains a mathematically derived finite valuation-word cylinder partition: each exact finite positive exponent word of total exponent \(A\) corresponds to one odd residue class modulo \(2^{A+1}\), with relative odd-start mass \(2^{-A}\). A finite cutoff \(B\) refines each prefix into exact children of weights \(2^{-1},\ldots,2^{-B}\) and one tail cylinder of weight \(2^{-B}\), giving exact finite mass conservation.
 
 This is a genuine candidate source-mass structure for an APW4-inspired bridge. It is not yet an APW4 transport theorem: an index-preserving map to the historical APW4 event/BIB objects, preservation of their original weights, and a proved capacity/Hall condition remain necessary. The disjoint Syracuse cylinders are not identified with historical BIB incidences without such a proof. This cross-project note does not modify the APW4 theorem or its mathematical status.
+
+
+### Sixth CI update — 10 November 2026
+
+Run 42721579786 completed with failure in both jobs. The audit job passed upstream source, degenerate-witness, zero-safe fibre, weighted update, uniform-coordinate, finite-stage moment, finite-coordinate geometry and uniform-stage source-moment stages, then failed in BBMSTPrefixMeasureRecursion.lean at lines 171/184/209/337/360. The integrated job had the same prefix errors and unresolved hyperplane moment denominator equalities at BBMSTHyperplaneFibreIncidence.lean:347/450. The earlier rational product monotonicity error no longer appears.
+
+Candidate source head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92 adds explicit prefix-index equality, removes an invalid rewrite, and normalizes universal finite-cardinality denominators. The next exact-head CI result is pending. No paranoid pass is claimed.
