@@ -159,7 +159,7 @@ Source: [arXiv:2610.34541](https://arxiv.org/abs/2610.34541).
 
 The preprint states noncoverage for LCMs supported on at most four distinct odd primes, with arbitrary exponents, and an unconditional five-prime result for 98.2% of exponent configurations. The remaining 1.8% is tied to a separate CRT coverage-maximality conjecture. This is useful local weight/Bonferroni machinery, but it is not an unrestricted five-prime theorem.
 
-Source: [On Odd Covering Systems with Few Prime Factors](https://rxiv.org/pdf/2604.0035v1.pdf).
+Source: [On Odd Covering Systems with Few Prime Factors](https://vixra.org/pdf/2604.0035v1.pdf).
 
 ### Öztürk, August 2026
 
@@ -263,6 +263,28 @@ The public Erdős Problem 7 history page still lists the square-free BBMST resul
 
 - **Bispels–Cohen–Harrington–Lowrance–Pontes–Schaumann–Wong, Discrete Mathematics 349 (July 2026), 115013.** This studies a variant allowing one odd modulus to repeat while all other moduli remain distinct. It is adjacent to, not a solution of, the all-distinct conjecture.  
   DOI: 10.1016/j.disc.2026.115013
+
+- **Hackmon proof-level check.** The April 2026 viXra preprint's four-prime weight argument is short enough to audit directly. Let \(f_i\) be the actual fraction of the \(p_i\)-coordinate left after deleting its pure \(p_i\)-power classes. The correct statement is
+\[
+f_i\geq1-\sum_{j=1}^{a_i}p_i^{-j}\geq\frac{p_i-2}{p_i-1},
+\]
+not equality with the final expression. For a composite divisor with prime support \(T\), its intersection with the product weight region \(W\) is at most
+\[
+\frac{L}{d}\prod_{i\notin T}f_i.
+\]
+Summing over all divisors with support \(T\) gives at most
+\[
+L\prod_{i\in T}\left(\sum_{j=1}^{a_i}p_i^{-j}\right)
+ \prod_{i\notin T}f_i
+\leq |W|\prod_{i\in T}\frac1{p_i-2}.
+\]
+Thus the total composite coverage is at most \(|W|R\), with
+\[
+R=\sum_{|T|\geq2}\prod_{i\in T}\frac1{p_i-2}.
+\]
+For the worst four-prime set \(\{3,5,7,11\}\), \(R=41/45<1\), and \(|W|\geq(9/32)L\), giving at least \(L/40\) uncovered residues. So the printed equality for \(|W|\) in Step 2 must be read as a lower bound; with that correction, the four-prime union-bound argument closes. The five-prime extension is explicitly conditional for 44 of 2,430 exponent configurations; the reported 10-million random/adversarial checks are evidence, not a proof of those remaining cases.  
+  https://vixra.org/pdf/2604.0035v1.pdf
+
 
 ### Newly surfaced full-solution claim: Esposito
 
