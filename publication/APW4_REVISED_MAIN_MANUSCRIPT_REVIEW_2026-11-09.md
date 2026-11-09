@@ -1,0 +1,397 @@
+# APW4: Diagonaltransport, gewichteter Off-Diagonaltransport und strikter Energieschluss
+
+## Überarbeitete Hauptfassung nach externer mathematischer Durchsicht
+
+**Autor:** Ta-Yoshua Lubuimi  
+**Stand:** 9. November 2026  
+**Fassung:** Review-korrigierte Beweis- und Verifikationsfassung 1.3
+
+---
+
+## Abstract
+
+Diese Arbeit untersucht die APW4-Energie
+\[
+E_{\rm APW4}=\sum_x w_x\left(\sum_{u\in W_x}\rho_x(u)\right)^2
+\]
+und trennt ihre Diagonal- und Off-Diagonalbeiträge exakt. Sie formuliert die beiden für den globalen Energieschluss benötigten Transportprinzipien in einer mathematisch präzisen endlichen Form: einen kapazitätsbeschränkten Diagonaltransport und einen gewichteten Hall-Transport auf einer bipartiten Ereignis-Platz-Inzidenzstruktur. Aus diesen Transportzertifikaten folgt die obere Energieschranke. Ein separat formulierter strikter Untergrenzensatz würde zusammen mit ihr einen Widerspruch liefern.
+
+Die externe Durchsicht hat eine wesentliche Expositionslücke offengelegt: Die hier verfügbaren APW4-Manuskript- und Repository-Fassungen nennen die historischen DT-/HT-Resultate und die strikte Untergrenze, enthalten aber nicht die vollständigen historischen Definitionen und die jeweilige Konstruktion der Transportzertifikate. Insbesondere liefert die Bedingung \(B(M)=2M-\sigma(M)\leq0\) allein keine solche Untergrenze. Ein endlicher BIB-Zweitmomentensatz wird vollständig und mit seinen exakten Voraussetzungen bewiesen; sein Transfer auf die historischen APW4-Fasern bleibt davon getrennt.
+
+Daher ist diese Fassung eine mathematisch präzise, review-korrigierte Beweisexposition der nachweisbaren algebraischen und endlichen Inzidenzschritte. Sie behauptet ausdrücklich weder einen vollständigen historischen DT-/HT-Nachweis noch einen abgeschlossenen Transfer von \(B(M)\) zur APW4-Energie, solange die entsprechenden historischen Konstruktionen und Zwischenrechnungen nicht im Beweistext vorliegen. Die in Dossier v1.5, Nachtrag 1.3, §25 dokumentierte Statusfeststellung wird historisch festgehalten, aber nicht als Ersatz für die fehlende ausgeschriebene Herleitung verwendet.
+
+## 1. Geltungsbereich und Beweisstatus
+
+Diese Arbeit behandelt die APW4-Energie-Inzidenz-Argumentation. Sie beansprucht nicht, das ursprüngliche Erdős–Selfridge-Problem für beliebige ungerade Moduli zu lösen. Insbesondere darf ein Widerspruch für eine speziell definierte APW4-Konfiguration nicht ohne einen gesonderten Äquivalenzsatz als allgemeiner Erdős–Selfridge-Satz bezeichnet werden.
+
+Für jeden Baustein werden vier unterschiedliche Fragen getrennt:
+
+1. Ist die mathematische Aussage im Forschungsdossier als abgeschlossen dokumentiert?
+2. Sind ihre historischen Objekte und Zwischenbeweise in einer zugänglichen Quelle vollständig definiert und hergeleitet?
+3. Ist die Aussage in Lean als genau dieser historische Satz formalisiert?
+4. Wurde genau diese Lean-Deklaration auf einem unveränderlichen Commit kompiliert und ihre Axiomspur geprüft?
+
+Eine positive Antwort auf eine dieser Fragen beantwortet die anderen nicht automatisch.
+
+Die Symbole \(x,W_x,w_x,\rho_x\), \(S_k,\mathcal N_k,c,\delta_j\), \(I_{x,u},J_{x,u}\), die APW4-Ereignisse, die BIB-Plätze und ihre Kapazitäten behalten ihre historischen Bedeutungen. Wo die zugänglichen Quellen diese Bedeutungen nicht vollständig angeben, werden sie nicht durch neue, ähnlich aussehende Objekte ersetzt.
+
+Wir schreiben
+\[
+E=E_{\rm APW4},\quad D=D_{\rm APW4},\quad
+C=C_{\rm APW4},\quad D_k=D_k^{\rm BBMST},\quad R=R_{\rm BIB}.
+\]
+
+## 2. Exakte Energiezerlegung
+
+Definiere
+\[
+E=\sum_x w_x\left(\sum_{u\in W_x}\rho_x(u)\right)^2,
+\]
+\[
+D=\sum_x w_x\sum_{u\in W_x}\rho_x(u)^2,
+\qquad
+C=\sum_x w_x
+\sum_{\substack{u,v\in W_x\\u\ne v}}\rho_x(u)\rho_x(v).
+\]
+Die Summe in \(C\) läuft über **geordnete** Paare.
+
+**Satz 2.1 (Exakte Zerlegung).**
+\[
+\boxed{E=D+C.}
+\]
+
+**Beweis.** Für jedes feste \(x\) gilt
+\[
+\left(\sum_{u\in W_x}\rho_x(u)\right)^2
+=\sum_{u\in W_x}\sum_{v\in W_x}\rho_x(u)\rho_x(v).
+\]
+Die Menge \(W_x\times W_x\) zerfällt disjunkt in die Diagonale \(u=v\) und die Off-Diagonale \(u\ne v\). Also
+\[
+\left(\sum_u\rho_x(u)\right)^2
+=\sum_u\rho_x(u)^2+\sum_{u\ne v}\rho_x(u)\rho_x(v).
+\]
+Multiplikation mit \(w_x\) und Summation über \(x\) ergibt \(E=D+C\). Wegen der geordneten Paare tritt kein zusätzlicher Faktor \(2\) auf. \(\square\)
+
+## 3. Der Diagonaltransport: exakte endliche Schnittstelle
+
+Ein bloßer Hinweis auf eine Zuordnung
+\[
+(x,u)\longmapsto(k,I_{x,u},J_{x,u})
+\]
+beweist noch keine Majorisierung. Für eine prüfbare DT-Aussage müssen Quellmenge, Zielmenge, Quellmassen, Zielkapazitäten und die massenerhaltende Zuordnung vollständig angegeben sein.
+
+**Lemma 3.1 (Kapazitätsbeschränkter endlicher Transport).**  
+Seien \(S,T\) endliche Mengen, \(a:S\to[0,\infty)\) eine Quellmasse, \(b:T\to[0,\infty)\) eine Zielkapazität und \(\mathcal I\subseteq S\times T\) eine Inzidenzrelation. Angenommen, es gibt Zahlen \(\lambda_{st}\ge0\) mit
+\[
+\lambda_{st}=0\quad\text{falls }(s,t)\notin\mathcal I,
+\]
+\[
+\sum_{t\in T}\lambda_{st}=a(s)\quad(s\in S),
+\qquad
+\sum_{s\in S}\lambda_{st}\le b(t)\quad(t\in T).
+\]
+Dann gilt
+\[
+\boxed{\sum_{s\in S}a(s)\le\sum_{t\in T}b(t).}
+\]
+
+**Beweis.** Vertauschen endlicher Summen liefert
+\[
+\sum_{s\in S}a(s)
+=\sum_{s\in S}\sum_{t\in T}\lambda_{st}
+=\sum_{t\in T}\sum_{s\in S}\lambda_{st}
+\le\sum_{t\in T}b(t).
+\]
+\(\square\)
+
+**Historische DT-Instanziierung.** Für APW4 müsste man konkret
+\[
+S=\{(x,u):u\in W_x\},\qquad
+a(x,u)=w_x\rho_x(u)^2
+\]
+setzen und die historische Zielmenge aus den tatsächlichen BBMST-Daten \((k,I_{x,u},J_{x,u})\) bilden. Anschließend wäre eine explizite Transportmasse \(\lambda\) anzugeben, deren Zielspaltensummen durch die historischen BBMST-Kapazitäten beschränkt sind und deren gesamte Zielkapazität genau \(D_k^{\rm BBMST}\) ergibt.
+
+Erst dieser konkrete Nachweis liefert
+\[
+D_{\rm APW4}\le D_k^{\rm BBMST}.
+\tag{DT}
+\]
+Die derzeit zugängliche APW4-Kurzfassung nennt die historische Zuordnung und die Ungleichung, druckt aber nicht die vollständigen Definitionen und die Transportmassen aus. Lemma 3.1 ist deshalb der präzise Prüfrahmen, nicht die Behauptung, die historische Instanziierung sei durch eine abstrakte Zuordnung bereits bewiesen.
+
+## 4. Gewichteter Off-Diagonaltransport
+
+### 4.1 Endliches gewichtetes Hall-System
+
+Seien \(\Gamma\) eine endliche Menge von Ereignissen, \(\mathcal B\) eine endliche Menge von BIB-Plätzen und \(\sim\subseteq\Gamma\times\mathcal B\) eine Inzidenzrelation. Jedes Ereignis \(\gamma\) habe Nachfrage \(d(\gamma)\ge0\), jeder Platz \(b\) Kapazität \(c(b)\ge0\). Für \(X\subseteq\Gamma\) sei
+\[
+N(X)=\{b\in\mathcal B:\exists\gamma\in X,\ \gamma\sim b\}.
+\]
+
+**Satz 4.1 (Gewichteter Hall-Transport).**  
+Gilt für jede Teilmenge \(X\subseteq\Gamma\)
+\[
+\boxed{\sum_{\gamma\in X}d(\gamma)
+\le\sum_{b\in N(X)}c(b),}
+\tag{H}
+\]
+so existiert ein nichtnegativer Transport \(\theta_{\gamma b}\), der nur auf inzidenten Paaren positiv ist, mit
+\[
+\sum_{b:\gamma\sim b}\theta_{\gamma b}=d(\gamma)
+\quad(\gamma\in\Gamma),
+\]
+\[
+\sum_{\gamma:\gamma\sim b}\theta_{\gamma b}\le c(b)
+\quad(b\in\mathcal B).
+\]
+
+**Beweis.** Betrachte das endliche Flussnetz mit Quelle \(s\), einem Knoten für jedes Ereignis \(\gamma\), einem Knoten für jeden Platz \(b\) und Senke \(t\). Die Kante \(s\to\gamma\) hat Kapazität \(d(\gamma)\), jede Inzidenzkante \(\gamma\to b\) eine hinreichend große Kapazität \(K\ge\sum_\gamma d(\gamma)\), und \(b\to t\) hat Kapazität \(c(b)\). Ein Schnitt, der eine Inzidenzkante mit Kapazität \(K\) schneidet, hat bereits Kapazität mindestens der Gesamtnachfrage. Jeder andere Schnitt wird durch eine Ereignisteilmenge \(X\) bestimmt; seine Kapazität ist
+\[
+\sum_{\gamma\notin X}d(\gamma)+\sum_{b\in N(X)}c(b),
+\]
+und ist nach (H) mindestens \(\sum_{\gamma}d(\gamma)\). Nach Max-Flow-Min-Cut existiert ein Fluss mit Wert \(\sum_\gamma d(\gamma)\). Damit sind alle Quellkanten gesättigt; die Flusswerte auf den Inzidenzkanten sind der gesuchte Transport. \(\square\)
+
+### 4.2 APW4-Instanziierung
+
+Für die historische APW4-Anwendung muss die Arbeit ausdrücklich angeben: die tatsächliche endliche Ereignismenge \(\Gamma_{\rm APW4}\); die tatsächliche BIB-Platzmenge \(\mathcal B_{\rm BIB}\); die historische Inzidenzrelation \(\gamma\sim b\); die Nachfrage \(d(\gamma)\), einschließlich der genauen Zuordnung zu den geordneten Off-Diagonalatomen; die Kapazität \(c_{\rm BIB}(b)\); und den Beweis von (H) für jede Teilmenge \(X\subseteq\Gamma_{\rm APW4}\).
+
+Erst nach dieser Instanziierung darf man aus Satz 4.1 und der Identifikation
+\[
+\sum_{\gamma\in\Gamma_{\rm APW4}}d(\gamma)=C_{\rm APW4},
+\qquad
+\sum_{b\in\mathcal B_{\rm BIB}}c_{\rm BIB}(b)=R_{\rm BIB}
+\]
+die historische HT-Aussage
+\[
+\boxed{C_{\rm APW4}\le R_{\rm BIB}}
+\tag{HT}
+\]
+folgern.
+
+Die gewichtete Hall-Bedingung ist eine echte mathematische Last. Sie folgt nicht aus einer bloßen ungewichteten CRT-Zählung oder aus der Matrixidentität \(I_q=A_q+Z_q\).
+
+### 4.3 BIB-Paarreserve als Doppeltzählung
+
+Sei \(\mathcal L\) eine endliche Labelmenge und \(S_u\subseteq\mathcal L\) für jedes \(u\) eine endliche Labelmenge. Setze
+\[
+c_\ell=|\{u:\ell\in S_u\}|.
+\]
+Dann gilt die exakte Identität
+\[
+\boxed{\sum_{\ell\in\mathcal L}c_\ell(c_\ell-1)
+=\sum_{u\ne v}|S_u\cap S_v|.}
+\tag{4.1}
+\]
+
+**Beweis.** Die linke Seite zählt geordnete Paare \((u,v)\) mit \(u\ne v\), die dasselbe Label \(\ell\) enthalten: Für jedes \(\ell\) gibt es genau \(c_\ell(c_\ell-1)\) solche Paare. Zählt man dieselben Tripel zuerst nach \((u,v)\), erhält man für jedes geordnete Paar genau \(|S_u\cap S_v|\) Möglichkeiten. \(\square\)
+
+Die Identität (4.1) beweist die Paarzählung. Sie beweist nicht, dass die historischen APW4-Ereignisnachfragen durch diese Labels mit den erforderlichen Gewichten und Multiplizitäten repräsentiert werden.
+
+## 5. Globale obere Energieschranke
+
+**Satz 5.1 (Bedingte APW4-Energieobergrenze).**  
+Wenn die historische DT-Instanziierung tatsächlich \(D\le D_k\) und die historische HT-Instanziierung tatsächlich \(C\le R\) liefert, dann gilt
+\[
+\boxed{E\le D_k+R.}
+\]
+
+**Beweis.** Nach Satz 2.1 ist \(E=D+C\). Daher
+\[
+E=D+C\le D_k+R.
+\]
+\(\square\)
+
+Der algebraische Schluss ist vollständig. Die historische DT-/HT-Instanziierung ist davon logisch getrennt.
+
+## 6. Endlicher BIB-Zweitmomentensatz
+
+Dieser Abschnitt enthält den vollständig ausgeschriebenen endlichen Inzidenzbeweis aus der Arbeitsnotiz vom 6. November 2026. Er wird nicht mit dem historischen APW4-Gewichtstransfer gleichgesetzt.
+
+Seien \(U,D\) endliche Mengen mit \(m_0=|U|\) und \(\tau=|D|\). Für jedes \(x\in U\) sei \(S_x\subseteq D\). Für \(d\in D\) definiere
+\[
+n_d=|\{x\in U:d\in S_x\}|,\qquad
+T=\sum_{d\in D}n_d=\sum_{x\in U}|S_x|.
+\]
+Es seien \(r,\mu\ge0\) ganze Zahlen und es gelte
+\[
+|S_x|\ge r\quad(x\in U),\qquad
+|S_x\cap S_y|\le\mu\quad(x\ne y).
+\tag{H1}
+\]
+Zusätzlich gelte
+\[
+m_0>0,\qquad \tau\le2r,\qquad
+\mu<r,\qquad \tau\mu<r^2.
+\tag{H2}
+\]
+
+**Satz 6.1 (Endliche Inzidenzschranke).**
+Unter (H1) und (H2) gilt
+\[
+\boxed{m_0\le
+\frac{\tau(r-\mu)}{r^2-\tau\mu}.}
+\tag{6.1}
+\]
+
+**Beweis.** Aus \(|S_x|\ge r\) folgt \(T\ge rm_0\). Zähle Tripel \((x,y,d)\) mit \(x\ne y\) und \(d\in S_x\cap S_y\). Zuerst nach \(d\), dann nach dem ungeordneten Paar \(\{x,y\}\) gezählt, ergibt
+\[
+\sum_{d\in D}\binom{n_d}{2}
+=\sum_{\{x,y\}\in\binom U2}|S_x\cap S_y|
+\le\mu\binom{m_0}{2}.
+\tag{6.2}
+\]
+Da \(n_d^2=n_d+2\binom{n_d}{2}\), folgt
+\[
+\sum_dn_d^2
+=T+2\sum_d\binom{n_d}{2}
+\le T+\mu m_0(m_0-1).
+\tag{6.3}
+\]
+Cauchy–Schwarz liefert
+\[
+T^2=\left(\sum_dn_d\right)^2
+\le\tau\sum_dn_d^2
+\le\tau\bigl(T+\mu m_0(m_0-1)\bigr).
+\tag{6.4}
+\]
+Aus \(T\ge rm_0\), \(\tau\le2r\) und \(m_0\ge1\) folgt
+\[
+T+rm_0-\tau\ge2rm_0-\tau\ge0.
+\]
+Zusammen mit \(T-rm_0\ge0\) ist
+\[
+(T-rm_0)(T+rm_0-\tau)\ge0.
+\]
+Ausmultiplizieren ergibt
+\[
+T^2-\tau T\ge r^2m_0^2-\tau r m_0.
+\tag{6.5}
+\]
+Andererseits folgt aus (6.4)
+\[
+T^2-\tau T\le\tau\mu m_0(m_0-1).
+\tag{6.6}
+\]
+Kombination von (6.5) und (6.6), Division durch \(m_0>0\) und Umstellen liefern
+\[
+(r^2-\tau\mu)m_0\le\tau(r-\mu).
+\]
+Wegen \(\tau\mu<r^2\) ist der Faktor \(r^2-\tau\mu\) positiv. Division ergibt (6.1). \(\square\)
+
+**Wichtige Grenze.** Satz 6.1 beweist nur die algebraische Konsequenz von (H1) und (H2). Er beweist nicht, dass eine historische Überdeckung die Mengen \(S_x\) mit diesen Eigenschaften liefert. Die Arbeitsnotiz vom 6. November kennzeichnet genau diese historische Konstruktion als nicht vollständig rekonstruiert. Der Satz enthält außerdem weder APW4-Gewichte noch eine Abbildung von APW4-Off-Diagonalereignissen auf BIB-Plätze.
+
+## 7. Arithmetischer Parameter \(B(M)\): was sein Vorzeichen aussagt
+
+Für die gewöhnliche Teilersummenfunktion \(\sigma\) sei
+\[
+B(M)=2M-\sigma(M).
+\]
+Die Bedingung \(B(M)\le0\) ist äquivalent zu \(\sigma(M)/M\ge2\). Sie ist eine arithmetische Aussage über \(M\), keine Aussage über eine konkrete Überdeckung, eine APW4-Faser, eine gewichtete Hall-Bedingung oder eine BIB-Reserve.
+
+Ein quadratfreies Beispiel zeigt dies bereits:
+\[
+M=3\cdot5\cdot7\cdot11\cdot13=15015.
+\]
+Wegen der Multiplikativität von \(\sigma\) gilt
+\[
+\sigma(M)=(1+3)(1+5)(1+7)(1+11)(1+13)
+=4\cdot6\cdot8\cdot12\cdot14=32256.
+\]
+Somit
+\[
+B(M)=2\cdot15015-32256=-2226<0.
+\]
+Zugleich ist
+\[
+\sum_{\substack{d\mid M\\d>1}}\frac1d
+=\frac{\sigma(M)}M-1
+=\frac{32256}{15015}-1
+=\frac{821}{715}>1.
+\]
+Dies ist kein Gegenbeispiel zu einem Satz über konkrete Überdeckungssysteme; es zeigt aber, dass aus \(B(M)\le0\) allein kein Widerspruch folgt. Das elementare Dichteargument schließt diesen Parameterbereich gerade nicht aus.
+
+Eine Aussage der Form
+\[
+B(M)\le0\Longrightarrow
+E_{\rm APW4}>D_k+R
+\]
+muss sämtliche zusätzlichen historischen APW4-Hypothesen enthalten. Sie darf nicht als reine Aussage über \(M\) gelesen werden. Die im Dossier §25 dokumentierte strikte Untergrenze wird als dort festgehaltener mathematischer Status vermerkt; die vollständige Herleitung und die präzisen Voraussetzungen sind in den hier zugänglichen Beweisartefakten jedoch nicht ausgeschrieben. Die 6.-November-Inzidenznotiz erklärt ausdrücklich, dass die Brücke von \(B(M)\) zur APW4-Energie bzw. BIB-Reserve dort nicht bewiesen wird.
+
+## 8. Präziser logischer Hauptschluss
+
+**Satz 8.1 (Bedingte Unvereinbarkeit).**  
+Seien \(E,D,C,D_k,R\in\mathbb R\) mit
+\[
+E=D+C,\qquad D\le D_k,\qquad C\le R.
+\]
+Dann gilt \(E\le D_k+R\). Gilt zusätzlich \(E>D_k+R\), so folgt ein Widerspruch.
+
+**Beweis.** Die erste Aussage folgt durch Addition der beiden oberen Schranken. Zusammen mit der strikten unteren Schranke erhält man
+\[
+D_k+R<E\le D_k+R,
+\]
+unmöglich. \(\square\)
+
+Die Lean-Deklaration APW4IncidenceSecondMoment.apw4_energy_contradiction formalisiert genau diesen bedingten Schluss: Energieidentität, Diagonalmajorisierung, Hall-/Off-Diagonalschranke und strikte Untergrenze werden als Hypothesen übergeben. Die Deklaration beweist nicht, dass die historischen APW4-Daten diese Hypothesen erfüllen.
+
+Um aus Satz 8.1 einen vollständig ausgeschriebenen APW4-Hauptsatz zu machen, muss das Manuskript die historische Konfiguration \(\mathfrak A\) in Standardsprache definieren und daraus herleiten: die genauen APW4-Faser- und Gewichtsobjekte; die konkrete DT-Transportmasse und BBMST-Zielkapazitäten; die konkrete HT-Ereignismenge, BIB-Platzmenge, Inzidenzrelation und gewichtete Hall-Ungleichung; die exakte arithmetische Voraussetzung und vollständige Herleitung der strikten Untergrenze; sowie die genaue Aussage, welche Klasse von Überdeckungen oder APW4-Konfigurationen ausgeschlossen wird.
+
+Ohne diese Angaben wäre die Formulierung „der APW4-Hauptsatz ist vollständig bewiesen“ stärker als die vorliegende Beweisexposition.
+
+## 9. Lean- und CI-Protokoll: genaue Reichweite
+
+### 9.1 APW4 PR #67
+
+Auf Commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5 liefen erfolgreich:
+
+- [CI 42599116967](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116967)
+- [CI 42599116987](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42599116987)
+
+Für incidence_bound_from_second_moment, offDiagonal_exceeds_reserve und apw4_energy_contradiction wird das Profil
+\[
+[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]
+\]
+ausgegeben. Das sind echte Kernel-/Axiom-Befunde für genau diese Deklarationen.
+
+Die Hypothesen sind entscheidend: incidence_bound_from_second_moment erhält die Zweitmoment-Ungleichung als Eingabe. apw4_energy_contradiction erhält Energieidentität, DT, HT und strikte Untergrenze als Eingaben. Die historischen APW4-Konstruktionen werden dadurch nicht formal bewiesen.
+
+### 9.2 Integrierter PR #69
+
+Die integrierte Lean-4.35.0-Prüfung ist **nicht bestanden**. Der letzte hier geprüfte Ersatzlauf [42602474355](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42602474355) endete mit Fehler. Im Log von BBMSTMomentRecurrence.lean:118 wird Finset.prod_le_prod₀ als unbekannte Konstante gemeldet. Zwei davon abhängige Deklarationen zeigen in der Axiomspur sorryAx. Der parallele Lauf 42602465766 wurde abgebrochen bzw. endete ebenfalls nicht erfolgreich. Der frühere integrierte Lauf 42601494591 scheiterte zusätzlich am abhängigen Index-/Cast-Schritt in BBMSTGeometryStageCore.lean.
+
+Der APW4-only All-roots-Lauf 42600819647 endete als cancelled. Diese Läufe dürfen nicht als bestandene integrierte Paranoid-Prüfung ausgegeben werden.
+
+### 9.3 Separater erfolgreicher Geometriecheckpoint
+
+[CI 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) bestand für die benannten geometrischen Reduktionsdeklarationen aus PR #56. Das ist ein echter, aber separater BBMST-Geometriecheckpoint. Er beweist nicht die APW4-spezifischen DT-, HT- oder Untergrenzeninstanziierungen.
+
+### 9.4 Verifikationsaussage
+
+Zulässig ist:
+
+> Die genannten APW4- und BBMST-Deklarationen wurden auf den jeweils angegebenen Commits mit den dort protokollierten Axiomprofilen kernelgeprüft. Die bedingte APW4-Widerspruchsdeklaration ist axiomsauber im Standardprofil.
+
+Nicht zulässig ist:
+
+> Der vollständige historische APW4-Hauptbeweis ist bereits als ein Lean-Theorem ohne zusätzliche Hypothesen kernelverifiziert.
+
+Dafür braucht es einen einzigen benannten Hauptsatz, dessen historische Voraussetzungen im Lean-Code konstruiert und dessen vollständige transitive Axiomspur auf einem erfolgreichen Release-Commit geprüft sind.
+
+## 10. Schluss
+
+Die exakte Energiezerlegung, die endliche Transportlogik, der gewichtete Max-Flow-Min-Cut-Schluss unter Hall, die BIB-Doppeltzählidentität, der endliche Zweitmomentensatz unter (H1)–(H2) und der bedingte Energie-Widerspruch sind mathematisch vollständig bewiesen.
+
+Der entscheidende historische Transfer bleibt gesondert zu belegen: Die zugänglichen Quellen liefern derzeit nicht die vollständigen Definitionen und Konstruktionen, die DT und HT auf die historischen APW4-Daten instanziieren, und die 6.-November-Inzidenznotiz erklärt ausdrücklich, dass sie keine Brücke von \(B(M)\) zur APW4-Energie oder BIB-Reserve herleitet. Dossier v1.5 §25 dokumentiert die strikte Untergrenze als abgeschlossen; die vorliegende Fassung gibt diesen dokumentierten Status wieder, ohne eine nicht vorliegende Zwischenrechnung zu fingieren.
+
+Damit ist der mathematisch korrekte nächste Publikationsschritt klar: Die historische DT-Abbildung, der historische gewichtete Hall-Nachweis und die vollständige arithmetische Untergrenzenherleitung müssen aus den maßgeblichen APW4-Primärbeweisen in den Text eingesetzt werden. Erst dann liegt ein selbstständig prüfbares vollständiges Hauptmanuskript vor.
+
+---
+
+## Literatur und feste Artefakte
+
+- P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe, M. Tiba, “The Erdős–Selfridge problem with square-free moduli,” Algebra & Number Theory 15 (2021), 609–626, DOI: [10.2140/ant.2021.15.609](https://doi.org/10.2140/ant.2021.15.609).
+- P. Balister, B. Bollobás, R. Morris, J. Sahasrabudhe, M. Tiba, “On the Erdős Covering Problem: The Density of the Uncovered Set,” [arXiv:1811.03547](https://arxiv.org/abs/1811.03547).
+- Lubuimi, “Exact BIB incidence second-moment bound and transfer audit,” 6 November 2026, repository branch research/bab-bib-incidence-bound-2026-11-06.
+- APW4 Dossier v1.5, Nachtrag 1.3, §25; Dossier v1.6 and chronological proof concordance.
+- APW4 Lean PR #67, commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5, CI runs 42599116967 and 42599116987.
+- BBMST geometry PR #56, CI run 42601107408.
+- Integrated BBMST/APW4 PR #69, failed CI runs 42601494591 and 42602474355.

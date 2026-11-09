@@ -248,3 +248,14 @@ This formal status is separate from the established APW4 mathematical results re
 ## 16. Public release and attribution
 
 APW4 research and authorship remain attributed to **Ta-Yoshua Lubuimi**. The original BBMST source results remain attributed to their five original authors. The author-held final manuscript is recorded as independently finalized, published, and secured by the author; this repository does not claim to host its PDF binary or to possess a DOI/arXiv identifier.
+
+
+## 12. External review correction — 9 November 2026
+
+The external review of the 17-page main-text version is answered in [APW4_EXTERNAL_REVIEW_RESPONSE_AND_CORRECTIONS_2026-11-09.md](APW4_EXTERNAL_REVIEW_RESPONSE_AND_CORRECTIONS_2026-11-09.md). The review-corrected text is [APW4_REVISED_MAIN_MANUSCRIPT_REVIEW_2026-11-09.md](APW4_REVISED_MAIN_MANUSCRIPT_REVIEW_2026-11-09.md).
+
+The revised text separates the dossier's recorded mathematical status from the availability of the full historical proof exposition and from Lean verification. It gives complete proofs of the energy decomposition, the finite transport and weighted Hall implications, the BIB pair-count identity, the finite incidence second-moment lemma under explicit hypotheses, and the conditional energy contradiction. It does not silently identify those abstract lemmas with the historical APW4 constructions.
+
+The 6 November incidence note explicitly does not establish a bridge from \(B(M)=2M-\sigma(M)\) to APW4 energy or BIB reserve. A square-free example \(M=15015\) has \(B(M)=-2226\) and \(\sum_{d\mid M,d>1}1/d=821/715>1\). Thus \(B(M)\le0\) alone is not an exclusion theorem. The strict lower bound remains recorded as mathematically completed in v1.5, Addendum 1.3, §25; the accessible source set still does not reproduce its full derivation and historical hypotheses.
+
+The successful PR #67 runs remain declaration-scoped. The integrated PR #69 run 42602474355 failed at BBMSTMomentRecurrence.lean:118 because Finset.prod_le_prod₀ is unavailable; dependent declarations show sorryAx. The APW4-only all-roots run 42600819647 was cancelled. No complete historical APW4 main theorem is claimed to have passed a single integrated Lean kernel audit.
