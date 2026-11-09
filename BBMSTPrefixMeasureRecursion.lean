@@ -170,8 +170,9 @@ theorem restrictPrefix_extendPrefix
     (s : C.S (stageCoordinate hk)) :
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
-  simp_all [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update]
+  have hne : (i : ℕ) ≠ k := by omega
+  simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
+    prefixIndex, stageCoordinate, Function.update, hne]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -182,10 +183,12 @@ theorem extendPrefix_restrictPrefix
   funext i
   by_cases hi : i.val < k
   · have hne : i.val ≠ k := by omega
-    have hle : i.val ≤ k := Nat.le_of_lt hi
     have hhi : i.val < k + 1 := i.isLt
+    have hidx : prefixIndex hk ⟨i.val, hi⟩ = i := by
+      apply Fin.ext
+      rfl
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hhi]
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hhi, hidx]
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
@@ -203,10 +206,6 @@ theorem prefixPointCovered_iff
   have hExtend :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
-  have hcoord : stageCoordinate hk = prefixIndex hk (Fin.last k) := by
-    apply Fin.ext
-    rfl
-  rw [hcoord]
   simp [prefixPointCovered, prefixCoveredValues, hExtend]
 
 #print axioms extendPrefix_restrictPrefix
