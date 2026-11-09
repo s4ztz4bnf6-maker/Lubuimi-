@@ -1464,4 +1464,4 @@ The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. It n
 
 ## 56. Exact-head retry 42722133436
 
-GitHub has started [run 42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both audit and integrated-paranoid jobs are active. At the latest status check, the audit job was generating the Lean manifest and the integrated job was installing Lean 4.35.0. Neither had entered the final compilation step yet. This is an in-progress retry, not a pass.
+GitHub has started [run 42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Both jobs are still active. The integrated-paranoid job has completed Lean 4.35.0 setup, sandbox installation and Mathlib cache restoration and is now executing the integrated module compilation. The audit job has completed manifest generation and upstream-source fetch and is restoring the Mathlib cache. This is an in-progress retry, not a pass.
