@@ -125,7 +125,7 @@ On branch research/rank9-crt-fiber-audit-2026-10-30, commit 098699f663a144fae5da
 - [Indicator check 42595925019](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925019)
 - [Audit/paranoid workflow 42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001)
 
-The audit job compiled the finite indicator bridge, finite sieve-stage modules, dependent fibre interface, finite CRT decomposition, arithmetic ZMod CRT theorem, and actual congruence-class CRT representation. The separate fiber-paranoid job in run 42595925001 was still running at the time of this record; no success is claimed for that job until its final conclusion is read.
+The audit job compiled the finite indicator bridge, finite sieve-stage modules, dependent fibre interface, finite CRT decomposition, arithmetic ZMod CRT theorem, and actual congruence-class CRT representation. The separate fiber-paranoid job in run 42595925001 ultimately ended as cancelled. It is not counted as a successful paranoid check; only the dependency-ordered audit job passed.
 
 ## 6. Integration boundary and release rule
 
