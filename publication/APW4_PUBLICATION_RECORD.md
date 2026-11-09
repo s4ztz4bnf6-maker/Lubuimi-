@@ -359,3 +359,10 @@ The next candidate source head is 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Its 
 ## 19. Seventh CI update — 10 November 2026
 
 Exact-head run 42722133436 has started on PR #69 head 95669afac00d8913c1fc2a91b6bb3b5740ce6d92. Integrated-paranoid has completed setup, sandbox and Mathlib cache restoration and entered integrated compilation. Audit has fetched the upstream source and is restoring Mathlib cache. No compile or paranoid result is available yet.
+
+
+## 20. Eighth CI update — 10 November 2026
+
+Run 42721579786 failed in both jobs on PR #69 head `4ecac363ca6a06b5a41c750edac8eba2303b64cf`. The rational finite-product/factor error is no longer present. The remaining failures are in BBMSTPrefixMeasureRecursion.lean at lines 171, 184, 209, 337 and 360, and in BBMSTHyperplaneFibreIncidence.lean at lines 347 and 450. The audit job passed the upstream, zero-safe fibre, weighted update, uniform-coordinate, finite moment and geometry stages before the prefix recursion failure. Error-recovery output showed sorryAx in dependent declarations; no integrated build or paranoid pass is claimed.
+
+The next PR #69 candidate head is `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Run 42722133436 is active on that exact head; the audit job is restoring Mathlib cache and the integrated job is compiling. No final result is claimed yet. The APW4 mathematical proof record and prior successful commit-bound checks remain unchanged.
