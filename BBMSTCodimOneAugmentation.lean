@@ -44,7 +44,9 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
     simp only [if_pos rfl, Option.isSome_some, true_iff, eq_self_iff_true]
   · constructor
     · intro hsome
-      simp only [if_neg h, Option.isSome_none] at hsome
+      have hfalse : False := by
+        simpa [h] using hsome
+      exact hfalse.elim
     · intro hji
       exact (h hji.symm).elim
 
