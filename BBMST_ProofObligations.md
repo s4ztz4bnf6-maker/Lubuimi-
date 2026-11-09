@@ -34,3 +34,16 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+
+## Source-fidelity finding (2026-10-28)
+
+A fresh check against the pinned upstream file and the published BBMST paper exposes a second, independent issue beyond malformed parameter lists:
+
+1. The upstream Lean comments label `sieve_criterion` as “BBMST Thm 3.1 + 3.2”, but the actual published geometric criterion is stated for a finite product space and a family of nontrivial, pairwise nonparallel hyperplanes, together with the source's fixed-coordinate / moment hypotheses. The axiom's signature receives only an integer covering system, oddness, scalar sieve parameters, `ca1 ≥ 1`, and `sieveSum < 1`. Those data do not themselves encode or prove the geometric hypotheses or the construction linking the integer system to that hyperplane family. The axiom is therefore not source-faithful as an interface.
+
+2. The upstream Lean comment labels `sf_sieve_lt_one` as “BBMST Thm 1.1 (computation)”. In the published paper, Theorem 1.1 is the square-free-moduli obstruction, not merely an existential parameter-computation lemma. The numerical/distribution certificate and the large-prime argument must be mapped to their actual source lemmas, the supplemental computation, and the exact theorem scope. A theorem label is not a proof of that mapping.
+
+3. The published paper's headline theorem concerns distinct square-free moduli. Any use for the unrestricted odd-modulus conjecture must explicitly identify and prove the additional prime-power extension and its exact restrictions; the square-free theorem alone cannot discharge the unrestricted goal.
+
+These findings are source/interface audits, not a counterexample to the mathematical conjecture. They strengthen the release gate: before replacing either axiom, first write the precise source theorem in Lean-shaped form, include its geometric and parameter-provenance hypotheses, and prove the integer-to-hyperplane translation and every extension hypothesis. Do not fix this by adding unproved geometric predicates as assumptions to the final theorem.
