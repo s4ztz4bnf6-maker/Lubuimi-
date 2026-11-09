@@ -127,3 +127,8 @@ The authors' own [supplementary page](https://people.maths.ox.ac.uk/balister/Erd
 The corrected integrated branch has two source fixes and two new CI runs, 42602474355 and 42602465766, still pending at the last check. The separate APW4-only all-roots run 42600819647 was also still running. The previous integrated run 42601494591 failed and is not counted as passed. See Dossier v1.6, §§43–45 for the exact diagnostics and scope.
 
 The uploaded 17-page PDF is not reissued as a final manuscript: its rendered/extracted page 11 loses the strict comparison symbol in Satz 5.1, and the complete arithmetic intermediate derivation is not printed in the document. A clean companion report can accurately present the verified energy identities, finite incidence elimination, BBMST source reconstruction and CI evidence, but it must not be advertised as a self-contained APW4 proof until the historical DT/HT identifications and the full Satz-5.1 derivation are reproduced.
+
+
+## New companion manuscript
+
+[APW4: Energy–Incidence Closure, Finite Moment Arithmetic, and Source-Faithful Formalization](publication/APW4_Energy_Incidence_Companion_Manuscript_2026-11-09.md) is the clean companion report prepared on 9 November. It gives the complete energy algebra, the finite second-moment elimination proof, the BBMST source reconstruction and supplements, and the exact declaration-scoped Lean status. It explicitly preserves the mathematical status of the strict APW4 lower bound in dossier v1.5 §25 while not pretending that the historical intermediate derivation or the full APW4 main-theorem kernel dependency closure has been reproduced. It is therefore a companion research/verification manuscript, not a replacement for a self-contained proof of the historical APW4 theorem.
