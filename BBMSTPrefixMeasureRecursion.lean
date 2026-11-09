@@ -356,13 +356,19 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
+  have hcovered :
+      (y (Fin.last k) ∈ prefixCoveredValues C hk xprev) ↔
+      (y (Fin.last (a + j)) ∈
+        prefixCoveredValues C (by omega)
+          (restrictPrefix C (by omega) y)) := by
+    rfl
   simp only [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
-  split_ifs <;> ring
+  split_ifs <;> simp_all [hcovered] <;> ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
