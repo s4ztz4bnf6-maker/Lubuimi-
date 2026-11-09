@@ -230,3 +230,11 @@ The Syracuse terminal-residue collision energy is now represented by an explicit
 ### PR #69 latest run — 42722133436
 
 Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) failed on head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`. Audit passed upstream and several zero-safe fibre, weighted update, uniform-coordinate, moment and geometry modules before failing in prefix recursion; integrated-paranoid also failed in hyperplane fibre cardinalities. The current concrete issues are dependent Fin-index/cast transport, filtered-set membership rewriting, `PAt_nonneg` induction transport, redundant tactic, and mismatched local Fintype denominator normalization. Error recovery includes `sorryAx`; no paranoid pass. Earlier positive checks and APW4 mathematical results remain preserved. See Dossier v1.6, Addendum 1.12.
+
+
+## Current integration and bridge status — 10 November 2026
+
+- [Append-only APW4 CI status snapshot](publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md): records exact PR #69 failure 42722133436 and the separate documentation-branch audit 42723539932, including the fact that later documentation commits advanced PR #79 beyond the commit checked by that run.
+- [APW4–Syracuse Cylinder–Energy Bridge research programme](publication/LUBUIMI_APW4_SYRACUSE_CYLINDER_ENERGY_BRIDGE_RESEARCH_PROGRAMME_2026-11-10.md): separates the established APW4 and Syracuse results from the unproved transport bridge.
+
+The current PR #69 integrated source head has not passed the full Lean 4.35.0 integrated-paranoid build. This is a formalization status, not a change to the mathematical APW4 proof record. The diagonal mass, off-diagonal mass and BIB pair reserve remain distinct until the historical index-preserving map and capacity inequalities are proved in the relevant formalization.
