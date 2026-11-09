@@ -14,6 +14,9 @@
 - [Manuscript verification memorandum](publication/APW4_MANUSCRIPT_VERIFICATION_2026-11-08.md)
 - [Citation metadata](CITATION.cff)
 - [Proprietary rights notice](LICENSE-PROPRIETARY.md)
+- [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md)
+- [Repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md)
+- [Separate Erdős–Selfridge Lean audit](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md)
 - [Release integrity and archival record](publication/APW4_RELEASE_INTEGRITY_AND_ARCHIVING_2026-11-09.md)
 
 ## Mathematical scope
