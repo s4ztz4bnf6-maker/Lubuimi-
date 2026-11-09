@@ -133,7 +133,7 @@ theorem stageFactorProduct_le_two_over_size_product
           (hδ m) (hδhalf m) (hsize m))
       have hstep := stageFactor_le_two_over_size δ size z (a + 1 + m) hz
         (hδ m) (hδhalf m) (hsize m)
-      exact mul_le_mul ih hstep hprodR hfactorL
+      exact mul_le_mul ih hstep hfactorL hprodR
 
 /-- The initial polynomial is nonnegative for nonnegative coefficients
 and nonnegative z. -/
