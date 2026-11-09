@@ -38,8 +38,7 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
   classical
   ext j
   simp only [fixedCoords, Finset.mem_filter, Finset.mem_univ, true_and,
-    singletonAt, Option.isSome_some, Option.isSome_none,
-    Finset.mem_singleton]
+    Finset.mem_singleton, singletonAt]
   by_cases h : i = j
   · subst j
     simp
