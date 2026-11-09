@@ -68,7 +68,7 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
     (x : PrefixPoint C k hk) :
     projectPrefix hk (liftPrefix C hk x) = x := by
   funext j
-  simp [projectPrefix, liftPrefix, prefixIndex, j.isLt] <;> rfl
+  simp [projectPrefix, liftPrefix, prefixIndex, j.isLt]
 
 /-- The coordinate introduced after a prefix of length k. -/
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
@@ -160,7 +160,7 @@ theorem extendPrefix_last
     (s : C.S (stageCoordinate hk)) :
     (extendPrefix C hk x s) (Fin.last k) = s := by
   simp [extendPrefix, projectPrefix, prefixIndex, stageCoordinate,
-    Function.update] <;> rfl
+    Function.update]
 
 
 /-- Restricting an appended prefix recovers the original prefix. -/
@@ -171,7 +171,8 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> rfl
+    prefixIndex, stageCoordinate, Function.update, i.isLt,
+    Nat.ne_of_lt i.isLt]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -185,7 +186,7 @@ theorem extendPrefix_restrictPrefix
     have hle : i.val ≤ k := Nat.le_of_lt hi
     have hhi : i.val < k + 1 := i.isLt
     simp [extendPrefix, restrictPrefix, projectPrefix, liftPrefix,
-      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi] <;> rfl
+      prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi]
   · have hiEq : i.val = k := by omega
     have hlast : i = Fin.last k := Fin.ext hiEq
     subst i
@@ -351,11 +352,9 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
   have hcovered :
-      y (Fin.last k) ∈ prefixCoveredValues C hk xprev ↔
-        y (Fin.last k) ∈
-          prefixCoveredValues C (by omega) (restrictPrefix C (by omega) y) := by
+      prefixCoveredValues C hk xprev =
+        prefixCoveredValues C (by omega) (restrictPrefix C (by omega) y) := by
     dsimp [xprev, k]
-    rfl
   have hstage :
       stageCoordinate hk = stageCoordinate (by omega) := by
     apply Fin.ext
