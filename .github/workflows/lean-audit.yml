@@ -98,4 +98,6 @@ jobs:
           use-mathlib-cache: true
       - name: Compile and check all integrated BBMST/APW4 modules
         working-directory: kernel-audit
-        run: lake check --paranoid
+        run: |
+          lake build ResearchKernelAudit
+          lake check --paranoid
