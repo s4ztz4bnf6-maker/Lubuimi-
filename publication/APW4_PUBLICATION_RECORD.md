@@ -328,3 +328,10 @@ The weighted Hall condition for every finite event family \(X\) is
 \sum_{b\in\Gamma_{\mathrm{BIB}}(X)}c_{\mathrm{BIB}}(b).
 \]
 These maps and capacities retain their original APW4 meanings. The canonical finite-fibre model is not a substitute for them.
+
+
+## 15. Third CI update — 10 November 2026
+
+Run 42720062719 failed in integrated-paranoid at BBMSTMomentRecurrence.lean:136, BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361 and BBMSTHyperplaneFibreIncidence.lean:347/454. The separate audit job had passed upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate and finite-stage moment stages and was still progressing through geometry.
+
+The product-induction argument order and dependent prefix/stage-coordinate proofs were refined on PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New run 42720690874 is pending on that exact head. The mathematical APW4 proof status and earlier successful commit-bound checks remain unchanged.
