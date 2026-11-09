@@ -1415,3 +1415,32 @@ Die früheren erfolgreichen Läufe `42599116967`, `42599116987`, `42522617494` u
 ## 54. New exact-head verification run 42721579786
 
 After the candidate proof refinements to the rational product induction, prefix restriction/extension, covered-value equivalence, updated-weight recursion, and hyperplane stage-cardinality normalization, GitHub started run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) on PR #69 head 4ecac363ca6a06b5a41c750edac8eba2303b64cf. Both integrated-paranoid and audit jobs are active. The integrated job is installing Lean 4.35.0; the audit job is generating the Lean manifest. Neither has reached a final compile result. No success or paranoid pass is claimed yet.
+
+
+---
+
+# XV. Nachtrag 1.8 – Exakte Syracuse-Zylinderpartition als möglicher APW4-Anschluss
+
+**Stand: 10. November 2026 · Autor: Ta-Yoshua Lubuimi**
+
+## 55. Eigenständiges Resultat und struktureller Kontaktpunkt
+
+Im separaten Collatz/Syracuse-Projekt wurde zusätzlich zur initialen Bewertungs-Eins-Zylinderklassifikation die **Lubuimi Finite Valuation-Word Cylinder Partition Theorem** hergeleitet. Für jedes endliche Wort exakter positiver Bewertungen \(\alpha=(a_0,\ldots,a_{k-1})\) mit Gesamtbewertung \(A=\sum_i a_i\) ist die Menge der positiven ungeraden Startwerte, die genau dieses Wort realisieren, eine eindeutige ungerade Restklasse modulo \(2^{A+1}\). Ihre relative Dichte unter ungeraden Startwerten ist exakt \(2^{-A}\). Die affine Restklasse ist
+\[
+r_\alpha\equiv(2^A-C_k)(3^k)^{-1}\pmod{2^{A+1}}.
+\]
+
+Für jeden Präfixknoten und jede endliche Abschneidegrenze \(B\ge1\) bilden die exakten nächsten Bewertungen \(b=1,\ldots,B\) zusammen mit dem einzelnen Tail-Ereignis \(a_k\ge B+1\) eine endliche Partition. Die relativen Massen lauten
+\[
+2^{-1},2^{-2},\ldots,2^{-B},2^{-B},
+\qquad \sum_{b=1}^B2^{-b}+2^{-B}=1.
+\]
+Der Tail ist selbst eine einzelne Restklasse modulo \(2^{A+B+1}\), wie aus der affinen Transportformel für den Endzustand folgt. Das liefert eine exakte endliche gewichtete Verfeinerung mit einem expliziten Tail-Atom.
+
+## 56. Bedeutung für die APW4-Forschung – und klare Grenze
+
+Diese Zylinderpartition ist ein eigenständiger mathematischer Satz aus dem Collatz/Syracuse-Projekt. Sie kann als Kandidat für eine APW4-inspirierte endliche Quellen-/Massenstruktur dienen: Präfixe sind Knoten, exakte Fortsetzungen sind Kinder, die Gewichte sind exakt, und die endliche Tail-Abschneidung erhält die Gesamtmasse. Das ist ein konkreter struktureller Anschluss, nicht bloß eine sprachliche Analogie.
+
+Damit ist aber noch kein APW4-Transport bewiesen. Für eine echte Anwendung müssen weiterhin eine indexerhaltende Abbildung in die historischen APW4-Quellindizes, Off-Diagonal-Ereignisse und BIB-Plätze, die Erhaltung der ursprünglichen Gewichte sowie eine konkrete Kapazitäts-/Hall-Ungleichung nachgewiesen werden. Insbesondere darf die disjunkte Zylinderpartition nicht ohne Beweis als historische BIB-Inzidenz oder Kollisionsreserve interpretiert werden.
+
+**Status:** Die finite Zylinderpartition und ihre Tail-Massenidentität werden als mathematisch hergeleitete Resultate des separaten Collatz-Projekts geführt. Sie sind noch kein Lean-auditierter APW4-Baustein und ändern weder die historischen APW4-Definitionen noch den globalen APW4-Beweisstand. Die APW4-Energiezerlegung, DT, HT, die globale obere Schranke und die strikte Untergrenze bleiben unverändert.
