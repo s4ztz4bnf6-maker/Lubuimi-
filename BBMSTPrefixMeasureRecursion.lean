@@ -382,8 +382,8 @@ theorem PAt_nonneg
       let F := prefixFibreData C (A := A) (k := k) hk xprev
         (PAt C (A := A) a ha P0 δ j hprev xprev) hbase
       have hpoint : y (Fin.last k) ∈ F.points := by
-        simp [F, prefixFibreData, prefixUniformFibre,
-          BBMSTUniformFibreInstantiation.toFibreData]
+         change y (Fin.last k) ∈ Finset.univ
+         exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y (by
           simpa [k, xprev] using hbase)
@@ -518,8 +518,8 @@ theorem PAt_succ_le_prev_div_card_mul_one_sub_delta
       hP0_nonneg hδ hδhalf j hprev xprev
   let F := prefixFibreData C (A := A) (k := k) hk xprev baseMass hbase
   have hpoint : y (Fin.last k) ∈ F.points := by
-    simp [F, prefixFibreData, prefixUniformFibre,
-      BBMSTUniformFibreInstantiation.toFibreData]
+         change y (Fin.last k) ∈ Finset.univ
+         exact Finset.mem_univ _
   have hlocal := prefixFibre_updatedWeight_eq_PAt
     (C := C) (A := A) a ha P0 δ j
     hk y (by
@@ -586,7 +586,7 @@ theorem initialPrefixOf_restrictPrefix
     Nat.lt_trans hi (Nat.lt_succ_self (a + j))
   have hi'' : i.val < a + (j + 1) := by omega
   simp [initialPrefixOf, restrictPrefix, projectPrefix,
-    liftPrefix, prefixIndex, hi, hi', hi'']
+    liftPrefix, prefixIndex, hi, hi', hi''] <;> rfl
 
 /-- The one-coordinate distortion factor at coordinate i. -/
 noncomputable def distortionFactor (δ : Fin n → ℚ) (i : Fin n) : ℚ :=
