@@ -42,7 +42,7 @@ theorem singletonAt_fixedCoords (i : Fin n) (s : C.S i) :
   change (if h : i = j then some (h ▸ s) else none).isSome = true ↔ j = i
   by_cases h : i = j
   · subst j
-    simp only [if_pos rfl, Option.isSome_some, true_iff, eq_self_iff_true]
+    simp
   · constructor
     · intro hsome
       have hfalse : False := by
