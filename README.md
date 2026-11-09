@@ -188,3 +188,8 @@ Candidate fixes are on PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. Exa
 ### Third CI update — 10 November 2026
 
 Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) completed with failure in both jobs on PR #69 head `6c34cd1d4f7487c200a04a4f1cc90010ceb19643` (integrated merge commit `ac80e32831b12aaeb117242d62395bd421aaf713`). The integrated build reports a factor-positivity type mismatch at `BBMSTMomentRecurrence.lean:136:32`, dependent-prefix errors at `BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361`, and finite-coordinate cardinality equalities at `BBMSTHyperplaneFibreIncidence.lean:347/454`. The audit job passed upstream and several finite fibre/geometry stages, then failed in the prefix recursion. The build failure means no successful `lake check --paranoid` result is available for this run. Earlier successful commit-bound checks and the mathematical APW4 proof record remain unchanged. Full diagnosis and repair targets are in Dossier v1.6, Addendum 1.7.
+
+
+### Fifth CI update — 10 November 2026
+
+New exact-head run [42721579786](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42721579786) is running on PR #69 head 4ecac363ca6a06b5a41c750edac8eba2303b64cf after the latest product, prefix, updated-weight and hyperplane-cardinality proof refinements. Both integrated-paranoid and audit jobs are active; no final result is available yet.
