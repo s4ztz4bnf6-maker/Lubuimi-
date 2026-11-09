@@ -346,17 +346,9 @@ theorem actualStageFirstMoment_eq
           (((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) := by
   classical
-  have hcard :
-      (Finset.univ : Finset (C.S (stageCoordinate k hk hk0))).card =
-        Fintype.card (C.S (stageCoordinate k hk hk0)) := by
-    simp
-  have hcard' :
-      (Finset.univ : Finset (C.S (⟨k - 1, by omega⟩ : Fin n))).card =
-        Fintype.card (C.S (⟨k - 1, by omega⟩ : Fin n)) := by
-    simpa [stageCoordinate] using hcard
   simp [uniformStageFirstMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageFirstMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, hcard']
+    coveredProportion, uniformWeight, stageCoordinate]
 
 /-- The first moment is bounded by the expected number of new
 hyperplanes whose old-coordinate shadow contains the base point, divided
@@ -453,17 +445,9 @@ theorem actualStageSecondMoment_eq
           ((((stageCoveredValues (C := C) A k hk hk0 x).card : ℚ) /
             (Fintype.card (C.S (stageCoordinate k hk hk0)) : ℚ)) ^ 2) := by
   classical
-  have hcard :
-      (Finset.univ : Finset (C.S (stageCoordinate k hk hk0))).card =
-        Fintype.card (C.S (stageCoordinate k hk hk0)) := by
-    simp
-  have hcard' :
-      (Finset.univ : Finset (C.S (⟨k - 1, by omega⟩ : Fin n))).card =
-        Fintype.card (C.S (⟨k - 1, by omega⟩ : Fin n)) := by
-    simpa [stageCoordinate] using hcard
   simp [uniformStageSecondMoment, toFiniteStageData, toFibreData,
     toUniformFiniteStageData, stageSecondMoment, stageUniformFibre,
-    coveredProportion, uniformWeight, stageCoordinate, hcard']
+    coveredProportion, uniformWeight, stageCoordinate]
 
 /-- The second moment is bounded by the second moment of the number
 of new hyperplanes whose old-coordinate shadows contain the base point,
