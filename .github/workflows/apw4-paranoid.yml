@@ -39,4 +39,6 @@ jobs:
           use-mathlib-cache: true
       - name: Check all APW4 modules with Lean and paranoid checkers
         working-directory: fiber-audit
-        run: lake check --paranoid
+        run: |
+          lake build APW4Audit
+          lake check --paranoid
