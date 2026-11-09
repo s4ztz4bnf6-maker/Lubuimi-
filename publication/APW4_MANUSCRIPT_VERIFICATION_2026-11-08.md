@@ -173,3 +173,8 @@ This is a finding about the specific Library copy available in this conversation
 The final APW4 kernel release still requires a single named theorem whose transitive dependencies construct the historical APW4 definitions and maps for DT and HT, the actual BIB event/slot incidence and capacity data, and the strict lower-bound proof from the historical APW4 objects. The final theorem must then be compiled on one immutable commit and audited with #print axioms, with no project axioms and no sorryAx in its dependency closure.
 
 The dossier's mathematical status remains unchanged. The distinction here is solely between the established mathematical proof record and the exact scope of the kernel evidence currently available.
+
+
+## 13. Consolidated dossier pointer
+
+The complete updated source and verification record is consolidated in [APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). Its Addendum 1.4 preserves the mathematical APW4 status from v1.5, Section 25, and records the new source reconstruction and CI evidence without treating the conditional Lean end-step as a proof of its historical premises.
