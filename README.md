@@ -113,3 +113,6 @@ Formalization boundary for the CRT source: the rank-nine branch proves the actua
 
 
 An APW4-only Lean 4.35.0 paranoid package now lists all four APW4 modules as explicit roots and runs an explicit build before the paranoid check. Its all-roots run [42600819647](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42600819647) was still in the final check step at the time of this update. The earlier zero-declaration check is rejected as vacuous.
+
+
+A static source scan of all 33 integrated BBMST/APW4 modules found no direct axiom, sorry, or admit declarations. This is only a lexical check; transitive dependencies still require the active Lean builds, paranoid check, and #print axioms audit.
