@@ -114,14 +114,32 @@ theorem stageFactorProduct_le_two_over_size_product
     (hsize : ∀ j, 0 < size (a + 1 + j)) :
     stageFactorProduct a m δ size z ≤
       ∏ j ∈ Finset.range m, (1 + 2 * z / size (a + 1 + j)) := by
-  unfold stageFactorProduct
-  apply Finset.prod_le_prod₀
-  · intro j hj
-    exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j))
-  · intro j hj
-    exact stageFactor_le_two_over_size δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j)
+  induction m with
+  | zero =>
+      simp [stageFactorProduct]
+  | succ m ih =>
+      rw [stageFactorProduct_succ, Finset.prod_range_succ]
+      have hleft : 0 ≤ stageFactorProduct a m δ size z := by
+        unfold stageFactorProduct
+        apply Finset.prod_nonneg
+        intro j hj
+        exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
+          (hδ j) (hδhalf j) (hsize j))
+      have hright : 0 ≤ 1 + 2 * z / size (a + 1 + m) := by
+        positivity
+      calc
+        stageFactorProduct a m δ size z *
+            stageFactor δ size z (a + 1 + m)
+            ≤ stageFactorProduct a m δ size z *
+                (1 + 2 * z / size (a + 1 + m)) :=
+              mul_le_mul_of_nonneg_left
+                (stageFactor_le_two_over_size δ size z
+                  (a + 1 + m) hz (hδ m) (hδhalf m) (hsize m))
+                hleft
+        _ ≤ (∏ j ∈ Finset.range m,
+              (1 + 2 * z / size (a + 1 + j))) *
+              (1 + 2 * z / size (a + 1 + m)) :=
+              mul_le_mul_of_nonneg_right ih hright
 
 /-- The initial polynomial is nonnegative for nonnegative coefficients
 and nonnegative z. -/
