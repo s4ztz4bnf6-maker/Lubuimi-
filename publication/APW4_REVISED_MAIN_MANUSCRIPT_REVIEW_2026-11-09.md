@@ -544,3 +544,10 @@ The integrated BBMST/APW4 PR #69 head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92`
 The documentation PR #79 has its own separate workflow `42723539932`; it is a degenerate-witness audit, not the integrated-paranoid build. Its status must be read from the exact run record and not conflated with PR #69.
 
 Previously successful declaration-scoped APW4 checks remain valid for their exact commits and declarations. This integration failure neither invalidates those earlier checks nor changes the author's mathematical APW4 proof record. No successful full integrated `lake check --paranoid` is claimed here.
+
+
+---
+
+## PR #69 run 42722133436 — dependent prefix diagnosis
+
+Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) failed on PR head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` (merge `a73cc25`). The audit passed upstream, zero-safe fibre, finite weighted update, uniform-coordinate, finite-stage moment and geometry modules, then failed in prefix recursion. The integrated build also failed in hyperplane fibre cardinalities. The prefix errors now identify: (i) an unresolved dependent coordinate cast in `restrictPrefix_extendPrefix`; (ii) a `Fin k` proof used where `Fin (k+1)` is required, and a comparison of `Fin n` with `Fin (k+1)` in `extendPrefix_restrictPrefix`; (iii) an unresolved filtered-set membership rewrite in `prefixPointCovered_iff`; (iv) a dependent `PAt_nonneg` induction transport; and (v) a redundant tactic after a closed goal. Hyperplane denominators fail to normalize under one common `Fintype` instance. Error-recovery declarations show `sorryAx`; no successful integrated build or paranoid check is claimed. Full diagnosis and repair order are in Dossier v1.6, Addendum 1.12. The APW4 mathematical proof status remains unchanged.
