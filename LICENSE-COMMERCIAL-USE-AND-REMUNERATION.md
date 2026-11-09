@@ -59,3 +59,14 @@ This is a public statement of licensing policy and reservation of rights. It is 
 
 **Ta-Yoshua Lubuimi**  
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
+
+
+## 8. Important boundary: mathematical ideas and results
+
+Copyright generally protects original expression, such as the manuscript's wording, diagrams, source code, and documentation. It does not, by itself, give the author an exclusive right over mathematical facts, abstract ideas, methods, procedures, systems, or a theorem merely because the author discovered or published it. The precise treatment depends on applicable law.
+
+Accordingly, this policy reserves rights in the author's copyrightable original materials; it must not be read as a claim that every independent implementation, use of a mathematical result, or reference to the theorem automatically requires a royalty. A person who wants to reproduce or commercially exploit protected code or substantial protected expression needs an appropriate license unless an exception applies. A person who independently uses an unprotected mathematical idea may stand differently.
+
+If the author believes a patentable technical implementation or other registrable right may exist, obtain specialist advice before further disclosure or licensing. Because the research has already been published, any patent novelty or filing question is time- and jurisdiction-sensitive and cannot be assumed to remain available.
+
+This distinction is essential: a written paid license can create enforceable contractual compensation for the rights actually licensed, but a proprietary copyright notice alone cannot guarantee payment whenever someone benefits from the mathematical result.
