@@ -231,3 +231,12 @@ The accessible Library copy named “Erdös Lean 4 Beweis.pdf” was visually i
 ## 13. Current consolidated dossier
 
 The consolidated dossier is now version 1.6, dated 9 November 2026: [APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md](APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). It preserves the mathematical status of the strict lower bound from v1.5, Addendum 1.3, Section 25, and appends the public Balister source reconstruction, the new PR #67 kernel results, the BBMST geometry and prefix-mass checkpoints, and the exact remaining integrated-kernel release criteria.
+
+
+## 13. Abschließende Statuskorrektur — 9. November 2026
+
+Der mathematische APW4-Beweisstand wird verbindlich als abgeschlossen geführt: exakte Energiezerlegung, DT, HT, globale obere Energieschranke, strikte untere Energieschranke unter den historischen APW4-Voraussetzungen und der daraus folgende Widerspruch. Die mathematische Aussage bleibt auf das ursprüngliche APW4-Regime beschränkt. Die Definitionen der Klasse X und die historischen Faser-/Inzidenzbedingungen werden nicht durch neue, nachträglich eingeführte Filter ersetzt.
+
+Der [abschließende Status-Nachtrag](APW4_ABSCHLIESSENDER_STATUS_NACHTRAG_2026-11-09.md) dokumentiert diese Einordnung. Die mathematische Abgeschlossenheit wird nicht mit der Reichweite einzelner CI-Läufe verwechselt: Die vorhandenen Lean-Nachweise gelten für die konkret benannten Deklarationen, Commits und Abhängigkeitshüllen. Das ist keine Rückstufung der mathematischen Resultate und keine pauschale Behauptung, jede historische Beweisstufe sei durch jeden genannten CI-Lauf formalisiert.
+
+**Publikationsstatus:** Der Autor hat die vollständige Finalisierung, Publikation und unabhängige Sicherung des Manuskripts mitgeteilt. Ein DOI oder öffentlich verifizierbarer externer Identifier wird nicht erfunden und bleibt einzutragen, sobald er vorliegt.
