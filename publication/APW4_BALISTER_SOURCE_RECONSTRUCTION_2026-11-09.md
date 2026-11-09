@@ -219,3 +219,25 @@ The global allocation theorem is a finite double-counting/injective-allocation r
 It is not the APW4 weighted Hall theorem. It does not construct APW4 event weights, BIB slot capacities, or the APW4 historical event-to-slot relation. The unweighted cardinality inequality must not be silently identified with the weighted reserve \(\mathcal R_{\mathrm{BIB}}\).
 
 The rank-nine audit run [42595925001](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42595925001) successfully compiled the arithmetic CRT, congruence-class CRT, finite fibre decomposition, and associated named axiom traces. Its separate fiber-paranoid job ended as cancelled and is not counted as a successful paranoid check.
+
+
+## 9. Original supplementary material and computational certificates
+
+The authors' own supplementary page is part of the primary-source record:
+
+- [Balister et al., supplementary material](https://people.maths.ox.ac.uk/balister/Erdos-Selfridge.html)
+- [C source: initial-distribution linear-program search (coverlp.c)](https://people.maths.ox.ac.uk/balister/es/coverlp.c)
+- [Output: configurations with bounds above 9.018 (coverresults.txt)](https://people.maths.ox.ac.uk/balister/es/coverresults.txt)
+- [C source: optimize \(\delta_6,\ldots,\delta_{21}\) (coverbounds.c)](https://people.maths.ox.ac.uk/balister/es/coverbounds.c)
+- [C source: large-prime \(f_{21}\) bound and density-paper Table 1 (coverasymp.c)](https://people.maths.ox.ac.uk/balister/es/coverasymp.c)
+- [Output of the asymptotic/large-prime program](https://www.memphis.edu/msci/people/pbalistr/coverasymres.txt)
+
+The supplementary page states that coverlp.c uses the Gurobi Optimizer to solve multiple linear-programming instances for a suitable initial probability distribution on \([3]\times[5]\times[7]\times[11]\). Its accompanying output lists configurations whose bounds exceed 9.018. The second portable C program optimizes the sixteen parameters \(\delta_k\), \(6\le k\le21\), and checks that the first program's bounds suffice. The third program determines a sufficient bound on \(f_{21}\) for Corollary 5.2 and reproduces Table 1 of the 2018 density paper. These are the authors' own computational supplements, not a later reconstruction.
+
+**Access and reproducibility qualification.** The Oxford page and the text outputs were accessible during this review. The web text interface did not expose the C-source bodies because the server returns the text/x-csrc content type; therefore this note records the programs' stated purpose from the authors' index page, not a line-by-line source audit or a fresh execution of those C programs. No Lean theorem is inferred from the existence of the programs. The independently checkable rational/integer certificates and the Lean formalization remain separate artifacts.
+
+The 2021 paper's large-prime section explicitly imports the 2018 density-paper tail criterion, and the 2018 source supplies that termination argument. Thus the correct dependency chain is: 2021 geometric/fibre proof through Theorem 5.1, then the 2018 large-prime termination result, together with the finite rational certificates and standard finite CRT/unique factorization. The supplemental programs support the finite parameter search; they do not replace the analytic tail proof.
+
+### Consequence for the APW4 reconstruction
+
+This additional source material closes a bibliographic omission in the reconstruction of the published BBMST proof architecture: the initial measure search, the sixteen \(\delta\)-parameters, and the large-prime recurrence have author-published computational support. It does not supply APW4's separate historical maps \((x,u)\mapsto(k,I,J)\), the APW4 event-to-BIB-slot relation, the APW4-specific weighted Hall capacities, or the intermediate arithmetic derivation of the strict APW4 lower bound. Those must still be recovered from APW4's own historical proof record; they cannot be inferred from BBMST's supplementary programs.
