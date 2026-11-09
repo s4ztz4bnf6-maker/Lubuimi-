@@ -180,7 +180,7 @@ A stronger source-level result is now added on the updated PR #56 branch: surviv
 Even after that checkpoint, the geometric reduction is not yet integrated with the full fibre-moment/tail chain in one build, and it does not prove the APW4-specific DT/HT or strict-energy transfer. The distinction between a formally checked source reduction and the later APW4 energy argument remains mandatory.
 
 
-## 8. Theorem 1.1: exact CRT equivalence and finite allocation
+## 8. Theorem 1.1: CRT source mechanism and the formalized one-prime fibre interface
 
 The public reconstruction's [Theorem 1.1](https://github.com/plasma-ai/erdos/blob/17c86a0d4ebe1487a087ceb8c14952a10ec2f2bd/library/covering_systems/balister_2021_erdos_selfridge_problem_square_free_moduli/theorem_1_1.md) gives both directions of the correspondence between distinct square-free integer progressions and nonparallel nontrivial hyperplanes in an odd-prime product.
 
@@ -190,9 +190,9 @@ For an initial segment of odd primes \(q_1,\ldots,q_m\), put \(M=\prod_jq_j\). T
 \]
 A square-free divisor \(d=\prod_{j\in F}q_j>1\) and a residue class modulo \(d\) correspond exactly to the hyperplane fixing the coordinates in the nonempty set \(F\). Unique factorization gives distinct fixed sets for distinct moduli. The condition \(d>1\) is essential: it excludes the trivial progression \(\mathbb Z\) and corresponds to a nonempty fixed-coordinate set. The theorem is for square-free moduli; it does not settle arbitrary odd moduli.
 
-### Exact Lean correspondence in the rank-nine branch
+### Lean components in the rank-nine branch — not yet the full Theorem 1.1 encoding
 
-The following declarations are already present in the rank-nine CRT/fibre branch:
+The following declarations are already present in the rank-nine CRT/fibre branch and formalize important one-prime CRT/fibre components:
 
 - BBMSTArithmeticCRT.crtEquiv
 - BBMSTArithmeticCRT.crt_cover_iff_every_fibre
@@ -209,6 +209,10 @@ The following declarations are already present in the rank-nine CRT/fibre branch
 - BBMSTCongruenceCRT.no_complete_cover_of_global_support_budget
 - BBMSTFiniteProjection.fiberEquiv
 - BBMSTFiniteProjection.fiber_mass_sum
+
+
+
+**Formalization boundary:** the source file BBMSTArithmeticCRT.lean explicitly states that it proves the actual CRT equivalence and the cover/fibre equivalence for indexed old/new predicates, but does not yet identify arbitrary divisor classes with the corresponding hyperplane predicates. BBMSTCongruenceCRT.lean improves the one-prime interface by representing old classes as residues modulo divisors \(d\mid M\) and new classes modulo \(dq\), deriving coprimality and extracting the base and new-prime residues by CRT. These are substantial one-prime arithmetic/fibre components, but the complete finite-family encoding of every square-free divisor class as a nonparallel hyperplane family, including the unique-factorization injectivity argument, is not yet one named Lean theorem in this branch. Accordingly, the public Theorem 1.1 is the source model for these modules; it is not claimed as fully formalized end-to-end here.
 
 The global allocation theorem is a finite double-counting/injective-allocation result: if every old-uncovered base residue and every new-coordinate residue is assigned a compatible new class, then the incidence count is at least \(|U|\,|S_q|\). The same incidence set is counted by summing the support sizes of projected new classes. This is a genuine unweighted incidence budget and a useful source-level precursor for later capacity arguments.
 
