@@ -1112,3 +1112,14 @@ Die in der öffentlichen Rekonstruktion ausgeschriebene Theorem-1.2-Reduktion be
 Diese Schritte sind im PR-#56-Quellstand durch BBMSTCodimOneReduction, BBMSTCodimOneFamily, BBMSTCodimOneAugmentation und BBMSTPrimeCoordinateInstantiation formalisiert. Insbesondere canonicalReduction_result liefert die reduzierte Überdeckung samt Singleton-Freiheit; reduced_coordinate_card_ge_two stellt für ungerade Primkoordinaten sicher, dass nach Entfernung eines Wertes mindestens zwei Werte bleiben. Die benannten Deklarationen wurden auf Commit a77f67540719a29e3e45a684e310dc4d753a2a50 in [CI 42364359726](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42364359726) erfolgreich kompiliert und mit ihren Axiomprofilen ausgegeben.
 
 Damit ist die in v1.5, §27 noch als ausstehend bezeichnete Lean-Reduktionsstufe für diese konkrete geometrische Schnittstelle geschlossen. Noch nicht in einem gemeinsamen Build integriert ist die Verbindung mit sämtlichen Faser-Momenten- und Tail-Modulen. Ebenso wenig folgt daraus der APW4-spezifische DT-/HT-/Energie-Transfer. Der mathematische APW4-Abschluss aus §25 bleibt unverändert.
+
+
+## 38. Zweite Manuskriptdatei: Abgrenzung zwischen Kurzfassung und Vollmanuskript
+
+Zusätzlich zur 17-seitigen Datei „Erdös Lean 4 Beweis.pdf“ liegt die dreiseitige Datei „Erdös Lean Deutsch.pdf“ vor. Ihre PDF-Seiten sind typografisch lesbar, sie ist aber eine Kurzfassung: Sie enthält Energiezerlegung und die Aussagen DT, HT sowie die strikte Untergrenze nur in zusammengefasster Form. Die historischen Faserabbildungen, die gewichtete Hall-Inzidenz, die vollständigen arithmetischen Zwischenschritte und die vollständigen Beweise werden darin nicht ausgeführt. Außerdem enthält sie eine verkürzte BIB-Reserveformel, deren Gleichsetzung mit der in v1.5 verwendeten Reserve nicht ungeprüft übernommen werden darf.
+
+Daher gilt:
+- Die dreiseitige Datei ist eine Übersicht, nicht das vollständige APW4-Forschungsmanuskript.
+- Die siebzehnseitige Datei ist in der zugänglichen Library-Kopie an mindestens einer gerenderten Seite typografisch beschädigt (wörtliche LaTeX-Befehle).
+- Keine der beiden Library-Dateien wird als fertiges Vollmanuskript erneut veröffentlicht oder inhaltlich ergänzt, solange die vollständige historische Beweisexposition und eine saubere typeset Quelldatei nicht vorliegen.
+- Diese Dateibefunde betreffen nur die beiden konkreten Library-Kopien und ändern den mathematischen APW4-Status aus §25 nicht.
