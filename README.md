@@ -169,3 +169,10 @@ APW4 research and authorship remain attributed to **Ta-Yoshua Lubuimi**. The mat
 Run [42718994622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42718994622) failed in both jobs: the integrated build reported MulLeftMono ℚ at BBMSTMomentRecurrence.lean:118, prefix recursion errors at lines 171/333/356, and hyperplane cardinality equalities at lines 347/454. The audit job passed its upstream and finite fibre/geometry stages but failed in the prefix recursion. No integrated lake check --paranoid pass is claimed.
 
 Candidate fixes are now on PR #69 at commits f4f6fb5210d080a08fbf72682a29718d95af4a1e and 6c34cd1d4f7487c200a04a4f1cc90010ceb19643. New exact-head run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) is in progress. The APW4 mathematical proof status and earlier successful commit-bound checks remain unchanged.
+
+
+### Third CI update — 10 November 2026
+
+Run [42720062719](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720062719) failed in integrated-paranoid at BBMSTMomentRecurrence.lean:136, BBMSTPrefixMeasureRecursion.lean:176/187/211/338/361, and BBMSTHyperplaneFibreIncidence.lean:347/454. The audit job had passed the upstream, degenerate-witness, zero-safe fibre, weighted-update, uniform-coordinate and finite-stage moment stages and was still compiling geometry.
+
+The product-induction argument order and dependent prefix/stage-coordinate proofs were refined on current PR #69 head 5b645d776ebbf7a71b7370f1b0078c711f9af651. New exact-head run [42720690874](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42720690874) is pending. Earlier successful checks and the mathematical APW4 status remain unchanged.
