@@ -103,14 +103,24 @@ und die Offsetrekursion bleiben die zentrale Schnittstelle. Die offene Abstiegsf
 
 Wichtig zur PR-Nummerierung: Die Syracuse-Arbeit hat ebenfalls eine PR #72, aber in einem anderen Repository: [`Lubuimi` PR #72](https://github.com/s4ztz4bnf6-maker/Lubuimi/pull/72). Sie betrifft die rückwärtsgerichtete Exaktheit des affinen Akkumulators, nicht die BBMST-Präfixreparatur.
 
-Der Syracuse-PR dokumentiert:
-- (A_{k+1}=A_k+a_k) und (C_{k+1}=3C_k+2^{A_k});
-- aus terminaler Exaktheit am Index (k+1) und (a_k\geq1) folgt die Rückwärtskongruenz (C_k\equiv2^{A_k}\pmod{2^{A_k+1}});
-- Commit `b9a89872e39b6688f7c7ef567755beceb0c1e5f9` entfernt nur eine redundante `omega`-Taktik, nachdem `simp` das Ziel bereits geschlossen hatte;
-- der erste Workflow [42835859458](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42835859458) scheiterte an `SyracuseAffineCorrectionSum.lean:108:2` mit `No goals to be solved`;
-- ein frischer exakter Head-Nachweis für den bereinigten Commit ist im PR-Datensatz noch nicht bestätigt; `terminalExact_backward_step` bleibt dort Zielsignatur und ist noch nicht als Lean-Deklaration elaboriert.
+### Aktualisierter Verifikationsstand der Syracuse-PR #72
 
-Die bereits unabhängig verifizierten Syracuse-Bausteine behalten ihren eigenen Commit-/CI-Geltungsbereich. Insbesondere der exakte affine Ein-Schritt-Übergang auf Head `d5c32aba3e9e767cb1051d7aac6b54ff1196ea2d`, Workflow [42807396471](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42807396471), bleibt ein separater PASS mit Standardprofil und ohne `sorryAx`. Er beweist nicht die globale Terminierung.
+Der frühere PR-Text, der `terminalExact_backward_step` noch als reine Zielsignatur beschrieb, ist durch die späteren Commits und erfolgreichen Workflow-Ergebnisse überholt.
+
+Auf dem isolierten Branch `collatz/terminal-exact-backward-step-2026-11-10` sind inzwischen beide Deklarationen implementiert und kernel-geprüft:
+
+- `SyracuseAudit.terminalExact_backward_step`: aus (a_k\geq1) und terminaler Exaktheit folgt (C_k\equiv2^{A_k}\pmod{2^{A_k+1}}).
+- `SyracuseAudit.terminalExact_backward_prefix`: die Ein-Schritt-Implikation iteriert über einen endlichen Suffix, sofern alle dortigen Bewertungen positiv sind.
+
+Exakter Lean-Quellcommit: `e44eb4331cc1481e10d6f60780d695412c47a726`. Der spätere Dokumentationscommit ist `f36fdcc157e2f40dffd96485898f4ad35136550b`; er ändert nur die Dokumentation der Toolchain-Grenze. Workflow [42845962042](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42845962042) auf diesem Dokumentationskopf hat den vollständigen deklarierten Lean-Library-Build, die Zusatzmodule, den expliziten Axiom-Report und den `sorryAx`-Guard erfolgreich abgeschlossen. Die frühere exakte Quellprüfung [42844423707](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42844423707) war ebenfalls erfolgreich.
+
+Beide neuen Deklarationen haben das transitive Profil `[propext, Classical.choice, Quot.sound]`; `sorryAx` wurde im geprüften Report nicht gefunden. Damit ist die endliche rückwärtsgerichtete Akkumulator-Exaktheit auf diesem isolierten Branch **LEAN BEWIESEN**.
+
+**Toolchain-Grenze:** Der Branch verwendet Lean 4.34.1 / Mathlib 4.34.1. Diese Toolchain stellt `lake check` nicht bereit. Der Workflow prüft deshalb den vollständigen deklarierten Library-Build, die benannten Axiom-Ausgaben und das Fehlen von `sorryAx`; ein `lake check --paranoid`-PASS wird ausdrücklich nicht behauptet. Ebenso ist dies kein integrierter APW4-/BBMST-Nachweis.
+
+### Weiterhin offene Syracuse-Verpflichtungen
+
+Der endliche Rückwärts-Transport beweist weder die Realisierbarkeit beliebiger Bewertungswörter noch die allgemeine Tail-Partition, eine 2-adische Haarmaß-/Dichte-zu-Punkt-Aussage oder globale Orbitabsenkung. Die zentrale offene Collatz-Verpflichtung bleibt ein gültiger globaler Abstieg bzw. der Ausschluss einer unendlichen nichtterminierenden Bahn. Bereits unabhängig verifizierte Initialzylinder, Bewertungsgrenzen, Offset- und lokale Margenergebnisse behalten ihren jeweiligen exakten Commit-/CI-Geltungsbereich.
 
 ## 6. Erdős–Selfridge-Audit bleibt separat
 
