@@ -108,3 +108,21 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## Separate APW4 prefix-recursion track — status boundary (10 November 2026)
+
+The current source-indexed APW4 prefix-recursion repair is documented in the root `README.md` and `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md`. Its v6 integrated failure and v7 pending run are not a new status for the pinned upstream `erdos_selfridge` theorem discussed in this historical audit. Keep the APW4 mathematical result record, the source-specific BBMST obligations, and the upstream sieve-axiom interface audit separate. No result in this README-AUDIT is retroactively changed by the APW4 repair chain.
+
+## v7 integrated failure and v8 endpoint-membership candidate — 10 November 2026
+
+PR #121 / v7 source `5631a527c289889db3e70bf0fb1644926e11d893`, workflow [42808470265](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42808470265): separate audit **PASS**, integrated-paranoid **FAIL**. The integrated log has two residual goals at lines 387 and 397. In the covered branch, the residual implication assumes the endpoint is not covered but the multiplier equality still needs to be reduced; in the uncovered branch, the residual implication assumes the endpoint is covered but the multiplier equality still needs to be reduced. The explicit dependent cast itself is present, but the endpoint membership fact has not been propagated to the recursive `PAt` expression. Error recovery reports `sorryAx` for the target and dependent recursion declarations.
+
+Current PR [#123](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/123) / v8 exact source `135f76d26c3c2392039e53c135e871f09ce2e256` adds explicit `hcovEndpoint` and `hnotEndpoint` facts, transporting membership and nonmembership from the cast point `x` back to `y (Fin.last k)`, so the `PAt` simplification receives the exact endpoint condition it needs. Workflow [42809116463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42809116463): integrated-paranoid was in progress and the separate audit job was queued at the latest poll. This remains **OFFEN – NICHT VERIFIZIERT**.
+
+Acceptance requires both v8 jobs to pass, the integrated dependency closure to compile without error-recovery `sorryAx`, and named `#print axioms` output for the target and dependent recursion declarations.
+## v8 integrated failure and v9 cast-endpoint candidate — 10 November 2026
+
+PR #123 / v8 source `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow [42809116463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42809116463): integrated-paranoid **FAIL**. The added endpoint membership facts used the uncast point `y (Fin.last k)` in a finset whose element type is `C.S (stageCoordinate hk)`. Lean reports the point type is `C.S (prefixIndex hj (Fin.last k))`. This is a genuine dependent-index mismatch; the integrated target and dependent recursion declarations report error-recovery `sorryAx`.
+
+Current PR [#125](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/125) / v9 exact head `c72345ef32776ce9548b236f4b47e2b3688b5ddc` uses the transported endpoint `hstage.symm ▸ y (Fin.last k)` in the covered/uncovered membership facts. Exact-head workflow [42810220588](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42810220588) was queued at the latest poll. This candidate remains **OFFEN – NICHT VERIFIZIERT** until the audit and integrated-paranoid jobs finish, the integrated target compiles, the named axiom profile is checked, and no `sorryAx` remains in the dependency closure.
