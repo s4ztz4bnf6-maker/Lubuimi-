@@ -184,3 +184,23 @@ The exact accessible source checkpoint is Dossier v1.6, §48. It records the wor
 The separate notation I_q(x,h), A_q(x,h), Z_q=I_q-A_q in older dossier §15 is an algebraic candidate decomposition under A_q≤I_q. It is not promoted to a primary-source definition of the historical APW4 matrices. The explicit finite residue projection in PR #89 is a formal specialization of the local q-fibre inequality, not evidence that the unavailable historical U_q or C_h definitions have been reconstructed.
 
 The source-to-BIB event map, actual event set, BIB slot objects, capacities, incidence predicate, and weighted Hall allocation therefore remain open at the source-reconstruction/formal-instantiation layer. This correction preserves the established mathematical DT/HT/energy results; it narrows only the evidence claim about the missing artifact.
+
+
+## 9. Reconciled CRT block identity and remaining weighted-coupling tasks — 10 November 2026
+
+The 1 November mathematical working record explicitly fixes, for q ≠ r,
+D_{q,r} = N / (q^{a_q} r^{a_r}),
+and describes W_{q,r} as the residue-class compatibility matrix. It records the exact block identity
+A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T
+and the fibre bound sum_h M_{q,r}(h,g) ≤ Gamma_{q,r}(g). Accordingly, D_{q,r} is no longer listed as an entirely unknown modulus: its recorded formula is known. The full row/column index types, entries of W_{q,r}, vector coordinates of a_{q,t}, and their normalization remain to be recovered from the original working definitions.
+
+The 1 November record also sharpens the two remaining mathematical interfaces:
+
+(A) Higher-order support preservation under the CRT compression C_t. Pairwise bounds such as |A_i ∩ A_j| ≤ |H_i ∩ H_j| do not imply equality of all higher intersections. The support-layer identity z_S = sum_{T ⊇ S} (-1)^{|T|-|S|} c_T requires the relevant full finite intersection profile. Either prove that C_t preserves every required higher-order intersection or derive a direct exact/positive expression for z_S(C_t)-z_S.
+
+(B) Weighted APW-to-BIB coupling. The unweighted local fibre inequality does not itself imply the weighted profile demand/capacity domination. The remaining target is to write the exact definitions of omega_ell, Phi, P_S, k_S and the historical BIB slots side by side, then prove an index-preserving weight allocation or direct sum inequality. Do not infer that two APW events share a BIB support index merely from the q-fibre count, and do not infer an injection from private witnesses without proof.
+
+The recorded APW collision identity and BIB reserve identity remain:
+sum_{h,g} R_{q,r}(h,g)^2 = sum_{ell,ell'} omega_ell omega_{ell'} 1_{Phi(ell)=Phi(ell')},
+and R_BIB = sum_ell c_ell(c_ell-1) = sum_{u != v} |S_u ∩ S_v|.
+These identities are preserved in their recorded scopes; the weighted bridge between them remains the open obligation. This addendum does not reopen the established DT/HT/global-energy mathematical result; it identifies the exact source/formal reconstruction tasks that remain.
