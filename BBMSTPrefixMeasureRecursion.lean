@@ -366,33 +366,29 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
+  -- Give the recursive PAt unfolding named proof witnesses and
+  -- transport the whole prefix fibre before unfolding any dependent finset.
+  have hk' : k + 1 ≤ n := by
+    simpa only [k, Nat.add_succ] using hj
+  have hprev' : k ≤ n := by omega
+  have hhk : hk = hk' := Subsingleton.elim _ _
+  have hhp : hprev = hprev' := Subsingleton.elim _ _
+  cases hhk
+  cases hhp
+  -- With the dependent proof witnesses aligned, both sides use the same
+  -- covered-value finset and the same final-coordinate membership test.
   simp only [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  -- Give the recursive PAt unfolding named proof witnesses and
-  -- transport the whole prefix fibre, not only one membership proposition.
-  have hk' : k + 1 ≤ n := by
-    simpa only [k, Nat.add_succ] using hj
-  have hprev' : k ≤ n := by omega
-  have hhk : hk = hk' := Subsingleton.elim _ _
-  have hhp : hprev = hprev' := Subsingleton.elim _ _
-  -- Eliminate proof-witness differences before rewriting any dependent
-  -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
-  cases hhk
-  cases hhp
-  -- The local abbreviation k is already unfolded by the preceding
-  -- dependent proof-witness transport; no further dsimp is required.
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · intro hnot
-    exact (hnot hcov).elim
-  · intro hpos
-    exact (hcov hpos).elim
+  · simp [hcov]
+  · simp [hcov]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
