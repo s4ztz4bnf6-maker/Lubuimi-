@@ -220,11 +220,11 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  change y (Fin.last k) ∈
-      prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) ↔
-    ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y
-  rw [mem_prefixCoveredValues_iff]
-  rw [extendPrefix_restrictPrefix]
+  have hmem := mem_prefixCoveredValues_iff (C := C) (A := A)
+    (hk := hk) (x := restrictPrefix C hk y)
+    (s := by simpa only [stageCoordinate] using y (Fin.last k))
+  simpa only [prefixPointCovered, stageCoordinate,
+    extendPrefix_restrictPrefix] using hmem
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms mem_prefixCoveredValues_iff
@@ -391,35 +391,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
         prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
           (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
     rw [hhk, hxprev]
-  have hcovered :
-      y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev ↔
-        y (Fin.last k) ∈
-          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
-            (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
-    rw [hvalues]
   have hstage :
       stageCoordinate hk =
         stageCoordinate (show k + 1 ≤ n from by omega) := by
     rw [hhk]
-  by_cases hcov :
-      y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev
-  · have hcov' := hcovered.mp hcov
-    have hcov₁ :
-        y (Fin.last (a + j)) ∈
-          prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) := by
-      simpa [xprev, k] using hcov
-    simp [hcov₁, hcov', hvalues, hstage, hPAt, xprev, k, Finset.mem_univ]
-  · have hcov' :
-        ¬ y (Fin.last k) ∈
-          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
-            (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
-      intro h'
-      exact hcov (hcovered.mpr h')
-    have hcov₁ :
-        y (Fin.last (a + j)) ∉
-          prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) := by
-      simpa [xprev, k] using hcov
-    simp [hcov₁, hcov', hvalues, hstage, hPAt, xprev, k, Finset.mem_univ]
+  simp [hvalues, hstage, hPAt, xprev, k, Finset.mem_univ]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
