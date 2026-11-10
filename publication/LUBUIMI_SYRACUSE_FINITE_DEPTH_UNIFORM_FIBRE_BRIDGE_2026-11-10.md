@@ -2,7 +2,7 @@
 
 **Author:** Ta-Yoshua Lubuimi  
 **Date:** 10 November 2026  
-**Status:** Mathematical proposition derived from the finite-word cylinder partition and the Lean-verified local margin cap. This note is not yet Lean-formalized and does not identify the construction with the historical APW4 event system.
+**Status:** Mathematical proposition derived from the finite-word cylinder partition and the Lean-verified local margin cap. One constituent dyadic cardinality identity is now Lean-verified on the separate Collatz/Syracuse repository (workflow 42738528207); this note's complete cap/tree/residue-fibre construction is not yet Lean-formalized and is not identified with the historical APW4 event system.
 
 ## Abstract
 
@@ -160,7 +160,7 @@ The Lean development should be isolated from the historical APW4 proof until eac
 7. identify the interval atoms with the refined exact residue cylinders;
 8. instantiate the generic finite-fibre structure and audit the named declarations.
 
-The initial all-one cylinder theorem, the signed-margin cap core, and the finite (k=2) terminal-residue module have their own successful Lean audits. None of those audits is evidence that this new finite-depth uniformization note has already been compiled.
+The initial all-one cylinder theorem, the signed-margin cap core, and the finite (k=2) terminal-residue module have their own successful Lean audits. In addition, the specific dyadic child-plus-tail cardinality identity `dyadicUniformFibre_partition_card` passed Lean 4.35.0 compile/audit on Collatz source commit `a1becbc8e837f10abcd952a2e03832cb057fb2b8`, workflow [42738528207](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42738528207), with standard transitive axioms and no actual `sorryAx`. This is a local constituent result, not a compile of the complete finite-depth uniformization construction.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
 
@@ -197,3 +197,14 @@ for (B\leq B^*\). Exact source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 is 
 The finite count lemma dyadicUniformFibre_partition_card passed compile-drafts workflow 42738528207 on exact Syracuse source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8. Its transitive profile is [propext, Classical.choice, Quot.sound]; the complete log contains no actual sorryAx occurrence and reports successful completion of the 8,932-job build.
 
 This verifies the algebraic cardinality identity only. The dependent cap maximum, finite surviving tree, interval partition and residue-cylinder bijection are not yet Lean-formalized. The APW4 historical hyperplane/BIB map remains open.
+
+
+## Formalization status update — 10 November 2026
+
+The exact dyadic cardinality identity for the common refinement has now passed on the Collatz/Syracuse Lean 4.35.0 branch:
+
+- Declaration: `dyadicUniformFibre_partition_card`
+- Source commit: `a1becbc8e837f10abcd952a2e03832cb057fb2b8`
+- Workflow: [42738528207](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42738528207)
+
+The complete finite-depth bridge remains unverified in Lean. In particular, the finite level/cap construction, the canonical residue-atom bijection, and the full prefix-dependent finite-fibre instantiation still require their own declarations and exact-head audits. No APW4 historical event/place map, weight-preservation theorem, DT/HT transport, BIB/Hall capacity bound, or infinite-path exclusion follows from this local cardinality result.
