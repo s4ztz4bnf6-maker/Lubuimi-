@@ -153,3 +153,38 @@ The next historical source obligations remain:
 5. prove the weighted Hall inequality for every admissible event family and connect its total capacity to (mathcal R_{mathrm{BIB}}).
 
 No replacement definition is accepted as historical without an explicit source correspondence. The fixed matrix identity (2.1), local q-fibre inequality (2.2), and all earlier mathematical results remain unchanged.
+
+
+## 11. Full source-PDF audit and the boundary of the historical reconstruction — 10 November 2026
+
+The complete 17-page original manuscript `Erdös Lean 4 Beweis.pdf` was inspected page by page, not only at the previously cited matrix/fibre pages. It explicitly records:
+
+- the APW4 energy and its diagonal/off-diagonal split;
+- the historical diagonal assignment `(x,u) ↦ (k,I_{x,u},J_{x,u})` and an aggregate fibre-weight estimate, while referring to `phi,F,a,nu` as already-defined historical objects;
+- the off-diagonal event demand `d(gamma)=omega_l omega_{l'}`, actual BIB places `b`, their capacities, the relation `gamma ~ b`, and the weighted Hall condition;
+- the fixed matrix identity (7.2) and the aggregate fibre inequality (7.3).
+
+However, the 17-page manuscript does **not** expand the element-level domains, predicates, matrix entries, or coordinate maps for `W_x,rho_x,pi_x,w_x`, `phi`, the elementary event set, the BIB-place set, or the incidence relation. Nor does it spell out the full historical index types and entries of `A_q,W_{q,r},a_{q,t}`. The manuscript invokes these as objects of the underlying historical construction. This is now an explicit source finding, not an assumption that a missed paragraph will supply the missing definitions.
+
+The following partial formulas remain recorded, with their exact epistemic status:
+1. The profile-demand formula `P_S = sum_x w_x sum_{(u,v) in W_x^2, pi_x(u,v)=S} rho_x(u)rho_x(v)` is retained. Since the displayed domain is `W_x^2`, its literal formula includes diagonal pairs `u=v`; the separate off-diagonal energy uses `u != v`. No diagonal exclusion may be silently imposed on the profile formula.
+2. The candidate atom notation `ell=(x,u,v)` and candidate weight `omega_{x,u,v}=w_x rho_x(u)rho_x(v)` appeared in earlier working reconstruction. This is a bookkeeping candidate, not a source-verified definition of the historical event universe.
+3. The proposed BIB slot notation `(u,v,i)` with `u != v` and `i in S_u intersect S_v`, and a proposed support condition on `pi_x(u,v)`, remain unverified reconstruction hypotheses. They are not the historical incidence relation until the source map and every domain are recovered.
+4. The recorded pair modulus `D_{q,r}=N/(q^{a_q}r^{a_r})` and the fixed matrix/fibre identities remain unchanged. They do not determine the entries or index sets of `A_q,W_{q,r},a_{q,t}` by themselves.
+
+Accordingly, the source reconstruction is not to be completed by promoting any of items 2–3 to historical definitions. The next source task is to locate the underlying construction that defines the symbols invoked by the 17-page manuscript, or to state that the present source archive does not contain it and keep the historical map open.
+
+## 12. New formal interfaces — distinct from the historical event map
+
+### 12.1 PR #89: preimage derivation of the local q-fibre hypotheses
+
+The generic preimage interface in `APW4HistoricalQFibre.PreimageModel` now explicitly declares the generic label type `X` and its decidable equality. The previous draft's compile error was a missing type parameter, not a mathematical counterexample. The corrected source head is `45700b0151a1bdd52b3b1f0374c4e7273e17db9a`, PR [#89](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/89). Its audit and canonical runs were retriggered; no final pass is claimed until those exact-head jobs complete and the logs are inspected.
+
+The generic theorem derives fibre containment from membership in a selected label set and pairwise block disjointness from a single block-label map. It then invokes the already-proved local q-fibre count. This is a valid preimage-model theorem. It becomes historical only after the actual arithmetic projections, selected sets, and block-label map are matched to the source.
+
+### 12.2 PR #93: Syracuse common dyadic fibre as APW4 FibreData
+
+The finite-depth Syracuse uniform fibre is now formalized as a concrete `BBMSTFiniteFibreUpdate.FibreData` candidate in `SyracuseUniformFibreBridge.lean`. The source includes the ambient atom set, candidate-child interval, tail interval, uniform point weights, total mass, and exact proportions. The first audit failed because the new module was not registered as a library root; the corrected lakefile now includes it. Current source head: `dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4`, PR [#93](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/93), run 42747404273 queued at the latest check.
+
+This is a genuine formal finite-fibre interface between the Syracuse uniformization and the APW4/BBMST data type. It is not the historical APW4 covered set, event universe, or BIB-place map, and it does not exclude an infinite surviving Collatz path.
+
