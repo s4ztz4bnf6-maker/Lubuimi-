@@ -113,3 +113,8 @@ No prize eligibility or award is guaranteed by this audit.
 ## APW4 prefix-recursion status update — v7/v8 (10 November 2026)
 
 The APW4 prefix recursion's v7 integrated failure and v8 candidate are tracked in the root `README.md` and `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md`. These are not updates to the pinned upstream `erdos_selfridge` theorem or its `sieve_criterion` / `sf_sieve_lt_one` interface. Keep the mathematical APW4 result record, the current dependent Lean integration, and the upstream sieve-axiom audit separate.
+
+
+## Latest APW4 v8 CI poll — 10 November 2026
+
+PR #123 workflow 42809132672 is running both audit and integrated-paranoid jobs. This remains a separate source-specific APW4 integration candidate and does not change the historical upstream `erdos_selfridge` audit status.
