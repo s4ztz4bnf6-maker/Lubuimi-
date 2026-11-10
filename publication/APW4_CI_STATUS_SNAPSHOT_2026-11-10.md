@@ -804,3 +804,27 @@ The root Lean 4.28 audit in this workflow did not yet explicitly compile Syracus
 ### PR #89 q-power modulus positivity correction
 
 The first q-power quotient build (workflow 42754520297, Lean 4.35.0 paranoid job) failed at qFibreModulus_pos: in this Mathlib/Lean version Nat.div_pos takes the divisor bound q^a ≤ N, not the positivity proof 0 < N. The divisibility hypothesis already supplies that bound via Nat.le_of_dvd hN hdiv. The proof was corrected to `Nat.div_pos hle` at exact source commit `bc7479016b2cf21ff44fb7cc83d00f8419b3d44f`. The failed run's printed q-power declarations showed only the standard profiles, but the build failure means they are not accepted as an exact-head PASS. New exact-head workflows 42754828642 and 42754828631 are queued.
+
+## Exact-head status continuation — 10 November 2026, 05:18 CET
+
+This is an append-only reconciliation of the latest source heads and workflow states. It preserves all earlier successful declaration-scoped checks and the mathematical status recorded in the APW4 dossier; it does not transfer CI outcomes between commits.
+
+### APW4 finite-depth Syracuse fibre bridge — PR #93
+
+- Exact head: `fbab49639954ae749d30a884a04032ee1d4d0f0e`.
+- Workflow: [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105).
+- At this snapshot, `syracuse-bridge-paranoid`, `integrated-paranoid`, and `audit` were in progress/queued; the audit job had not yet reached the module compilation steps. No Lean PASS or paranoid PASS is claimed.
+- `SyracuseDyadicResidueFibre.lean` defines a genuine finite residue cylinder as all lifts of a residue (r) modulo (2^B), proves `mem_tailAtoms_iff`, exact tail/candidate cardinalities, disjointness, union and the rational candidate-mass identity. It remains generic in (r).
+- `SyracuseUniformFibreBridge.lean` separately packages a cardinality-only initial-interval/complement model as `FibreData`. Its module documentation explicitly does not identify that model with the residue-cylinder construction or historical APW4 events/BIB places.
+- The Lean bridge still must instantiate (r) by the already-derived normalized prefix-tail residue and prove that the exact valuation-(b) child predicates coincide with the sibling residue classes. The mathematical finite valuation-word cylinder theorem itself is not reopened.
+
+### APW4 prefix recursion repair — PRs #100 and #101
+
+- PR #100 exact head: `f57f03708f094068f91ac84c76895f082ed09d6c`; workflow [42752093612](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42752093612).
+- Its Lean 4.28 audit job passed the ordered compile stages, including `BBMSTPrefixMeasureRecursion`, prefix cylinder identities, prefix-to-stage moment bridge, hyperplane incidence, old-shadow geometry, weighted union/noncoverage and moment recurrence.
+- Its Lean 4.35.0 integrated-paranoid job failed at the uncovered branch of `prefixFibre_updatedWeight_eq_PAt`. The exact diagnostic was an unsolved conditional equality in the negative membership branch; `sorryAx` consequently appeared in that declaration and downstream `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one). This is a toolchain-specific integration failure on that head, not a mathematical refutation.
+- PR #101 is a narrow proof repair based on the PR #100 head. Commit: `3625d65285e36da383f7fcd1a322ec6612d98451`. It changes the let-bound endpoint nonmembership into an explicit hypothesis about `y (Fin.last (a+j))) before simplification. Workflow [42754856131](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754856131) was queued at this snapshot. No verification result is yet available.
+
+### Existing APW4 status remains intact
+
+The established APW4 energy decomposition, DT, weighted HT, global upper energy estimate and strict lower-bound implication remain recorded as mathematical results under their stated full historical hypotheses. PR #79's status correction remains binding. Neither PR #93 nor the prefix-recursion integration attempts redefine or downgrade those results. The historical source definitions, original index-preserving maps, weighted Hall demand/capacity and BIB slot data remain distinct from canonical or Syracuse model fibres.
