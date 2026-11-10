@@ -103,3 +103,55 @@ jobs:
         run: |
           lake build ResearchKernelAudit
           lake check --paranoid
+
+
+  syracuse-bridge-paranoid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install isolated Lean 4.35.0 audit toolchain
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+      - name: Assemble minimal Syracuse fibre audit package
+        run: |
+          mkdir -p kernel-audit-syracuse
+          cp BBMSTFiberMeasureCore.lean BBMSTFiniteFibreUpdate.lean SyracuseUniformFibreBridge.lean kernel-audit-syracuse/
+          cat > kernel-audit-syracuse/lean-toolchain <<'EOF'
+          leanprover/lean4:v4.35.0
+          EOF
+          cat > kernel-audit-syracuse/lakefile.lean <<'EOF'
+          import Lake
+          open Lake DSL
+          package syracuse_fibre_kernel_audit
+          require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"
+          @[default_target]
+          lean_lib SyracuseFibreKernelAudit where
+            roots := #[`BBMSTFiberMeasureCore, `BBMSTFiniteFibreUpdate, `SyracuseUniformFibreBridge, `SyracuseFibreKernelAudit]
+          EOF
+          cat > kernel-audit-syracuse/SyracuseFibreKernelAudit.lean <<'EOF'
+          import BBMSTFiberMeasureCore
+          import BBMSTFiniteFibreUpdate
+          import SyracuseUniformFibreBridge
+          EOF
+          cd kernel-audit-syracuse
+          lake update
+      - name: Restore Mathlib cache for isolated Syracuse package
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: kernel-audit-syracuse
+          build: false
+          use-mathlib-cache: true
+      - name: Install bubblewrap for paranoid kernel checking
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bubblewrap
+      - name: Build only the Syracuse fibre dependency closure
+        working-directory: kernel-audit-syracuse
+        run: lake build SyracuseFibreKernelAudit
+      - name: Run isolated paranoid kernel check
+        working-directory: kernel-audit-syracuse
+        run: lake check --paranoid
