@@ -763,3 +763,22 @@ The repair and model candidates now have fresh stacked PRs created from their la
 - PR #85, local historical-q-fibre M/Gamma theorem, remains at head `d4c61399918c03715197cbe2de6356fd170463d3`: canonical job passed in 42744980622 with standard axiom profile and zero `sorryAx` occurrences in the complete log; paranoid remains in progress.
 
 The current documentation PR #88 head is `d78e06f2790190ac3e7ad7e173d5ff2eff72be5f). Audit run 42746179850 passed on the earlier docs head `88946cbaa591ce423fcfff16ec022964dda4c07e`; that result is not transferred to the newer documentation head. No new docs-audit PASS is claimed.
+
+
+## Addendum 1.49 — canonical q-fibre helper PASS and latest prefix repair diagnostics
+
+### PR #92 canonical helper
+
+On exact source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`, canonical workflow [42746644499](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746644499) completed successfully. The complete job log has zero `sorryAx` occurrences and no Lean errors. It prints the standard profile `[propext, Classical.choice, Quot.sound]` for:
+- `APW4CanonicalQFibreProjection.qFibre_subset_liftedUncoveredSet`;
+- `APW4CanonicalQFibreProjection.sum_M_qr_le_Gamma_of_projected_fibres).
+
+The Lean 4.35 paranoid job in the same workflow remained in progress at this check. This PASS verifies only the canonical Fin-based model; it is not a historical source equivalence and does not close the event-to-BIB map.
+
+### PR #91 prefix repair failure and PR #94 explicit conditional rewrite
+
+PR #91 head `837fc31de5f574e6fea912b5d70ea8fac05413cb` failed its integrated job in workflow 42746685650. The covered branch used `intro` although the target was an equality, causing `introN failed: no additional binders`; the uncovered branch retained a conditional equality. The dependent coordinate-index equality itself elaborated. The audit job and follow-up run were not a completed PASS.
+
+The next candidate is PR #94, exact head `2b34742e996527d04cd47cba0a95e68a1575fd14`. It rewrites the covered branch with `if_pos hcov`, the uncovered branch with `if_neg hcov` and the universal-membership fact, then applies `ring_nf`. Exact-head workflows [42747180121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747180121) and [42747175085](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747175085) were queued at this check. No PASS is claimed.
+
+PR #85's separate local M/Gamma theorem still has its canonical PASS and zero-`sorryAx` canonical log; its paranoid job remains in progress. The latest documentation head is `26370bb7860d09561d07c8008a910e8507f7c5de`; the earlier documentation audit applies only to the earlier commit 88946cbaa591ce423fcfff16ec022964dda4c07e.
