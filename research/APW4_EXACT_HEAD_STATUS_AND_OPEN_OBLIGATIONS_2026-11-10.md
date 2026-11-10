@@ -34,3 +34,34 @@ A successful standalone audit is not a substitute for the integrated gate. No ma
 ### Attribution and licence boundary
 
 Original APW4 research, manuscript material, and formalization authored by Ta-Yoshua Lubuimi remain attributed to him. AI tools are assistants only and are not authors or independent mathematical verifiers. The existing `LICENSE-PROPRIETARY.md` and commercial-use policy remain unchanged; no new licence, assignment, waiver, or reuse permission is created by this status entry. Third-party sources, Lean, Mathlib, and dependencies remain subject to their own terms.
+
+
+## 10 November 2026 — v14 coordinate-normalization result and next gate (13:43 CET)
+
+### Exact source diagnostics
+
+PR #133, exact head `dada662cc35b42d760bec7b1848ec85c8111ee7c`, workflow 42812910651:
+- separate audit: PASS;
+- integrated-paranoid: FAIL;
+- exact failure: the endpoint term `y (Fin.last k)` remains indexed by `prefixIndex hj (Fin.last k)`, whereas `F.covered` is a finset over `C.S (stageCoordinate hk)`;
+- the integrated error-recovery output reports `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`.
+
+This exact diagnostic supersedes any vague description of the remaining issue as merely an `if` simplification failure: the decisive obstruction at this source head is dependent-coordinate transport.
+
+### Current v14 candidate
+
+PR #137, branch `repair/apw4-explicit-endpoint-membership-v14-2026-11-10`, exact head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`:
+
+1. derive `hstage : stageCoordinate hk = prefixIndex hj (Fin.last k)` by `Fin.ext`;
+2. rewrite `[hstage] at *` before defining the endpoint and constructing `F`;
+3. perform the covered/uncovered split only after the coordinate family has been normalized throughout the local context.
+
+This is a materially different proof-script order from the failed post-construction casts: it attempts to make the fibre's coordinate type and the recursive endpoint type definitionally coincide before either is used. It has **no exact-head CI result yet** and remains **OFFEN – NICHT VERIFIZIERT**. Do not transfer audit results from v12/v13 or PR #133.
+
+### Preserved mathematical record
+
+No APW4 mathematical result is reopened. DT, HT, the exact two-term energy decomposition, the upper estimate, the strict lower-bound implication, and the contradiction remain recorded at their original scope. Keep A*, B*, and `m_S(x) ≤ 1` explicit wherever required. Keep APW diagonal mass, APW off-diagonal mass, and BIB pair reserve as separate ledgers absent a proved index-preserving map with weight/capacity transport.
+
+### Acceptance gate
+
+Run the exact v14 head through the integrated Lean 4.35.0 package and `lake check --paranoid`. Inspect named axiom output for the local update identity, nonnegativity, normalization, distortion-product bound, and the intended theorem. Require the standard profile `[propext, Classical.choice, Quot.sound]` where appropriate and no transitive `sorryAx`. A standalone audit PASS is not sufficient.
