@@ -447,3 +447,11 @@ All statuses are scoped to the stated source snapshots. The standalone finite mo
 - PR #79 docs head 7be2b35eaa38a1591808b94e0bd35911565ea2d2, workflow 42737658978 in progress; this addendum advances the docs head.
 
 All claims are commit- and scope-bound. General finite-word cylinders, tail partition, APW4 integration and global Collatz remain open as stated.
+
+
+## Addendum 1.25 — finite-depth uniform fibre and newest PR #69 candidate, 10 November 2026
+
+- A new mathematical note, LUBUIMI_SYRACUSE_FINITE_DEPTH_UNIFORM_FIBRE_BRIDGE_2026-11-10.md, constructs an explicit finite-depth APW4-style uniform fibre from the Syracuse cap and exact child/tail cylinders. At each fixed depth the cap-compatible prefix level is finite; a common B*_k gives a fibre of size 2^(B*_k), with child blocks of size 2^(B*_k-b), tail block of size 2^(B*_k-B_α), and distinguished subset proportion 1-2^-B_α. This is not yet Lean-formalized and is not identified with the historical APW4 hyperplane/BIB event set.
+- APW4 PR #69 candidate 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768 failed both Lean 4.28 audit and Lean 4.35 integrated-paranoid. The attempted propext rewrite did not normalize all proof-indexed covered-membership and stage-coordinate terms; residual goals still compared coveredMultiplier and uncoveredMultiplier branches. Error-recovery sorryAx in PAt_nonneg and PAt_sum_eq_one is downstream of the failed update identity and is not a mathematical counterexample.
+- A new source candidate f02f8d28f0d06735bab9ec1a591839704c6bb9ac changes the rewrite orientation. Exact-head dual-toolchain workflow 42738073791 is queued. No result is claimed until both jobs complete and all affected declarations have standard profiles and no actual sorryAx.
+- Earlier Lean 4.28 audit passes on their exact commits remain preserved. The integrated Lean 4.35 release blocker remains open pending this run.
