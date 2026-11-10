@@ -299,3 +299,31 @@ The latest PR #69 candidate is `1f4225ce0bdf6186fd0700612e2306ed3ff44506`. The p
 The current documentation PR #79 head is `799eba5a2a478b130ea780de3c53ef17d8f87e1f`, and exact-head audit 42733244916 passed. This new addendum advances the documentation branch and therefore requires a new exact-head documentation audit.
 
 The APW4 theorem record, earlier successful exact-commit results, and historical source reconstruction remain unchanged. Neither the finite Kolaz/cylinder bridge nor the k=2 Markov-energy calculation supplies the still-open historical APW4 event-index map, separate diagonal/off-diagonal transport, or BIB/Hall capacity proof.
+
+## 20. New exact finite formal results and APW4 live repair — 10 November 2026
+
+### Terminal-residue k=2: standalone kernel audit passed
+
+The standalone project PR #38 was aligned to Lean 4.35.0 and Mathlib v4.35.0. Exact-head workflow 42735716873 passed on code snapshot 4e30c083f3e1657edd08b0945cdda4e16c8b0e14. All seven declarations in LubuimiTerminalResidueEnergyK2.lean have the standard transitive axiom profile [propext, Classical.choice, Quot.sound]; the complete job passed lake check --paranoid and had no actual sorryAx hit. The exact two-step mass vector is (8,16,11,4,2,22)/63 and the collision energy is 5/21. This is a finite k=2 result, not an APW4/BIB identity.
+
+### Odd-covering L945: standalone finite CRT module passed
+
+The standalone odd-covering PR #80 was likewise aligned to Lean 4.35.0/Mathlib v4.35.0. Exact-head workflow 42736060742 passed on code snapshot f81a08296c88e5ee2877dd88adaf932927ecb7a7. Its seven declarations — coprime pair/triple sums, exact divisor density 65/63, pair count 16 and density 74/315, triple count 3 and density 13/945 — all have the standard profile [propext, Classical.choice, Quot.sound]. The standalone lake check --paranoid passed and no actual sorryAx was found. This is finite CRT arithmetic only; it does not establish positive private mass, a universal distortion inequality, or the odd-covering conjecture.
+
+### Kolaz finite archive: extended exact tables pass
+
+The latest exact-head reproducibility run 42735880399 passed on PR #39 head 012c8717e9d80025e7aa6cbb99f0b7ed5affd176. Seven tests verify all six threshold families, the full B=511 and B=1023 CSV archives, the two added cross-threshold suffixes, and the x=731 exact (1,2) valuation-word/cylinder/margin certificate. This is Python integer-arithmetic verification, not Lean or a global orbit result.
+
+### Syracuse: a concrete (1,2) cylinder theorem is now in the Lean pipeline
+
+A new declaration was added to SyracuseOffsetIdentity.lean: realizesValuationWord12_iff_mod_sixteen_eleven. It states that the exact two-step valuation word (1,2), represented by odd quotient witnesses 2*n1=3*n+1 and 4*n2=3*n1+1, is equivalent to n ≡ 11 (mod 16). This is the first Lean formalization of a nontrivial mixed finite word in the current programme, bridging the general cylinder manuscript and the B=1023 Kolaz witness. Exact-head unified workflow 42736159935 is in progress on source head 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9; no compile or axiom result is claimed until it finishes.
+
+### APW4: the covered-predicate transport is now explicit
+
+The latest PR #69 candidate is 4edf44ce8232d0b9be9f9b9f9f69671740c0f921. The previous Lean 4.35.0 run 42735620828 showed that the direct branch split generated four incompatible conditional cases because the updated-weight predicate and recursive P_{j+1} predicate were represented with different proof-indexed prefixCoveredValues terms. The current candidate explicitly rewrites the covered-membership equivalence before split_ifs, so both branches are normalized to one predicate. Exact-head run 42736373195 is in progress with Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs. The APW4 integration is not yet accepted; both jobs must complete with standard profiles and no actual sorryAx.
+
+### Documentation audit
+
+The previous documentation head 388b788d0c5623eab8e2cdf1755e426b8f7f2100 passed exact-head audit 42735453999. This new section advances PR #79 and requires its own exact-head documentation audit.
+
+All earlier mathematical and formal results remain preserved at their exact scopes. In particular, neither the new finite-word cylinder example nor the terminal-residue and L945 finite sums discharges the APW4 historical event-index mapping, separate diagonal/off-diagonal transport, BIB/Hall capacity, or the global Collatz problem.
