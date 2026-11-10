@@ -1249,3 +1249,12 @@ The APW4 energy decomposition, DT, weighted HT, global upper energy estimate and
 ## Superseding source-head record — 10 November 2026
 
 PR #107 was advanced after its initial commit. Current exact source head: b5a7b83c1953927eef27b39962b044c746191066. The affine factorization proof was rewritten as an explicit three-step calc using the stated divisibility identity, avoiding a broad rewrite whose matching depended on distributivity. Exact workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) is queued; no PASS is claimed for this updated head. The earlier head ba96a24de4df64513dd1a3dd801020544cc71dd0 was superseded before verification completed.
+
+
+## Verification queue snapshot — 10 November 2026 (latest)
+
+- PR #93, source head fbab49639954ae749d30a884a04032ee1d4d0f0e: syracuse-bridge-paranoid remains in progress; integrated-paranoid failed at BBMSTPrefixMeasureRecursion.lean:407 with unsolved goals and downstream sorryAx; audit succeeded. This is a failure of that integration snapshot, not a retroactive change to the separately established APW4 theorem results.
+- PR #101, source head 6bad5a25400aeae8e851a38c507141ec0e092a3a: the revised dependent-stage/uncovered-branch proof is being compiled by integrated-paranoid; the audit job is queued. No result yet.
+- PR #107, source head 33ff0b894391e6845a81fe1a5f472671086021ef: its prior full jobs were cancelled on the earlier source snapshot. The audit-only retry is queued; a full exact-head paranoid run is still required. The explicit residue/factorization statements remain formalization candidates until that run and the axiom audit finish.
+- PR #105 documentation audit succeeded. This verifies its documentation workflow only, not Lean mathematics.
+- Previously published valuation-word cylinder theorem (PR #36) and all previously proved APW4 results remain retained at their established status. No result in this queue changes those proofs.
