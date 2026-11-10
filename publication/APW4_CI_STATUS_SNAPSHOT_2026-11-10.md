@@ -678,3 +678,43 @@ Exact-head CI: [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/action
 - APW4 PR #84 is now at head `729ef87f7491543efeac2643640e9e95edc45225`. The repair aligns the dependent `hk/hprev` proof witnesses before unfolding the recursive `PAt) and covered-value finsets. Exact-head runs [42744534006](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744534006) and [42744527754](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744527754) are in progress. The previous head `b6bc9e` failed because an `intro` was applied to an equality goal. The current repair remains unverified.
 - Collatz PR #9 root head `7a1c174e1c5e70e1b601760db57692009dc1f552` adds the canonical offset nondivisibility/unit lemmas and canonical terminal-residue unit theorem. Exact-head run [42744418555](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42744418555) is in progress. The previous exact-head root run [42743672688](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42743672688) passed the explicit inverse formula with profiles `[propext, Classical.choice, Quot.sound]` and `[propext, Quot.sound]), and its no-`sorryAx` guard passed.
 - PR #85's q-fibre M/Gamma helper remains in exact-head CI: [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626707) and [42744626561](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626561). No final pass is claimed.
+
+
+## Addendum 1.41 — exact PR #69 diagnosis, stacked repair, and q-fibre local PASS
+
+### PR #69 current integrated head and failure
+
+The PR #69 source head at this check is `b8d98215ed2d8d401c1e27805a193666e093f067`. Exact-head workflow [42740835775](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740835775) completed with failure in both the Lean 4.28 audit and Lean 4.35 integrated-paranoid jobs.
+
+The first source-indexed prefix-recursion error is at `BBMSTPrefixMeasureRecursion.lean:386`: `dsimp [k] at *` makes no progress. The full elaboration diagnostic then exposes the actual dependent-type mismatch: `y (Fin.last (a+j))` has coordinate type indexed by `prefixIndex hj (Fin.last (a+j))`, while `prefixCoveredValues` is indexed by `stageCoordinate hk`. Error recovery prints `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_sum_eq_one`, and dependent distortion declarations. Those declarations are not verified on this head. The upstream zero-safe parameter/fibre/update, finite-stage moment, finite-coordinate geometry, and uniform-stage moment modules completed before the prefix failure.
+
+### Stacked dependent-coordinate repair PR #86
+
+PR #86 is a one-file stacked candidate based on the exact PR #69 head above:
+- source commit: `4e4b378887cc76382d9cd2e17807f96a2c277e23`;
+- branch: `repair/apw4-prefix-stage-coordinate-transport-2026-11-10`;
+- [PR #86](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/86).
+
+It removes the no-op `dsimp [k] at *`, proves an explicit equality
+`stageCoordinate hk = prefixIndex hj (Fin.last (a+j))`
+by `Fin.ext`, eliminates that equality before the covered/uncovered split, and uses goal-sensitive `simp ... <;> ring_nf` in both branches. Exact-head workflow [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023) has both audit and integrated-paranoid jobs in progress at this snapshot. This is a candidate only; no compile or kernel pass is claimed.
+
+PR #84's newer exact-head workflow [42745022363](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745022363) was cancelled in both jobs when its branch advanced. Cancellation is not a proof failure and is not a verification result. PR #84 and PR #86 remain separate repair candidates; neither is accepted until one exact head passes both toolchains, the complete dependent chain, transitive axiom inspection, no-`sorryAx` scan, and `lake check --paranoid`.
+
+### PR #85 q-fibre aggregate inequality — canonical declaration PASS, paranoid pending
+
+PR #85 source head `d4c61399918c03715197cbe2de6356fd170463d3` adds `APW4HistoricalQFibre` to `APW4HistoricalCRTCore.lean`. It defines
+`Pq = Fq ∩ C_h`, `Pr = Fr ∩ C_g`,
+`M_qr = |Pq ∩ Pr|`, and
+`Gamma_qr = |C_g ∩ Vq ∩ Vr|`.
+The theorem `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` proves the sum-over-h bound by pairwise disjointness of the finite sets and a cardinality comparison.
+
+The exact structural hypotheses are explicit: `Fq ⊆ Vq`, `Fr ⊆ Vr`, and pairwise disjointness of the blocks `C_h`. Canonical workflow [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) has its canonical job completed successfully. The theorem prints exactly `[propext, Classical.choice, Quot.sound]`; the complete canonical job log has zero `sorryAx` occurrences and no Lean errors. The separate audit workflow [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) also completed successfully. The paranoid job in workflow 42744980622 was still in progress at this snapshot, so no `lake check --paranoid` PASS is claimed.
+
+This is a genuine local q-fibre counting theorem under its stated structural hypotheses. It does not yet derive the fibre-containment and block-disjointness hypotheses from the complete original projection and block definitions, and it does not identify the q-fibre count with the full APW4 off-diagonal event/BIB-slot system or weighted Hall condition.
+
+### Historical source fidelity check
+
+The author's 17-page APW4 proof PDF was re-read at pages 6–9 and 13–14. It records the event demand `d(γ)=ω_ℓω_{ℓ'}`, the historical BIB incidence `γ ∼ b`, capacities, weighted Hall inequality, and the matrix/fibre identities (7.2)–(7.3). However, those pages refer to the event set, BIB places, incidence, and capacities as the historical construction without giving their element-by-element domains or predicates. Thus the local PR #85 theorem is a proved finite-set consequence of explicit hypotheses, not a reconstruction of the missing historical event-to-place map.
+
+No mathematical APW4 theorem, prior successful declaration audit, or licensing term is changed by these entries. Earlier exact-commit results remain valid within their recorded scopes.
