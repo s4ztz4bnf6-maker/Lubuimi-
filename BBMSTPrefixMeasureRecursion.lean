@@ -358,6 +358,20 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hk : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
   have hprev : k ≤ n := by omega
+  -- First identify the dependent proof witnesses, then normalize the
+  -- stage-coordinate index before constructing or unfolding the fibre.
+  have hk' : k + 1 ≤ n := by
+    simpa only [k, Nat.add_succ] using hj
+  have hprev' : k ≤ n := by omega
+  have hhk : hk = hk' := Subsingleton.elim _ _
+  have hhp : hprev = hprev' := Subsingleton.elim _ _
+  cases hhk
+  cases hhp
+  have hstage : stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) := by
+    apply Fin.ext
+    rfl
+  cases hstage
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
     simpa [xprev, k] using hbase
@@ -372,47 +386,12 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  -- Give the recursive PAt unfolding named proof witnesses and
-  -- transport the whole prefix fibre, not only one membership proposition.
-  have hk' : k + 1 ≤ n := by
-    simpa only [k, Nat.add_succ] using hj
-  have hprev' : k ≤ n := by omega
-  have hhk : hk = hk' := Subsingleton.elim _ _
-  have hhp : hprev = hprev' := Subsingleton.elim _ _
-  -- Eliminate proof-witness differences before rewriting any dependent
-  -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
-  cases hhk
-  cases hhp
-  -- The two proofs of the stage bound are propositionally equal, but the
-  -- coordinate family still carries their dependent Fin index. Normalize
-  -- that index explicitly before forming the covered/uncovered split.
-  have hstage : stageCoordinate (k := a + j) hk =
-      prefixIndex hj (Fin.last (a + j)) := by
-    apply Fin.ext
-    rfl
-  cases hstage
-  -- Use the exact membership decision in both definitions of the update;
-  -- avoid simp_all, which leaves a negated-branch implication here.
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ] <;>
-      (intro hnot; exact (hnot hcov).elim)
-  · let z := y (Fin.last (a + j))
-    change z ∉ prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) at hcov
-    by_cases hmem :
-        z ∈ prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
-    · exact (hcov hmem).elim
-    · change y (Fin.last (a + j)) ∉
-        prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) at hmem
-      have hunit :
-          y (Fin.last (a + j)) ∈
-            (Finset.univ : Finset
-              (C.S (prefixIndex hj (Fin.last (a + j))))) :=
-        Finset.mem_univ _
-      rw [if_neg hmem]
-      rw [if_pos hunit]
+  · simp [hcov]
+  · simp [hcov]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
