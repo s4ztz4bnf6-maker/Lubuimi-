@@ -1874,3 +1874,12 @@ The complete 17-page original proof PDF was inspected. It gives the historical d
 The literal profile formula P_S = sum_x w_x sum_{(u,v) in W_x^2, pi_x(u,v)=S} rho_x(u)rho_x(v) includes u=v because its written domain is W_x^2. This must remain distinct from the separately defined off-diagonal sum over u != v. Earlier candidate notation ell=(x,u,v), omega_ell=w_x rho_x(u)rho_x(v), and candidate BIB slots indexed by (u,v,i) remain reconstruction hypotheses only.
 
 PR #85's local q-fibre theorem has canonical and audit PASS on its exact source head; paranoid remains pending. PR #89 adds the generic preimage-fibre interface, corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a, with audit/canonical rechecks pending. PR #93 adds the Syracuse common dyadic uniform fibre as an APW4 FibreData object, corrected Lake-root head dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued. These results do not identify historical BIB places or close weighted Hall transport.
+
+
+## 50. Concrete finite residue projection and local q-fibre bound — 10 November 2026
+
+PR #89 now specializes the generic preimage-fibre theorem to the explicit residue map on ZMod N with working moduli Bq,Br satisfying Bq ∣ N and Br ∣ N. The residue labels are represented by Fin Bq and Fin Br using the canonical representatives z.val % Bq and z.val % Br. The theorem APW4HistoricalQFibre.ResidueProjectionModel.sum_M_qr_le_Gamma_qr_of_residue_projections proves the local aggregate M/Gamma inequality for these fibres.
+
+Exact source head 157cdcc00353c9d89e5d596720cee08d098684ae; canonical run 42749178635 and audit run 42749178673 passed. The canonical log reports exactly [propext, Classical.choice, Quot.sound] for the new theorem and zero sorryAx occurrences. The paranoid job had not completed at the time of this record.
+
+The proof makes the residue projections concrete, but keeps Uq,Ur and the block-label map c explicit. It is not yet a historical reconstruction of the selected sets or of the source blocks C_h. The original event universe, BIB slots, and event-place incidence remain separate obligations.
