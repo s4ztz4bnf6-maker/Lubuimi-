@@ -763,3 +763,7 @@ end BBMSTPrefixMeasure
 
 
 /- Exact-head CI refresh — 10 November 2026. No declaration or proof content changed. -/
+
+
+/- Exact-head CI refresh for PR #138 v15 local-membership witness repair.
+   This comment changes no declaration, proof term, hypothesis, or mathematical content. -/
