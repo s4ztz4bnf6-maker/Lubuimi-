@@ -108,3 +108,8 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## APW4 v10 coordinate-substitution candidate — 10 November 2026
+
+The v9 integrated conditional mismatch and v10 `cases hstage` candidate are documented in the root README and APW4 exact-head ledger. This remains separate from the upstream `erdos_selfridge` / `sieve_criterion` interface audit.
