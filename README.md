@@ -178,3 +178,24 @@ Candidate branch: `repair/apw4-membership-witness-local-let-v15-2026-11-10`. Can
 The remaining historical formalization tasks are still tracked separately: the source-faithful `prefixFixedCoords` / initial profile family, historical `c(I)) including the empty profile, exact identification of the suffix factor with `nu(J)), the full historical Lemma 3.3 statement, and the Lemma 3.4 moment chain. The v15 proof-script candidate does not by itself close those bridges.
 
 This entry does not modify or replace the author's independently finalized manuscript PDF. Any manuscript-source edit must preserve the existing mathematical exposition and be checked against the author's release copy before publication.
+
+
+## Historical event-to-BIB reconstruction checkpoint — 10 November 2026
+
+The source-reconstruction ledger is now included at [publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md](publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). It records the recovered q-fibre working definitions
+
+\[
+B_q=N/q^{a_q},\quad V_q=\{z:z\bmod B_q\in U_q\},\quad
+F_q(x)=\{z:z\equiv x\pmod{B_q}\},\quad P_{q,x,h}=F_q(x)\cap C_h,
+\]
+
+and the corresponding intersection-count quantities
+
+\[
+M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|,\qquad
+\Gamma_{q,r}(g)=|C_g\cap V_q\cap V_r|.
+\]
+
+The ledger also preserves the block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\), the fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\), and the exact four-term residual expansion obtained from \(I_q=A_q+Z_q\). The four-term matrix expansion contains three Z-residual contributions; it is not a third term in the two-term APW4 energy decomposition.
+
+The ledger deliberately marks the exact row/column domains, quotient maps, event universe, full event map, BIB slot universe, incidence predicate, and weight-preserving weighted-Hall verification as remaining source-reconstruction obligations. The historical DT map \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) must be expanded componentwise. APW off-diagonal atoms \((\ell,\ell')\) must not be identified with within-fibre pairs \((u,v)\) without an explicit proved projection/quotient map. These distinctions guide the remaining Lean instantiation; they do not reopen the established APW4 mathematical proof.
