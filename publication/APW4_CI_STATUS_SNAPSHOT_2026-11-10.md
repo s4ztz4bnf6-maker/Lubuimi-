@@ -476,3 +476,17 @@ The APW4 historical event-index map, weight-preserving transport, separate diago
 ## Addendum 1.26 — first Lean counting lemma for the Syracuse uniform fibre
 
 Syracuse PR #9 source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 adds dyadicUniformFibre_partition_card, the exact finite count of child blocks plus tail block at common refinement depth B*. Exact compile/axiom workflow 42738528207 is in progress. No formal verification claim is made until the full job finishes with the standard profile and no actual sorryAx. This lemma is only the finite cardinality conservation law; it does not formalize the cap maximum, finite tree, residue-atom bijection, or historical APW4/BIB transport.
+
+
+## Addendum 1.27 — Lean 4.35 result on APW4 candidate f02f8d28
+
+The integrated-paranoid job in exact-head workflow 42738073791 failed on PR #69 source commit f02f8d28f0d06735bab9ec1a591839704c6bb9ac. The failure remains localized to BBMSTPrefixMeasureRecursion.lean:
+- line 355:45: unsolved equality in prefixFibre_updatedWeight_eq_PAt;
+- line 378:34: an extra tactic ran after no goals remained;
+- error recovery consequently reports sorryAx in prefixFibre_updatedWeight_eq_PAt, PAt_nonneg and PAt_sum_eq_one.
+
+The residual target shows that the updatedWeight branch uses membership in prefixCoveredValues C hk (restrictPrefix C hk y), while the recursive PAt branch still contains a proof-indexed variant prefixCoveredValues C ⋯ (restrictPrefix C ⋯ y). The stage-coordinate/Fintype-card and δ arguments also retain proof-indexed variants. The propext rewrite did not normalize all of these expressions. prefixPointCovered_iff itself continues to print the standard profile in the integrated log.
+
+The Lean 4.28 audit job for run 42738073791 is still in progress at this snapshot. Therefore no dual-toolchain conclusion is claimed yet. The integrated Lean 4.35 job is a confirmed failure for this exact candidate.
+
+**Next exact repair:** isolate named equality lemmas for stageCoordinate across proof witnesses, restriction-prefix values across proof witnesses, and the resulting prefixCoveredValues finset/membership transport. Rewrite both the generic finite-fibre update and recursive PAt formula to one canonical set of stage/prefix terms before case splitting. Alternatively refactor PAt through a shared raw point-update expression that avoids rebuilding proof-indexed terms. Do not weaken hypotheses or accept error-recovery sorryAx.
