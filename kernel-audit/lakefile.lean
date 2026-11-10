@@ -10,7 +10,7 @@ lean_lib ResearchKernelAudit where
   roots := #[
     `ResearchKernelAudit,
     `APW4CanonicalMajorization, `APW4DiagonalAudit, `APW4HistoricalCRTCore,
-    `APW4IncidenceSecondMoment,
+    `APW4IncidenceSecondMoment, `SyracuseUniformFibreBridge, `SyracuseDyadicResidueFibre,
     `BBMSTArithmeticCRT, `BBMSTCodimOneAugmentation, `BBMSTCodimOneFamily,
     `BBMSTCodimOneReduction, `BBMSTCongruenceCRT, `BBMSTCoordinateStage,
     `BBMSTFiberMeasureCore, `BBMSTFiniteFibreUpdate, `BBMSTFiniteProjection,

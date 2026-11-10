@@ -1,5 +1,6 @@
 import ErdosSelfridge_v17_fixed
 import Mathlib
+import SyracuseUniformFibreBridge
 
 /-!
 Reproducible audit of the degenerate parameter case for sieve_criterion.
