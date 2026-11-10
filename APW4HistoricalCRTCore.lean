@@ -304,18 +304,20 @@ end APW4HistoricalQFibre
 
 
 /-!
-## Residue-projection specialization of the preimage model
+## Coordinate-only residue labels for the preimage model
 
-This specialization uses the recorded working q-fibre definitions on the
-actual finite ambient type ZMod N. It makes the residue projections and
-selected residue sets explicit. The block-label map remains a parameter
-because the complete historical definition of C_h is not present in the
-17-page source manuscript.
+This is a set-level coordinate representation in Fin B, not a quotient
+ring homomorphism. Its divisor argument is retained only to record the
+intended arithmetic context; it is not used by the coordinate map. For the
+genuine reduction map ZMod N → ZMod B when B divides N, use the separate
+ZModQuotientProjectionModel below. In both models the selected supports and
+block-label map remain explicit because their historical APW4 definitions
+are not supplied by the 17-page source manuscript.
 -/
 
 namespace APW4HistoricalQFibre
 
-namespace ResidueProjectionModel
+namespace ResidueCoordinateModel
 
 /-- Canonical residue label of a point of ZMod N modulo a positive
 working fibre modulus B. -/
