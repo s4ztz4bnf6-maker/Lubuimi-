@@ -1865,3 +1865,43 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+## Nachtrag 1.7 — q-Profilrekonstruktion und bedingte BIB-Parameterverfeinerung (10.11.2026)
+
+Die Arbeitsnotiz vom 06.11.2026 präzisiert die q-Profilobjekte:
+[
+B_q=N/q^a,quad
+I_q(x,h)=1\iff b_h\equiv x\pmod{\gcd(m_h,B_q)},quad
+A_q(x,h)\le I_q(x,h),quad Z_q=I_q-A_q,
+]
+sowie
+[
+D_{q,r}=N/(q^ar^b),qquad
+W_{q,r}(x,y)=\mathbf 1_{x\equiv y\pmod{D_{q,r}}}.
+]
+Diese Angaben präzisieren die q-Kompatibilitätsmatrix und den Modulus. Die genaue Matrixorientierung, die Koordinaten der Vektoren (a_{q,t}), die vollständige Konstruktion der minimalen Faserüberdeckung (A_q) und die quantitative Kontrolle der (Z)-haltigen Restterme bleiben gesonderte offene Verpflichtungen.
+
+Für die bedingte endliche BIB-Zweitmomentabschätzung wurde als **neuer Hilfsparameter**, nicht als historische Definition von (mu(B)), eingeführt:
+[
+\mu^*(B)=\max_{d\mid B,\ d<B}\tau(d).
+]
+Für (B=\prod_i p_i^{e_i}) gilt
+[
+\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1};
+]
+für quadratfreies (B) also (mu^*(B)=\tau(B)/2). Unter den weiterhin zu beweisenden Annahmen, dass die ausgewählten gemeinsamen Labels verschiedene Teiler von (B) mit echtem gemeinsamen kgV sind, folgt bei (r=q-1) die bedingte Schwelle
+[
+\tau(B)^2<2(q-1)^2
+]
+und die Schranke
+[
+m_0\le
+\frac{\tau(B)(2(q-1)-\tau(B))}
+{2(q-1)^2-\tau(B)^2}.
+]
+Dies ist eine arithmetische Verfeinerung der Parameterprüfung, keine historische Identifikation von (mu(B)) und keine bereits verifizierte Anwendung auf die ursprünglichen ausgewählten Fasern.
+
+Lean-Status: PR #85 hat den lokalen M/Gamma-Zählsatz auf seinem exakten Head kanonisch mit Standard-Axiomprofil und ohne `sorryAx` im vollständigen kanonischen Log bestanden; der Paranoid-Lauf ist noch offen. PR #91 (Prefix-Koordinatentransport) und PR #92 (kanonisches, ausdrücklich nicht-historisches Faser-Modell) haben neue exakte Prüfstände, deren Läufe noch nicht abgeschlossen sind. Das kanonische Fin-Modell ersetzt keine historischen APW4-Definitionsbereiche.
+
+Der globale APW4-Energiesatz sowie die als mathematische Ausgangspunkte festgehaltenen DT-/HT-Ergebnisse werden durch diesen Nachtrag nicht verändert oder zurückgestuft. Die historische Ereignismenge, die vollständige Ereignisabbildung, die tatsächlichen BIB-Plätze und -Kapazitäten, die Ereignis-Platz-Inzidenz und der gewichtete Hall-Nachweis bleiben als historische Brückenpflichten offen.
