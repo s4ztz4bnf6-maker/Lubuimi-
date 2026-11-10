@@ -201,3 +201,10 @@ The integrated-paranoid attempt for PR #101 at prior head 6bad5a25400aeae8e851a3
 PR #93's older integrated snapshot also failed in the same recursion theorem at line 407, leaving sorryAx in downstream PAt_nonneg and PAt_sum_eq_one. PR #101 is the explicit repair line; neither failure changes the separately proved APW4 results or the published PR #36 valuation-word cylinder theorem.
 
 PR #107's previous attempt remains cancelled at its full Lean jobs; its exact current source head is 33ff0b894391e6845a81fe1a5f472671086021ef. The explicit residue candidate is still awaiting a full exact-head run and clean named axiom audit.
+
+
+## Exact-head verification mirrors started — 10 November 2026
+
+- Draft PR #108 is a verification-only mirror of PR #101's latest source head 30dac5cf32445326aaad1b717e125c0688bea5a0. It has two queued integrated-paranoid/audit workflow attempts (42757020571 and 42756928257). Canonical mathematical repair remains PR #101; do not merge the mirror.
+- Draft PR #109 is a verification-only mirror of PR #107's latest source head 33ff0b894391e6845a81fe1a5f472671086021ef. Its initial workflow attempt 42756751052 was cancelled; an audit-only retry has been queued. The Syracuse bridge paranoid job still needs a completed exact-head run. Canonical mathematical development remains PR #107; do not merge the mirror.
+- These mirrors exist solely to obtain fresh exact-head CI after the original branch attempts were cancelled or completed on preceding snapshots. They add no theorem claims and do not alter the mathematical status ledger.
