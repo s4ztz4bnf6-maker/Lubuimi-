@@ -1372,3 +1372,8 @@ The same integrated run also exposed a separate APW4 issue in the older prefix-r
 A precise Syracuse follow-up was committed at 5139df8b55279011862084c453105a13926b03cc: after rewriting by the finite representative equality, it uses the actual Fin.isLt bound of explicitTailCoordinateFin B k d to prove the modulo identity. Exact-head run 42759653537 is queued. This is an unverified repair candidate; the no-sorryAx condition remains open.
 
 PR #101 head 0be00b2161ad8f2676779b90582f30b34083c008 has its own workflow 42759210844, still in progress at this snapshot. No result from the PR #107 failure is attributed to that different commit.
+
+
+## 17. PR #101 reaches the exact recursion compile — 10 November 2026
+
+The exact-head audit for 0be00b2161ad8f2676779b90582f30b34083c008 (workflow 42759210844) has passed the stages for upstream source compilation, focused degenerate-witness tests, zero-safe parameter core, zero-safe fibre measure core, finite weighted fibre update, uniform-coordinate fibre instantiation, finite-stage moment bounds, finite-coordinate geometry, and uniform-stage source moment instantiation. It is now compiling `BBMSTPrefixMeasureRecursion` itself — the precise module containing the `simp [hcov]` repair. In parallel, integrated-paranoid has completed package assembly, sandbox setup, and Mathlib cache restoration and is compiling the integrated package including the full Theorem 1.2 reduction. Both jobs are still running. This is not yet a successful compile or axiom audit; all dependent declarations remain unverified until the complete exact-head checks and named `#print axioms` evidence are available.
