@@ -792,3 +792,12 @@ Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue i
 \]
 
 This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
+
+### PR #93 exact prefix/tail formula commit and isolated build status
+
+PR #93 source head `abbba013765cbddd9f5dca0d141da21e70966756` adds the explicit prefix, tail, and exact-child congruences recorded above. Workflow 42753898744 has:
+- `audit`: success;
+- `integrated-paranoid`: failure in the independent BBMSTPrefixMeasureRecursion dependency, where prefixFibre_updatedWeight_eq_PAt and dependent PAt declarations still print sorryAx;
+- `syracuse-bridge-paranoid`: the minimal Lean 4.35.0 package build, including SyracuseDyadicResidueFibre.lean, succeeded; lake check --paranoid was still running at the last check.
+
+The root Lean 4.28 audit in this workflow did not yet explicitly compile SyracuseDyadicResidueFibre.lean. A new explicit Lean 4.28 compile plus sorryAx scan was added to the workflow in commit fbab49639954ae749d30a884a04032ee1d4d0f0e. Its exact-head workflow is pending. Thus the new residue module has a successful isolated Lean 4.35.0 build, but no completed paranoid PASS and no Lean 4.28 module-specific PASS yet.
