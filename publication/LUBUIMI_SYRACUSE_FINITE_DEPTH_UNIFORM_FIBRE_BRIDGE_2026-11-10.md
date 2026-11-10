@@ -163,3 +163,21 @@ The Lean development should be isolated from the historical APW4 proof until eac
 The initial all-one cylinder theorem, the signed-margin cap core, and the finite (k=2) terminal-residue module have their own successful Lean audits. None of those audits is evidence that this new finite-depth uniformization note has already been compiled.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## 7. Necessary-condition and descent justification
+
+The cap inequality is a necessary condition for a next step to remain at or above the initial odd value; it is not sufficient. A child exponent b≤B_α is only retained because the cap has not ruled it out. Such a child may still descend for other arithmetic reasons. Accordingly, the distinguished subset in the uniform fibre is the set of **cap-compatible** children, not a classification of all genuinely non-descending children.
+
+For completeness, the implication from positive margin to descent follows directly from the affine identity. Write A'=A_{k+1}, C'=C_{k+1}, and n'=n_{k+1}. If
+\[
+D_{k+1}=2^{A'}-C'-3^{k+1}>0,
+\]
+then \(2^{A'}>C'+3^{k+1}\). Since \(n_0\geq1\) and \(C'\geq0\),
+\[
+2^{A'}n_0
+> C'+3^{k+1}n_0
+=3^{k+1}n_0+C'
+=2^{A'}n'.
+\]
+As \(2^{A'}>0\), this implies \(n'<n_0\). Thus every step that remains at least \(n_0\) must have nonpositive next margin and satisfy the exponent-cap inequality.
