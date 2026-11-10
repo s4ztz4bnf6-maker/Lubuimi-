@@ -2,24 +2,25 @@ import Mathlib
 import BBMSTFiniteFibreUpdate
 
 /-!
-# Syracuse finite-depth uniform fibre as APW4 finite-fibre data
+# Cardinality-only model for a Syracuse finite-depth fibre
 
 Author: Ta-Yoshua Lubuimi
 Copyright (c) 2026 Ta-Yoshua Lubuimi. All rights reserved.
 Subject to the repository's proprietary and commercial-use notices.
 Mathlib and other third-party components retain their own licenses.
 
-This module formalizes the common dyadic fibre from the Syracuse
-finite-depth uniformization note as an actual BBMST finite weighted-fibre
-datum. The candidate block is an initial interval and the tail is its
-complement inside the ambient finite interval.
+This module does not construct a dyadic residue cylinder. It represents
+the target cardinalities by an initial interval and its complement, and
+then packages that finite cardinality model as a BBMST finite weighted-fibre
+datum. The residue-class construction is kept separately in
+SyracuseDyadicResidueFibre.lean.
 
 This is a finite combinatorial interface only. It does not prove that the
 prefix tree has no infinite path, and it does not identify these atoms
 with historical APW4 hyperplane, event, or BIB-place objects.
 -/
 
-namespace SyracuseUniformFibreBridge
+namespace SyracuseUniformFibreCardinalityModel
 
 open BBMSTFiniteFibreUpdate
 
@@ -93,8 +94,7 @@ theorem card_tailAtoms (B Bstar : ℕ) :
   rw [card_allAtoms, card_candidateAtoms]
   exact Nat.sub_sub_self (tail_size_le_ambient B Bstar)
 
-/-- The Syracuse common dyadic fibre as an actual APW4/BBMST finite
-weighted-fibre datum. -/
+/-- The cardinality-only candidate/tail model as a finite weighted-fibre datum. -/
 def toFibreData (B Bstar : ℕ) :
     BBMSTFiniteFibreUpdate.FibreData ℕ where
   points := allAtoms Bstar
@@ -180,4 +180,4 @@ theorem candidate_tail_mass_sum_eq_one
 #print axioms candidateProportion_eq_one_sub_tail
 #print axioms tailProportion_eq_dyadic
 
-end SyracuseUniformFibreBridge
+end SyracuseUniformFibreCardinalityModel
