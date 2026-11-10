@@ -122,6 +122,20 @@ noncomputable def prefixPointCovered
   x (Fin.last k) ∈
     prefixCoveredValues C (A := A) hk (restrictPrefix C hk x)
 
+/-- Membership in the finite covered-value set is exactly the geometric
+new-stage hyperplane predicate. This isolates Finset filter reduction from
+the dependent prefix-coordinate transport. -/
+theorem mem_prefixCoveredValues_iff
+    {A : Finset (Hyperplane C)} {k : ℕ}
+    (hk : k + 1 ≤ n)
+    (x : PrefixPoint C k (Nat.le_trans (Nat.le_succ k) hk))
+    (s : C.S (stageCoordinate hk)) :
+    s ∈ prefixCoveredValues C (A := A) hk x ↔
+      ∃ H ∈ newAtStage A (k + 1),
+        H.ContainsPrefix hk (extendPrefix C hk x s) := by
+  classical
+  simp [prefixCoveredValues]
+
 /-- The recursively defined measure P_(a+j) on Q_(a+j), extended by the
 source's uniform-coordinate update at each stage. The index j counts stages
 after the initial prefix a. -/
@@ -206,12 +220,11 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  have hext :
-      extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
-    extendPrefix_restrictPrefix C hk y
-  simp only [prefixPointCovered, prefixCoveredValues, stageCoordinate,
-    Finset.mem_filter, Finset.mem_univ, true_and]
-  rw [hext]
+  change y (Fin.last k) ∈
+      prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) ↔
+    ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y
+  rw [mem_prefixCoveredValues_iff]
+  rw [extendPrefix_restrictPrefix]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
