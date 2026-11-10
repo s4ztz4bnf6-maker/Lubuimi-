@@ -526,3 +526,10 @@ PR #93 formalizes the finite-depth common dyadic fibre as an actual BBMSTFiniteF
 ### Source-to-BIB boundary
 
 The full 17-page original APW4 proof PDF was inspected. It states the DT assignment, aggregate fibre estimate, HT event demand, BIB places/capacities/incidence notation, weighted Hall condition, and the fixed matrix/fibre identities. It does not expand the underlying element-level domains or predicates for W_x, rho_x, pi_x, w_x, elementary events, BIB places, or the incidence relation. No replacement definitions are promoted to historical. The source reconstruction remains an explicit obligation.
+
+
+## 11. Residue projection bridge update — 10 November 2026
+
+PR #89 now instantiates the generic preimage-fibre theorem with explicit residue-label maps on ZMod N, for Bq ∣ N and Br ∣ N. The local M/Gamma inequality is kernel-checked on exact head 157cdcc00353c9d89e5d596720cee08d098684ae: canonical run 42749178635 and audit run 42749178673 passed, with standard axiom profile and zero sorryAx in the canonical log. The paranoid job remained pending.
+
+This improves the interface from arbitrary maps to actual residue projections, but it does not identify the source-selected sets or historical C_h blocks. It is not an APW4-to-Syracuse transport and does not close weighted Hall.
