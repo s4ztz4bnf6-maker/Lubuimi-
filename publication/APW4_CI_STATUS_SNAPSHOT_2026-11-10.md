@@ -455,3 +455,19 @@ All claims are commit- and scope-bound. General finite-word cylinders, tail part
 - APW4 PR #69 candidate 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768 failed both Lean 4.28 audit and Lean 4.35 integrated-paranoid. The attempted propext rewrite did not normalize all proof-indexed covered-membership and stage-coordinate terms; residual goals still compared coveredMultiplier and uncoveredMultiplier branches. Error-recovery sorryAx in PAt_nonneg and PAt_sum_eq_one is downstream of the failed update identity and is not a mathematical counterexample.
 - A new source candidate f02f8d28f0d06735bab9ec1a591839704c6bb9ac changes the rewrite orientation. Exact-head dual-toolchain workflow 42738073791 is queued. No result is claimed until both jobs complete and all affected declarations have standard profiles and no actual sorryAx.
 - Earlier Lean 4.28 audit passes on their exact commits remain preserved. The integrated Lean 4.35 release blocker remains open pending this run.
+
+
+## Chronological cross-project update — 10 November 2026
+
+The companion Syracuse repository has added a complete German parallel manuscript for Lubuimi's Initial Valuation-One Cylinder Theorem. The theorem and its formal scope are unchanged; the seven successful exact-commit Lean audit snapshots listed in the manuscript remain the verification record. The German translation itself is a documentation-only addition and does not require or imply a new Lean proof run.
+
+New completed finite-project checks:
+- Terminal-residue k=2 Lean module: run 42737167314, exact PR #38 head 50492a880f5b8a2c4bb96838e16dfed2339dd501, completed success. The audited k=2 declarations have the standard transitive profile [propext, Classical.choice, Quot.sound], with no actual sorryAx finding. This covers the finite k=2 matrix, two-step mass vector and energy identity only.
+- Kolaz finite threshold-return archive: run 42737593864, exact PR #39 head 710fb173c3006bbf622f6b7b3a67ac69907fc783, completed success. This checks the extended B=511/B=1023 finite tables and regression workflow, not a uniform return theorem or global Collatz.
+
+Latest active verification snapshot:
+- Collatz offset PR #9 head 19ad4e58847508ff078c424e4ee809b9ade92f85, run 42738027956, compile-drafts in progress.
+- APW4 integration PR #69 head f02f8d28f0d06735bab9ec1a591839704c6bb9ac, run 42738073791, audit and integrated-paranoid in progress. No Lean 4.35 integration success is claimed yet.
+- APW4 documentation PR #79 run 42737972794 completed successfully on the prior head 96cd9f3712b15ebcc6b1c6fe1ff28760670b55c2. The current documentation head has since advanced to b7e1099e8afe585e51c6fc2547dee2cc04f3e539; the prior success does not audit this newer head.
+
+The APW4 historical event-index map, weight-preserving transport, separate diagonal/off-diagonal estimates, and BIB/Hall capacity proof remain distinct obligations. No finite Syracuse/Collatz result is being used as a substitute for them.
