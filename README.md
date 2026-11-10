@@ -362,3 +362,8 @@ The APW4 mathematical proof record remains unchanged: DT, HT, the global upper e
 The integrated source branch has advanced to commit `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. In `prefixFibre_updatedWeight_eq_PAt`, this candidate removes the failed `rw` over a dependent membership proposition. It introduces named proofs for the stage and previous-prefix bounds, identifies those proof witnesses by subsingleton equality, eliminates the witness equalities, and then splits on the concrete covered predicate before simplifying the two rational update branches.
 
 Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) were still in progress at this update. No compile, axiom, or integrated-paranoid result is claimed yet. The next decisive check is whether the source-indexed update identity closes without `sorryAx`, followed by the dependent nonnegativity and total-mass recursion.
+
+
+## Historical completeness audit — 10 November 2026
+
+The additive [APW4 historical completeness and formalization audit](publication/APW4_HISTORICAL_COMPLETENESS_AUDIT_2026-11-10.md) answers the source-fidelity question directly. The mathematical APW4 proof record remains established as documented by the author. However, the repository's source reconstruction does not yet independently construct every historical APW4 index map, weighted BIB/Hall allocation, and strict lower-bound premise inside one axiom-clean Lean theorem. This is a formal/source-integration boundary, not a downgrade of the manuscript's mathematical result. Existing proprietary notices are unchanged.
