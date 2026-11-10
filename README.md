@@ -342,3 +342,16 @@ This status supersedes any implication that the latest candidate has already com
 The documentation branch advanced after workflow 42727094672 was queued. That workflow was triggered for the then-current documentation head `f1a48b7353961177e1b6e3f34b074ac78155e424`; the latest PR #79 head is now `579bf0b23aef2909d860abd1e0ff4c970fc433ab` after Addendum 1.12 and the PR-body chronology correction. A commit-specific workflow lookup for `579bf0b23aef2909d860abd1e0ff4c970fc433ab` returned no run at the latest check. Therefore 42727094672 is not evidence for the latest documentation head; a new exact-head run is still required.
 
 PR #69 workflow 42726991713 has progressed since the prior check: `integrated-paranoid` is now in progress and `audit` remains queued. No outcome is claimed until both finish on exact head `4d5186564006439b48fe95b060a1cfd1c279238a`.
+
+
+## Addendum 1.14 — exact integration failure and next source candidate, 10 November 2026
+
+The latest integrated Lean 4.35.0 candidate at source commit `2843f40fd5c04fc68014ee8fe59a87d26520b285` was checked by workflows [42738930763](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42738930763) and [42738923964](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42738923964). Both completed with failure in `BBMSTPrefixMeasureRecursion.lean`. The decisive errors are confined to the source-indexed update identity:
+
+- an extra tactic remains after a preceding tactic has already closed its goal;
+- rewriting the covered-membership proposition across a dependent `Finset (C.S (stageCoordinate ...))` index produces an ill-typed motive;
+- the resulting declaration `prefixFibre_updatedWeight_eq_PAt` and dependent mass theorems report `sorryAx` in error recovery and therefore are not accepted as verified.
+
+This is a formalization failure on that exact candidate, not a mathematical counterexample and not a reason to weaken the theorem. The next isolated candidate is branch `fix/prefix-fibre-update-case-split-2026-11-10`, source commit `086ad916f48270d984ebd3e4bcf86fc58cf60f2b`, which splits on the source-indexed covered predicate before simplifying the recursive branch. Its exact-head workflows [42739175075](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739175075) were still running at this update. No pass is claimed until both the audit and integrated-paranoid jobs finish and the full axiom/log checks are clean.
+
+The APW4 mathematical proof record remains unchanged: DT, HT, the global upper energy estimate and the strict lower-bound implication remain established mathematical results in the author's manuscript. The unresolved historical instantiation in Lean remains distinct from this integration issue. The Syracuse-derived finite fibre is still only a candidate model for cross-project testing; it is not substituted for APW4's historical event/place definitions.
