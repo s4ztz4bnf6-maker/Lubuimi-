@@ -178,3 +178,8 @@ Exact-head runs [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actio
 ### 2.9 Exact-head q-fibre proof repair
 
 The first PR #85 canonical/paranoid attempt (head `33aa4f3`, run `42744626707`) failed at the application of `Finset.disjoint_left.mp): the proof supplied the element (z) as an extra explicit argument, although the element is implicit. The source-level argument itself was unchanged. The current head `d4c61399918c03715197cbe2de6356fd170463d3` removes that extra argument. Exact-head runs `42744980622` (canonical/paranoid) and `42744980640` (audit) are in progress. The conditional M/Gamma theorem is not yet verified.
+
+
+### 2.10 PR #85 canonical verification result
+
+At exact head `d4c61399918c03715197cbe2de6356fd170463d3`, canonical run [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) completed successfully. The named declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` has axiom profile `[propext, Classical.choice, Quot.sound]`; the full canonical log contains no `sorryAx). The separate audit run [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) also succeeded. The Lean 4.35 paranoid job from run 42744980622 remains in progress. Thus the local conditional M/Gamma inequality is canonically kernel-checked; full paranoid verification and derivation of its three structural hypotheses from the original definitions remain open.
