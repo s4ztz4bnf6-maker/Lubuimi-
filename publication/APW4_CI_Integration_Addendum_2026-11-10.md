@@ -332,3 +332,12 @@ The source-level diagnosis is now specific: a single membership Iff is insuffici
 The next source candidate is commit 2843f40fd5c04fc68014ee8fe59a87d26520b285. It introduces explicit equality witnesses for the two versions of the next-prefix proof and previous-prefix proof, transports the restricted prefix, proves equality of the entire prefixCoveredValues finset, identifies the stage coordinate, and transports the previous PAt mass. Only after these equalities does it split the covered/uncovered conditional. This directly addresses the residual mismatch in the preceding runs, where only the membership proposition had been rewritten but the cardinality, stageCoordinate and base-mass terms remained proof-indexed.
 
 Exact-head dual-toolchain workflow 42738923964 is in progress. The result is pending. A pass requires both Lean 4.28 audit and Lean 4.35 integrated-paranoid success, plus standard axiom profiles and no actual sorryAx for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg and PAt_sum_eq_one.
+
+
+## 10 November 2026 — historical event-to-BIB reconstruction ledger
+
+See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md for the append-only definition-completeness matrix and the exact event-to-BIB proof obligations. The ledger preserves the identities A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T and sum_h M_{q,r}(h,g) <= Gamma_{q,r}(g), while requiring all source index spaces, entries, suppressed indices, elementary events, the original map (x,u) -> (k,I_{x,u},J_{x,u}), BIB slots/capacities, pointwise incidence, weight preservation and weighted Hall inequality to be explicit before formal transfer. It does not replace historical definitions by canonical model fibres.
+
+The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
+
+This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
