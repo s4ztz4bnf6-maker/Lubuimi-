@@ -131,3 +131,37 @@ No integrated Lean-4.35 PASS and no clean dependent-theorem axiom audit are clai
 **APW4 PR #107** remains open on branch `bridge/syracuse-explicit-tail-residue-2026-11-10`, exact head `44d00ad20c352471795358dde2aaf24152281649`. Run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002) was queued at this check. No PASS is claimed for this head.
 
 This ledger update changes documentation only. It does not alter any mathematical theorem status, the PR source branches, or the previously established independent APW4 results.
+
+
+## Exact-head reconciliation — 10 November 2026, 04:50 UTC
+
+This entry supersedes the earlier queue snapshot above for the exact PR heads named here. It is an append-only verification record; it does not revise the established mathematical status of APW4.
+
+### PR #101 — prefix recursion
+
+- Canonical branch: `repair/apw4-prefix-uncovered-change-2026-11-10`.
+- Exact source head: `f87657c8f02f41266a43bae1fe44f43267f0c985`.
+- Run [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402): audit job [129634085319](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402) succeeded; integrated-paranoid job [129634085692](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402) failed.
+- The integrated log identifies two remaining goals in `BBMSTPrefixMeasureRecursion.lean` at lines 393–394. Both are dependent membership/conditional-reduction goals: the proof's `hcov` is stated over `prefixCoveredValues`, while `updatedWeight` branches over `F.covered` and then `F.points`. The `simp [hcov]` calls do not normalize these two decisions to the same proposition.
+- The log also prints `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and propagates it into `PAt_nonneg`, `PAt_sum_eq_one`, `PAt_le_initial_mul_distortionProduct`, and `PAt_succ_le_prev_div_card_mul_one_sub_delta`.
+- Status: **NOT VERIFIED — exact-head integrated-paranoid failure**. The next repair must explicitly transport endpoint membership to `F.covered` and separately reduce the covered and uncovered branches. No source repair is claimed in this record.
+
+### PR #107 — explicit Syracuse tail/child residues
+
+- Canonical branch: `bridge/syracuse-explicit-tail-residue-2026-11-10`.
+- Exact source head: `44d00ad20c352471795358dde2aaf24152281649`.
+- Run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002): `syracuse-bridge-paranoid` failed; `integrated-paranoid` failed; the isolated audit job was still in progress at the last poll.
+- Exact compiler errors: `SyracuseDyadicResidueFibre.lean:276:35` and `:485:36` cannot project `.isLt` from the dependent `ZMod.val` representation; line `:290` has an unsolved `mpr` equality. The named tail/child atom membership and cardinality declarations consequently report `sorryAx`.
+- The normalized congruence existence/uniqueness and affine factorization declarations shown in the same log have the reported standard profile (or `[propext]` for the factorization); that positive evidence is declaration-scoped and does not clear the failed atom/cardinality declarations.
+- Status: **NOT VERIFIED — exact-head bridge and integrated failures**. The arithmetic statements are not refuted by these representation errors.
+
+### Collatz PR #48
+
+- Exact source head: `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`.
+- Run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798): Lean 4.35 paranoid, draft compilation, and Lean 4.34 kernel jobs were all queued at the last poll. No PASS is claimed for this run.
+
+### Mathematical and publication boundary
+
+The established APW4 results recorded in the main proof dossier — DT, HT, historical atom identification, BIBW dominance, weighted Hall conditions, exact energy decomposition, CRT fibre balance, and the global energy inequality — remain established at their previously recorded mathematical status. The failures above are formal integration results attached only to the exact Lean source heads. PR #107 is a separate Syracuse formal bridge, not a new premise of the APW4 energy theorem.
+
+The finalized manuscript PDF is not silently rewritten by this CI ledger. This append-only record is the current repository-side verification addendum; the author's publication copy remains under the author's control.
