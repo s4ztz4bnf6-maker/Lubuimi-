@@ -193,3 +193,8 @@ Original APW4 research, manuscript material, and formalization authored by Ta-Yo
 - PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137), head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`, states the covered/uncovered membership witnesses directly at the unfolded endpoint `y (Fin.last k)`. No workflow run/status was returned for this head at this checkpoint; **PENDING / NOT VERIFIED**.
 
 These candidates are alternative proof-script refinements. They do not alter the theorem statement, APW4 mathematical hypotheses, or established result record. The integrated verification gate remains open.
+
+
+### PR #133 / v8 integrated result — exact-head correction
+
+PR [#133](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/133), branch `repair/apw4-cast-then-eliminate-coordinate-v8-2026-11-10`, exact head `dada662cc35b42d760bec7b1848ec85c8111ee7c`, workflow [42812910651](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42812910651): separate audit PASS; integrated-paranoid FAIL. The integrated log reports conditional rewrite failures at lines 395 and 408, with the target conditional expressed at the unfolded endpoint `y (Fin.last k)`; the affected recursion declaration and downstream declarations report `sorryAx`. This is a source-level Lean integration failure. It does not invalidate the mathematical APW4 proof record or other independently checked declarations.
