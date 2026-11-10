@@ -108,3 +108,8 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## Separate APW4 prefix-recursion track — status boundary (10 November 2026)
+
+The current source-indexed APW4 prefix-recursion repair is documented in the root `README.md` and `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md`. Its v6 integrated failure and v7 pending run are not a new status for the pinned upstream `erdos_selfridge` theorem discussed in this historical audit. Keep the APW4 mathematical result record, the source-specific BBMST obligations, and the upstream sieve-axiom interface audit separate. No result in this README-AUDIT is retroactively changed by the APW4 repair chain.
