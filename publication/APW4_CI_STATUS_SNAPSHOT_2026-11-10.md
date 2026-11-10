@@ -556,3 +556,10 @@ Both are in progress. The declarations incidence_bound_from_second_moment, offDi
 - The new APW4 README and completeness-audit documentation commits trigger separate documentation/audit workflows `42739964459` and `42739971629`; these do not substitute for PR #69's integrated kernel build.
 
 This entry is append-only and commit-scoped. It does not overwrite earlier runs or downgrade prior declaration-scoped successes.
+
+
+## Addendum 1.34 — source head 17eb308 failed; index-normalization patch queued
+
+Exact-head runs [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) (audit and integrated-paranoid) and [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) completed with failure on `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. Lean 4.35 reported unsolved goals in the positive and negative cases because the source branch condition was stated with `Fin.last k`, but the recursive target retained `Fin.last (a + j)`; the simplifier invocation did not unfold the local `k). The legacy audit run reported redundant tactics after its simplification. The axiom log confirms `sorryAx` contamination of `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one` through error recovery. Reject this candidate as verified.
+
+Follow-up commit `1725efe46fb2b953ae162eb46ef6ccab454d6e33` adds `k` to both branch simplifier sets and removes trailing `ring_nf`. Exact-head run [42740073283](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740073283) was pending at documentation time. Its result must be read from completed logs before any claim of repair.
