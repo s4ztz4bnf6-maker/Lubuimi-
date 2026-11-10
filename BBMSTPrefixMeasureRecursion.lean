@@ -227,6 +227,7 @@ theorem prefixPointCovered_iff
   rw [extendPrefix_restrictPrefix]
 
 #print axioms extendPrefix_restrictPrefix
+#print axioms mem_prefixCoveredValues_iff
 #print axioms prefixPointCovered_iff
 
 
