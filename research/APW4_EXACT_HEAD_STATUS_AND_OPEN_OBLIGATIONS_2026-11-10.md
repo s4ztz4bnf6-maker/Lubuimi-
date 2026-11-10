@@ -125,3 +125,13 @@ Current v15 head: `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The last commit is
 ## Repository-wide exact-head refresh — 10 November 2026
 
 The current consolidated status is in [APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md](../publication/APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md). Exact current candidates: PR #101 head `31cc94993fdcb481cea919ca762a29c568948a7a` has audit run 42760198290 failed; PR #138 head `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202` has no exact-head workflow returned; PR #107 head `d7b159e9300a0215073d4cbad208e3a9c30a3243` has run 42762741729 cancelled. No result is promoted on the basis of earlier candidate commits. The mathematical APW4 result remains unchanged.
+
+
+## CI interpretation correction — 10 November 2026
+
+A job-level inspection refines the preceding run summary:
+
+- For PR #101 exact head `31cc94993fdcb481cea919ca762a29c568948a7a`, workflow [42760198290](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42760198290) had **audit = success** and **integrated-paranoid = failure**. The audit job's success does not remove the reported `sorryAx): its log prints `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`. The integrated job fails while compiling the integrated BBMST/APW4 modules. The overall workflow is therefore not a passing integrated verification.
+- The PR #136 docs-branch workflow [42835240615](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42835240615) is an upstream/degenerate-witness audit of `ErdosSelfridge_v17_fixed.lean` and `AuditCheck.lean`; it is not an APW4 integrated build and does not verify the historical APW4 theorem. Its output still lists `sf_sieve_lt_one` and `sieve_criterion` in `erdos_selfridge).
+
+This job-level correction supersedes any wording above that called run 42760198290 an audit-job failure. The accurate status is: audit job passes, integrated-paranoid fails, and the dependent prefix recursion still contains `sorryAx`. The mathematical APW4 results remain unchanged.
