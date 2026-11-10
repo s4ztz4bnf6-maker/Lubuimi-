@@ -445,3 +445,10 @@ The q-fibre M/Gamma helper (PR #85) is at head `d4c61399918c03715197cbe2de6356fd
 ### Addendum 1.23 — q-fibre M/Gamma canonical Lean result
 
 APW4 PR #85's local conditional theorem `sum_M_qr_le_Gamma_qr` now passes canonical Lean CI at head `d4c61399918c03715197cbe2de6356fd170463d3`, with the standard axiom profile and no `sorryAx` in the full log. The separate audit passed. The Lean 4.35 paranoid job is still running; the original fibre-containment and block-disjointness properties and the global weighted HT/BIB bridge remain to be derived.
+
+
+### Addendum 1.24 — recovered q-profile data and projected-fibre formalization
+
+The 6 November BIB incidence note now supplies the recovered working formulas for I_q(x,h), A_q(x,h), Z_q(x,h), D_{q,r}=N/(q^a r^b), and W_{q,r}(x,y)=1_{x≡y mod D_{q,r}}. These refine the historical ledger but do not yet settle matrix orientation, the a_{q,t} vector entries, the exact minimal-cover construction, or the residual-term bounds. The same note proves a separate finite second-moment bound only under explicit row-size and pair-intersection hypotheses; its historical instantiation and APW4 transfer remain open.
+
+APW4 PR #87 adds a source-shaped finite Fin N → Fin B residue projection, with B | N, and proves that a fibre over x ∈ U_q lies in the lifted old-uncovered set. It instantiates the local M/Gamma inequality while retaining pairwise disjointness of the historical blocks C_h as an explicit premise. Exact-head CI is pending; no kernel PASS is claimed for PR #87.
