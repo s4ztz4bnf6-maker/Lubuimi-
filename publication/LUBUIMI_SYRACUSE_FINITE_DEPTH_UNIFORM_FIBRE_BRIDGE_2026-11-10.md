@@ -199,3 +199,10 @@ PR #107 was advanced after its initial commit. Current exact source head: b5a7b8
 PR #107 has advanced to source head cad354967759a89c02df1b42369898dec3406445. Beyond the unique tail coordinate and canonical quotient, the Lean module now defines the exact child-b coordinate as (2^(b-1)-d) * (3^(k+1))^(-1) modulo 2^b, proves its normalized congruence and uniqueness, and instantiates each child as a residue cylinder in the common refinement. The child cylinder has exactly 2^(B-b) lifts and an explicit membership/congruence characterization.
 
 This is the normalized finite-fibre layer. The remaining steps are to derive the divisibility of the prefix-tail numerator from the explicit prefix residue formula, prove the complete pairwise-disjoint child-plus-tail partition, and connect these normalized congruences to the original exact valuation predicates and then to historical APW4/BIB events. No Lean PASS is claimed for cad354967759a89c02df1b42369898dec3406445; an exact-head workflow has not yet been returned.
+
+
+## PR #107 namespace and child-residue consolidation — latest source head
+
+PR #107 now stands at exact source head 44d00ad20c352471795358dde2aaf24152281649. The canonical quotient and exact child-coordinate declarations are now kept inside the SyracuseDyadicResidueFibre namespace, alongside the generic tail-cylinder construction. The provenance note was also corrected to describe the actual source extension rather than calling the code commit comment-only. This head includes the unique tail coordinate, quotient/factorization under the explicit divisibility condition, unique exact child-b residues modulo 2^b, and 2^(B-b) child lift counts. The exact prefix-divisibility derivation and complete child-plus-tail partition remain open.
+
+No completed exact-head CI result has yet been returned for 44d00ad20c352471795358dde2aaf24152281649. No Lean PASS is claimed.
