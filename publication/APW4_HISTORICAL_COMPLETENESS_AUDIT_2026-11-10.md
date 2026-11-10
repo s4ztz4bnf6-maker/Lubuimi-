@@ -137,3 +137,30 @@ The earlier PR #83 scalar-transport candidate was closed as superseded, not merg
 
 
 The distinction is also explicit in `APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-07_v1.3.md`: §25 records the strict APW4 lower-bound implication as mathematically completed and says the remaining work is source-faithful Lean translation and exact historical integration, not re-proving that lower bound; §6 separately limits what the existing canonical CRT/majorization Lean modules establish. This audit follows that status exactly.
+
+
+### 2.7 Correction after locating the later v1.6 q-fibre record
+
+A later, authoritative project artifact was located on the APW4 documentation branch: `APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md`, §48, together with the recovered 31 October interface in `BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md`, §5. These records explicitly retain the q-fibre definitions
+[
+B_q=N/q^{a_q},qquad
+V_q={zinmathbb Z/Nmathbb Z:zmod B_qin U_q},
+]
+[
+P_{q,x,h}=F_q(x)cap C_h,qquad
+P_{r,y,g}=F_r(y)cap C_g,
+]
+[
+M_{q,r}((x,h),(y,g))=|P_{q,x,h}cap P_{r,y,g}|,qquad
+Gamma_{q,r}(g)=|C_gcap V_qcap V_r|.
+]
+The recovered 31 October record additionally states (U_q) is the set of old-uncovered base residues modulo (B_q), gives the raw congruence-compatibility indicator (I_q(x,h)), an inclusion-minimal selected fibre cover (A_qle I_q), the redundancy (Z_q=I_q-A_q), and (W_{q,r}(x,y)=1_{xequiv ypmod{D_{q,r}}}).
+
+**Correction:** the earlier statement in §2.3 that `B_q=N/q^a` and `I_q(x,h)` were not corroborated by the located project records is superseded by these later artifacts. They are now retained as recovered q-fibre working definitions, not discarded as speculative notation. The separate indicator decomposition (I_q=A_q+Z_q) remains an exact algebraic identity; it does not itself bound the mixed or redundant terms.
+
+The v1.6 record still does not, by itself, spell out every underlying domain and construction needed for a complete Lean instantiation. The remaining element-level items are:
+1. the full definitions and domains of (U_q), (F_q(x)), and (C_h), including the precise projection/fibre maps and block-index types;
+2. proofs from those definitions that (F_q(x)subseteq V_q), (F_r(y)subseteq V_r), and the required disjointness/partition property of the (C_h);
+3. the exact bridge from these q-fibre counts (M,Gamma) to the APW4 HT event set (Gamma_{m off}), BIB slots, capacities, and the historical relation (gammasim b).
+
+The next formal target is now sharper: encode the exact (P,M,Gamma) definitions from §48 and prove the local aggregate inequality (sum_h M_{q,r}((x,h),(y,g))leGamma_{q,r}(g)) from the source-derived fibre-containment and block-disjointness properties. This is a local q-fibre incidence lemma, not yet the full weighted Hall condition (H) or the global APW4 HT theorem.
