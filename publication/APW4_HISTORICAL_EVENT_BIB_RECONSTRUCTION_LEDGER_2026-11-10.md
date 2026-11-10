@@ -171,3 +171,16 @@ PR #92's canonical Lean job passed on source head `baf5241fb77b258dfab4e7b3a620c
 The prefix-integration candidate PR #91 failed on its exact head because its covered branch attempted to introduce a binder where the goal was an equality, and its uncovered branch retained a conditional equality. The dependent coordinate equality was established. PR #94 is the next explicit-if-rewrite candidate; both exact-head workflows were queued at the latest check. No prefix integration PASS is recorded.
 
 The historical obligations listed in Sections 11–16 remain unchanged: exact old-class/index universes, selected-cover construction and residual bounds, vector coordinates and matrix orientation, actual block family and disjointness, event universe and event map, BIB slots/capacities/incidence, and the weighted Hall transport.
+
+
+## 18. Finite incidence second-moment kernel checkpoint
+
+The PR #92 canonical build on exact source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec` also compiled and printed the standard axiom profile for the three declarations:
+[
+	exttt{incidence_bound_from_second_moment},quad
+	exttt{offDiagonal_exceeds_reserve},quad
+	exttt{apw4_energy_contradiction}
+]
+in namespace `APW4IncidenceSecondMoment`. The complete canonical log contains no `sorryAx`.
+
+This closes the formal finite incidence implication under its explicit hypotheses. It does not prove the historical extraction (A_q(x,h)mapsto S_x), the row-size lower bound, the proper-LCM/pair-intersection bound, or the identification of this incidence capacity with the historical BIB reserve in the weighted HT theorem. The auxiliary (mu^*(B)) specialization is not yet Lean-verified. These distinctions remain mandatory.
