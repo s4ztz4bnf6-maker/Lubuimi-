@@ -373,4 +373,64 @@ theorem sum_M_qr_le_Gamma_qr_of_residue_projections
 
 end ResidueProjectionModel
 
+
+/-!
+## Genuine quotient-homomorphism specialization
+
+Unlike the coordinate-valued residue map above, this version uses the
+actual reduction homomorphisms ZMod N → ZMod B for divisors B | N.
+It derives the local aggregate inequality for their inverse-image fibres.
+The selected supports Uq,Ur and the common block-label map c remain explicit
+inputs; their identification with the historical APW4 objects is still open.
+-/
+
+namespace ZModQuotientProjectionModel
+
+/-- The genuine quotient ring homomorphism ZMod N → ZMod B. -/
+def quotientProjection
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) :
+    ZMod N →+* ZMod B :=
+  ZMod.castHom hdiv (ZMod B)
+
+/-- The inverse image of one residue modulo B under the quotient map. -/
+def quotientFibre
+    {N B : ℕ} [NeZero N] [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (x : ZMod B) : Finset (ZMod N) :=
+  PreimageModel.fibre (quotientProjection hdiv) x
+
+/-- The selected support in ZMod N, obtained as the inverse image of U. -/
+def quotientVisible
+    {N B : ℕ} [NeZero N] [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (U : Finset (ZMod B)) : Finset (ZMod N) :=
+  PreimageModel.visible (quotientProjection hdiv) U
+
+/-- The q-fibre aggregate bound for the actual quotient homomorphisms
+ZMod N → ZMod Bq and ZMod N → ZMod Br. -/
+theorem sum_M_qr_le_Gamma_qr_of_quotient_homs
+    {N Bq Br : ℕ} [NeZero N] [NeZero Bq] [NeZero Br]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hq : Bq ∣ N) (hr : Br ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod Bq)) (Ur : Finset (ZMod Br))
+    (c : ZMod N → H)
+    (x : ZMod Bq) (y : ZMod Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (quotientFibre hq x) (quotientFibre hr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (quotientVisible hq Uq) (quotientVisible hr Ur)
+      (PreimageModel.block c) g := by
+  classical
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (quotientProjection hq) (quotientProjection hr)
+    Uq Ur c x y g hx hy
+
+#print axioms quotientProjection
+#print axioms sum_M_qr_le_Gamma_qr_of_quotient_homs
+
+end ZModQuotientProjectionModel
+
 end APW4HistoricalQFibre
