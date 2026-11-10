@@ -151,3 +151,15 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## Exact-head continuity update — 10 November 2026
+
+PR #79's explicit status correction remains binding: later integration errors do not retroactively invalidate already-proved APW4 mathematics. The published valuation-word cylinder theorem in PR #36 is not reopened. Mathematical proof, historical reconstruction and Lean/CI verification remain separate evidence categories.
+
+- APW4 PR #93 head `fbab49639954ae749d30a884a04032ee1d4d0f0e`: generic dyadic residue-cylinder source added; exact workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105) has audit success, integrated-paranoid failure in the separate prefix recursion, and isolated Syracuse paranoid still running at last poll. No overall PASS.
+- APW4 PR #101 head `f5aff142fcdf6c3893ef1c890f3be45a67da68aa`: explicit finite-universal membership added to the uncovered update branch. Exact workflow [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237) queued at this snapshot; no PASS.
+- Collatz PR #48 head `5699182344be6a7950c6265551112a7a6d50e58d`: workflow [42755702331](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42755702331) queued. The preceding head's Lean 4.35.0 paranoid job and draft compile passed; Lean 4.34.1 failed because its Lake version does not recognize `lake check`, not because of a reported theorem failure.
+- Kolaz PR #39 finite archive workflow [42739986917](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42739986917) passed exact finite-table reproducibility tests. This is not Lean verification or a global Collatz result.
+
+All statuses are scoped to the exact source heads and runs stated. No pending workflow is represented as passed.
