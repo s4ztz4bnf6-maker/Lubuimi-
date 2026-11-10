@@ -372,25 +372,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  -- Give the recursive PAt unfolding named proof witnesses and
-  -- transport the whole prefix fibre, not only one membership proposition.
-  have hk' : k + 1 ≤ n := by
-    simpa only [k, Nat.add_succ] using hj
-  have hprev' : k ≤ n := by omega
-  have hhk : hk = hk' := Subsingleton.elim _ _
-  have hhp : hprev = hprev' := Subsingleton.elim _ _
-  -- Eliminate proof-witness differences before rewriting any dependent
-  -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
-  cases hhk
-  cases hhp
-  by_cases hcov :
-      y (Fin.last k) ∈
-        prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
@@ -427,10 +408,17 @@ theorem PAt_nonneg
          exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y hbase
-      rw [← hlocal]
-      exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
-        (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
-        (hδhalf (stageCoordinate hk)) hpoint
+      have hUpdateNonneg :
+          0 ≤ BBMSTFiniteFibreUpdate.updatedWeight F
+            (δ (stageCoordinate hk)) := by
+        exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
+          (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
+          (hδhalf (stageCoordinate hk)) hpoint
+      -- Transport the scalar inequality along the exact update identity.
+      -- Avoid rw: rewriting through the dependent fibre index attempts
+      -- to abstract a motive containing prefixCoveredValues at another
+      -- stage-coordinate type.
+      exact hlocal ▸ hUpdateNonneg
 
 #print axioms PAt_nonneg
 
