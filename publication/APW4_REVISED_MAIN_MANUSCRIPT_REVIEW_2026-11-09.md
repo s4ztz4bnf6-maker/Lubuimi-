@@ -804,3 +804,10 @@ A complete page-by-page review of the 17-page APW4 proof PDF confirms that the m
 The formula for P_S uses W_x^2, so diagonal pairs are literally included there; the separate off-diagonal energy explicitly excludes them. Any revised exposition must preserve this distinction. Candidate atom and BIB-slot notation from earlier working sessions remains explicitly unverified and must not be silently promoted to historical source data.
 
 The PR #85 local q-fibre inequality is a conditional finite-set theorem; PR #89 supplies a generic preimage model for its structural premises; PR #93 supplies a Syracuse-derived uniform finite-fibre datum in the APW4 FibreData type. These are useful formal interfaces, not a proof of the historical event-to-BIB map or weighted Hall condition.
+
+
+## 9. Formal residue-projection update — 10 November 2026
+
+The q-fibre preimage model has now been specialized to canonical finite residue labels on ZMod N, with the divisibility hypotheses Bq ∣ N and Br ∣ N explicit. The local theorem sum_M_qr_le_Gamma_qr_of_residue_projections is canonically compiled and audited on exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae; runs 42749178635 and 42749178673 passed. Its reported profile is [propext, Classical.choice, Quot.sound], and the canonical log contains no sorryAx.
+
+The selected sets and common block-label map remain parameters. Therefore this formalization is a residue-projection specialization of the local q-fibre inequality, not the historical event/BIB instantiation. The separate paranoid check was still pending when recorded.
