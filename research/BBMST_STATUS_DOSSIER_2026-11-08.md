@@ -73,3 +73,8 @@ Do not announce the overall proof as complete until Step 16 has passed on the fi
 Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) completed with failure on `e230c4508b17fccfd006392b92d39b70d7f23ca6`. The five prerequisites succeeded; the target did not. The remaining issue is dependent-index transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)`. The compiler diagnostics and `sorryAx` declarations are recorded in Section 12.5 of `BBMST_ProofObligations.md`.
 
 **No third patch is authorized by this status update.** The next code change must follow from inspection of the exact definitions and a derived equality/transport lemma, and must be limited to the demonstrated failing target.
+
+
+## APW4 v9 integrated failure and v10 candidate — 10 November 2026
+
+PR #125 / v9 left two unsolved conditional membership goals because the target used the original prefix endpoint while the case split used the transported fibre point; the integrated dependency closure reported `sorryAx`. PR #127 / v10 eliminates the coordinate equality before constructing the fibre, so the dependent endpoint should become definitionally equal to the stage coordinate. The exact-head run was not visible at the latest poll. This is a proof-script candidate, not a verified repair and not a mathematical counterexample. Previously established APW4 results and their explicit premises remain unchanged.
