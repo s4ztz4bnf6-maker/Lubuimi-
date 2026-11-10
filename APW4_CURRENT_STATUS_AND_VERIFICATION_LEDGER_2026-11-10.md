@@ -157,3 +157,8 @@ The v10 acceptance gate remains integrated compilation without errors, named axi
 ## 13. Latest v10 exact-head poll — 10 November 2026
 
 Workflow 42810911393 is attached to exact head `3afd9de4e05b75af08579f9961f8cc28cada72af`: audit job `129811792964` in progress; integrated-paranoid job `129811793388` queued. The proof remains OFFEN – NICHT VERIFIZIERT.
+
+
+## 14. Completed v9 audit result — 10 November 2026
+
+PR #125 workflow 42810241207 completed: audit `129809542278` PASS; integrated-paranoid `129809542736` FAIL. The integrated failure and `sorryAx` findings are unchanged. This is a clean separate audit but not an integrated verification.
