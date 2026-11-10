@@ -34,3 +34,8 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+
+## 10 November 2026 — consolidated APW4 integration checkpoint
+
+See [APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md](APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md). The established APW4 mathematical energy result is preserved. Explicit open formal obligations remain: finite historical profile maximum and empty profile, exact suffix-factor/nu(J) product identity, source-facing Lemma 3.3 with Q_k measurability, arbitrary ordered Fin t shadow intersection for Lemma 3.4, historical event-to-BIB index map, original weight preservation, BIB-slot incidence and weighted Hall capacity. PR #138 current head 6768506b55821de4fb84a6b81ca30d1e43eb1fd6 has no associated exact-head PR workflow run in the latest query. PR #84 current head 99d6b2987488aaaf33bb481e17aa6115686cc322 failed workflow 42890942791; an earlier candidate 1980351a3002bef610107b810c8e726cc685b7b4 failed workflow 42745653492. Neither candidate is promoted to a verified theorem.
