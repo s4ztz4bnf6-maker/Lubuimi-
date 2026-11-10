@@ -181,3 +181,12 @@ then \(2^{A'}>C'+3^{k+1}\). Since \(n_0\geq1\) and \(C'\geq0\),
 =2^{A'}n'.
 \]
 As \(2^{A'}>0\), this implies \(n'<n_0\). Thus every step that remains at least \(n_0\) must have nonpositive next margin and satisfy the exponent-cap inequality.
+
+
+## 8. Lean counting lemma — pending exact-head audit
+
+A corresponding arithmetic lemma has been added to the Syracuse/Collatz Lean source as `dyadicUniformFibre_partition_card`. It states
+[
+\sum_{b=1}^{B}2^{B^*-b}+2^{B^*-B}=2^{B^*}
+\]
+for (B\leq B^*\). Exact source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 is being checked in workflow 42738528207. The result is pending; this note does not claim that the lemma has compiled or passed its axiom audit. Even a successful run will certify only this finite counting identity, not the full dependent uniform-fibre construction or APW4 historical transport.
