@@ -386,31 +386,13 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  have hstage :
-      stageCoordinate hk = stageCoordinate (show k + 1 ≤ n from by omega) := by
-    rw [hhk]
-  have hpoint : y (Fin.last (a + j)) ∈ Finset.univ :=
-    Finset.mem_univ _
   have hcovered :
-      (y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)) ↔
+      (y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev) ↔
       (y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
           (restrictPrefix C (show k + 1 ≤ n from by omega) y)) := by
     rfl
-  by_cases hcov :
-      y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
-  · have hcov' := hcovered.mp hcov
-    simp [hpoint, hcov, hcov', hstage, hPAt]
-  · have hcov' :
-        ¬ y (Fin.last (a + j)) ∈
-          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
-            (restrictPrefix C (show k + 1 ≤ n from by omega) y) := by
-      intro h'
-      exact hcov (hcovered.mpr h')
-    simp [Finset.mem_univ, hcov, hcov', hstage, hPAt]
-  all_goals ring_nf
+  split_ifs <;> simp_all [hcovered] <;> ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
