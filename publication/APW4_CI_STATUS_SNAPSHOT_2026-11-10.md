@@ -502,3 +502,8 @@ Syracuse PR #9 exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 pass
 PR #69 has advanced to source head 2843f40fd5c04fc68014ee8fe59a87d26520b285. The latest repair no longer relies on a single membership Iff. It introduces named proof witnesses hk' and hprev', proves equality of those proof witnesses by Subsingleton.elim, transports the restricted previous prefix, stage coordinate, full prefixCoveredValues finset, and previous PAt base mass, then performs the covered/uncovered case split on the normalized expressions.
 
 Exact-head workflow 42738923964 is in progress with both Lean 4.28 audit and Lean 4.35 integrated-paranoid jobs. This is the first candidate that explicitly normalizes the entire dependent fibre expression, including the cardinality and base-mass terms. No result is claimed until both jobs complete and the named declarations print the standard profile without actual sorryAx.
+
+
+## Addendum 1.30 — exact standalone k=2 head reconfirmed
+
+The terminal-residue collision-energy PR #38 current head 50492a880f5b8a2c4bb96838e16dfed2339dd501 has its own exact-head workflow 42737167314 completed successfully. This is the current documentation/source snapshot for that standalone finite k=2 project. The seven named finite declarations have the standard transitive profile, no actual sorryAx, and the Lean 4.35.0 paranoid check passed. Scope remains the finite k=2 matrix, two-step mass and energy only; no general k theorem or APW4/BIB transport is inferred.
