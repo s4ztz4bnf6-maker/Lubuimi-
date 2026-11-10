@@ -83,3 +83,8 @@ PR #125 / v9 left two unsolved conditional membership goals because the target u
 ## Latest v10 APW4 CI poll — 10 November 2026
 
 PR #127 exact head `3afd9de4e05b75af08579f9961f8cc28cada72af`, workflow 42810911393: audit job `129811792964` in progress, integrated-paranoid job `129811793388` queued. No v10 PASS is claimed.
+
+
+## v9 audit completion — 10 November 2026
+
+PR #125 workflow 42810241207 completed with audit PASS and integrated-paranoid FAIL. The integrated type/conditional mismatch remains open and error recovery includes `sorryAx`. No integrated proof claim is made; v10 is the active candidate.
