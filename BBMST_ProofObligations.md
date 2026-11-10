@@ -533,3 +533,8 @@ A job-level inspection refines the preceding run summary:
 - The PR #136 docs-branch workflow [42835240615](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42835240615) is an upstream/degenerate-witness audit of `ErdosSelfridge_v17_fixed.lean` and `AuditCheck.lean`; it is not an APW4 integrated build and does not verify the historical APW4 theorem. Its output still lists `sf_sieve_lt_one` and `sieve_criterion` in `erdos_selfridge`.
 
 This job-level correction supersedes any wording above that called run 42760198290 an audit-job failure. The accurate status is: audit job passes, integrated-paranoid fails, and the dependent prefix recursion still contains `sorryAx`. The mathematical APW4 results remain unchanged.
+
+
+## Cross-project continuity checkpoint — 10 November 2026, 22:58 CET
+
+See [the consolidated research continuity checkpoint](publication/RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md) for the exact PR #69 head/run diagnosis, the closed surgical PR #72 candidate, PR #138 v15's unverified exact head, the source-reconstruction progress on c(I), ν(J), prefix-cylinder mass and arbitrary-t shadows, and the parallel Syracuse PR #72. The current integrated blocker is localized to redundant post-simp tactics in `BBMSTPrefixMeasureRecursion.lean` (run 42739454140, lines 391 and 393); the same integrated run reaches `BBMSTHyperplaneFibreIncidence.lean` without a direct error there. Do not classify that second file as a confirmed failure from this run. All mathematical APW4 results remain preserved; historical Event-to-BIB, weight, capacity and arbitrary-t obligations remain open.
