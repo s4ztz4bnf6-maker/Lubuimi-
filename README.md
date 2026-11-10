@@ -430,3 +430,8 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+### Addendum 1.21 — local q-fibre M/Gamma Lean draft
+
+APW4 PR #85 now formalizes the recovered finite-set definitions (P_q,P_r,M_{q,r},Gamma_{q,r}) from Dossier v1.6 §48 and proves the local aggregate count under explicit fibre-containment and pairwise-disjoint-block hypotheses. Exact-head canonical/paranoid and audit CI runs are in progress; no verification claim is made yet. The remaining task is to derive those hypotheses from the original (U_q,F_q(x),C_h) definitions and connect the local count to the actual weighted HT/BIB transport.
