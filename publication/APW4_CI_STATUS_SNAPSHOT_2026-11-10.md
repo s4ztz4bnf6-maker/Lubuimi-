@@ -74,3 +74,10 @@ PR #107's previous attempt remains cancelled at its full Lean jobs; its exact cu
 PR #101 has advanced to head f87657c8f02f41266a43bae1fe44f43267f0c985. The preceding exact-head run 42756335441 failed again at the uncovered branch: even with an explicit universal-membership witness, the dependent Finset membership rewrite did not match the update expression. The new repair changes the proof order instead: it identifies the proof witnesses and eliminates the dependent stage-coordinate equality before constructing and unfolding the FibreData object. The covered/uncovered split is then made only after the fibre's point type is normalized. This targets the source of the type mismatch rather than adding another local rewrite witness.
 
 The new commit is a proof candidate. No exact-head CI run or Lean PASS has yet been returned for f87657c8f02f41266a43bae1fe44f43267f0c985. The previous failed run and its sorryAx propagation remain recorded against their own exact heads.
+
+
+## Exact child-cylinder formalization candidate — PR #107
+
+PR #107 has advanced to source head cad354967759a89c02df1b42369898dec3406445. Beyond the unique tail coordinate and canonical quotient, the Lean module now defines the exact child-b coordinate as (2^(b-1)-d) * (3^(k+1))^(-1) modulo 2^b, proves its normalized congruence and uniqueness, and instantiates each child as a residue cylinder in the common refinement. The child cylinder has exactly 2^(B-b) lifts and an explicit membership/congruence characterization.
+
+This is the normalized finite-fibre layer. The remaining steps are to derive the divisibility of the prefix-tail numerator from the explicit prefix residue formula, prove the complete pairwise-disjoint child-plus-tail partition, and connect these normalized congruences to the original exact valuation predicates and then to historical APW4/BIB events. No Lean PASS is claimed for cad354967759a89c02df1b42369898dec3406445; an exact-head workflow has not yet been returned.
