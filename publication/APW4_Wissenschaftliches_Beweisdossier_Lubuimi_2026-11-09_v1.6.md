@@ -1341,3 +1341,23 @@ Runs [42758799252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/427
 ## Arbeitsprotokoll 10.11.2026 — Syracuse-Fin-Repräsentanten
 
 Für den getrennten Syracuse-Zweig wurde der konkrete Lean-Fehler in den beiden endlichen Koordinatenkonstruktoren eingegrenzt: `ZMod` stellt hier kein projizierbares Feld `.isLt` bereit. Der Mathlib-v4.35.0-Quelltext `Mathlib/Data/ZMod/Basic.lean` bestätigt stattdessen den Satz `ZMod.val_lt {n} [NeZero n] (a : ZMod n) : a.val < n`. Daraufhin wurden ausschließlich die beiden Konstruktoren `explicitTailCoordinateFin` und `explicitChildCoordinateFin` umgestellt. Commit: `bd8a7857a07f4fb32bbcfe9e2b446bd5b7403028`; Workflow `42759029006` beim Eintrag QUEUED. Dies ist eine gezielte Typkorrektur, kein abgeschlossener Beweis. Die Membership-Verifikation und die vorhandenen `sorryAx`-Abhängigkeiten bleiben offen. Keine Änderung am veröffentlichten PDF und keine Auswirkung auf den etablierten APW4-Kern.
+
+## 15. Exact branch diagnosis and continuation — 10 November 2026
+
+### PR #101: the equality, not implication, diagnosis
+
+The complete integrated log for run `42758803063` establishes that the positive branch of `prefixFibre_updatedWeight_eq_PAt` had no binder left to introduce. The goal was already an equality, so the proposed `intro hnot` tactic was structurally invalid. The subsequent exact head `0be00b2161ad8f2676779b90582f30b34083c008` uses `simp [hcov]` in both branches. This is a targeted proof candidate; it is not yet accepted. Its own exact-head run `42759210844` has been created, with both audit and integrated-paranoid jobs QUEUED at the latest poll. The earlier failed run is not evidence about this new head.
+
+The source expansion is now checked against the actual definitions: `prefixFibreData` builds a uniform fibre whose points are `Finset.univ` and whose covered set is `prefixCoveredValues`; `updatedWeight` selects covered/uncovered multipliers and returns zero outside the fibre. The remaining negative branch must reduce using the exact nonmembership hypothesis and the fact that the coordinate lies in `Finset.univ`. The `simp [hcov]` candidate expresses precisely that reduction, but only the new exact-head CI can establish whether Lean closes it. Dependent prefix indices and proof witnesses must remain explicitly transported as in the preceding `hk` / `hprev` / `hstage` equalities; no proof-witness identity is assumed silently.
+
+### Syracuse #107 exact workflow state
+
+Run `42759029006` is progressing. The integrated job has reached compilation of all integrated BBMST/APW4 modules; the audit job has begun Lean and manifest setup; the dedicated Syracuse-paranoid job is still QUEUED. The `ZMod.val_lt` API repair is still unverified. The earlier failure of explicit membership/cardinality declarations and their `sorryAx` dependencies remains part of the open record.
+
+### Collatz #48 exact workflow state and next mathematical obligation
+
+On exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run `42757504798` still has its three jobs QUEUED. No compile, axiom, or paranoid result is claimed from this run.
+
+The finite cap-tree path theorem is still a necessary finite-depth certificate, not an infinite-branch exclusion. The current minimal-counterexample wrapper explicitly assumes a suffix-return premise. A concrete route to remove that assumption is identified but not yet formalized: use the accelerated-step identity `2^(a_j) n_{j+1}=3n_j+1` and `a_j>0` to prove `n_j` odd; prove the quotient `n_{j+1}` is odd, making `a_j` the exact 2-adic valuation; then prove the sequence tail is the deterministic Syracuse orbit starting at `n_j`. Minimality among odd nonterminating starting values would then yield the suffix-return property. This chain must be established in Lean before the current conditional reduction can be treated as an unconditional minimal-counterexample consequence.
+
+No established APW4 theorem, historical result, or user-published manuscript is changed by these candidate updates.
