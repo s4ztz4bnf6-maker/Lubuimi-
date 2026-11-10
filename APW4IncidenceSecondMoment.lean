@@ -1,3 +1,11 @@
+/-!
+Verification note: this module is an explicit conditional algebraic
+checkpoint. Its hypotheses are supplied as theorem arguments; this file
+does not claim to derive the historical APW4 incidence hypotheses.
+The dedicated APW4 canonical/paranoid workflows are required to verify
+this module as part of the library roots.
+-/
+
 import Mathlib
 
 /-!
