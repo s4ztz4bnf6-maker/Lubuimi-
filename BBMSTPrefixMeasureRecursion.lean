@@ -379,31 +379,17 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hprev' : k ≤ n := by omega
   have hhk : hk = hk' := Subsingleton.elim _ _
   have hhp : hprev = hprev' := Subsingleton.elim _ _
-  have hxprev : xprev = restrictPrefix C hk' y := by
-    dsimp [xprev]
-    rw [hhk]
-  have hstage :
-      stageCoordinate (k := k) hk =
-        stageCoordinate (k := k) hk' := by
-    exact congrArg (stageCoordinate (k := k)) hhk
-  have hvalues :
-      prefixCoveredValues C (A := A) hk xprev =
-        prefixCoveredValues C (A := A) hk'
-          (restrictPrefix C hk' y) := by
-    rw [hhk, hxprev]
-  have hmass :
-      PAt C (A := A) a ha P0 δ j hprev xprev =
-        PAt C (A := A) a ha P0 δ j hprev'
-          (restrictPrefix C hk' y) := by
-    rw [hhp, hxprev]
-  rw [hstage, hvalues, hmass]
+  -- Eliminate proof-witness differences before rewriting any dependent
+  -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
+  cases hhk
+  cases hhp
   by_cases hcov :
       y (Fin.last k) ∈
-        prefixCoveredValues C (A := A) hk'
-          (restrictPrefix C hk' y)
-  · simp [hcov, Finset.mem_univ]
+        prefixCoveredValues C (A := A) hk
+          (restrictPrefix C hk y)
+  · simp [hcov, xprev, Finset.mem_univ]
     ring
-  · simp [hcov, Finset.mem_univ]
+  · simp [hcov, xprev, Finset.mem_univ]
     ring
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
