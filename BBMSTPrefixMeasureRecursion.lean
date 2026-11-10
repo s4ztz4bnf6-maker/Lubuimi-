@@ -203,9 +203,7 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  have hcoord : stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
   unfold prefixPointCovered prefixCoveredValues
-  rw [hcoord]
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
@@ -376,9 +374,9 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
   have hcovered :
-      y (Fin.last k) ∈ prefixCoveredValues C hk xprev ↔
+      y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev ↔
         y (Fin.last k) ∈
-          prefixCoveredValues C (show k + 1 ≤ n from by omega)
+          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
             (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
     rw [hhk, hxprev]
   have hstage :
