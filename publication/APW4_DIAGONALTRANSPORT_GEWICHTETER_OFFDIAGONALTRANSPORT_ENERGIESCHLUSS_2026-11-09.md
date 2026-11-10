@@ -364,3 +364,15 @@ The proof first bounds (alpha_k(x)) by the number of compatible new hyperplanes 
 u(J)) bound on each shadow intersection, followed by the ordered tuple summation. The tuple order and multiplicity must be preserved.
 
 Primary source pages: [published article PDF, pp. 614–617](https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s). This source reconciliation is distinct from Lean verification: the definitions and proof architecture are source-checked; the v15 integrated candidate remains unverified on its exact head.
+
+
+
+
+### Präzisierung der historischen Lemma-3.3-Schnittstelle — 10. November 2026
+
+Die veröffentlichte Lemma-3.3-Aussage setzt ausdrücklich voraus, dass die betrachtete Hyperfläche (Q_k)-messbar ist. In der Lean-Schnittstelle muss daher zusätzlich `H.FixedInsidePrefix (a+j)` vorliegen, bevor die über die ersten (a+j) Koordinaten definierte `prefixCylinder`-Masse als Masse des ursprünglichen historischen Ereignisses identifiziert wird. Ohne diese Voraussetzung beschreibt die Lean-Größe nur den Präfixzylinder der Projektion von (H), nicht notwendig das vollständige Ereignis.
+
+Die Profilgröße (c(I)) ist nach Gleichung (9) des Originals das Maximum über **alle** Hyperflächen des Anfangsprodukts (Q_a) mit exakt festem Koordinatensatz (I), nicht nur über die Mitglieder der konkreten Überdeckungsfamilie. Für (I=arnothing) ist dies die volle Anfangsbox; (c(arnothing)=1) folgt aus der Normierung von (mathbb P_a). Der Suffixfaktor (
+u(J)) aus Gleichung (10) ist das Produkt (1/((1-delta_j)|S_j|)) über genau die im Suffix festgelegten Koordinaten. Die vorhandene Lean-Rekursion realisiert diese freie/feste Koordinaten-Dichotomie; die explizite Indexproduktidentität und die source-faithful Definition von (c(I)) sind die verbleibenden Anschlusslemmata.
+
+Quelle: Balister et al., *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), Gleichungen (9), (10), Lemma 3.3, S. 614–617. Dieser Nachtrag präzisiert ausschließlich die Formalisierungsschnittstelle und ändert keinen mathematischen APW4-Satz.
