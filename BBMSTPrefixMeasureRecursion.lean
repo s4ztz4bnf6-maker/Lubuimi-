@@ -378,7 +378,13 @@ theorem prefixFibre_updatedWeight_eq_PAt
         prefixCoveredValues C (by omega)
           (restrictPrefix C (by omega) y)) := by
     rfl
-  split_ifs <;> simp_all [hcovered] <;> ring_nf
+  -- Transport the recursive PAt membership proposition to the exact
+  -- covered-set membership used by the finite-fibre point update before
+  -- splitting the conditional. This avoids proof-indexed prefix variants
+  -- appearing as unrelated branches after simplification.
+  have hcoveredEq := propext hcovered
+  rw [← hcoveredEq]
+  split_ifs <;> simp_all <;> ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
