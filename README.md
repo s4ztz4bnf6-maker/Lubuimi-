@@ -441,3 +441,12 @@ APW4 PR #85 formalizes the recovered finite-set definitions (P_q,P_r,M_{q,r},Gam
 PR #69 head `b8d98215ed2d8d401c1e27805a193666e093f067` failed exact-head workflow 42740835775 in both audit and integrated-paranoid jobs. The first prefix-recursion error is a no-op `dsimp [k] at *` at line 386; the elaborator then exposes the dependent index mismatch between `stageCoordinate hk` and `prefixIndex hj (Fin.last (a+j))`. Error recovery includes `sorryAx` in the affected prefix-mass declarations. Stacked PR #86 (head `4e4b378887cc76382d9cd2e17807f96a2c277e23`) now introduces an explicit `Fin.ext` coordinate equality and goal-sensitive `simp ... <;> ring_nf`. Exact-head workflow 42745081023 is in progress in both jobs; no pass is claimed. PR #84's workflow 42745022363 was cancelled after branch advancement and is not counted as a proof failure or success.
 
 The APW4 mathematical theorem record, previous exact-commit PASS results, and proprietary/commercial licensing notices remain unchanged.
+
+
+### Addendum 1.23 — APW4 source audit and finite-fibre interfaces
+
+The complete 17-page APW4 proof PDF was inspected. It records the DT assignment and aggregate fibre-weight bound, the HT demand d(gamma)=omega_l*omega_l', actual BIB places/capacities/incidence notation, and weighted Hall condition, but it does not expand the element-level source definitions of the event universe, BIB places, or incidence map. The historical source-to-BIB map remains open; generic finite-set or preimage definitions are not substituted for it.
+
+PR #89 adds a generic preimage-fibre interface deriving fibre containment and block disjointness from explicit maps. Corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a; audit/canonical runs pending. PR #93 formalizes the Syracuse finite-depth common dyadic fibre as BBMSTFiniteFibreUpdate.FibreData; its corrected Lake-root head is dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued. Neither is a historical event/BIB identification.
+
+PR #90 is the latest prefix update repair candidate, head b2bd581ea79696c1d47b8b02a47a209e8a87fd10; it explicitly handles the impossible covered-branch implication and the uncovered Finset.univ test. Run 42747202778 is pending. No integrated PASS is claimed.
