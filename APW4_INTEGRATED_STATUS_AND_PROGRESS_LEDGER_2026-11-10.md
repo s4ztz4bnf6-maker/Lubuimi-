@@ -70,7 +70,7 @@ OldCompatible / mergeOldShadows und prefixPairReserve sind Paar-/t=2-Bausteine, 
 
 ### PR #138 — lokaler Membership-Witness-Fix
 
-Branch repair/apw4-membership-witness-local-let-v15-2026-11-10; dokumentierter Head 94b89a2c5bda9a494c0c42e79ad054aabacabdd8; Draft/offen. Die letzte Workflow-Abfrage für diesen Head lieferte keine zugeordneten PR-Workflow-Runs.
+Branch repair/apw4-membership-witness-local-let-v15-2026-11-10; aktueller PR-Head 6768506b55821de4fb84a6b81ca30d1e43eb1fd6; Draft/offen. Die letzte Workflow-Abfrage für diesen Head lieferte keine zugeordneten PR-Workflow-Runs.
 
 Die Reparatur gewinnt lokale Witnesses x ∈ F.covered, x ∉ F.covered und x ∈ F.points aus den Endpoint-Witnesses, bevor Conditional-Ausdrücke reduziert werden. Keine Änderung an Theoremaussage, historischen Definitionen oder Voraussetzungen.
 
@@ -78,7 +78,7 @@ Die Reparatur gewinnt lokale Witnesses x ∈ F.covered, x ∉ F.covered und x �
 
 ### PR #84 — abhängiger Präfix-/Punktmassen-Transport
 
-Branch fix/prefix-stage-proof-transport-v3-2026-11-10; dokumentierter kombinierter Kandidat 1980351a3002bef610107b810c8e726cc685b7b4; Draft/offen. Der Kandidat richtet rekursive PAt-/Covered-Finset-Witnesses über hk/hprev/xprev aus und transportiert die Stage-Koordinate explizit mittels Fin.ext. Workflow 42745653492 wurde für diesen Kandidaten als fehlgeschlagen zurückgegeben.
+Branch fix/prefix-stage-proof-transport-v3-2026-11-10; aktueller PR-Head 99d6b2987488aaaf33bb481e17aa6115686cc322; Draft/offen. Der Kandidat richtet rekursive PAt-/Covered-Finset-Witnesses über hk/hprev/xprev aus und transportiert die Stage-Koordinate explizit mittels Fin.ext. Der aktuelle Head scheiterte in Workflow 42890942791. Ein früherer Kandidat 1980351a3002bef610107b810c8e726cc685b7b4 war bereits in Workflow 42745653492 fehlgeschlagen.
 
 **Status:** fehlgeschlagener Reparaturkandidat; Diagnose erforderlich. Kein Merge, keine Beweisbehauptung. Frühere mathematische Faserresultate werden dadurch nicht zurückgestuft.
 
