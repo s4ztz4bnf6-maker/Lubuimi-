@@ -387,3 +387,127 @@ theorem explicitPrefixTail_lift_factorization
 
 #print axioms explicitPrefixTailQuotient_spec
 #print axioms explicitPrefixTail_lift_factorization
+
+
+/-!
+## Exact child residue classes
+
+For a positive next valuation b, the exact child condition is
+`3^(k+1) q + d = 2^(b-1)` modulo `2^b`. The odd coefficient is
+invertible, so each child is one explicit residue class modulo `2^b`;
+inside a common refinement modulo `2^B`, it has exactly `2^(B-b)`
+lifts. The original valuation-word theorem supplies the arithmetic
+interpretation of this congruence; this section formalizes its normalized
+finite-fibre residue class.
+-/
+
+/-- The unique normalized coordinate for the exact child of valuation b. -/
+def explicitChildCoordinate (b k d : ℕ) : ZMod (2 ^ b) :=
+  ((((2 ^ (b - 1) : ℕ) : ZMod (2 ^ b)) -
+      (d : ZMod (2 ^ b))) *
+    (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹))
+
+/-- The explicit child coordinate satisfies its exact normalized congruence. -/
+theorem explicitChildCoordinate_spec
+    (b k d : ℕ) (hb : 0 < b) :
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
+        explicitChildCoordinate b k d +
+      (d : ZMod (2 ^ b)) =
+        (2 ^ (b - 1) : ℕ) := by
+  unfold explicitChildCoordinate
+  have hcop : Nat.Coprime (3 ^ (k + 1)) (2 ^ b) :=
+    Nat.Coprime.pow_right b
+      (Nat.Coprime.pow_left (k + 1) (by decide : Nat.Coprime 3 2))
+  have hinv :
+      ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
+        (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) = 1 :=
+    ZMod.coe_mul_inv_eq_one _ hcop
+  calc
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
+        ((((2 ^ (b - 1) : ℕ) : ZMod (2 ^ b)) -
+            (d : ZMod (2 ^ b))) *
+          (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹)) +
+        (d : ZMod (2 ^ b))
+      = (((2 ^ (b - 1) : ℕ) : ZMod (2 ^ b)) -
+            (d : ZMod (2 ^ b))) *
+          ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
+            (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹))) +
+          (d : ZMod (2 ^ b) := by ring
+    _ = (2 ^ (b - 1) : ℕ) := by rw [hinv]; ring
+
+/-- The normalized exact-child congruence has a unique solution modulo 2^b. -/
+theorem explicitChildCoordinate_unique
+    (b k d : ℕ) (hb : 0 < b) (q : ZMod (2 ^ b)) :
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) * q +
+        (d : ZMod (2 ^ b)) =
+          (2 ^ (b - 1) : ℕ)
+      ↔ q = explicitChildCoordinate b k d := by
+  constructor
+  · intro h
+    have hmul :
+        ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) * q =
+          (2 ^ (b - 1) : ℕ) - (d : ZMod (2 ^ b)) := by
+      calc
+        ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) * q =
+            (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) * q +
+              (d : ZMod (2 ^ b))) - (d : ZMod (2 ^ b)) := by ring
+        _ = (2 ^ (b - 1) : ℕ) - (d : ZMod (2 ^ b)) := by rw [h]
+    have hcop : Nat.Coprime (3 ^ (k + 1)) (2 ^ b) :=
+      Nat.Coprime.pow_right b
+        (Nat.Coprime.pow_left (k + 1) (by decide : Nat.Coprime 3 2))
+    have hinv :
+        ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
+          (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) = 1 :=
+      ZMod.coe_mul_inv_eq_one _ hcop
+    have hinv' :
+        (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) *
+          ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) = 1 := by
+      simpa [mul_comm] using hinv
+    calc
+      q = 1 * q := by simp
+      _ = ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) *
+            ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))) * q := by rw [hinv']
+      _ = (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) *
+            (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) * q) := by ring
+      _ = (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹) *
+            ((2 ^ (b - 1) : ℕ) - (d : ZMod (2 ^ b))) := by rw [hmul]
+      _ = explicitChildCoordinate b k d := by
+        unfold explicitChildCoordinate
+        ring
+  · intro h
+    rw [h]
+    exact explicitChildCoordinate_spec b k d hb
+
+/-- Finite representative of the exact child coordinate. -/
+def explicitChildCoordinateFin (b k d : ℕ) : Fin (2 ^ b) :=
+  ⟨(explicitChildCoordinate b k d).val,
+    (explicitChildCoordinate b k d).isLt⟩
+
+/-- The exact valuation-b child as a residue cylinder in the common
+finite refinement. -/
+def explicitChildAtoms (b B k d : ℕ)
+    (hB : b ≤ B) : Finset (Fin (2 ^ B)) :=
+  tailAtoms b B hB (explicitChildCoordinateFin b k d)
+
+/-- Membership in the exact child cylinder is precisely the normalized
+congruence modulo 2^b. -/
+theorem explicitChildAtoms_mem_iff
+    (b B k d : ℕ) (hB : b ≤ B)
+    (x : Fin (2 ^ B)) :
+    x ∈ explicitChildAtoms b B k d hB
+      ↔ x.val % 2 ^ b =
+        (explicitChildCoordinateFin b k d).val := by
+  exact mem_tailAtoms_iff b B hB
+    (explicitChildCoordinateFin b k d) x
+
+/-- Every exact valuation-b child has exactly 2^(B-b) lifts in the
+common refinement modulo 2^B. -/
+theorem explicitChildAtoms_card
+    (b B k d : ℕ) (hB : b ≤ B) :
+    (explicitChildAtoms b B k d hB).card = 2 ^ (B - b) := by
+  exact card_tailAtoms b B hB (explicitChildCoordinateFin b k d)
+
+#print axioms explicitChildCoordinate_spec
+#print axioms explicitChildCoordinate_unique
+#print axioms explicitChildAtoms_mem_iff
+#print axioms explicitChildAtoms_card
