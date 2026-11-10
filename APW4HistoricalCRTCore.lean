@@ -463,7 +463,6 @@ theorem qFibreModulus_pos
     {N q a : ℕ} (hN : 0 < N) (hq : 0 < q)
     (hdiv : q ^ a ∣ N) :
     0 < qFibreModulus N q a := by
-  have hpow : 0 < q ^ a := pow_pos hq a
   have hle : q ^ a ≤ N := Nat.le_of_dvd hN hdiv
   exact Nat.div_pos hN hle
 
