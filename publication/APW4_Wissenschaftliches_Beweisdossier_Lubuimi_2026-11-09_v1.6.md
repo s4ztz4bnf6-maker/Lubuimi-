@@ -1225,3 +1225,14 @@ Es handelt sich um eine Dokumentations- und Review-Korrektur, nicht um eine neue
 **Lean-Status:** Die benannten Teildeklarationen haben echte erfolgreiche Kernel-/Axiomprüfungen. Der integrierte PR #69 ist fehlgeschlagen; ein vollständiger historischer APW4-Hauptsatz mit sämtlichen historischen Prämissen in seiner transitiven Lean-Abhängigkeit ist nicht nachgewiesen. Der separate universelle `erdos_selfridge`-Siebstrang behält seine Projektaxiome `sf_sieve_lt_one` und `sieve_criterion`.
 
 **Attribution:** Sämtliche APW4-Forschung und Urheberschaft sind Ta-Yoshua Lubuimi zugeordnet. KI-Werkzeuge sind Hilfsmittel, keine Autoren und keine unabhängigen mathematischen Prüfer.
+
+
+## Addendum 1.15 — PR #79 continuity and exact-head repair ledger, 10 November 2026
+
+The APW4 mathematical status is preserved exactly as corrected in PR #79. Established APW4 results are not invalidated by later integration failures. The published finite valuation-word cylinder theorem in PR #36 is not reopened. Historical reconstruction, mathematical proof and Lean/CI status remain separate.
+
+PR #101's updated source head is `f5aff142fcdf6c3893ef1c890f3be45a67da68aa`. The previous attempt made covered-set nonmembership explicit but left the second conditional for membership in `Finset.univ` unresolved. The new proof supplies that membership explicitly and rewrites both branches. Workflow [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237) was queued at this snapshot; no new Lean PASS is claimed.
+
+PR #93's generic dyadic residue-cylinder model proves finite lift/cardinality/mass identities for arbitrary residue (r). Its separate `FibreData` wrapper is cardinality-only. The remaining formal task is to instantiate (r) by the already-derived normalized prefix-tail residue and prove exact equivalence between the child residue classes and next-valuation predicates. This formalization gap does not reopen the existing mathematical finite-word cylinder theorem.
+
+The APW4 energy decomposition, DT, weighted HT, global upper energy estimate and strict lower-bound implication remain established under their stated full historical hypotheses. No later CI failure changes those mathematical claims.
