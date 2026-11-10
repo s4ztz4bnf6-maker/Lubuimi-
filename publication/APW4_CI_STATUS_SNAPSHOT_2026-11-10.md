@@ -726,3 +726,29 @@ No PASS is claimed for PR #87. Even a successful run will verify only the canoni
 ### Prefix repair status cross-check
 
 The first PR #86 coordinate-only commit `4e4b378887cc76382d9cd2e17807f96a2c277e23` failed its integrated job in run 42745081023 because the covered/uncovered goals remained after the coordinate equality. The branch now has amended head `80c607af6efd79c9a3221ebbb7aca76bebcaa991`, replacing branch simplification with `simp_all ... <;> ring_nf`; exact-head run [42745711983](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745711983) was queued. PR #84 remains a separate proof-witness/recursive-mass transport candidate. No prefix integration pass is claimed.
+
+
+## Addendum 1.47 — conditional BIB divisor-envelope sharpening
+
+The BIB incidence note on PR #57 was extended at exact source commit `e7eca4d8a6ed6398d7ca641699401592da485569` with the new auxiliary parameter
+[
+\mu^*(B)=\max_{d\mid B,,d<B}\tau(d).
+]
+It is explicitly **not** identified with the historical (mu(B)). If the actual common selected labels are distinct divisors of (B) whose LCM is a proper divisor, then their intersection size is bounded by (mu^*(B)).
+
+For (B=\prod_i p_i^{e_i}),
+[
+\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1},
+]
+and for squarefree (B), (mu^*(B)=\tau(B)/2). With (r=q-1), the three numerical conditions of the finite second-moment lemma then follow from the single condition
+[
+\tau(B)^2<2(q-1)^2,
+]
+and the conditional bound becomes
+[
+m_0\leq
+\frac{\tau(B)(2(q-1)-\tau(B))}
+{2(q-1)^2-\tau(B)^2}.
+]
+
+This is a mathematical conditional derivation recorded in the research note; it has not yet been Lean-formalized. Its application still depends on proving the distinct-divisor, proper-LCM, and row-size hypotheses for the actual selected q-fibre entries. It does not identify the historical (mu(B)), does not close the extraction map (A_q(x,h)\to S_x), and does not establish the APW4 weighted HT event/BIB-slot transport.
