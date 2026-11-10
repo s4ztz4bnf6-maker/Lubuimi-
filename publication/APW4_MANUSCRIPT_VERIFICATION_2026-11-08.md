@@ -208,3 +208,12 @@ The updated PR #56 branch now contains the full source-level reduction output:
 The successful [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) compiled the updated family and augmentation modules. Its axiom output for canonicalReduction_result_full and the new helper declarations is exactly [propext, Classical.choice, Quot.sound], with no sorryAx. This is the formalized geometric reduction of Balister et al. Theorem 1.2 under the explicit product-coordinate and nonparallel-cover hypotheses.
 
 This result does not by itself integrate the geometric reduction with every prefix/fibre-moment/tail module, and it does not construct APW4's historical DT/HT or strict energy transfer.
+
+
+## Addendum — exact-head formalization status, 10 November 2026 (13:43 CET)
+
+This memorandum's mathematical verification scope is unchanged. The established APW4 mathematical proof and the repository's declaration-scoped Lean evidence remain separate evidence records.
+
+PR #133's integrated Lean 4.35.0 run (42812910651) failed at the concrete prefix-fibre update because the endpoint coordinate family and the fibre coordinate family were not definitionally aligned. The exact diagnostic is recorded in the current status ledger. PR #137 / v14 now attempts to normalize the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` throughout the proof context before constructing the fibre. This candidate has not yet passed an exact-head integrated run; no new machine-verification claim is made.
+
+No statement in the finalized manuscript PDF is changed by this repository addendum. The PDF remains the separately secured author-held publication artifact.
