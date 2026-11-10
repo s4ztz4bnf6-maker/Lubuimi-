@@ -361,3 +361,14 @@ assignment whose fixed set is the union of the fixed sets. Apply the
 source-facing Lemma 3.3 to that union, then sum over the ordered tuple
 without quotienting by permutations or removing repetitions. This is the
 exact point where the (c(I)\nu(J)) bound enters the moment estimate.
+
+
+## 10 November 2026 — BBMST arbitrary-t tuple dependency note
+
+The current repository source was re-inspected before extending the Lemma 3.4 bridge. The old-shadow implementation is binary only: `OldCompatible`, `mergeOldShadows`, `mergeOldShadows_contains_iff`, `oldShadows_disjoint_of_conflict`, and `fixedCoords_mergeOldShadows`. The incidence bridge likewise contains pair-indexed masses and ordered-pair reserve/count identities, not arbitrary-t declarations.
+
+The next extension must preserve the tuple as a function `Fin t → N_k`. For pairwise compatible entries, a finite fold is justified by the invariant that the accumulated partial assignment agrees with each next entry on every retained old coordinate. The induction must prove the intersection predicate and union of fixed-coordinate profiles together. For a conflict, the existing binary disjointness theorem kills the entire tuple intersection. The empty tuple uses the everywhere-free hyperplane; repeated entries are permitted and do not change the intersection.
+
+The pointwise power expansion must remain over all ordered functions `Fin t → N_k`, including repetitions. Its finite-sum interchange is the exact bridge from the (t)-th moment to the tuple-intersection masses. No unordered-subset shortcut is valid.
+
+This is a formalization plan grounded in the currently inspected declarations, not a theorem or a CI result. The historical APW4 event-to-BIB reconstruction ledger remains separate; this BBMST tuple step does not redefine historical APW4 events, slots, or capacities and does not alter the completed APW4 mathematical proof status.
