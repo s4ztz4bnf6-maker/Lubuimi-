@@ -333,3 +333,13 @@ The published Lemma 3.3 assumes that (A) is (Q_k)-measurable, equivalently every
 H.mathrm{FixedInsidePrefix}(a+j).
 ]
 This is not needed for the internal induction, but it is needed for the exact historical event identification. The final theorem should state the decomposition (F(H)=Isqcup J), with (Isubseteq[a]), (Jsubseteq[a+1,a+j]), and prove that the Lean fixed-coordinate profile and the paper's (F(H)) agree under the one-based/zero-based index conversion.
+
+## Source-faithful BBMST Lemma 3.3/3.4 correction — 10 November 2026
+
+The published paper's equations (9)–(11) settle the historical profile definitions. For every I⊆[a], c(I) is the maximum of P_a(H) over **all hyperplanes H in Q_a with F(H)=I**; it is not a maximum over the selected cover A and not a family of only occurring profiles. The profile index set is the full power set P([a]). The suffix factor is ν(J)=product over j∈J of 1/((1−δ_j)|S_j|), for J⊆[a+1,n]. Since P_a is a probability distribution, c(∅)=1; this does not follow from nonnegativity alone. The generating polynomial is c_k(x)=Σ_{I⊆[a]}Σ_{J⊆[a+1,k]}c(I)ν(J)x^{|I|+|J|}.
+
+BBMST Lemma 3.3 states P_k(A)≤c(I)ν(J) when F(A)=I∪J, I⊆[a], J⊆[a+1,k]. Its induction has the free-coordinate branch (Lemma 2.1(4), no new factor) and fixed-coordinate branch (Lemma 2.1(5) plus uniform fibre extension, giving exactly 1/((1−δ_k)|S_k|)). Lemma 3.4 is the ordered t-tuple moment bound over (F_1,…,F_t)∈N_k^t; repetitions are included. It follows from the union bound, unique extension value, ordered expansion, and Lemma 3.3 on intersections of projected hyperplanes.
+
+This corrects the earlier shorthand “actual finite family of initial profiles”: c's profile domain is all I⊆[a], and its maximization domain is all initial hyperplanes with that profile. The selected cover enters through N_k in Lemma 3.4, not in c(I). The current hyperplaneSuffixFactor has the correct fixed-coordinate charging pattern but the existing cylinder theorem still uses the actual initial cylinder mass; it has not yet been identified with c(I). Exact Lean integration and the normalization Σ_x P0(x)=1 remain open. See publication/APW4_BBMST_LEMMAS_3_3_3_4_SOURCE_TO_LEAN_INTERFACE_2026-11-10.md for the detailed interface and proof decomposition.
+
+Source: Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), equations (9)–(11), Lemmas 3.3–3.4, DOI 10.2140/ant.2021.15.609.
