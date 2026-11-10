@@ -387,3 +387,10 @@ theorem explicitPrefixTail_lift_factorization
 
 #print axioms explicitPrefixTailQuotient_spec
 #print axioms explicitPrefixTail_lift_factorization
+
+
+/-!
+Verification-mirror-only comment: request a fresh exact-head workflow for
+the canonical PR #107 source snapshot. This comment changes no definitions,
+proof terms, theorem statements, or assumptions.
+-/
