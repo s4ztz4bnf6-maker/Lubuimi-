@@ -511,3 +511,18 @@ Integration rule: these results may supply finite candidate coordinate sets and 
 ## Documentation update chronology
 
 The event-to-BIB reconstruction ledger was added in commit 9a3aec51cd7d4696d6220a548c8f711c45ca9d20. The bridge programme and APW4 CI snapshot were then appended with its exact identities, missing definitions, and current run 42739454140 diagnostic. The subsequent cross-project synchronization is appended here; all earlier CI snapshots remain preserved with their exact commit scopes.
+
+
+## 10. New formal bridge checkpoints — 10 November 2026
+
+### APW4 local q-fibre and preimage interface
+
+PR #85 proves the fixed-index local inequality sum_h M_qr((x,h),(y,g)) <= Gamma_qr(g) from explicit fibre-containment and block-disjointness premises. Its canonical and audit jobs passed with the standard axiom profile; its paranoid job was still running at the latest check. PR #89 adds a generic preimage-map theorem deriving those premises from genuine fibres of projections and blocks of a common label map. The generic theorem remains nonhistorical until the source-specific arithmetic projections, selected sets, and block-label map are identified.
+
+### Syracuse uniform fibre as APW4 data
+
+PR #93 formalizes the finite-depth common dyadic fibre as an actual BBMSTFiniteFibreUpdate.FibreData object: ambient cardinality 2^Bstar, candidate cardinality 2^Bstar - 2^(Bstar-B), tail cardinality 2^(Bstar-B), uniform point weights, and exact mass proportions. The initial audit failed only because the new module was not registered as a Lake root; the corrected head registers it and run 42747404273 is queued. This formalizes the finite fibre model, not the historical APW4 hyperplane/event/BIB map.
+
+### Source-to-BIB boundary
+
+The full 17-page original APW4 proof PDF was inspected. It states the DT assignment, aggregate fibre estimate, HT event demand, BIB places/capacities/incidence notation, weighted Hall condition, and the fixed matrix/fibre identities. It does not expand the underlying element-level domains or predicates for W_x, rho_x, pi_x, w_x, elementary events, BIB places, or the incidence relation. No replacement definitions are promoted to historical. The source reconstruction remains an explicit obligation.
