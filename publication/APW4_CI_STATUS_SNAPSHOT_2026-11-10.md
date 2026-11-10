@@ -546,3 +546,13 @@ A comment-only update on source commit e8b61d2961dadbae2915dd6754807fc1b13daf6d 
 - Lean 4.35.0 integrated paranoid audit 42739947626.
 
 Both are in progress. The declarations incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction require explicit output in these logs, standard transitive axiom profiles and no actual sorryAx before a formal-verification claim is made. Even if successful, they prove only the conditional algebraic checkpoint, not the historical APW4 incidence hypotheses or BIB/Hall map.
+
+
+## Exact-head recheck: 10 November 2026, 02:03 UTC
+
+- PR #69 source head `17eb308d106c770ab559d254bcee2bdfd2ead6c4` was rechecked by integrated-paranoid run `42739454140`. The audit job reached the two explicit covered/uncovered branches in `prefixFibre_updatedWeight_eq_PAt`, where `ring` failed to normalize the rational goals at lines 390 and 392. Error recovery consequently reports `sorryAx` in this theorem and dependent `PAt_nonneg` / downstream mass declarations. The integrated-paranoid job failed. The audit job was still compiling the prefix recursion at the latest check. This is a real localization, not a pass.
+- A narrow candidate commit `5f8077e7e621bc4e6684bda4e561bfafc6dd2a66` changes only the two branch-closing tactics from `ring` to `ring_nf`, exactly following Lean's diagnostic. Exact-head workflow `42740031054` was queued at the time of this note. **No success is claimed for this candidate until both the audit and integrated-paranoid jobs finish, the target declarations have the standard profile, and the full log has no actual `sorryAx`.**
+- The additive [historical completeness audit](APW4_HISTORICAL_COMPLETENESS_AUDIT_2026-11-10.md) states the remaining source-to-Lean obligations explicitly. The APW4 manuscript's mathematical proof status and historical hypotheses are preserved; the missing integrated historical index-map / weighted BIB-Hall construction is not represented as already formalized.
+- The new APW4 README and completeness-audit documentation commits trigger separate documentation/audit workflows `42739964459` and `42739971629`; these do not substitute for PR #69's integrated kernel build.
+
+This entry is append-only and commit-scoped. It does not overwrite earlier runs or downgrade prior declaration-scoped successes.
