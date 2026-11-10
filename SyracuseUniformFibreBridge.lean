@@ -160,6 +160,20 @@ theorem tailProportion_eq_dyadic
   rw [card_tailAtoms, card_allAtoms]
   norm_cast
 
+
+/-- Exact finite mass conservation for the candidate/tail partition.
+This is a uniform measure identity on the finite ambient residue set;
+it is not a probability bound for an infinite Syracuse trajectory. -/
+theorem candidate_tail_mass_sum_eq_one
+    (B Bstar : ℕ) :
+    candidateProportion B Bstar +
+      ((tailAtoms B Bstar).card : ℚ) /
+        ((allAtoms Bstar).card : ℚ) = 1 := by
+  rw [candidateProportion_eq_one_sub_tail, tailProportion_eq_dyadic]
+  ring
+
+#print axioms candidate_tail_mass_sum_eq_one
+
 #print axioms tail_size_le_ambient
 #print axioms card_tailAtoms
 #print axioms toFibreData
