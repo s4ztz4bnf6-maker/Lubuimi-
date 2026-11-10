@@ -374,3 +374,8 @@ The source candidate now also contains the generic weighted ordered-tuple identi
 The current source head is `04f574b3eddc75cb56beb387c4c3a6868dafddca` (file blob `e9531b86229361cad9c070c4baaff5530d7fdce2`). The code now reopens `BBMSTOldShadow` explicitly for the appended tuple declarations; the earlier list/tuple block is in that namespace.
 
 **OFFEN – NICHT VERIFIZIERT:** no Lean compile, exact-head workflow, named axiom output, or transitive no-`sorryAx` evidence has been returned for this head. The complete Lemma 3.4 still requires the source-faithful Lemma 3.3 bound for the merged hyperplane/event, the exact identification of its initial and suffix profiles with the unions in the source formula, and the weighted moment estimate after inserting the tuple-intersection mass bound. This is a genuine geometric/algebraic interface advance, not yet the full historical Lemma 3.4.
+
+
+## Konsolidierter Fortschrittsstand — 10. November 2026, 22:54 CET
+
+Der append-only Status- und Verpflichtungsledger [APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md](APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md) bündelt den mathematischen APW4-Kern, historische Rekonstruktionsfortschritte, offene Event/BIB-/Gewichts-/Kapazitätsverpflichtungen sowie die exakten PR- und CI-Grenzen der aktuellen Reparaturkandidaten. Der mathematische Energieabschluss bleibt erhalten; die vollständige historische Lean-Hauptsatzintegration ist weiterhin nicht nachgewiesen.
