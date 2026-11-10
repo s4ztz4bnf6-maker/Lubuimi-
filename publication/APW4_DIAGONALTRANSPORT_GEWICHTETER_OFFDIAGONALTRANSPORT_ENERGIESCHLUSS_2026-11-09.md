@@ -386,3 +386,7 @@ BBMST Lemma 3.3 states P_k(A)≤c(I)ν(J) when F(A)=I∪J, I⊆[a], J⊆[a+1,k].
 This corrects the earlier shorthand “actual finite family of initial profiles”: c's profile domain is all I⊆[a], and its maximization domain is all initial hyperplanes with that profile. The selected cover enters through N_k in Lemma 3.4, not in c(I). The current hyperplaneSuffixFactor has the correct fixed-coordinate charging pattern but the existing cylinder theorem still uses the actual initial cylinder mass; it has not yet been identified with c(I). Exact Lean integration and the normalization Σ_x P0(x)=1 remain open. See publication/APW4_BBMST_LEMMAS_3_3_3_4_SOURCE_TO_LEAN_INTERFACE_2026-11-10.md for the detailed interface and proof decomposition.
 
 Source: Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), equations (9)–(11), Lemmas 3.3–3.4, DOI 10.2140/ant.2021.15.609.
+
+## Formal verification status addendum — 10 November 2026
+
+The established APW4 mathematical proof record above is unchanged. Its current source-to-Lean reconstruction remains a separate workstream. PR #138 v15 is at exact head `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`; the latest change is comment-only and no exact-head workflow/status result was returned. The local membership transport, historical event-to-BIB map, weight/capacity preservation, and arbitrary-`t` shadow application must not be represented as formally closed on this evidence. This does not downgrade the established mathematical APW4 results.
