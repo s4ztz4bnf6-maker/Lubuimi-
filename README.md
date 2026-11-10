@@ -478,3 +478,10 @@ The exact accessible source checkpoint is Dossier v1.6, §48. It records the wor
 The separate notation I_q(x,h), A_q(x,h), Z_q=I_q-A_q in older dossier §15 is an algebraic candidate decomposition under A_q≤I_q. It is not promoted to a primary-source definition of the historical APW4 matrices. The explicit finite residue projection in PR #89 is a formal specialization of the local q-fibre inequality, not evidence that the unavailable historical U_q or C_h definitions have been reconstructed.
 
 The source-to-BIB event map, actual event set, BIB slot objects, capacities, incidence predicate, and weighted Hall allocation therefore remain open at the source-reconstruction/formal-instantiation layer. This correction preserves the established mathematical DT/HT/energy results; it narrows only the evidence claim about the missing artifact.
+
+
+## CRT modulus and weighted-bridge reconciliation — 10 November 2026
+
+The 1 November working record fixes D_{q,r}=N/(q^{a_q}r^{a_r}) for q≠r and describes W_{q,r} as the residue-class compatibility matrix. It records the block factorization A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T and the local fibre bound sum_h M_{q,r}(h,g) ≤ Gamma_{q,r}(g). Thus the modulus formula is known; exact matrix index types, W entries, vector coordinates and normalization still require reconstruction.
+
+The remaining mathematical interfaces are now tracked as (A) full higher-order support-profile preservation under CRT compression C_t, because pairwise intersection bounds alone do not imply equality of all higher intersections; and (B) the exact weighted APW-to-BIB allocation, with omega_ell, Phi, P_S, k_S, actual slot set and incidence relation defined side by side. The recorded identities for the APW collision sum and BIB reserve remain fixed in their stated scopes. The local q-fibre inequality does not by itself close the weighted Hall bridge.
