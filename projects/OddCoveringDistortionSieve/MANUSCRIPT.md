@@ -103,6 +103,22 @@ Q=\sum_{\substack{d,e\in D\\d<e,\ \gcd(d,e)=1}}\frac1{de}
 \]
 The value Q is the exact sum of pairwise intersection densities for coprime modulus pairs. It is not the total pair-collision energy, and it does not rule out a covering: pairwise information alone does not control all triple and higher intersections.
 
+The exact pairwise-coprime triple contribution is also finite and explicit:
+\[
+T_3^{\mathrm{pc}}=
+\sum_{\substack{d<e<f\in D\\
+\gcd(d,e)=\gcd(d,f)=\gcd(e,f)=1}}
+\frac1{def}
+=\frac{13}{945}.
+\]
+There are exactly three such triples:
+\[
+(3,5,7),\quad(5,7,9),\quad(5,7,27).
+\]
+No pairwise-coprime quadruple exists in D, since every element of D is supported only on the three primes 3,5,7. For pairwise-coprime moduli, generalized CRT makes every choice of residue classes compatible, so these reciprocal products are exact triple-intersection densities. This is only the pairwise-coprime part of the third-order intersection sum; triples with nontrivial gcds remain placement-dependent and are not included in T₃ᵖᶜ.
+
+
+
 ## 6. Private mass and distortion-sieve targets
 
 For a class A_i, its private set is
@@ -137,7 +153,7 @@ Accordingly, this section records a proof lead, not a fully stated theorem. No c
 - The cover lower bound E2 >= sum_i |A_i| - |Ω|.
 - The LCM growth ratio and its odd-factor lower bound.
 - The L=15 private-set example.
-- The L=945 divisor density 65/63 and coprime-pair sum 74/315.
+- The L=945 divisor density 65/63, coprime-pair sum 74/315, and pairwise-coprime triple contribution 13/945 from exactly three triples.
 
 ### Previously derived but requiring source-complete reconstruction
 - The flag-complex compatibility statement with exact two-prime hypotheses.
