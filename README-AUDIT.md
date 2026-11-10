@@ -113,3 +113,8 @@ No prize eligibility or award is guaranteed by this audit.
 ## APW4 v9 exact-head continuation — 10 November 2026
 
 The v8 integrated type mismatch and v9 cast-endpoint candidate are tracked in the root `README.md` and exact-head ledger. This does not change the separate upstream `erdos_selfridge`/`sieve_criterion` audit.
+
+
+## Latest APW4 v9 poll — 10 November 2026
+
+PR #125 workflow 42810241207 has both the audit and integrated-paranoid jobs in progress. This is still a separate APW4 prefix-recursion candidate and does not alter the upstream `erdos_selfridge` audit status.
