@@ -460,3 +460,8 @@ The coordinate-only PR #86 did not close the covered/uncovered goals. PR #84 now
 ### Addendum 1.26 — historical BIB mixed-term frontier
 
 The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four-term expansion, but explicitly does not bound the three terms containing the redundancy Z. The selected depth-one label extraction map and the full F_q/F_r/C_h generator/index definitions remain unresolved in the accessible source record. The canonical projection-fibre completion was explicitly non-historical and must not be used. PR #85's local M/Gamma theorem is conditional and does not close this weighted transport gap.
+
+
+### Addendum 1.27 — canonical projection-fibre helper, not a historical replacement
+
+PR #87 now explicitly labels its Fin N / Fin B residue-fibre construction as a canonical helper, not an instantiation of the historical APW4 F_q, V_q, U_q or C_h. It proves a reusable fibre-in-lift inclusion in that model; a separate source-derived equivalence preserving the original domains and indices is still required before any historical transfer. Exact-head canonical workflow 42746080147 and audit workflow 42746080378 are pending. No PASS is claimed.
