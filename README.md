@@ -69,3 +69,8 @@ PR #125 / v9 head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, workflow [42810241
 ## v9 conditional mismatch and v10 coordinate-substitution candidate — 10 November 2026
 
 The v9 casted endpoint facts are well-typed, but the integrated goal still contains conditional membership tests at the original prefix index, while the case split is on the transported fibre point. The two branches remain unsolved at lines 387 and 402; integrated error recovery includes `sorryAx` in the target and dependent `PAt` recursion. PR #127 / v10 removes the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` by `cases hstage` before the fibre is constructed. This is intended to make the dependent indices definitionally identical, allowing a single point and membership hypothesis to drive both the fibre update and the `PAt` multiplier. The exact-head run was not yet visible at the latest poll. Status: **OFFEN – NICHT VERIFIZIERT**.
+
+
+### Latest v10 CI poll — 10 November 2026
+
+PR #127 / v10 exact head `3afd9de4e05b75af08579f9961f8cc28cada72af`, workflow [42810911393](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42810911393): audit job `129811792964` is in progress; integrated-paranoid job `129811793388` is queued. No conclusion is inferred yet.
