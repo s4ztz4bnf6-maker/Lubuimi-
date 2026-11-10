@@ -628,3 +628,24 @@ A later source artifact was located: Dossier v1.6 §48, together with the 6 Nove
 The recovered 31 October record also gives the raw compatibility indicator `I_q), selected minimal cover `A_q), redundancy `Z_q), and cross-profile indicator `W_{q,r}).
 
 This supersedes the earlier statement that `B_q` and `I_q` were not corroborated. They are now treated as recovered q-fibre working definitions. Remaining source-to-Lean work: recover the full domains/projection definitions of `U_q,F_q(x),C_h`; prove the fibre-containment and block-disjointness properties from those definitions; then formalize the local `sum_h M ≤ Gamma` inequality. That local count is not yet the full weighted Hall condition or APW4 HT.
+
+
+## Historical APW4 event-to-BIB reconstruction ledger — 10 November 2026
+
+A new source-reconstruction ledger was added at publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md. It preserves the fixed algebraic identities
+\[
+A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T},
+\qquad
+\sum_h M_{q,r}(h,g)\leq\Gamma_{q,r}(g),
+\]
+while explicitly requiring the complete index context, matrix entries, residue modulus, and fixed/suppressed indices to be recovered before formal instantiation. The ledger separates recovered q-fibre working definitions from still incomplete source domains and maps. It records the remaining exact obligations for elementary events, the original diagonal map (x,u) ↦ (k,I_{x,u},J_{x,u}), BIB-slot universe/capacities, pointwise event-slot incidence, original-weight preservation, and weighted Hall demand/capacity. No canonical finite-fibre substitute is identified with the historical objects.
+
+The ledger also preserves the residual decomposition I_q W I_r^T into selected-cover and three residual terms, explicitly noting that the residual terms require separate quantitative control; nonnegativity or minimality alone does not supply the required upper bounds.
+
+## Exact APW4 integration diagnostic — workflow 42739454140
+
+The latest PR #69 exact-head workflow 42739454140 completed with both audit and integrated-paranoid jobs failing on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. In BBMSTPrefixMeasureRecursion.lean, the two covered/uncovered branches of prefixFibre_updatedWeight_eq_PAt use simp followed by ring. Under the Lean 4.28 audit, simp already closes both goals and ring causes “No goals to be solved”. Under the Lean 4.35 integrated job, algebraic residual goals remain and ring does not normalize them; the log recommends ring_nf. Error recovery consequently reports sorryAx in PAt_nonneg and PAt_sum_eq_one. These declarations are not verified on this head. The next minimal proof-script experiment is to use goal-sensitive sequencing (simp ... <;> ring_nf) in both branches, then rerun both toolchains and inspect the complete declaration-level axiom output. This is a candidate repair strategy, not yet a source change or a pass.
+
+PR #84's workflow 42743406155 also remains unsuccessful as a complete verification: integrated-paranoid failed and the audit job was cancelled. No exact-head dual-toolchain pass is claimed for that repair branch.
+
+These failures do not alter the earlier successful APW4 module audits or the established mathematical theorem record. The historical event-to-BIB transport remains an independent open source-reconstruction/proof obligation.
