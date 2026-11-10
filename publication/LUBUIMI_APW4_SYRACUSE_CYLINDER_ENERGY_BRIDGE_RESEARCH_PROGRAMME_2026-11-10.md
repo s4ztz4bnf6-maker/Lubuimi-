@@ -274,3 +274,28 @@ The odd-covering research branch now records the exact L=945 divisor-density sum
 The cross-project lesson is that higher-order CRT intersection terms can be enumerated exactly when the moduli are pairwise coprime, while the non-coprime terms still depend on residue compatibility. The L945 third-order term is not the APW4/BIB pair reserve and is not transferred into APW4 without an explicit event-index map and weight identity.
 
 APW4 PR #69 is currently at head `13dce6216dba9499305b528f5f3c15fbc3dca681`. Its prior f843 candidate failed on the filter-membership simp no-progress issue and the mismatch between the two updated-weight membership predicates. The current candidate makes the predicates use the same point and stage coordinate, uses simp_all, and avoids a no-goal tactic. Exact-head verification remains pending.
+
+
+## 19. Exact-head update: Collatz, terminal-residue k=2, Kolaz and APW4 — 10 November 2026
+
+### Unified Syracuse/Collatz/finite-arithmetic audit
+
+The unified root-library workflow 42733657952 passed on PR #9 head `63851fe25f8bbc19c198cf1e8ec9d59a35dd4722`. Its completed `compile-drafts` job compiled the updated Syracuse offset/margin module, the terminal-residue k=2 module, and the L945 finite CRT moment module. The three margin-cap declarations retain the standard transitive profile [propext, Classical.choice, Quot.sound]. The k=2 declarations `initialRow_sum`, `rowOne_sum`, `rowTwo_sum`, `transitionRow_sum`, `twoStepNumerator_eq`, `twoStepMass_eq`, and `twoStepEnergy_eq_five_div_twentyOne` also print only [propext, Classical.choice, Quot.sound]. The actual completed log has no `sorryAx) hit in the checked declaration outputs; grep command text is not a hit. This is the unified root-library audit scope, not a global statement about unrelated legacy declarations elsewhere in the repository.
+
+The exact two-step vector remains
+\[
+m_2=\frac1{63}(8,16,11,4,2,22),\qquad E_2=\frac5{21}.
+\]
+The standalone terminal-residue project PR #38 was aligned to Lean/Mathlib 4.35.0 because its previous Lean 4.34.1 workflow reached the final command and failed only with `lake check --paranoid` being an unknown option on that older toolchain. The corrected standalone exact-head run 42735188229 is in progress on head `26c7b92fd529bf03582995e1bee301b0d07c131c`; the unified root success does not substitute for that standalone run.
+
+### Kolaz extended threshold-return archive
+
+Exact-head reproducibility workflow 42732216205 passed on PR #39 head `821579ea5555a6f5e2e38fa771f8797dc4650106`. All seven Python regression tests passed, including the complete B=511 and B=1023 CSV comparisons and the exact x=731 valuation-word/cylinder/margin certificate. The tables contain 42 and 85 escape sources, maximum excursion lengths 24 and 50, and maximum heights 13,121 and 83,501. This is finite exact computation and regression CI only, not Lean verification or a universal Collatz result.
+
+### APW4 Lean 4.35.0 repair
+
+The latest PR #69 candidate is `1f4225ce0bdf6186fd0700612e2306ed3ff44506`. The preceding exact-head Lean 4.35.0 integrated log isolated the remaining failure to the covered/uncovered branches of `prefixFibre_updatedWeight_eq_PAt): after unfolding the finite-fibre update, a residual membership test against `Finset.univ` remained. The repair now explicitly normalizes `Finset.mem_univ` in both branches and uses `ite_true` in the initial reduction. Exact-head workflow 42734929700 has both Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs in progress. No result is claimed until both finish; the earlier 4.28 audit success on the prior commit remains preserved.
+
+The current documentation PR #79 head is `799eba5a2a478b130ea780de3c53ef17d8f87e1f`, and exact-head audit 42733244916 passed. This new addendum advances the documentation branch and therefore requires a new exact-head documentation audit.
+
+The APW4 theorem record, earlier successful exact-commit results, and historical source reconstruction remain unchanged. Neither the finite Kolaz/cylinder bridge nor the k=2 Markov-energy calculation supplies the still-open historical APW4 event-index map, separate diagonal/off-diagonal transport, or BIB/Hall capacity proof.
