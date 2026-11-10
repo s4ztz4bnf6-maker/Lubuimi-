@@ -633,3 +633,10 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+## 7. Source-reconstruction and formal-interface update — 10 November 2026
+
+The complete 17-page source manuscript was inspected. It states the DT assignment, aggregate fibre estimate, HT event demand, BIB places/capacities/incidence notation, weighted Hall condition, and fixed matrix/fibre identities, but omits element-level definitions for the historical event set, BIB-place set, and incidence relation. The source-to-BIB reconstruction remains open and no substitute definition is accepted as historical.
+
+New formal interface candidates: PR #89 (generic preimage-fibre derivation; corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a, exact-head rechecks pending) and PR #93 (Syracuse common dyadic uniform fibre as APW4 FibreData; corrected head dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued). Existing publication authorship and licensing notices remain unchanged.
