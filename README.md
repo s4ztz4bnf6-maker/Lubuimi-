@@ -228,3 +228,10 @@ The new commit is a proof candidate. No exact-head CI run or Lean PASS has yet b
 ## Exact child-cylinder extension — current PR #107 head
 
 Canonical PR #107 now stands at cad354967759a89c02df1b42369898dec3406445. It adds the exact child-b coordinate modulo 2^b, proves its congruence and uniqueness, and identifies each child as a residue cylinder with exactly 2^(B-b) lifts in the common refinement. The exact-head workflow [42757204609](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757204609) is queued. The prefix divisibility derivation and complete child-plus-tail partition remain open formal steps; no Lean PASS is claimed.
+
+
+## PR #107 namespace and child-residue consolidation — latest source head
+
+PR #107 now stands at exact source head 44d00ad20c352471795358dde2aaf24152281649. The canonical quotient and exact child-coordinate declarations are now kept inside the SyracuseDyadicResidueFibre namespace, alongside the generic tail-cylinder construction. The provenance note was also corrected to describe the actual source extension rather than calling the code commit comment-only. This head includes the unique tail coordinate, quotient/factorization under the explicit divisibility condition, unique exact child-b residues modulo 2^b, and 2^(B-b) child lift counts. The exact prefix-divisibility derivation and complete child-plus-tail partition remain open.
+
+No completed exact-head CI result has yet been returned for 44d00ad20c352471795358dde2aaf24152281649. No Lean PASS is claimed.
