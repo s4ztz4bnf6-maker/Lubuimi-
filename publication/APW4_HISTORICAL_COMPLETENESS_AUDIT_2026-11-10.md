@@ -183,3 +183,18 @@ The first PR #85 canonical/paranoid attempt (head `33aa4f3`, run `42744626707`) 
 ### 2.10 PR #85 canonical verification result
 
 At exact head `d4c61399918c03715197cbe2de6356fd170463d3`, canonical run [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) completed successfully. The named declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` has axiom profile `[propext, Classical.choice, Quot.sound]`; the full canonical log contains no `sorryAx). The separate audit run [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) also succeeded. The Lean 4.35 paranoid job from run 42744980622 remains in progress. Thus the local conditional M/Gamma inequality is canonically kernel-checked; full paranoid verification and derivation of its three structural hypotheses from the original definitions remain open.
+
+
+### 2.12 Exact remaining BIB gap from the 6 November source record
+
+The 6 November note `BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md`, §§5–6, supplies more of the raw historical interface:
+- (U_q) is the set of base residues modulo (B_q) not covered by the old classes;
+- (I_q(x,h)=1) exactly when (b_hequiv xpmod{gcd(m_h,B_q)});
+- (A_q(x,h)in{0,1}) is a selected inclusion-minimal fibre cover with (A_qle I_q);
+- (Z_q=I_q-A_qge0) and (I_q=A_q+Z_q);
+- (D_{q,r}=N/(q^ar^b)) and (W_{q,r}(x,y)=1_{xequiv ypmod{D_{q,r}}});
+- the four-term expansion of (I_qW_{q,r}I_r^{mathsf T}) into the (AA,AZ,ZA,ZZ) terms is exact.
+
+The same note explicitly warns that this expansion is **not a bound**: no quantitative control of the three terms containing (Z) is established, minimality alone has not been shown to imply the required weighted estimate, and the extraction map from selected depth-one labels to divisor labels is unspecified. The claims about depth-one label counts, proper lcm, and (|U|geDelta(B)) remain marked unverified in that note and are not to be used as proof premises.
+
+The earlier 6 November source-status discussion also records that the full generators/index domains for (F_q,F_r,C_h) were not supplied. A proposed completion (F_q(x)=pi_q^{-1}({x})) was explicitly labelled **canonical but non-historical**. It must not be substituted into the historical proof or Lean implementation. The current PR #85 theorem is therefore only a conditional local M/Gamma set-count; it does not resolve the mixed (Z)-term bounds, selected-label extraction, or weighted HT/BIB capacity transport.
