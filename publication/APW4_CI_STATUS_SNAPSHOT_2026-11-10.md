@@ -664,3 +664,10 @@ Integration rule: these results may supply finite candidate coordinate sets and 
 ## Documentation update chronology
 
 The event-to-BIB reconstruction ledger was added in commit 9a3aec51cd7d4696d6220a548c8f711c45ca9d20. The bridge programme and APW4 CI snapshot were then appended with its exact identities, missing definitions, and current run 42739454140 diagnostic. The subsequent cross-project synchronization is appended here; all earlier CI snapshots remain preserved with their exact commit scopes.
+
+
+## Addendum 1.39 — q-fibre M/Gamma Lean helper under exact-head CI
+
+Draft PR #85, head `33aa4f395fd6b8e66bd683da08fe4c98df1e2fc8`, adds the source-derived finite-set definitions Pq, Pr, M_qr and Gamma_qr from Dossier v1.6 §48. The theorem `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` proves the local sum_h M ≤ Gamma inequality from the explicit hypotheses Fq ⊆ Vq, Fr ⊆ Vr, and pairwise disjoint C_h. This is a conditional local count, not the weighted Hall condition or full HT.
+
+Exact-head CI: [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626707) (canonical/paranoid) and [42744626561](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626561) (audit) are in progress. No pass or axiom-profile claim yet. The source-derived instantiation of the hypotheses and the connection to the actual HT event/BIB slot system remain open.
