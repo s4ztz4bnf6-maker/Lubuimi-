@@ -366,12 +366,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   -- Give the recursive PAt unfolding named proof witnesses and
   -- transport the whole prefix fibre, not only one membership proposition.
   have hk' : k + 1 ≤ n := by
@@ -391,14 +385,21 @@ theorem prefixFibre_updatedWeight_eq_PAt
     apply Fin.ext
     rfl
   cases hstage
-  -- Use the exact membership decision in both definitions of the update;
-  -- avoid simp_all, which leaves a negated-branch implication here.
+  -- First eliminate all dependent proof witnesses, then unfold PAt and
+  -- updatedWeight. Otherwise the two syntactically similar fibre tests
+  -- retain different dependent transports and do not reduce together.
+  simp only [F, prefixFibreData, prefixUniformFibre,
+    BBMSTUniformFibreInstantiation.toFibreData,
+    BBMSTUniformFibreInstantiation.uniformWeight,
+    BBMSTUniformFibreInstantiation.coveredProportion,
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
+    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · split_ifs <;> simp_all [Finset.mem_univ] <;> ring_nf
-  · split_ifs <;> simp_all [Finset.mem_univ] <;> ring_nf
+  · simp [hcov, xprev, Finset.mem_univ] <;> ring_nf
+  · simp [hcov, xprev, Finset.mem_univ] <;> ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
