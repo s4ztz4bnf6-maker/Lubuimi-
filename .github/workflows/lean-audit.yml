@@ -45,8 +45,8 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
       - name: Compile finite weighted fibre update
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
-      - name: Compile Syracuse uniform-fibre bridge
-        run: lake env lean -o .lake/build/lib/lean/SyracuseUniformFibreBridge.olean SyracuseUniformFibreBridge.lean
+      - name: Build Syracuse uniform-fibre bridge through Lake
+        run: lake build SyracuseUniformFibreBridge
       - name: Run focused degenerate-witness and Syracuse fibre tests
         run: lake env lean AuditCheck.lean
       - name: Compile uniform-coordinate fibre instantiation
