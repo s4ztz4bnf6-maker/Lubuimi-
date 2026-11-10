@@ -273,7 +273,7 @@ theorem explicitTailCoordinate_unique (B k d : ℕ)
 /-- Finite representative of the explicit normalized tail coordinate. -/
 def explicitTailCoordinateFin (B k d : ℕ) : Fin (2 ^ B) :=
   ⟨(explicitTailCoordinate B k d).val,
-    (explicitTailCoordinate B k d).isLt⟩
+    ZMod.val_lt (explicitTailCoordinate B k d)⟩
 
 /-- The generic residue cylinder from the first part of this file is now
 instantiated by the explicit normalized prefix-tail residue. -/
@@ -482,7 +482,7 @@ theorem explicitChildCoordinate_unique
 /-- Finite representative of the exact child coordinate. -/
 def explicitChildCoordinateFin (b k d : ℕ) : Fin (2 ^ b) :=
   ⟨(explicitChildCoordinate b k d).val,
-    (explicitChildCoordinate b k d).isLt⟩
+    ZMod.val_lt (explicitChildCoordinate b k d)⟩
 
 /-- The exact valuation-b child as a residue cylinder in the common
 finite refinement. -/
