@@ -124,3 +124,13 @@ The reconstruction dossier also records a nontrivial event-index ambiguity: if a
 ### 2.6 Scope of this audit
 
 This is a statement about the contents currently retrievable from the connected Library and the inspected repository branches. It is **not** a claim that the author has not derived, proved, or documented the historical DT/HT/BIB definitions in the complete APW4 research record. The author's established mathematical status, including DT, HT, the global energy upper bound, and the strict lower-bound contradiction, remains preserved as the accepted mathematical starting point. The present task is to recover the exact source artifact containing the element-level definitions and then bind the repository/Lean reconstruction to it without changing the mathematical proof.
+
+
+
+### 2.6 Follow-up: exact-head status after the dependent-prefix repair pass
+
+At the latest repository check on 10 November 2026, the integrated PR #69 head remains `b8d98215ed2d8d401c1e27805a193666e093f067`. Its exact-head audit [42740835775](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740835775) failed in `BBMSTPrefixMeasureRecursion.lean`: the first error was a no-op `dsimp` at line 386, and Lean's error recovery then reported `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and `PAt_nonneg`. This is a concrete source-level failure, not an accepted theorem result.
+
+Draft PR #84 now carries a narrower repair on branch `fix/prefix-stage-proof-transport-v3-2026-11-10`, exact head `f681650c102d011e0bc715c93b5d4a94ffb866ca`. The current source removes the no-op `dsimp`, uses the two direct finite-fibre simplification branches, and proves pointwise nonnegativity by transporting the concrete `updatedWeight` inequality through the exact scalar equality `hlocal`. Exact-head workflow [42743406155](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42743406155) is still in progress. The repair is not accepted until both jobs complete, the entire integrated target compiles, the named declarations print only the standard axioms, and the log contains no actual `sorryAx`.
+
+The earlier PR #83 scalar-transport candidate was closed as superseded, not merged. PR #84 remains draft. No dependent-type workaround, axiom, or replacement definition has been accepted.
