@@ -343,3 +343,16 @@ BBMST Lemma 3.3 states P_k(A)≤c(I)ν(J) when F(A)=I∪J, I⊆[a], J⊆[a+1,k].
 This corrects the earlier shorthand “actual finite family of initial profiles”: c's profile domain is all I⊆[a], and its maximization domain is all initial hyperplanes with that profile. The selected cover enters through N_k in Lemma 3.4, not in c(I). The current hyperplaneSuffixFactor has the correct fixed-coordinate charging pattern but the existing cylinder theorem still uses the actual initial cylinder mass; it has not yet been identified with c(I). Exact Lean integration and the normalization Σ_x P0(x)=1 remain open. See publication/APW4_BBMST_LEMMAS_3_3_3_4_SOURCE_TO_LEAN_INTERFACE_2026-11-10.md for the detailed interface and proof decomposition.
 
 Source: Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), equations (9)–(11), Lemmas 3.3–3.4, DOI 10.2140/ant.2021.15.609.
+
+
+## Arbitrary-t shadow geometry — implementation checkpoint, 10 November 2026
+
+The next source-faithful Lemma 3.4 task is the general ordered-tuple intersection, not a restart of the already established APW4 proof. Repository inspection on the current working branch confirms that `BBMSTOldShadow.lean` contains only the binary operations `OldCompatible`, `mergeOldShadows`, `mergeOldShadows_contains_iff`, `oldShadows_disjoint_of_conflict`, and `fixedCoords_mergeOldShadows`. `BBMSTPrefixIncidenceBridge.lean` contains the pair-level masses and `prefixPairReserve_eq_weightedPairCount`, plus the concrete first/second incidence bridges. These declarations are genuinely pair-level; none is being relabelled as arbitrary (t).
+
+The next Lean module should add the tuple interface in this dependency order: (i) pairwise compatibility on `Fin t`; (ii) a deterministic finite fold of old shadows; (iii) induction proving the fold predicate is the intersection and its fixed-coordinate set is the union; (iv) the conflict branch, reducing a failed pairwise compatibility witness to a disjoint pair and hence empty total intersection; (v) the exact prefix tuple-mass identity/bound; (vi) the ordered `Fin t → N_k` indicator expansion and finite-sum interchange. The (t=0) and (t=1) cases must be explicit, and repetitions must remain present.
+
+**Important proof-engineering constraint:** a binary merge theorem alone does not justify iterating the merge. The induction step must prove that the accumulated merge remains compatible with the next tuple entry, using the original pairwise compatibility hypotheses. The fixed-coordinate union theorem and the point-predicate intersection theorem must be proved for the same fold and same tuple order. No associativity or order-independence is assumed without proof.
+
+The source-facing tuple bound depends on the separately specified historical Lemma 3.3 interface (c(I)\nu(J)), including the all-initial-hyperplanes maximum and the exact suffix interval. The tuple geometry does not bypass those source requirements.
+
+**Verification:** this is a source inspection and proof-obligation record, not a Lean compile. No compiler is available through this repository-editing session. The current candidate head and PR #138 status remain separately controlled by exact-head CI and transitive axiom evidence. No new theorem or CI success is claimed here.
