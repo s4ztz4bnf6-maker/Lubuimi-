@@ -347,3 +347,16 @@ The 4.35.0 integrated job reports:
 Error recovery prints sorryAx in prefixPointCovered_iff, prefixExtensionEquiv, sum_prefix_eq_sum_extensions, prefixFibre_updatedWeight_eq_PAt, PAt_nonneg and downstream PAt inequalities/sums in the 4.35.0 integrated log. These declarations are not verified for the target toolchain on this commit.
 
 **Next repair sequence:** (1) replace the opaque rcases path with an explicit Finset membership normalization (including the exact filter/set representation) before destructuring the existential; (2) prove the prefix-coordinate cast identity with named Fin.ext lemmas rather than relying on broad simp; (3) simplify the uncovered branch explicitly using Finset.mem_univ; (4) rerun both toolchains and require the 4.35.0 integrated-paranoid build and axiom audit to pass on one exact commit. The legacy 4.28 audit remains useful compatibility evidence but cannot substitute for the 4.35.0 result.
+
+
+## Addendum 1.18 — Collatz state-dependent cap now Lean-audited, 10 November 2026
+
+Syracuse PR #9 run 42728049650 completed successfully on exact head `ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc`. The full `compile-drafts` job passed. The three new declarations in `SyracuseOffsetIdentity.lean` all printed the standard transitive profile `[propext, Classical.choice, Quot.sound]):
+
+- `signedOffsetMargin_nonpos_succ_iff_exponent_cap);
+- `signedOffsetMargin_nonpos_of_nondecreasing_orbit);
+- `nondecreasing_orbit_next_exponent_cap).
+
+The complete log has no actual `sorryAx) occurrence; the token appears only in workflow grep/diagnostic command strings. This formally verifies the exact one-step equivalence between nonpositive next margin and the exponent-cap inequality, and the necessary cap for a nondecreasing endpoint under the exact affine-orbit hypotheses. It remains a local, state-dependent necessary condition: no uniform branching bound, exclusion of an infinite path, or global Collatz proof is claimed.
+
+The APW4 side remains split by toolchain on PR #69 head `8e7cd3ca5b3440ee25eb6241f2aa799103b56830`: Lean 4.28.0 upstream audit passed the named source chain with standard profiles and no `sorryAx); Lean 4.35.0 integrated-paranoid failed in the dependent prefix-recursion elaboration. PR #79 documentation commits have advanced since the last exact-head audit; no current-head docs pass is claimed until a run is attached to the latest commit.
