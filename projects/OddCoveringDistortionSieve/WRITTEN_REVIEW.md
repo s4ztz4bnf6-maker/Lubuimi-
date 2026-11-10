@@ -40,3 +40,8 @@ The main unresolved obligation is a quantitative positive lower bound for privat
 **Verdict:** There are exact finite identities, a useful LCM-chain bound, and informative test configurations. A standalone Lean 4.34.1 project now contains a kernel-reduction candidate for the exact L945 density, pair, and triple sums; the same module is mirrored into the unified Syracuse/Collatz audit library. Its current exact-head CI is pending, so no Lean verification is claimed yet. The universal private-mass/distortion estimate is not proved; the odd covering conjecture is not solved.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI tools are assistants only, not authors or independent mathematical verifiers.
+
+
+## Exact-head standalone Lean 4.35.0 audit — 10 November 2026
+
+The standalone L945 finite CRT moment module now passes its exact-head workflow 42736060742 on code commit `f81a08296c88e5ee2877dd88adaf932927ecb7a7`, using Lean 4.35.0 and Mathlib v4.35.0. The seven audited declarations — `coprimePairs_eq_expected`, `coprimeTriples_eq_expected`, `divisorDensity_eq_65_over_63`, `coprimePairs_card_eq_16`, `coprimePairDensity_eq_74_over_315`, `coprimeTriples_card_eq_3`, and `coprimeTripleDensity_eq_13_over_945` — print the standard transitive profile [propext, Classical.choice, Quot.sound]. The complete job passes its `lake check --paranoid` step and has no actual `sorryAx` hit. This verifies the finite CRT arithmetic module only; it does not prove a positive private mass, a universal distortion bound, or the odd-covering conjecture.
