@@ -444,3 +444,10 @@ Its printed transitive profile is [propext, Classical.choice, Quot.sound]; the c
 ## 26. Exact-head reconfirmation of terminal-residue k=2 project
 
 Standalone PR #38 current head 50492a880f5b8a2c4bb96838e16dfed2339dd501 passed exact-head workflow 42737167314. The finite k=2 module remains standard-profile and sorryAx-free under Lean 4.35.0 with the paranoid check. This confirms the project documentation and source snapshot together; the result remains confined to k=2 and does not establish general k or APW4/BIB transport.
+
+
+## 27. PR #67 incidence checkpoint — exact audit restarted
+
+The APW4IncidenceSecondMoment.lean file was not actually included in the earlier successful general audit 42603327843; its log did not compile or print the three new declarations. The dedicated APW4 workflows for that head were cancelled. This module must therefore remain marked as a conditional mathematical/Lean candidate, not as previously verified.
+
+A source comment update on commit e8b61d2961dadbae2915dd6754807fc1b13daf6d has now triggered exact-head canonical Lean 4.28 run 42739947391 and Lean 4.35.0 paranoid run 42739947626. Both are in progress. The required declarations are incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction. A successful audit would verify only this conditional finite-incidence algebra, not the historical APW4 event map or BIB/Hall capacity argument.
