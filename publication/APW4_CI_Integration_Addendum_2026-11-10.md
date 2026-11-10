@@ -348,3 +348,10 @@ This technical failure does not alter the separately recorded APW4 mathematical 
 The full original 17-page APW4 proof PDF was inspected. It records the historical diagonal assignment and aggregate fibre bound, off-diagonal demand d(gamma)=omega_l*omega_l', BIB place/capacity/incidence notation, weighted Hall condition, and equations (7.2)-(7.3). It does not give the element-level source domains/predicates for the event universe, BIB places, or incidence map. This is a confirmed source gap, not a reason to invent a map.
 
 PR #85: local q-fibre aggregate inequality; canonical and audit jobs passed on exact head d4c61399918c03715197cbe2de6356fd170463d3; paranoid pending. PR #89: generic preimage-fibre hypotheses; corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a, recheck pending. PR #93: Syracuse uniform fibre as APW4 FibreData; corrected head dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued. PR #90: covered/uncovered prefix update repair candidate head b2bd581ea79696c1d47b8b02a47a209e8a87fd10, run 42747202778 pending. No new integrated kernel PASS is claimed.
+
+
+## 1.9 Exact residue-projection result — 10 November 2026
+
+PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae now includes the residue-projection specialization. The new local theorem has canonical PASS (42749178635) and audit PASS (42749178673), exact axiom profile [propext, Classical.choice, Quot.sound], and zero sorryAx in the canonical log. The paranoid job remained in progress at the time of this entry.
+
+The map is ZMod N → Fin B, z ↦ z.val % B, with B ∣ N explicit. The selected sets and block-label map are still parameters. This is not the historical event-to-BIB map.
