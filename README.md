@@ -367,3 +367,10 @@ Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/
 ## Historical completeness audit — 10 November 2026
 
 The additive [APW4 historical completeness and formalization audit](publication/APW4_HISTORICAL_COMPLETENESS_AUDIT_2026-11-10.md) answers the source-fidelity question directly. The mathematical APW4 proof record remains established as documented by the author. However, the repository's source reconstruction does not yet independently construct every historical APW4 index map, weighted BIB/Hall allocation, and strict lower-bound premise inside one axiom-clean Lean theorem. This is a formal/source-integration boundary, not a downgrade of the manuscript's mathematical result. Existing proprietary notices are unchanged.
+
+
+## Addendum 1.16 — exact-head status refresh, 10 November 2026
+
+The latest observed PR #69 source head remains `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) were still `in_progress` at the refresh; the integrated-paranoid job was compiling the integrated Lean 4.35.0 BBMST/APW4 modules and full Theorem 1.2 reduction. No result is claimed until both relevant jobs finish and their complete logs, declaration-level axiom reports, and sorryAx scans are inspected.
+
+The latest observed documentation PR #79 head is `be6dfbcdc55b2603cc6901caaa32f8e4ed24a505`. Exact-head workflows [42739759284](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739759284) and [42739763639](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739763639) were also still `in_progress`. These are documentation/integration-candidate checks, not a substitute for the APW4 mathematical proof or a completed kernel audit.
