@@ -169,3 +169,8 @@ PR #125 workflow 42810241207 completed: audit `129809542278` PASS; integrated-pa
 PR #127 / v10 head `3afd9de4e05b75af08579f9961f8cc28cada72af`, workflow [42810911393](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42810911393): audit job `129811792964` PASS; integrated-paranoid job `129811793388` FAIL. The integrated error at lines 393 and 406 says the rewrite could not find the `if x ∈ F.covered` pattern because `x` had type `C.S (prefixIndex ...)`, whereas `F.covered` expects `C.S (stageCoordinate hk)`. The equality elimination was in the wrong direction; error recovery includes `sorryAx`.
 
 PR #129 / v11 head `ffce6065f1489850c1c1aa156e90cf56413cebb0` changes only `cases hstage` to `cases hstage.symm`, eliminating the equality in the direction that rewrites the stage coordinate into the prefix endpoint before constructing `F`. No exact-head workflow was visible at the latest poll. Status: OFFEN – NICHT VERIFIZIERT.
+
+
+## 15. Latest v11 poll — 10 November 2026
+
+PR #129 exact-head workflow 42811577591: audit job `129814055326` and integrated-paranoid job `129814055704` are both in progress. The result remains OFFEN – NICHT VERIFIZIERT.
