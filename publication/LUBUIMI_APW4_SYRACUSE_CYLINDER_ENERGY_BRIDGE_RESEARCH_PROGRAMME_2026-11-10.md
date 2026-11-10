@@ -439,3 +439,8 @@ Syracuse PR #9 exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 pass
 \qquad(B\leq B^*).
 ]
 Its printed transitive profile is [propext, Classical.choice, Quot.sound]; the complete log contains no actual sorryAx and reports Build completed successfully (8,932 jobs). This formally verifies the cardinality conservation law behind the common dyadic refinement. It does not yet formalize the cap maximum, finite prefix tree, interval partition, residue-atom bijection, or historical APW4/BIB map.
+
+
+## 26. Exact-head reconfirmation of terminal-residue k=2 project
+
+Standalone PR #38 current head 50492a880f5b8a2c4bb96838e16dfed2339dd501 passed exact-head workflow 42737167314. The finite k=2 module remains standard-profile and sorryAx-free under Lean 4.35.0 with the paranoid check. This confirms the project documentation and source snapshot together; the result remains confined to k=2 and does not establish general k or APW4/BIB transport.
