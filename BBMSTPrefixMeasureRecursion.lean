@@ -383,12 +383,15 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
   cases hhk
   cases hhp
+  dsimp [k] at *
   by_cases hcov :
-      y (Fin.last k) ∈
+      y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [k, hcov, xprev, Finset.mem_univ]
-  · simp [k, hcov, xprev, Finset.mem_univ]
+  · simp [hcov, xprev, Finset.mem_univ]
+    ring_nf
+  · simp [hcov, xprev, Finset.mem_univ]
+    ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
