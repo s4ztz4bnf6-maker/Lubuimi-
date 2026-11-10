@@ -356,25 +356,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
   classical
   let k := a + j
   have hk : k + 1 ≤ n := by
-    omega
+    simpa only [k, Nat.add_succ] using hj
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
-  have hhk : hk = (show k + 1 ≤ n from by omega) :=
-    Subsingleton.elim _ _
-  have hprevEq : hprev = (show k ≤ n from by omega) :=
-    Subsingleton.elim _ _
-  have hxprev :
-      xprev = restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y := by
-    dsimp [xprev]
-  have hPAt :
-      PAt C (A := A) a ha P0 δ j hprev xprev =
-        PAt C (A := A) a ha P0 δ j
-          (show k ≤ n from by omega)
-          (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
-    rw [hprevEq, hxprev]
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
-    rw [← hPAt]
-    exact hbase
+    simpa [xprev, k] using hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
@@ -387,14 +373,12 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   have hcovered :
-      (y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev) ↔
+      (y (Fin.last k) ∈ prefixCoveredValues C hk xprev) ↔
       (y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
-          (restrictPrefix C (show k + 1 ≤ n from by omega) y)) := by
+        prefixCoveredValues C (by omega)
+          (restrictPrefix C (by omega) y)) := by
     rfl
-  rw [hcovered]
-  split_ifs <;> simp_all <;> ring_nf
-
+  split_ifs <;> simp_all [hcovered] <;> ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
