@@ -322,3 +322,14 @@ The proof first bounds (alpha_k(x)) by the number of compatible new hyperplanes 
 u(J)) bound on each shadow intersection, followed by the ordered tuple summation. The tuple order and multiplicity must be preserved.
 
 Primary source pages: [published article PDF, pp. 614–617](https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s). This source reconciliation is distinct from Lean verification: the definitions and proof architecture are source-checked; the v15 integrated candidate remains unverified on its exact head.
+
+
+
+
+### Additional exact interface condition: Q_k-measurability
+
+The published Lemma 3.3 assumes that (A) is (Q_k)-measurable, equivalently every fixed coordinate of (A) lies in the first (k) coordinates. The current `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` is stated for an arbitrary full `Hyperplane C`; because `prefixCylinder` tests only the first (a+j) coordinates, it bounds the cylinder of the **prefix projection** of (H). To identify that cylinder with the original source event (Asubseteq Q_k), the final source-facing theorem must carry and use
+[
+H.mathrm{FixedInsidePrefix}(a+j).
+]
+This is not needed for the internal induction, but it is needed for the exact historical event identification. The final theorem should state the decomposition (F(H)=Isqcup J), with (Isubseteq[a]), (Jsubseteq[a+1,a+j]), and prove that the Lean fixed-coordinate profile and the paper's (F(H)) agree under the one-based/zero-based index conversion.
