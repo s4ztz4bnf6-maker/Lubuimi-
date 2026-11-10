@@ -99,3 +99,45 @@ The general finite-word cylinder manuscript now contains a stronger arithmetic i
 2^{A+b}+3D\le4\cdot2^A.
 \]
 Thus each fixed prefix state has only finitely many possible non-descending children. A least hypothetical positive odd counterexample would determine an infinite path in this state-dependent finitely branching tree. This gives the APW4 bridge a finite indexed tree candidate with exact cylinder weights, terminal tail atoms and signed-margin labels. It does not yet establish a uniform bound, a global Collatz result, the historical APW4 index map, or BIB/Hall capacity. The diagonal mass, off-diagonal mass and BIB pair reserve remain separate.
+
+
+## 9. Standalone terminal-residue collision-energy theorem — 10 November 2026
+
+A third distinct Syracuse project has now been isolated as Lubuimi's Terminal-Residue Collision Energy (standalone project PR #38 in the Lubuimi repository). At fixed prefix length \(k\), finite exact valuation words \(\alpha\) have source weights
+\[
+w_\alpha=2^{-A(\alpha)},\qquad \sum_\alpha w_\alpha=1,
+\]
+and map to terminal unit places
+\[
+\tau_k(\alpha)=C_k(\alpha)2^{-A(\alpha)}\pmod{3^k}.
+\]
+The aggregated place masses \(m_k(t)\) have second moment
+\[
+E_k=\sum_t m_k(t)^2=D_k+C_k^{\rm coll},
+\qquad D_k=\sum_\alpha w_\alpha^2=3^{-k}.
+\]
+Since the place set has cardinality \(2\cdot3^{k-1}\), Cauchy–Schwarz gives
+\[
+C_k^{\rm coll}\ge\frac{1}{2\cdot3^k}.
+\]
+The manuscript also gives finite truncation error bounds and an explicit rational Markov matrix \(P_k\) with \(m_k=\delta_0P_k^k\). At \(k=2\), the exact distribution is \((8,16,11,4,2,22)/63\) and \(E_2=5/21\).
+
+This supplies an actual Syracuse-side diagonal/off-diagonal second-moment theorem, rather than only a structural analogy. It is a candidate input for APW4 transport, but it is **not** the historical APW4 BIB pair reserve. The original APW4 event indices, historical weights, diagonal map, off-diagonal Hall demand, and BIB capacity must be connected by an explicit index-preserving transport. Until that is proved, \(D_k=3^{-k}\) and \(C_k^{\rm coll}\) remain Syracuse collision-energy quantities and are not identified with APW4's diagonal mass or BIB reserve.
+
+The collision-energy and Markov-matrix manuscript is mathematically derived but not yet Lean-compiled or axiom-audited. The initial all-one cylinder's successful Lean audits do not certify it.
+
+## 10. Combined bridge obligations, kept separate
+
+The current bridge has three independent proved mathematical inputs:
+1. the finite-word cylinder theorem and exact tail partition;
+2. the local tail-margin/finite-branching cap, which bounds every possible non-descending next valuation at a fixed prefix;
+3. the terminal-residue collision-energy identity and finite Markov representation.
+
+The APW4 side retains its established DT, HT, global upper energy estimate, strict lower-bound implication, and original historical definitions. The missing bridge theorem must still provide:
+- an explicit map from finite Syracuse word/pair indices to the original APW4 historical event/place indices;
+- exact preservation or a proved domination of the original weights;
+- separate transport inequalities for diagonal and off-diagonal masses;
+- a capacity/Hall inequality for the historical BIB reserve;
+- an arithmetic consequence strong enough to exclude an infinite non-descending Syracuse path.
+
+No one of these obligations is inferred merely from the collision lower bound. The APW4 mathematical proof record is unchanged; the bridge remains an open, separately stated theorem programme.
