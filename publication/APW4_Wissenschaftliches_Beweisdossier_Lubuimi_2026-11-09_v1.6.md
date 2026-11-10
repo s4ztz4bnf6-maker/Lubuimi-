@@ -1433,3 +1433,13 @@ No verification result is claimed yet. The acceptance gate remains exact-head in
 ## PR #114 exact-head workflow launched — 10 November 2026
 
 The membership-first repair candidate [PR #114](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/114) is at exact head `d09d28935c9e026f4b8297b058c3cd4169231451`. Its triggered workflow [42762133686](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762133686) has both `audit` and `integrated-paranoid` in progress. No compilation or axiom-audit outcome is claimed until those jobs complete and their logs are inspected.
+
+
+## PR #114 residual diagnosis and next candidate — 10 November 2026
+
+The first exact-head integrated run [42762133686](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762133686) failed on source head `d09d28935c9e026f4b8297b058c3cd4169231451`. The two remaining goals are now precisely identified:
+
+- In the positive covered branch, Lean leaves an implication with the negated recursive membership predicate as premise, even though the branch hypothesis establishes membership. The equality beneath that impossible premise is immaterial; the branch should close by explicit contradiction elimination.
+- In the negative branch, the update reduces to an `if endpoint ∈ Finset.univ then ... else 0`; the proof must provide the concrete `Finset.mem_univ` witness and simplify it explicitly.
+
+A second proof-body adjustment is now at exact source head `278c0c6c192e34728bace660199e1c431e96846d`: it removes the unused `hcovF) rewrite, discharges the positive residual by `intro hnot; exact hnot hcov`, and supplies the explicit universal-membership witness in the negative branch. This is a targeted repair candidate, not a verified fix. A fresh exact-head integrated run and audit are still required; the earlier run's audit job was cancelled and cannot certify the newer source head.
