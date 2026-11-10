@@ -2042,3 +2042,14 @@ The seven L945 declarations for divisor density (65/63), 16 coprime pairs and pa
 - PR #93 remains split: audit PASS; integrated-paranoid FAIL from the same prefix-recursion sorryAx; isolated Syracuse paranoid job still running.
 
 No status above changes the APW4 mathematical proof record or converts a source-reconstruction obligation into a proved historical identity.
+
+
+## Addendum 1.17 — dependent universe rewrite follow-up, 10 November 2026
+
+PR #103 head `9db2c26ae444f2cb01332ac1129e72ebe8cb147f`, workflow [42755396032](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755396032), failed in both integrated-paranoid and audit. The first rewrite `if_neg hmem` succeeded; the second rewrite could not find the `if ... ∈ Finset.univ` pattern because Lean did not infer the dependent element type for the implicit universe-membership witness.
+
+PR #106 is the next narrow repair, head `ce44c2e8757318f3ac4108b9c8a291c693741959`. It names the full typed witness
+`y (Fin.last (a + j)) ∈ (Finset.univ : Finset (C.S (stageCoordinate hk)))`
+before applying `if_pos`. Exact-head workflow [42756169971](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756169971) has audit and integrated-paranoid jobs running. No result is claimed yet.
+
+The remaining target is still the same one local conditional identity in `prefixFibre_updatedWeight_eq_PAt`; all earlier prefix extension, restriction, fibre-cardinality, and source-indexed prefix-sum declarations remain separately recorded. The two failed repair attempts are retained as diagnostics; they do not alter the mathematical APW4 results.
