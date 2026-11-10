@@ -320,48 +320,52 @@ namespace ResidueProjectionModel
 /-- Canonical residue label of a point of ZMod N modulo a positive
 working fibre modulus B. -/
 def residueProjection
-    {N B : ℕ} (hB : 0 < B) :
+    {N B : ℕ} (hB : 0 < B) (_hdiv : B ∣ N) :
     ZMod N → Fin B :=
   fun z => ⟨z.val % B, Nat.mod_lt _ hB⟩
 
 @[simp] theorem residueProjection_val
-    {N B : ℕ} (hB : 0 < B) (z : ZMod N) :
-    (residueProjection hB z).val = z.val % B :=
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (z : ZMod N) :
+    (residueProjection hB hdiv z).val = z.val % B :=
   rfl
 
 /-- Working q-fibre: the inverse image of one residue label modulo B. -/
 def residueFibre
-    {N B : ℕ} (hB : 0 < B) (x : Fin B) :
+    {N B : ℕ} [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) :
     Finset (ZMod N) :=
-  PreimageModel.fibre (residueProjection hB) x
+  PreimageModel.fibre (residueProjection hB hdiv) x
 
 /-- Working visible set V_q: the inverse image of the selected residue
 set U_q under the same canonical residue projection. -/
 def residueVisible
-    {N B : ℕ} (hB : 0 < B) (U : Finset (Fin B)) :
+    {N B : ℕ} [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) :
     Finset (ZMod N) :=
-  PreimageModel.visible (residueProjection hB) U
+  PreimageModel.visible (residueProjection hB hdiv) U
 
 /-- The local aggregate q-fibre inequality for the concrete residue
 projections on ZMod N. The selected residue sets U_q,U_r and the block
 label map c are explicit parameters; no source-specific identification
 of C_h is assumed. -/
 theorem sum_M_qr_le_Gamma_qr_of_residue_projections
-    {N Bq Br : ℕ} [NeZero N]
-    (hBq : 0 < Bq) (hBr : 0 < Br)
+    {N Bq Br : ℕ} [NeZero N] [Fintype (ZMod N)]
+    [DecidableEq (ZMod N)]
+    (hBq : 0 < Bq) (hdivq : Bq ∣ N)
+    (hBr : 0 < Br) (hdivr : Br ∣ N)
     {H : Type*} [Fintype H] [DecidableEq H]
     (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
     (c : ZMod N → H)
     (x : Fin Bq) (y : Fin Br) (g : H)
     (hx : x ∈ Uq) (hy : y ∈ Ur) :
     (∑ h : H,
-      M_qr (residueFibre hBq x) (residueFibre hBr y)
+      M_qr (residueFibre hBq hdivq x) (residueFibre hBr hdivr y)
         (PreimageModel.block c) g h)
       ≤
-    Gamma_qr (residueVisible hBq Uq) (residueVisible hBr Ur)
+    Gamma_qr (residueVisible hBq hdivq Uq) (residueVisible hBr hdivr Ur)
       (PreimageModel.block c) g := by
   exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
-    (residueProjection hBq) (residueProjection hBr)
+    (residueProjection hBq hdivq) (residueProjection hBr hdivr)
     Uq Ur c x y g hx hy
 
 #print axioms residueProjection_val
@@ -371,59 +375,3 @@ end ResidueProjectionModel
 
 end APW4HistoricalQFibre
 
-
-namespace APW4HistoricalQFibre
-
-namespace ZModProjectionModel
-
-/-- The genuine reduction homomorphism ZMod N -> ZMod B for B | N. -/
-def residueProjectionHom
-    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) :
-    ZMod N →+* ZMod B :=
-  ZMod.castHom hdiv (ZMod B)
-
-@[simp] theorem residueProjectionHom_val
-    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) (z : ZMod N) :
-    (residueProjectionHom hdiv z).val = z.val % B := by
-  simp [residueProjectionHom, ZMod.castHom_apply, ZMod.cast_eq_val]
-
-/-- The actual residue fibre over x modulo B. -/
-def residueFibre
-    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) (x : ZMod B) :
-    Finset (ZMod N) :=
-  PreimageModel.fibre (residueProjectionHom hdiv) x
-
-/-- The selected residue support V, as the inverse image of U. -/
-def residueVisible
-    {N B : ℕ} [NeZero B] (hdiv : B ∣ N)
-    (U : Finset (ZMod B)) :
-    Finset (ZMod N) :=
-  PreimageModel.visible (residueProjectionHom hdiv) U
-
-/-- The local q-fibre inequality for genuine quotient homomorphisms
-ZMod N -> ZMod Bq and ZMod N -> ZMod Br. The selected sets Uq,Ur and
-the block-label map c remain explicit parameters. -/
-theorem sum_M_qr_le_Gamma_qr_of_ZMod_projections
-    {N Bq Br : ℕ} [NeZero N] [NeZero Bq] [NeZero Br]
-    (hq : Bq ∣ N) (hr : Br ∣ N)
-    {H : Type*} [Fintype H] [DecidableEq H]
-    (Uq : Finset (ZMod Bq)) (Ur : Finset (ZMod Br))
-    (c : ZMod N → H)
-    (x : ZMod Bq) (y : ZMod Br) (g : H)
-    (hx : x ∈ Uq) (hy : y ∈ Ur) :
-    (∑ h : H,
-      M_qr (residueFibre hq x) (residueFibre hr y)
-        (PreimageModel.block c) g h)
-      ≤
-    Gamma_qr (residueVisible hq Uq) (residueVisible hr Ur)
-      (PreimageModel.block c) g := by
-  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
-    (residueProjectionHom hq) (residueProjectionHom hr)
-    Uq Ur c x y g hx hy
-
-#print axioms residueProjectionHom_val
-#print axioms sum_M_qr_le_Gamma_qr_of_ZMod_projections
-
-end ZModProjectionModel
-
-end APW4HistoricalQFibre
