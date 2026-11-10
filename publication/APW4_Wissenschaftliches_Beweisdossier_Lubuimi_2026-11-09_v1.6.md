@@ -1258,3 +1258,10 @@ PR #107 was advanced after its initial commit. Current exact source head: b5a7b8
 - PR #107, source head 33ff0b894391e6845a81fe1a5f472671086021ef: its prior full jobs were cancelled on the earlier source snapshot. The audit-only retry is queued; a full exact-head paranoid run is still required. The explicit residue/factorization statements remain formalization candidates until that run and the axiom audit finish.
 - PR #105 documentation audit succeeded. This verifies its documentation workflow only, not Lean mathematics.
 - Previously published valuation-word cylinder theorem (PR #36) and all previously proved APW4 results remain retained at their established status. No result in this queue changes those proofs.
+
+
+## Latest exact-head reconciliation — 10 November 2026
+
+- PR #101 current head remains 6bad5a25400aeae8e851a38c507141ec0e092a3a. Workflow [42756335441](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756335441): integrated-paranoid is in progress and audit is queued. No PASS yet.
+- PR #107 current head is now 3534d47fcb9857109b71d1397f3976b5de35dcf1. In addition to the explicit unique tail coordinate, it now defines the prefix-tail numerator and its canonical quotient, proves the quotient multiplication identity under the exact divisibility hypothesis, and packages the lift factorization with that canonical quotient. The earlier workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) was cancelled when the branch advanced; no completed verification has been returned for the current head.
+- PR #105 documentation branch current head is cf918706cf242d04e70e2b4edd41750c33bf94ed. Its exact-head workflow [42756718300](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756718300) is queued. Earlier docs-only head bbfe91e33a09a3f1325a5d6e0952c615e6c40c52 passed its audit in run 42756393394; that PASS is scoped to that earlier head.
