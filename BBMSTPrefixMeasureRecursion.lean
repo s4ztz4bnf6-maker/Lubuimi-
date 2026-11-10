@@ -371,10 +371,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
       prefixIndex hj (Fin.last k) := by
     apply Fin.ext
     rfl
-  -- The fibre data is indexed by stageCoordinate hk.  Transport the
-  -- terminal prefix value into that exact dependent coordinate type.
-  let x : C.S (stageCoordinate hk) :=
-    cast (congrArg C.S hstage.symm) (y (Fin.last k))
+  -- Eliminate the dependent-coordinate equality before constructing the
+  -- fibre.  This reduces the cast to identity and keeps the terminal value
+  -- definitionally equal to the prefix's last coordinate.
+  cases hstage
+  let x : C.S (stageCoordinate hk) := y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
     simpa [xprev, k] using hbase
@@ -391,7 +392,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     simp only [if_pos hcovF]
-    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
+    simp [x, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
