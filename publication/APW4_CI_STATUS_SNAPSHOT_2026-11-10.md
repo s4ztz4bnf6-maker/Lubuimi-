@@ -507,3 +507,17 @@ Exact-head workflow 42738923964 is in progress with both Lean 4.28 audit and Lea
 ## Addendum 1.30 — exact standalone k=2 head reconfirmed
 
 The terminal-residue collision-energy PR #38 current head 50492a880f5b8a2c4bb96838e16dfed2339dd501 has its own exact-head workflow 42737167314 completed successfully. This is the current documentation/source snapshot for that standalone finite k=2 project. The seven named finite declarations have the standard transitive profile, no actual sorryAx, and the Lean 4.35.0 paranoid check passed. Scope remains the finite k=2 matrix, two-step mass and energy only; no general k theorem or APW4/BIB transport is inferred.
+
+
+## Addendum 1.31 — exact result for candidate 2843f40 and next case-split attempt
+
+The two exact-head workflows for source commit `2843f40fd5c04fc68014ee8fe59a87d26520b285`, [42738930763](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42738930763) and [42738923964](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42738923964), have now completed with failure. Both fail while compiling `BBMSTPrefixMeasureRecursion.lean`.
+
+The decisive diagnostic is:
+- an extra tactic is executed after the preceding tactic has already closed its goal;
+- rewriting the covered-membership equivalence through `rw` attempts to abstract a dependent Finset membership whose type changes with `stageCoordinate`, producing an ill-typed motive;
+- error recovery reports `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent recursion/mass declarations. These declarations are not accepted as verified.
+
+The next isolated case-split candidate is commit `086ad916f48270d984ebd3e4bcf86fc58cf60f2b` on branch `fix/prefix-fibre-update-case-split-2026-11-10`, with exact-head workflow [42739175075](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739175075). It splits on the concrete source-indexed covered predicate and simplifies the recursive branch without the failed proposition rewrite. At this snapshot its Lean audit and integrated-paranoid jobs are still running. No pass is claimed.
+
+The local Syracuse dyadic cardinality lemma remains a separate successful result: [42738528207](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42738528207), source commit `a1becbc8e837f10abcd952a2e03832cb057fb2b8`. It does not discharge the APW4 dependent prefix-fibre normalization obligation.
