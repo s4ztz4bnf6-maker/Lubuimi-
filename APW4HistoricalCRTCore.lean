@@ -227,17 +227,17 @@ V_q = {z : z mod B_q ∈ U_q}. The modulus and the old-uncovered base set
 remain explicit parameters: this does not manufacture the historical
 definition of U_q or the block family C_h.
 -/
-namespace APW4HistoricalQFibreProjection
+namespace APW4CanonicalQFibreProjection
 
 /-- Reduction of a residue modulo N to its canonical residue modulo B. -/
 def residueProjection {N B : ℕ} (hB : 0 < B) (_hdiv : B ∣ N) (z : Fin N) : Fin B :=
   ⟨z.val % B, Nat.mod_lt _ hB⟩
 
-/-- The exact congruence fibre over a base residue x modulo B. -/
+/-- A canonical finite-model fibre over a base residue x modulo B. -/
 def qFibre {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) : Finset (Fin N) :=
   Finset.univ.filter (fun z => residueProjection hB hdiv z = x)
 
-/-- The lift to residues modulo N of an old-uncovered base set U modulo B. -/
+/-- The canonical lift of a base subset U modulo B to Fin N. -/
 def liftedUncoveredSet {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N)
     (U : Finset (Fin B)) : Finset (Fin N) :=
   Finset.univ.filter (fun z => residueProjection hB hdiv z ∈ U)
@@ -252,9 +252,9 @@ theorem mem_liftedUncoveredSet_iff
     z ∈ liftedUncoveredSet hB hdiv U ↔ residueProjection hB hdiv z ∈ U := by
   simp [liftedUncoveredSet, residueProjection]
 
-/-- A congruence fibre over an old-uncovered base residue lies in the
-lifted old-uncovered set. This derives the containment premise used by
-the local M/Gamma inequality instead of assuming it independently. -/
+/-- In the canonical model, a fibre over x ∈ U lies in the lift of U. This
+is a reusable set-theoretic lemma; it is not a proof that the historical
+APW4 fibre objects have these exact domains. -/
 theorem qFibre_subset_liftedUncoveredSet
     {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B))
     (x : Fin B) (hx : x ∈ U) :
@@ -264,10 +264,10 @@ theorem qFibre_subset_liftedUncoveredSet
   rw [mem_liftedUncoveredSet_iff hB hdiv U z, hz]
   exact hx
 
-/-- Source-shaped q/r congruence fibres instantiate the local M/Gamma
-bound. The only remaining structural premise is pairwise disjointness of
-the historical blocks C_h; U_q and U_r membership now imply fibre
-containment by qFibre_subset_liftedUncoveredSet. -/
+/-- The canonical q/r model fibres instantiate the local M/Gamma bound.
+The result is conditional on a later source equivalence and on pairwise
+disjointness of the actual block family; it does not close the historical
+APW4 fibre or event-to-BIB reconstruction. -/
 theorem sum_M_qr_le_Gamma_of_projected_fibres
     {N Bq Br : ℕ} (hBq : 0 < Bq) (hBqdiv : Bq ∣ N) (hBr : 0 < Br) (hBrdiv : Br ∣ N)
     (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
@@ -290,6 +290,6 @@ theorem sum_M_qr_le_Gamma_of_projected_fibres
 #print axioms qFibre_subset_liftedUncoveredSet
 #print axioms sum_M_qr_le_Gamma_of_projected_fibres
 
-end APW4HistoricalQFibreProjection
+end APW4CanonicalQFibreProjection
 
 end APW4HistoricalQFibre
