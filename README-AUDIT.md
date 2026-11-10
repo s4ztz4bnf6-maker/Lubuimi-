@@ -108,3 +108,8 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## APW4 v9 exact-head continuation — 10 November 2026
+
+The v8 integrated type mismatch and v9 cast-endpoint candidate are tracked in the root `README.md` and exact-head ledger. This does not change the separate upstream `erdos_selfridge`/`sieve_criterion` audit.
