@@ -342,3 +342,8 @@ The next repair must derive the exact equality/transport between `stageCoordinat
 ## APW4 v10 failure / v11 equality-orientation candidate — 10 November 2026
 
 PR #127 / v10 workflow 42810911393: separate audit PASS; integrated-paranoid FAIL at lines 393 and 406 because `cases hstage` substituted the equality in the wrong direction, leaving the fibre point indexed by `prefixIndex` but the fibre data indexed by `stageCoordinate`. Integrated error recovery reports `sorryAx`. PR #129 / v11 changes the elimination to `cases hstage.symm` before constructing the fibre. No v11 verification is claimed.
+
+
+## Latest v11 exact-head CI poll — 10 November 2026
+
+Workflow 42811577591 has both audit and integrated-paranoid jobs in progress for PR #129. No proof or axiom result is yet available.
