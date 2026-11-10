@@ -223,3 +223,8 @@ The new commit is a proof candidate. No exact-head CI run or Lean PASS has yet b
 - Canonical PR #107 advanced to 3534d47fcb9857109b71d1397f3976b5de35dcf1. It now defines the numerator N = 3^(k+1) r₀ + 3 Cₖ + 2^A and the canonical quotient d = N / 2^(A+1), proves the quotient multiplication identity from divisibility, and derives the affine prefix-tail factorization with that canonical d. The divisibility N mod 2^(A+1) = 0 remains an explicit hypothesis; it has not yet been derived from the full valuation-prefix residue theorem. This is a substantive narrowing of the formalization gap, not a completed APW4 bridge.
 - Stale verification mirrors #108 and #109 were closed after their source heads moved. Current verification-only draft mirrors are #110 (exact PR #101 head) and #112 (PR #107 plus one comment-only trigger commit). Their integrated/audit/paranoid jobs are queued. Canonical mathematical branches remain PR #101 and PR #107; do not merge the mirrors.
 - PR #105 documentation audit remains queued at the latest documentation head. No new PASS is claimed for any of these queued runs.
+
+
+## Exact child-cylinder extension — current PR #107 head
+
+Canonical PR #107 now stands at cad354967759a89c02df1b42369898dec3406445. It adds the exact child-b coordinate modulo 2^b, proves its congruence and uniqueness, and identifies each child as a residue cylinder with exactly 2^(B-b) lifts in the common refinement. The exact-head workflow [42757204609](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757204609) is queued. The prefix divisibility derivation and complete child-plus-tail partition remain open formal steps; no Lean PASS is claimed.
