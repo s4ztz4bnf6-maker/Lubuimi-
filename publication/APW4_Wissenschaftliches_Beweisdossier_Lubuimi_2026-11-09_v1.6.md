@@ -1883,3 +1883,10 @@ PR #89 now specializes the generic preimage-fibre theorem to the explicit residu
 Exact source head 157cdcc00353c9d89e5d596720cee08d098684ae; canonical run 42749178635 and audit run 42749178673 passed. The canonical log reports exactly [propext, Classical.choice, Quot.sound] for the new theorem and zero sorryAx occurrences. The paranoid job had not completed at the time of this record.
 
 The proof makes the residue projections concrete, but keeps Uq,Ur and the block-label map c explicit. It is not yet a historical reconstruction of the selected sets or of the source blocks C_h. The original event universe, BIB slots, and event-place incidence remain separate obligations.
+
+
+## 50. Residue-label q-fibre specialization — 10 November 2026
+
+PR #89 now instantiates the local q-fibre count on ZMod N using the canonical-representative residue-label map z |-> z.val % B into Fin B. The q-fibre is the inverse image of one residue label; V_q is the inverse image of an explicitly selected residue set U_q. A common block-label map c is left explicit. The theorem proves the fixed-index sum-over-h inequality. Exact head 157cdcc00353c9d89e5d596720cee08d098684ae; canonical run 42749178635 and audit run 42749178673 passed, with standard profiles and no sorryAx in the canonical log. Paranoid remained pending.
+
+The map is not yet identified with the quotient ring homomorphism: the current theorem does not impose B_q | N or B_r | N. The historical U_q,U_r and C_h block map remain to be recovered. No event/BIB incidence claim follows.
