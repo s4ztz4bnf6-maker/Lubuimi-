@@ -1914,3 +1914,10 @@ PR #92 hat den kanonischen Fin-Modell-Helfer auf dem exakten Quellstand `baf5241
 PR #91 scheiterte in der integrierten Prefix-Stufe, weil der positive Fall fälschlich einen Binder einführen wollte und der negative Fall eine bedingte Gleichung offenließ. PR #94 enthält die nächste explizite Fallnormalisierung mit `if_pos`/`if_neg` und `ring_nf`; die exakten Läufe sind noch nicht abgeschlossen.
 
 Der historische APW4-Beweisstand und die offenen Ereignis-BIB-Verpflichtungen bleiben davon unberührt.
+
+
+## Nachtrag 1.9 — formaler endlicher Inzidenz-Zweitmomentbaustein
+
+Der kanonische PR-#92-Lauf hat zusätzlich die Deklarationen `incidence_bound_from_second_moment`, `offDiagonal_exceeds_reserve` und `apw4_energy_contradiction` aus `APW4IncidenceSecondMoment` mit dem Standard-Axiomprofil und ohne `sorryAx` im vollständigen Log kompiliert. Damit ist der endliche Zweitmoment-Schluss unter seinen expliziten Zeilen- und Schnittmengenannahmen formal geprüft.
+
+Nicht geprüft ist die historische Anwendung dieser Annahmen auf die ausgewählten q-Faser-Einträge: Die Extraktion (A_q(x,h)\mapsto S_x), die Zeilenstärke, die proper-LCM-Schranke und die Identifikation der Inzidenzkapazität mit der historischen HT/BIB-Reserve bleiben offen. Die neue quadratfreie (mu^*(B))-Spezialisierung ist mathematisch hergeleitet, aber noch nicht Lean-formalisiert.
