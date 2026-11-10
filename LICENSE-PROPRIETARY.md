@@ -2,7 +2,7 @@
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
 
-This notice applies to the original source code, Lean formalizations, scripts, project documentation, and other original materials in this repository that are owned by Ta-Yoshua Lubuimi (the “Materials”), except where a file contains a different, explicit license or third-party notice.
+This notice applies to the original mathematical manuscripts, research notes, proof records, publication materials, source code, Lean formalizations, scripts, project documentation, and other original materials in this repository that are owned by Ta-Yoshua Lubuimi (the “Materials”), except where a file contains a different, explicit license or third-party notice.
 
 ## No general license granted
 
