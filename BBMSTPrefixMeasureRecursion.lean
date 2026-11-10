@@ -220,16 +220,11 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  unfold prefixPointCovered prefixCoveredValues
-  simp_all only [Finset.mem_filter, Finset.mem_univ, true_and]
-  have hext :
-      extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
-    extendPrefix_restrictPrefix C hk y
-  constructor
-  · rintro ⟨H, hH, hmem⟩
-    exact ⟨H, hH, by simpa [hext] using hmem⟩
-  · rintro ⟨H, hH, hmem⟩
-    exact ⟨H, hH, by simpa [hext] using hmem⟩
+  have hmem := mem_prefixCoveredValues_iff (C := C) (A := A)
+    (hk := hk) (x := restrictPrefix C hk y)
+    (s := by simpa [stageCoordinate] using y (Fin.last k))
+  simpa [prefixPointCovered, stageCoordinate,
+    extendPrefix_restrictPrefix] using hmem
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms mem_prefixCoveredValues_iff
@@ -391,14 +386,28 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
+  have hstage :
+      stageCoordinate hk = stageCoordinate (show k + 1 ≤ n from by omega) := by
+    rw [hhk]
   have hcovered :
       (y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)) ↔
       (y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) (by omega)
-          (restrictPrefix C (by omega) y)) := by
+        prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
+          (restrictPrefix C (show k + 1 ≤ n from by omega) y)) := by
     rfl
-  split_ifs <;> simp_all [hcovered]
+  by_cases hcov :
+      y (Fin.last (a + j)) ∈
+        prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
+  · have hcov' := hcovered.mp hcov
+    simp [hcov, hcov', hstage, hPAt]
+  · have hcov' :
+        ¬ y (Fin.last (a + j)) ∈
+          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
+            (restrictPrefix C (show k + 1 ≤ n from by omega) y) := by
+      intro h'
+      exact hcov (hcovered.mpr h')
+    simp [hcov, hcov', hstage, hPAt]
   all_goals ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
