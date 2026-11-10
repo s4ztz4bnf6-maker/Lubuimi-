@@ -747,3 +747,7 @@ theorem PAt_le_initial_mul_distortionProduct
 
 
 end BBMSTPrefixMeasure
+
+
+/- Exact-head CI trigger for the v14 dependent-coordinate normalization candidate.
+   This comment changes no declaration, theorem statement, or mathematical content. -/
