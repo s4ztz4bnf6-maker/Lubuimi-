@@ -73,3 +73,8 @@ Do not announce the overall proof as complete until Step 16 has passed on the fi
 Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) completed with failure on `e230c4508b17fccfd006392b92d39b70d7f23ca6`. The five prerequisites succeeded; the target did not. The remaining issue is dependent-index transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)`. The compiler diagnostics and `sorryAx` declarations are recorded in Section 12.5 of `BBMST_ProofObligations.md`.
 
 **No third patch is authorized by this status update.** The next code change must follow from inspection of the exact definitions and a derived equality/transport lemma, and must be limited to the demonstrated failing target.
+
+
+## Append-only APW4 prefix-recursion integration update — 10 November 2026
+
+The current prefix-recursion proof repair has advanced through PRs #115–#121. PR #120 / v6 (head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, run 42807701621) had a successful separate audit but failed the integrated-paranoid build; the exact integrated log reports rewrite failures at lines 392 and 406 and `sorryAx` in the target/dependent recursion declarations. PR #121 / v7 (head `5631a527c289889db3e70bf0fb1644926e11d893`, run 42808470265) adds an explicit dependent cast and was still running at the latest poll. This is a formal integration status, not a mathematical counterexample. The APW4 mathematical results already established at their stated scope remain preserved. The explicit premises A*, B*, and `m_S(x) ≤ 1` remain visible, and the APW diagonal, APW off-diagonal, and BIB reserve ledgers remain distinct. The upstream unrestricted Erdős–Selfridge audit remains a separate theorem-scope issue.
