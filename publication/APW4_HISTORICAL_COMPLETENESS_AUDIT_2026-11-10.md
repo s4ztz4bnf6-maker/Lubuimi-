@@ -67,3 +67,45 @@ The existing proprietary and commercial-use notices remain in force. This audit 
 First finish the source-indexed dependent prefix/fibre recursion on PR #69 without placeholders. Then formalize the historical APW4 index map and weighted BIB/Hall allocation as separate named interfaces. Only after those exact interfaces are constructed should the final energy contradiction be instantiated from historical APW4 data.
 
 **Conclusion:** APW4's mathematical proof record is preserved as established by its author. The repository does not yet demonstrate that every historical definition, transport, weighted capacity statement and strict lower-bound premise is independently reconstructed and wired into one axiom-clean Lean theorem. That is the remaining formal/source-fidelity completion task.
+
+
+## Addendum 2 — Reinspection of the author's historical APW4 source material (10 November 2026)
+
+The 17-page project PDF `Erdös Lean 4 Beweis.pdf` and the retained mathematical reconstruction notes were re-read page-by-page. This addendum records exactly what those artifacts do and do not specify; it does not replace the author's published mathematical status.
+
+### 2.1 Definitions and identities actually present
+
+- The APW4 energy, ordered off-diagonal energy, and exact split `E_APW4 = D_APW4 + C_APW4` are displayed in §§1, pp. 3–4.
+- The historical DT map `(x,u) ↦ (k,I_{x,u},J_{x,u})`, the BBMST target budget, and a fibrewise weight estimate are displayed in §2, pp. 4–6. The PDF names `phi,F,a,nu` as historical objects but does not give their complete domains or definitions there.
+- The HT section specifies an event demand `d(gamma)=omega_ell omega_ell'`, a BIB-place capacity `c_BIB(b)`, an incidence relation `gamma ~ b`, the neighbour set `Gamma_BIB(X)`, the weighted Hall inequality, and the max-flow transport equations (§3, pp. 6–9). It does not give the element-by-element construction of the event set, BIB-place set, incidence relation, or capacity function.
+- The q-profile section records the four-term expansion under `I_q=A_q+Z_q`, the historical identity `A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T`, and the aggregate inequality `sum_h M_{q,r}(h,g) ≤ Gamma_{q,r}(g)` (§7, pp. 13–14).
+- The reconstruction notes retain the profile-demand target `P_S ≤ w_S z_S`, the APW collision identity, and the BIB reserve `sum_ell c_ell(c_ell-1) = sum_{u ≠ v} |S_u ∩ S_v|`. They expressly record that the complete domains of `x,W_x,pi_x,rho_x,w_x,ell,Phi,omega_ell,M_{q,r},Gamma_{q,r}` are not all preserved in the recovered material.
+
+### 2.2 Source-to-Lean boundary
+
+The existing `APW4HistoricalCRTCore.lean` gives an actual finite CRT realization through `congruenceSet`, `supportAt`, `bibReserve`, and `orderedBIBPairs`. It does not define the historical q-profile matrices or the APW-event-to-BIB-place relation.
+
+A new exact-support incidence identity has been added on PR #67:
+`APW4HistoricalCRT.intersectionCount_eq_sum_exactSupportCount`.
+It formalizes the forward relation
+`c_T = sum_{S ⊇ T} z_S`
+for the concrete support layers of the CRT congruence family. This is not yet the inverse Möbius formula, and it does not identify the q-profile quantities `M` or `Gamma`.
+
+Exact source head: `6b69e2c91010db9e7faf5d7f3a91b3a50b88b2a1`.
+The first attempt at `cbb8509` failed because a broad `simp` call looped through the cardinality/filter rewrite. The definition was changed to an explicit finite indicator sum, without changing the mathematical statement. Exact-head canonical and paranoid runs are now in progress: 42742383010, 42742374379, 42742382720, and 42742374338. The focused degenerate-witness audit 42742382711 succeeded. No Lean pass is claimed for the new support-layer theorem until the canonical and paranoid jobs finish and the full log is checked for the standard axiom profile and absence of `sorryAx`.
+
+### 2.3 Explicitly unclosed historical objects
+
+The currently located source artifacts do not yet specify enough data to instantiate the following as source-faithful Lean definitions:
+
+1. The full index types and entry formulas of `W_{q,r}`, `A_q`, `I_q`, and the historical block vectors `a_{q,t}`.
+2. The summands and source/target index sets of `M_{q,r}(h,g)` and `Gamma_{q,r}(g)`.
+3. The elementary APW event set `ell`, its weights `omega_ell`, and the exact components and fibres of `Phi`.
+4. The actual BIB place objects `b`, capacities `c_BIB(b)`, and the historical incidence predicate `gamma ~ b` that make the weighted Hall condition true.
+5. The complete source/target domains, admissibility conditions, multiplicities, and weight-preservation proof for the DT map `(x,u) ↦ (k,I_{x,u},J_{x,u})`.
+
+The candidate notation `B_q=N/q^a` and a proposed `I_q(x,h)` congruence formula are not corroborated by the located 17-page PDF or the reconstruction note as complete historical definitions. They remain candidate notation until tied to the author's original source pages or working definitions. They are not introduced into the historical Lean core.
+
+The expansion `I_q W I_r^T = A_q W A_r^T + A_q W Z_r^T + Z_q W A_r^T + Z_q W Z_r^T` is an exact algebraic identity under compatible dimensions. It supplies no bound on the three residual terms. No BIB/Hall capacity conclusion is inferred from it.
+
+**Next source-fidelity action:** recover or write down the author's original element-level definitions for the five interfaces above, with source/page and index-range citations. Only then instantiate the matrices, event relation, and capacities in Lean. This audit does not weaken or reopen the author's separate mathematical APW4 result; it records the remaining repository reconstruction obligations.
