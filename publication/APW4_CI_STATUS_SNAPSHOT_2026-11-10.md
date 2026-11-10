@@ -96,3 +96,16 @@ Workflow 42724557829 completed successfully on the exact PR #79 head 0593a89badb
 Earlier successful APW4/BBMST checks remain valid for their own exact commits and declaration scopes. The APW4 mathematical proof record, published manuscript status, and established DT/HT/energy results are unchanged. No successful full integrated-paranoid result is claimed.
 
 **Attribution:** APW4 research and authorship: Ta-Yoshua Lubuimi. AI tools are assistants only.
+
+
+## 10. New dependent-prefix repair candidate — head 1b1a377, run 42725559211
+
+PR #69 advanced from the failed head 53baa35961428ed27c42fc117e5a69fa28960067 to candidate head 1b1a377d7e3d0a7f4636ee6f941524a96b5dd442. The commit makes targeted changes in BBMSTPrefixMeasureRecursion.lean:
+
+- removes the broad omega fallback from restrictPrefix_extendPrefix, leaving the definitional simplification/refl proof path;
+- introduces an explicit hcoord equality between stageCoordinate hk and prefixIndex hk (Fin.last k) before unfolding prefixPointCovered_iff;
+- transports the dependent proofs hk and hprev explicitly by Subsingleton.elim in the updated-weight identity;
+- defines and rewrites the equality of the restricted previous prefix and the corresponding explicitly typed restriction;
+- uses those named transports in hcovered, hstage, and the final PAt equality.
+
+Exact-head workflow 42725559211 is running on this candidate. Both audit and integrated-paranoid jobs were in progress at the latest inspection; no success or failure is claimed. This candidate specifically addresses the previous errors at lines 174, 206, 341 and 364, but it is not verified until the full jobs complete and the downstream declarations have clean transitive axiom profiles without sorryAx.
