@@ -113,3 +113,8 @@ No prize eligibility or award is guaranteed by this audit.
 ## APW4 v11 equality-orientation candidate — 10 November 2026
 
 The v10 equality-orientation failure and v11 repair candidate are tracked in the root README and exact-head ledger. This is separate from the upstream `erdos_selfridge` / `sieve_criterion` audit.
+
+
+## APW4 v11 CI poll — 10 November 2026
+
+PR #129 workflow 42811577591 has both audit and integrated-paranoid jobs in progress. This does not alter the separate upstream sieve audit.
