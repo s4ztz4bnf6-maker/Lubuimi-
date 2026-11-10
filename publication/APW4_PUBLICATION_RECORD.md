@@ -633,3 +633,8 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+## Licensing and attribution record (10 November 2026)
+
+The project-wide authorship, third-party exclusions, current absence of repository `LICENSE` files, and proposed licensing architecture are recorded in [LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md](publication/LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md). No public reuse licence is claimed until Ta-Yoshua Lubuimi selects the licence scheme.
