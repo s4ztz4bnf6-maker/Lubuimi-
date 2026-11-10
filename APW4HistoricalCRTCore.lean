@@ -230,38 +230,38 @@ definition of U_q or the block family C_h.
 namespace APW4HistoricalQFibreProjection
 
 /-- Reduction of a residue modulo N to its canonical residue modulo B. -/
-def residueProjection {N B : ℕ} (hB : 0 < B) (z : Fin N) : Fin B :=
+def residueProjection {N B : ℕ} (hB : 0 < B) (_hdiv : B ∣ N) (z : Fin N) : Fin B :=
   ⟨z.val % B, Nat.mod_lt _ hB⟩
 
 /-- The exact congruence fibre over a base residue x modulo B. -/
-def qFibre {N B : ℕ} (hB : 0 < B) (x : Fin B) : Finset (Fin N) :=
-  Finset.univ.filter (fun z => residueProjection hB z = x)
+def qFibre {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) : Finset (Fin N) :=
+  Finset.univ.filter (fun z => residueProjection hB hdiv z = x)
 
 /-- The lift to residues modulo N of an old-uncovered base set U modulo B. -/
-def liftedUncoveredSet {N B : ℕ} (hB : 0 < B)
+def liftedUncoveredSet {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N)
     (U : Finset (Fin B)) : Finset (Fin N) :=
-  Finset.univ.filter (fun z => residueProjection hB z ∈ U)
+  Finset.univ.filter (fun z => residueProjection hB hdiv z ∈ U)
 
 theorem mem_qFibre_iff
-    {N B : ℕ} (hB : 0 < B) (x : Fin B) (z : Fin N) :
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) (z : Fin N) :
     z ∈ qFibre hB x ↔ residueProjection hB z = x := by
-  simp [qFibre]
+  simp [qFibre, residueProjection]
 
 theorem mem_liftedUncoveredSet_iff
-    {N B : ℕ} (hB : 0 < B) (U : Finset (Fin B)) (z : Fin N) :
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) (z : Fin N) :
     z ∈ liftedUncoveredSet hB U ↔ residueProjection hB z ∈ U := by
-  simp [liftedUncoveredSet]
+  simp [liftedUncoveredSet, residueProjection]
 
 /-- A congruence fibre over an old-uncovered base residue lies in the
 lifted old-uncovered set. This derives the containment premise used by
 the local M/Gamma inequality instead of assuming it independently. -/
 theorem qFibre_subset_liftedUncoveredSet
-    {N B : ℕ} (hB : 0 < B) (U : Finset (Fin B))
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B))
     (x : Fin B) (hx : x ∈ U) :
-    qFibre hB x ⊆ liftedUncoveredSet hB U := by
+    qFibre hB hdiv x ⊆ liftedUncoveredSet hB hdiv U := by
   intro z hz
-  rw [mem_qFibre_iff] at hz
-  rw [mem_liftedUncoveredSet_iff, hz]
+  rw [mem_qFibre_iff hB hdiv x z] at hz
+  rw [mem_liftedUncoveredSet_iff hB hdiv U z, hz]
   exact hx
 
 /-- Source-shaped q/r congruence fibres instantiate the local M/Gamma
@@ -269,7 +269,7 @@ bound. The only remaining structural premise is pairwise disjointness of
 the historical blocks C_h; U_q and U_r membership now imply fibre
 containment by qFibre_subset_liftedUncoveredSet. -/
 theorem sum_M_qr_le_Gamma_of_projected_fibres
-    {N Bq Br : ℕ} (hBq : 0 < Bq) (hBr : 0 < Br)
+    {N Bq Br : ℕ} (hBq : 0 < Bq) (hBqdiv : Bq ∣ N) (hBr : 0 < Br) (hBrdiv : Br ∣ N)
     (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
     (x : Fin Bq) (y : Fin Br) (hx : x ∈ Uq) (hy : y ∈ Ur)
     {H : Type*} [Fintype H] [DecidableEq H]
@@ -277,14 +277,14 @@ theorem sum_M_qr_le_Gamma_of_projected_fibres
     (hC : ∀ h₁ h₂, h₁ ≠ h₂ → Disjoint (C h₁) (C h₂)) :
     (∑ h : H,
       APW4HistoricalQFibre.M_qr
-        (qFibre hBq x) (qFibre hBr y) C g h)
+        (qFibre hBq hBqdiv x) (qFibre hBr hBrdiv y) C g h)
       ≤
     APW4HistoricalQFibre.Gamma_qr
-      (liftedUncoveredSet hBq Uq)
-      (liftedUncoveredSet hBr Ur) C g := by
+      (liftedUncoveredSet hBq hBqdiv Uq)
+      (liftedUncoveredSet hBr hBrdiv Ur) C g := by
   apply APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr
-  · exact qFibre_subset_liftedUncoveredSet hBq Uq x hx
-  · exact qFibre_subset_liftedUncoveredSet hBr Ur y hy
+  · exact qFibre_subset_liftedUncoveredSet hBq hBqdiv Uq x hx
+  · exact qFibre_subset_liftedUncoveredSet hBr hBrdiv Ur y hy
   · exact hC
 
 #print axioms qFibre_subset_liftedUncoveredSet
