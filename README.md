@@ -465,3 +465,6 @@ The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four
 ## Licensing and attribution record (10 November 2026)
 
 The project-wide authorship, third-party exclusions, current absence of repository `LICENSE` files, and proposed licensing architecture are recorded in [LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md](publication/LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md). No public reuse licence is claimed until Ta-Yoshua Lubuimi selects the licence scheme.
+
+
+The latest q-fibre quotient-map and finite Syracuse residue-cylinder status is recorded in the 10 November update in the APW4 research ledger and CI snapshot.
