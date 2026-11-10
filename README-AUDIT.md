@@ -71,3 +71,14 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## Copyright, authorship, and licensing
+
+Original APW4 mathematical manuscripts, research notes, Lean formalizations, proof records, and project documentation are attributed to Ta-Yoshua Lubuimi and reserved under the repository's proprietary rights notice. See:
+- [LICENSE-PROPRIETARY.md](LICENSE-PROPRIETARY.md)
+- [LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md)
+- [COPYRIGHT-AND-AUTHORSHIP.md](COPYRIGHT-AND-AUTHORSHIP.md)
+- [CITATION.cff](CITATION.cff)
+
+Lean, Mathlib, upstream publications, and other third-party components retain their own licenses. The notices do not claim copyright over abstract mathematical facts or ideas. AI tools are research assistants only, not authors or independent mathematical verifiers.
