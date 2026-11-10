@@ -188,3 +188,13 @@ The finite-depth Syracuse uniform fibre is now formalized as a concrete `BBMSTFi
 
 This is a genuine formal finite-fibre interface between the Syracuse uniformization and the APW4/BBMST data type. It is not the historical APW4 covered set, event universe, or BIB-place map, and it does not exclude an infinite surviving Collatz path.
 
+
+
+## 8. Concrete residue-projection specialization — 10 November 2026
+
+PR #89 now includes ResidueProjectionModel in APW4HistoricalCRTCore.lean. For positive working moduli Bq,Br dividing N, it defines the explicit residue-label maps z : ZMod N ↦ ⟨z.val % Bq, ...⟩ and the corresponding preimage fibres and selected visible sets. The local theorem APW4HistoricalQFibre.ResidueProjectionModel.sum_M_qr_le_Gamma_qr_of_residue_projections instantiates the generic preimage-fibre theorem with those residue projections. The selected sets Uq,Ur and common block-label map c remain explicit parameters.
+
+Exact PR head: 157cdcc00353c9d89e5d596720cee08d098684ae.
+Canonical workflow 42749178635 passed; audit workflow 42749178673 passed. The canonical log reports the new residue-projection theorem with exactly [propext, Classical.choice, Quot.sound] and zero sorryAx occurrences. The separate paranoid job remains in progress; no paranoid PASS is claimed.
+
+This is a stronger formal specialization than the abstract map interface, but it is still not the historical source instantiation: the actual selected residue sets Uq, the historical block partition C_h, and the complete event-to-BIB map remain unreconstructed. The divisibility conditions are explicit, and no ZMod quotient-cast identity is assumed.
