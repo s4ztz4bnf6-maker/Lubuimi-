@@ -415,7 +415,18 @@ noncomputable instance canonicalBIBSlotsFintype
     [Fintype (ZMod N)] [DecidableEq (ZMod N)] :
     Fintype (canonicalBIBSlots N m a) := by
   classical
-  exact Fintype.ofFinite _
+  letI : ∀ x : ZMod N, Fintype (slotsAt N m a x) := by
+    intro x
+    unfold slotsAt
+    let S := APW4HistoricalCRT.supportAt N m a x
+    letI : Fintype {i : I // i ∈ S} :=
+      Fintype.ofFinset S (by intro i; rfl)
+    letI : ∀ i : {i : I // i ∈ S},
+        Fintype {j : I // j ∈ S.erase i.1} := by
+      intro i
+      exact Fintype.ofFinset (S.erase i.1) (by intro j; rfl)
+    infer_instance
+  exact Fintype.sigma
 
 /-- The cardinality of the canonical slot type is exactly the ordered
 collision count. -/
