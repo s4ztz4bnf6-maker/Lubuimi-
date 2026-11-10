@@ -205,3 +205,12 @@ The PR #107 APW4 source mismatch remains open pending the separate PR #101 verif
 ## Exact-head progression — 10 November 2026
 
 PR #101 exact head 0be00b2161ad8f2676779b90582f30b34083c008, workflow 42759210844: the audit has successfully completed all stages up to and including uniform-stage source moment instantiation, and is now compiling the source-indexed BBMST prefix measure recursion. The integrated-paranoid job has completed integrated package assembly, bubblewrap setup, and Mathlib cache restoration and is compiling all integrated BBMST/APW4 modules, including the full Theorem 1.2 reduction. Both remain IN_PROGRESS. The key uncovered-branch equality is now under direct compilation; no result is inferred before the step and complete run finish.
+
+
+## Exact-head audit/integration discrepancy and follow-up — 10 November 2026
+
+Run 42759210844 has completed: audit SUCCESS; integrated-paranoid FAILURE. The audit's direct Lean compilation of `BBMSTPrefixMeasureRecursion.lean` printed the following named declarations with `[propext, Classical.choice, Quot.sound]`: `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`. In contrast, the integrated-paranoid log for the same reported head has unsolved goals in `prefixFibre_updatedWeight_eq_PAt` at lines 393–394 and failure recovery prints `sorryAx` for this theorem and dependent declarations. Do not collapse these distinct job results into a single pass. The discrepancy must be investigated; integrated-paranoid remains the decisive gate for the integrated theorem.
+
+The exact remaining goals show that the `updatedWeight` side is not reducing its `F.covered` membership in lockstep with the recursive `PAt` covered predicate. The residual expressions include an `if` over the fibre's `Finset.univ` points and the wrong covered/uncovered multiplier branch. Thus the prior `simp [hcov]` was not sufficient to transport the predicate across the fibre record's definition and dependent coordinate witnesses.
+
+Follow-up exact head `31cc94993fdcb481cea919ca762a29c568948a7a` on PR #101 now cases on `y (Fin.last k) ∈ F.covered`, then explicitly transports that membership/nonmembership to `prefixCoveredValues` before simplifying the update and recursive sides. Its exact-head workflow is 42760198290, QUEUED at this snapshot. No pass is claimed for this candidate.
