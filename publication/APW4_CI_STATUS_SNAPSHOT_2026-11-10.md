@@ -568,3 +568,8 @@ Follow-up commit `1725efe46fb2b953ae162eb46ef6ccab454d6e33` adds `k` to both bra
 ## Addendum 1.33 — historical definition completeness boundary
 
 PR #68's source-reconstruction and chronology record is reaffirmed: the original source and supplementary files have been catalogued, but the current Lean/GitHub chain does not yet provide a complete index-preserving identification of historical A_q, A_r, W_{q,r}, a_{q,t} with APW4 prefix/fibre atoms and original weights. Canonical finite-fibre and unweighted CRT results are not the historical weighted Hall transport. The available 17-page PDF copy is missing the strict comparison on page 11 and the complete intermediate arithmetic derivation. This does not downgrade the separately published APW4 mathematical theorem record, but it prevents claiming that every historical definition/bridge step is already reconstructed and formally integrated.
+
+
+## Addendum 1.34 — PR #67 import-order correction and new exact audit
+
+The first dedicated PR #67 workflows on commit e8b61d2961dadbae2915dd6754807fc1b13daf6d failed because a verification comment had been inserted before import Mathlib. Lean correctly rejected the import position. The comment has now been moved below the import on corrected source commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4. New exact-head workflows are queued: canonical Lean 4.28 run 42740305961 and Lean 4.35.0 paranoid run 42740306351. The three conditional incidence declarations remain unverified until these runs complete with standard profiles and no actual sorryAx.
