@@ -277,6 +277,12 @@ theorem weighted_sum_power_expansion
 end BBMSTOldShadow
 
 
+namespace BBMSTOldShadow
+
+open BBMSTGeometry
+
+variable {n : ℕ} {C : CoordinateSystem n}
+
 /-! ## Ordered finite-tuple old-shadow merge
 
 The list layer below preserves order and repetitions. The tuple interface
@@ -497,3 +503,5 @@ theorem tupleOldShadows_disjoint_of_conflict
 #print axioms mergeOldShadowsTuple_contains_iff
 #print axioms fixedCoords_mergeOldShadowsTuple
 #print axioms tupleOldShadows_disjoint_of_conflict
+
+end BBMSTOldShadow
