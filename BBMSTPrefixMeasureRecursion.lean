@@ -366,8 +366,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hhk : hk = hk' := Subsingleton.elim _ _
   have hhp : hprev = hprev' := Subsingleton.elim _ _
   have hhj : hj = hk' := Subsingleton.elim _ _
-  cases hhj
   cases hhk
+  cases hhj.symm
   cases hhp
   let x : C.S (stageCoordinate hk) := y (Fin.last k)
   let xprev := restrictPrefix C hk y
