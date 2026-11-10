@@ -122,3 +122,54 @@ Conversely, APW4 finite weighted-fibre and incidence methods may be applied to S
 This file is a research ledger and contains no new Lean theorem. The established mathematical APW4 results remain recorded as established under their historical hypotheses. The current integrated Lean 4.35 prefix-recursion repair is a separate technical gate; failed runs and their exact commits remain in the chronology and do not retroactively alter earlier successful checks.
 
 **Authorship:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+
+
+## Prefix-cylinder event-mass bridge — 10 November 2026
+
+The source-indexed prefix recursion now contains a stronger intermediate result than the pointwise distortion estimate alone. In `BBMSTPrefixCylinderMass.lean`, the following declarations provide the exact one-coordinate event-mass dichotomy:
+
+1. `containsPrefix_extend_iff` decomposes a next-prefix hyperplane constraint into the old-prefix constraint and the boundary-coordinate constraint.
+2. `prefixCylinderExtensionEquivFree` and `prefixCylinderExtensionEquivFixed` give the actual subtype equivalences for free and fixed boundary coordinates.
+3. `prefixCylinder_free_mass_reindex` and `prefixCylinder_fixed_mass_reindex` reindex the cylinder mass through those equivalences.
+4. `prefixCylinder_free_mass_eq` proves exact mass conservation when the new coordinate is free.
+5. `prefixCylinder_fixed_mass_le` proves the one-coordinate distortion bound when the new coordinate is fixed:
+   [
+   mu_{j+1}(H)le
+   rac{mu_j(H)}{|S_i|(1-delta_i)}.
+   ]
+6. `hyperplaneSuffixFactor` charges precisely the fixed coordinates and assigns factor (1) to free coordinates.
+7. `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` iterates the dichotomy and proves
+   [
+   mu_j(H)le mu_0(H),
+u_H([a,a+j)),
+   ]
+   where the suffix factor is the product of (1/(|S_i|(1-delta_i))) over exactly those suffix coordinates at which (H) has a fixed assignment.
+
+This is the concrete cylinder-level mechanism needed for the suffix part of BBMST Lemma 3.3: free coordinates preserve cylinder mass; fixed coordinates incur exactly one distortion factor. It is not merely the unrestricted total-mass identity.
+
+**Scope boundary:** these are declarations present in the v15 source candidate. They are not yet promoted to integrated Lean-verification results: PR #138's exact head is `6d6bcacedab9c0c98a21156d4e90601b7cb87a5f`, and no exact-head workflow/status was returned. The v15 local-membership repair in `BBMSTPrefixMeasureRecursion.lean` is a dependency of this chain and remains subject to the same exact-head integrated paranoid and transitive axiom audit.
+
+### Exact remaining bridge after the cylinder estimate
+
+The current theorem has the form
+[
+mu_j(H)le mu_0(H),
+u_H(J).
+]
+To obtain the historical Lemma 3.3 form, the remaining source-faithful work is now sharply localized:
+
+- define the actual initial profile (I(H)) from the source's fixed coordinates in the initial block;
+- define the source's finite profile family from the actual initial hyperplane family, not from all formally possible subsets;
+- identify (mu_0(H)) with the historical initial cylinder quantity and prove its bound by the exact (c(I(H)));
+- identify the suffix product above with the paper's (
+u(J(H))), including its exact interval convention and endpoint exclusions;
+- handle the empty initial profile as an explicit case of the historical definition;
+- then instantiate Lemma 3.3 and feed its output into Lemma 3.4's moment recurrence.
+
+No historical definition is inferred merely from the matching shape of the formula. The exact source index sets, coordinate deletion/preprocessing, and profile restrictions remain controlling.
+
+### Manuscript synchronization
+
+The corresponding main-text note is a formalization-status addendum only. It does not change the established APW4 mathematical proof, its hypotheses, or the exact two-term energy identity. It also does not assert that this intermediate BBMST cylinder theorem alone completes the historical APW4 event-to-BIB map or weighted Hall construction.
