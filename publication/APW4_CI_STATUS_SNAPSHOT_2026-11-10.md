@@ -521,3 +521,10 @@ The decisive diagnostic is:
 The next isolated case-split candidate is commit `086ad916f48270d984ebd3e4bcf86fc58cf60f2b` on branch `fix/prefix-fibre-update-case-split-2026-11-10`, with exact-head workflow [42739175075](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739175075). It splits on the concrete source-indexed covered predicate and simplifies the recursive branch without the failed proposition rewrite. At this snapshot its Lean audit and integrated-paranoid jobs are still running. No pass is claimed.
 
 The local Syracuse dyadic cardinality lemma remains a separate successful result: [42738528207](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42738528207), source commit `a1becbc8e837f10abcd952a2e03832cb057fb2b8`. It does not discharge the APW4 dependent prefix-fibre normalization obligation.
+
+
+## Addendum 1.32 — normalized dependent-witness case split queued
+
+The next integrated candidate is exact source commit `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. It eliminates the two proof-witness equalities before case splitting on the concrete covered predicate; this avoids the ill-typed `rw` motive seen on commit `2843f40` and the still-unsolved `simp [h, hcovered]` branch on commit `086ad916`.
+
+Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) are running the Lean audit and integrated Lean 4.35.0 paranoid build. At the latest check both were still in dependency/cache setup. No result is claimed until the compile, axiom audit, and paranoid check finish on this exact commit.
