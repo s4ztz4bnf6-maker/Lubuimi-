@@ -246,3 +246,10 @@ All established APW4 results and all earlier exact-head Lean passes remain valid
 - Run [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140): both jobs failed on a later exact source candidate. The proof had progressed through the covered/uncovered branches, but a subsequent `ring` tactic was reached after `simp` had already closed the goal ("No goals to be solved"); the algebraic remainder in the 4.35 path also required a separately normalized proof. The downstream `PAt_nonneg` and `PAt_sum_eq_one` declarations on that failing source are not certified. The subsequent v14 diagnosis narrowed the remaining failure to the exact local-let membership mismatch documented above.
 
 Do not erase the successful Lean 4.28 audit because the later integrated 4.35 path fails. Preserve both exact outcomes and their distinct verification scopes.
+
+
+### Historical event-to-BIB reconstruction — new 10 November source ledger
+
+The detailed source reconstruction is now recorded in [APW4 Historical Event-to-BIB Reconstruction Ledger](publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). The recovered q-fibre working definitions are \(B_q=N/q^{a_q}\), \(V_q=\{z:z\bmod B_q\in U_q\}\), \(F_q(x)=\{z:z\equiv x\pmod{B_q}\}\), \(P_{q,x,h}=F_q(x)\cap C_h\), with \(M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|\) and \(\Gamma_{q,r}(g)=|C_g\cap V_q\cap V_r|\). The ledger preserves the exact block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\) and local fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\).
+
+It also records \(I_q=A_q+Z_q\) and the full four-term expansion of \(I_qW_{q,r}I_r^{\mathsf T}\), with three Z-residual terms. This is matrix accounting only, not a third term in the APW4 energy identity, which remains exactly \(D_{\rm APW4}+C_{\rm APW4}\). The event universe, full index map, source domains, actual BIB slots, incidence predicate, and weight-preserving Hall proof remain explicit formalization obligations; no arbitrary replacement map or residual estimate is introduced.
