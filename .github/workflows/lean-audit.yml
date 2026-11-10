@@ -47,6 +47,14 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
       - name: Build Syracuse uniform-fibre bridge through Lake
         run: lake build SyracuseUniformFibreBridge
+      - name: Compile exact finite dyadic residue-cylinder model under Lean 4.28
+        run: |
+          set -o pipefail
+          lake env lean -o .lake/build/lib/lean/SyracuseDyadicResidueFibre.olean SyracuseDyadicResidueFibre.lean 2>&1 | tee /tmp/syracuse-dyadic-residue-428.log
+          if grep -q 'sorryAx' /tmp/syracuse-dyadic-residue-428.log; then
+            echo "Forbidden sorryAx found in SyracuseDyadicResidueFibre.lean."
+            exit 1
+          fi
       - name: Run focused degenerate-witness and Syracuse fibre tests
         run: lake env lean AuditCheck.lean
       - name: Compile uniform-coordinate fibre instantiation
