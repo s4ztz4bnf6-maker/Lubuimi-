@@ -429,3 +429,7 @@ Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue i
 \]
 
 This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
+
+### PR #89 q-power modulus positivity correction
+
+The first q-power quotient build (workflow 42754520297, Lean 4.35.0 paranoid job) failed at qFibreModulus_pos: in this Mathlib/Lean version Nat.div_pos takes the divisor bound q^a ≤ N, not the positivity proof 0 < N. The divisibility hypothesis already supplies that bound via Nat.le_of_dvd hN hdiv. The proof was corrected to `Nat.div_pos hle` at exact source commit `bc7479016b2cf21ff44fb7cc83d00f8419b3d44f`. The failed run's printed q-power declarations showed only the standard profiles, but the build failure means they are not accepted as an exact-head PASS. New exact-head workflows 42754828642 and 42754828631 are queued.
