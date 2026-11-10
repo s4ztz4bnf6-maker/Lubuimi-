@@ -31,3 +31,4 @@ import APW4CanonicalMajorization
 import APW4DiagonalAudit
 import APW4HistoricalCRTCore
 import APW4IncidenceSecondMoment
+import SyracuseUniformFibreBridge
