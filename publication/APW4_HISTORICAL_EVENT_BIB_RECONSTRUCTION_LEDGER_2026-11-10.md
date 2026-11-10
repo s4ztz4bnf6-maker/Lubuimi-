@@ -120,3 +120,36 @@ Conversely, APW4 finite weighted-fibre and incidence methods may be applied to S
 This file is a research ledger and contains no new Lean theorem. The established mathematical APW4 results remain recorded as established under their historical hypotheses. The current integrated Lean 4.35 prefix-recursion repair is a separate technical gate; failed runs and their exact commits remain in the chronology and do not retroactively alter earlier successful checks.
 
 **Authorship:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## 9. New local q-fibre formalization checkpoint — 10 November 2026
+
+Draft PR #85 now formalizes the recovered finite-set interface:
+[
+P_{q,x,h}=F_q(x)cap C_h,qquad
+P_{r,y,g}=F_r(y)cap C_g,
+]
+[
+M_{q,r}((x,h),(y,g))=|P_{q,x,h}cap P_{r,y,g}|,qquad
+Gamma_{q,r}(g)=|C_gcap V_qcap V_r|.
+]
+The declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` proves
+[
+sum_h M_{q,r}((x,h),(y,g))leqGamma_{q,r}(g)
+]
+from the explicit premises (F_q(x)subseteq V_q), (F_r(y)subseteq V_r), and pairwise disjointness of the (C_h). Its exact source head is `d4c61399918c03715197cbe2de6356fd170463d3). The canonical job in run 42744980622 passed with the standard axiom profile and no `sorryAx` in the complete log; the paranoid job was still running at the latest recorded check.
+
+This closes the finite counting implication **conditional on** the three structural premises. It does not yet prove those premises from the original (U_q,F_q(x),C_h) definitions. It also does not define the elementary APW4 event universe, the event-to-BIB map, actual BIB slots/capacities, or weighted Hall transport. It is therefore a new local formal checkpoint, not completion of the historical APW4 bridge.
+
+## 10. Source-fidelity and integration boundary
+
+The author's original 17-page APW4 proof PDF explicitly states the weighted Hall condition, event demand (d(gamma)=omega_ellomega_{ell'}), BIB incidence (gammasim b), capacities, and the matrix/fibre identities. The inspected pages still refer to the event and BIB-place objects as historical objects without expanding their element-level domains and predicates. The new q-fibre lemma must not be used to fill that gap by renaming its abstract finite sets.
+
+The next historical source obligations remain:
+1. instantiate the projection/fibre maps defining (F_q(x)) and (F_r(y)), and derive their containment in (V_q,V_r) from (xin U_q,yin U_r);
+2. recover the exact block-index set and prove the required (C_h) disjointness from the original block construction;
+3. reconstruct the elementary event set and the full components, image, multiplicities, and weight preservation of ((x,u)mapsto(k,I_{x,u},J_{x,u}));
+4. define actual BIB places, capacities, and incidence from the historical construction;
+5. prove the weighted Hall inequality for every admissible event family and connect its total capacity to (mathcal R_{mathrm{BIB}}).
+
+No replacement definition is accepted as historical without an explicit source correspondence. The fixed matrix identity (2.1), local q-fibre inequality (2.2), and all earlier mathematical results remain unchanged.
