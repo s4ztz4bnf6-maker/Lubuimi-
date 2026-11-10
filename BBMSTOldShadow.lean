@@ -297,7 +297,7 @@ def mergeOldShadowsList (boundary : Fin n) :
   | H :: Hs => mergeOldShadows boundary H
       (mergeOldShadowsList boundary Hs)
 
-/-- Every assignment selected by the list merge comes from one of its
+ /-- Every assignment selected by the list merge comes from one of its
 constituent old shadows. -/
 theorem mergeOldShadowsList_assignment_witness
     (boundary : Fin n) (Hs : List (Hyperplane C))
@@ -311,14 +311,25 @@ theorem mergeOldShadowsList_assignment_witness
       by_cases hlt : i.val < boundary.val
       · cases hH : H.assignment i with
         | some t =>
-            simp [mergeOldShadowsList, mergeOldShadows, hlt, hH] at h
-            subst s
-            exact ⟨H, by simp, by simp [oldShadow, hlt, hH]⟩
+            have hEq : t = s := by
+              exact Option.some.inj (by
+                simpa only [mergeOldShadowsList, mergeOldShadows,
+                  if_pos hlt, hH] using h)
+            subst t
+            exact ⟨H, by simp, by
+              simp only [oldShadow, if_pos hlt, hH]⟩
         | none =>
-            simp [mergeOldShadowsList, mergeOldShadows, hlt, hH] at h
-            obtain ⟨H', hmem, hassign⟩ := ih h
+            have htail :
+                (mergeOldShadowsList boundary Hs).assignment i = some s := by
+              simpa only [mergeOldShadowsList, mergeOldShadows,
+                if_pos hlt, hH] using h
+            obtain ⟨H', hmem, hassign⟩ := ih htail
             exact ⟨H', by simp [hmem], hassign⟩
-      · simp [mergeOldShadowsList, mergeOldShadows, hlt] at h
+      · have hnone :
+            (mergeOldShadowsList boundary (H :: Hs)).assignment i = none := by
+          simp only [mergeOldShadowsList, mergeOldShadows, if_neg hlt]
+        rw [hnone] at h
+        contradiction
 
 /-- If any constituent old shadow fixes a coordinate, the merged list
 also fixes that coordinate. -/
@@ -330,42 +341,51 @@ theorem mergeOldShadowsList_assignment_ne_none_of_mem
   have hlt : i.val < boundary.val := by
     by_contra hnot
     have hz : (oldShadow boundary H).assignment i = none := by
-      simp [oldShadow, hnot]
+      simp only [oldShadow, if_neg hnot]
     exact hassign hz
+  have hassign' : H.assignment i ≠ none := by
+    simpa only [oldShadow, if_pos hlt] using hassign
   induction Hs generalizing H with
   | nil =>
       simp at hmem
   | cons G Hs ih =>
       rcases List.mem_cons.mp hmem with hEq | htail
       · subst H
-        have hG : G.assignment i ≠ none := by
-          simpa [oldShadow, hlt] using hassign
         cases hGval : G.assignment i with
-        | none => exact (hG hGval).elim
+        | none =>
+            exact (hassign' hGval).elim
         | some s =>
             simp [mergeOldShadowsList, mergeOldShadows, hlt, hGval]
       · have htail' :
             (mergeOldShadowsList boundary Hs).assignment i ≠ none :=
-          ih H htail (by simpa [oldShadow, hlt] using hassign)
+          ih H htail hassign'
         cases hGval : G.assignment i with
         | some s =>
             simp [mergeOldShadowsList, mergeOldShadows, hlt, hGval]
         | none =>
-            simpa [mergeOldShadowsList, mergeOldShadows, hlt, hGval]
-              using htail'
+            simpa only [mergeOldShadowsList, mergeOldShadows,
+              if_pos hlt, hGval] using htail'
 
 /-- The list merge is supported strictly before the boundary. -/
 theorem oldShadow_mergeOldShadowsList
     (boundary : Fin n) (Hs : List (Hyperplane C)) :
     oldShadow boundary (mergeOldShadowsList boundary Hs) =
       mergeOldShadowsList boundary Hs := by
-  ext i
-  by_cases hlt : i.val < boundary.val
-  · simp [oldShadow, hlt]
-  · cases Hs with
-    | nil => simp [mergeOldShadowsList, oldShadow, hlt]
-    | cons H Hs =>
-        simp [mergeOldShadowsList, mergeOldShadows, oldShadow, hlt]
+  cases hmerge : mergeOldShadowsList boundary Hs with
+  | mk f =>
+      change (fun i => if i.val < boundary.val then f i else none) = f
+      funext i
+      by_cases hlt : i.val < boundary.val
+      · simp [hlt]
+      · have hnone :
+            (mergeOldShadowsList boundary Hs).assignment i = none := by
+          simp [mergeOldShadowsList, mergeOldShadows, hlt]
+        have hh :
+            (mergeOldShadowsList boundary Hs).assignment i = f i :=
+          congrArg (fun K : Hyperplane C => K.assignment i) hmerge
+        have hfi : f i = none := by
+          simpa [hnone] using hh.symm
+        simp [hlt, hfi]
 
 /-- The fixed-coordinate set of a list merge is the ordered fold-union of
 the fixed-coordinate sets of its old shadows. -/
@@ -383,7 +403,7 @@ theorem fixedCoords_mergeOldShadowsList
         oldShadow_mergeOldShadowsList, ih]
       rfl
 
-/-- Under pairwise old-coordinate compatibility, membership in the list
+ /-- Under pairwise old-coordinate compatibility, membership in the list
 merge is exactly simultaneous membership in every constituent old shadow. -/
 theorem mergeOldShadowsList_contains_iff
     (boundary : Fin n) (Hs : List (Hyperplane C))
@@ -392,34 +412,34 @@ theorem mergeOldShadowsList_contains_iff
     (mergeOldShadowsList boundary Hs).Contains x ↔
       ∀ H ∈ Hs, (oldShadow boundary H).Contains x := by
   constructor
-  · intro hmerge H hH
-    intro i
+  · intro hmerge H hH i
     by_cases hlt : i.val < boundary.val
     · cases hHassign : H.assignment i with
       | none =>
           simp [Hyperplane.Contains, oldShadow, hlt, hHassign]
       | some s =>
           have hAggNe :
-              (mergeOldShadowsList boundary Hs).assignment i ≠ none :=
-            mergeOldShadowsList_assignment_ne_none_of_mem
-              boundary Hs H hH i (by simp [oldShadow, hlt, hHassign])
+              (mergeOldShadowsList boundary Hs).assignment i ≠ none := by
+            exact mergeOldShadowsList_assignment_ne_none_of_mem
+              boundary Hs H hH i (by
+                simp [oldShadow, hlt, hHassign])
           cases hAgg : (mergeOldShadowsList boundary Hs).assignment i with
-          | none => exact (hAggNe hAgg).elim
+          | none =>
+              exact (hAggNe hAgg).elim
           | some t =>
               obtain ⟨H', hH', hH'assign⟩ :=
                 mergeOldShadowsList_assignment_witness
                   boundary Hs i t hAgg
               have hH'raw : H'.assignment i = some t := by
-                simpa [oldShadow, hlt] using hH'assign
+                simpa only [oldShadow, if_pos hlt] using hH'assign
               have hEq : s = t :=
                 hcompat H hH H' hH' i hlt s t hHassign hH'raw
               have hx : x i = t := by
-                simpa [Hyperplane.Contains, hAgg] using hmerge i
-              simpa [Hyperplane.Contains, oldShadow, hlt,
-                hHassign, hEq] using hx
+                simpa only [Hyperplane.Contains, hAgg] using hmerge i
+              change x i = s
+              exact hx.trans hEq.symm
     · simp [Hyperplane.Contains, oldShadow, hlt]
-  · intro hall
-    intro i
+  · intro hall i
     cases hAgg : (mergeOldShadowsList boundary Hs).assignment i with
     | none =>
         simp [Hyperplane.Contains, hAgg]
@@ -429,15 +449,16 @@ theorem mergeOldShadowsList_contains_iff
         have hlt : i.val < boundary.val := by
           by_contra hnot
           have hz : (oldShadow boundary H).assignment i = none := by
-            simp [oldShadow, hnot]
+            simp only [oldShadow, if_neg hnot]
           rw [hz] at hassign
           contradiction
         have hraw : H.assignment i = some t := by
-          simpa [oldShadow, hlt] using hassign
-        have hpoint := hall H hH i
-        have hx : x i = t := by
-          simpa [Hyperplane.Contains, oldShadow, hlt, hraw] using hpoint
-        simpa [Hyperplane.Contains, hAgg] using hx
+          simpa only [oldShadow, if_pos hlt] using hassign
+        have hpoint : x i = t := by
+          have h := hall H hH i
+          simpa only [Hyperplane.Contains, oldShadow, if_pos hlt, hraw] using h
+        change x i = t
+        exact hpoint
 
 /-- Ordered tuple of old shadows. List.ofFn retains the order and every
 occurrence of the original Fin t-indexed tuple, including repetitions. -/
@@ -453,17 +474,23 @@ theorem mergeOldShadowsTuple_contains_iff
     (x : ProductPoint C) :
     (mergeOldShadowsTuple boundary Hs).Contains x ↔
       ∀ r, (oldShadow boundary (Hs r)).Contains x := by
-  apply mergeOldShadowsList_contains_iff
-  · intro H hH H' hH'
+  change (mergeOldShadowsList boundary (List.ofFn Hs)).Contains x ↔
+    ∀ r, (oldShadow boundary (Hs r)).Contains x
+  have hcompatList :
+      ∀ H ∈ List.ofFn Hs, ∀ H' ∈ List.ofFn Hs,
+        OldCompatible boundary H H' := by
+    intro H hH H' hH'
     obtain ⟨r, rfl⟩ := List.mem_ofFn.mp hH
     obtain ⟨s, rfl⟩ := List.mem_ofFn.mp hH'
     exact hcompat r s
-  · constructor
-    · intro hall r
-      exact hall (Hs r) (List.mem_ofFn.mpr ⟨r, rfl⟩)
-    · intro hall H hH
-      obtain ⟨r, rfl⟩ := List.mem_ofFn.mp hH
-      exact hall r
+  rw [mergeOldShadowsList_contains_iff boundary (List.ofFn Hs)
+    hcompatList x]
+  constructor
+  · intro hall r
+    exact hall (Hs r) (List.mem_ofFn.mpr ⟨r, rfl⟩)
+  · intro hall H hH
+    obtain ⟨r, rfl⟩ := List.mem_ofFn.mp hH
+    exact hall r
 
 /-- The fixed-coordinate union for an ordered tuple, expressed as a fold
 over List.ofFn; this preserves tuple multiplicity in the indexing data. -/
