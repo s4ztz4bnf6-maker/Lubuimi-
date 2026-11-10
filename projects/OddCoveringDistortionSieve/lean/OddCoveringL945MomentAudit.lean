@@ -25,6 +25,10 @@ def coprimePairs : Finset (ℕ × ℕ) :=
   (divisors945.product divisors945).filter
     (fun p => p.1 < p.2 ∧ Nat.Coprime p.1 p.2)
 
+def expectedCoprimePairs : Finset (ℕ × ℕ) :=
+  {(3, 5), (3, 7), (3, 35), (5, 7), (5, 9), (5, 21), (5, 27), (5, 63),
+   (5, 189), (7, 9), (7, 15), (7, 27), (7, 45), (7, 135), (9, 35), (27, 35)}
+
 def coprimePairDensity : ℚ :=
   ∑ p ∈ coprimePairs, (1 : ℚ) / (p.1 * p.2)
 
@@ -36,29 +40,51 @@ def coprimeTriples : Finset ((ℕ × ℕ) × ℕ) :=
       Nat.Coprime t.1.1 t.2 ∧
       Nat.Coprime t.1.2 t.2)
 
+def expectedCoprimeTriples : Finset ((ℕ × ℕ) × ℕ) :=
+  {((3, 5), 7), ((5, 7), 9), ((5, 7), 27)}
+
 def coprimeTripleDensity : ℚ :=
   ∑ t ∈ coprimeTriples, (1 : ℚ) / (t.1.1 * t.1.2 * t.2)
 
+/-- Exact finite enumeration of the pairwise-coprime pairs in D. -/
+theorem coprimePairs_eq_expected :
+    coprimePairs = expectedCoprimePairs := by
+  decide
+
+/-- Exact finite enumeration of the pairwise-coprime triples in D. -/
+theorem coprimeTriples_eq_expected :
+    coprimeTriples = expectedCoprimeTriples := by
+  set_option maxRecDepth 100000 in
+    decide
+
 theorem divisorDensity_eq_65_over_63 :
     divisorDensity = (65 : ℚ) / 63 := by
-  decide
+  norm_num [divisorDensity, divisors945]
 
 theorem coprimePairs_card_eq_16 :
     coprimePairs.card = 16 := by
-  decide
+  rw [coprimePairs_eq_expected]
+  norm_num [expectedCoprimePairs]
 
 theorem coprimePairDensity_eq_74_over_315 :
     coprimePairDensity = (74 : ℚ) / 315 := by
-  decide
+  unfold coprimePairDensity
+  rw [coprimePairs_eq_expected]
+  norm_num [expectedCoprimePairs]
 
 theorem coprimeTriples_card_eq_3 :
     coprimeTriples.card = 3 := by
-  decide
+  rw [coprimeTriples_eq_expected]
+  norm_num [expectedCoprimeTriples]
 
 theorem coprimeTripleDensity_eq_13_over_945 :
     coprimeTripleDensity = (13 : ℚ) / 945 := by
-  decide
+  unfold coprimeTripleDensity
+  rw [coprimeTriples_eq_expected]
+  norm_num [expectedCoprimeTriples]
 
+#print axioms coprimePairs_eq_expected
+#print axioms coprimeTriples_eq_expected
 #print axioms divisorDensity_eq_65_over_63
 #print axioms coprimePairs_card_eq_16
 #print axioms coprimePairDensity_eq_74_over_315
