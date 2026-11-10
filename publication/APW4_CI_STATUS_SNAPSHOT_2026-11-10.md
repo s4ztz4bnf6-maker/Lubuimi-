@@ -188,3 +188,15 @@ A source-level patch was committed on `bridge/syracuse-explicit-tail-residue-202
 **Collatz #48:** exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8` remains on run `42757504798`; `kernel-check-lean-435-paranoid`, `compile-drafts`, and `kernel-check-lean-434` are all QUEUED. No new theorem evidence is claimed.
 
 **New formalization route, not yet proved:** the current minimal-counterexample wrapper assumes `hminimal : ∀ j, n j < n₀ → ∃ k, n (j+k)=1`. To derive it from minimality rather than assume it, formalize the exact accelerated-step relation, prove each `n j` is odd using `a j > 0`, prove the quotient `n (j+1)` is odd and hence `a j` is the exact 2-adic valuation, and establish by deterministic recursion that the tail from `n j` is the same Syracuse orbit. Then the least-odd-counterexample premise yields the suffix return. Until these links are proved, `hminimal` remains an explicit hypothesis and the minimal-counterexample theorem is conditional.
+
+
+## Syracuse #107 — integrated failure and exact follow-up (10 November 2026)
+
+Workflow 42759029006 completed with integrated-paranoid, audit, and dedicated Syracuse-paranoid all failing. The compiler log identifies two distinct source blockers in that PR branch:
+
+1. SyracuseDyadicResidueFibre.lean:290: in the reverse implication of explicitTailAtoms_mem_iff, the proof did not establish that the explicit finite representative is below 2^B. The failed declaration's axiom output contains sorryAx.
+2. BBMSTPrefixMeasureRecursion.lean:386: the APW4 prefix recursion's final-coordinate term is indexed by prefixIndex hj (Fin.last ...), while the fibre expects stageCoordinate hk. Lean rejects the application with a dependent coordinate type mismatch. This is a distinct older proof body on the PR #107 integration branch; do not conflate it with PR #101's newer candidate.
+
+The Syracuse membership issue has a narrow follow-up on PR #107: exact head 5139df8b55279011862084c453105a13926b03cc rewrites the representative equality and closes the modulo bound using (explicitTailCoordinateFin B k d).isLt. Its own workflow 42759653537 was QUEUED at the latest poll. No pass is claimed.
+
+The PR #107 APW4 source mismatch remains open pending the separate PR #101 verification. PR #101 exact head 0be00b2161ad8f2676779b90582f30b34083c008 has workflow 42759210844; audit is restoring dependencies and integrated-paranoid is assembling the Lean package. Both remain in progress. No established APW4 theorem is downgraded by these integration failures.
