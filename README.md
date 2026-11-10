@@ -208,3 +208,10 @@ PR #107's previous attempt remains cancelled at its full Lean jobs; its exact cu
 - Draft PR #108 is a verification-only mirror of PR #101's latest source head 30dac5cf32445326aaad1b717e125c0688bea5a0. It has two queued integrated-paranoid/audit workflow attempts (42757020571 and 42756928257). Canonical mathematical repair remains PR #101; do not merge the mirror.
 - Draft PR #109 is a verification-only mirror of PR #107's latest source head 33ff0b894391e6845a81fe1a5f472671086021ef. Its initial workflow attempt 42756751052 was cancelled; an audit-only retry has been queued. The Syracuse bridge paranoid job still needs a completed exact-head run. Canonical mathematical development remains PR #107; do not merge the mirror.
 - These mirrors exist solely to obtain fresh exact-head CI after the original branch attempts were cancelled or completed on preceding snapshots. They add no theorem claims and do not alter the mathematical status ledger.
+
+
+## APW4 dependent-stage normalization repair — latest source candidate
+
+PR #101 has advanced to head f87657c8f02f41266a43bae1fe44f43267f0c985. The preceding exact-head run 42756335441 failed again at the uncovered branch: even with an explicit universal-membership witness, the dependent Finset membership rewrite did not match the update expression. The new repair changes the proof order instead: it identifies the proof witnesses and eliminates the dependent stage-coordinate equality before constructing and unfolding the FibreData object. The covered/uncovered split is then made only after the fibre's point type is normalized. This targets the source of the type mismatch rather than adding another local rewrite witness.
+
+The new commit is a proof candidate. No exact-head CI run or Lean PASS has yet been returned for f87657c8f02f41266a43bae1fe44f43267f0c985. The previous failed run and its sorryAx propagation remain recorded against their own exact heads.
