@@ -78,3 +78,8 @@ Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4251
 ## Append-only APW4 v7 failure and v8 candidate — 10 November 2026
 
 PR #121 / v7 (head `5631a527c289889db3e70bf0fb1644926e11d893`, run 42808470265) passed the separate audit with the standard profile for `prefixFibre_updatedWeight_eq_PAt`, but failed the integrated-paranoid build at lines 387 and 397. The residual implications compare membership at the original endpoint with the transported endpoint; integrated error recovery contains `sorryAx` in the target and dependent `PAt` declarations. PR #123 / v8 (head `135f76d26c3c2392039e53c135e871f09ce2e256`, run 42809132672) derives explicit endpoint membership/nonmembership facts through the cast; both jobs were queued at the latest poll. No v8 verification is claimed. The already established APW4 mathematical results remain preserved at their recorded scope and premises; no definitions or theorem statements were weakened.
+
+
+## Latest APW4 v8 CI poll — 10 November 2026
+
+PR #123 exact head `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow 42809132672: audit job `129805804074` and integrated-paranoid job `129805804376` are in progress; log artifacts were unavailable at the poll. No v8 verification claim is made. The mathematical result record and explicit premise set remain unchanged.
