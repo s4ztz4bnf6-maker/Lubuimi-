@@ -207,3 +207,10 @@ PR #87 now contains a Lean implementation of the canonical Fin N / Fin B residue
 The 6 November BIB note additionally records the q-profile formulas I_q(x,h), A_q(x,h), Z_q(x,h), D_{q,r}=N/(q^a r^b), and W_{q,r}(x,y)=1_{x≡y mod D_{q,r}}. It still leaves the exact matrix orientation, a_{q,t} vector coordinates, selected-cover construction, and all three Z-containing residual bounds unresolved. The separate finite depth-one second-moment inequality remains conditional on its explicit row-size and pair-intersection hypotheses and is not the weighted APW4 HT theorem.
 
 PR #85's local M/Gamma theorem has a canonical Lean PASS on its exact head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid check remains pending. PR #87's own canonical and audit workflows are pending. No historical event-to-BIB closure or full integrated kernel PASS is claimed.
+
+
+### Addendum 2.11 — current q-profile and conditional BIB parameter record
+
+The 6 November source note now records explicit formulas for I_q, A_q, Z_q, D_{q,r}, and W_{q,r}. A separate new auxiliary divisor envelope μ*(B)=max{τ(d):d|B,d<B} gives μ*(B)=τ(B)/2 for squarefree B and yields the conditional threshold τ(B)^2<2(q−1)^2 in the depth-one second-moment lemma. It is not identified with historical μ(B); the selected-label extraction and proper-LCM hypotheses remain unproved for the original system.
+
+PR #85's local M/Gamma theorem has a canonical PASS on its exact source head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid run remains pending. PR #91 and PR #92 are the current exact-head prefix-repair and canonical-model verification candidates, respectively; both remain in progress. PR #92 is expressly not a historical instantiation. No historical event-to-BIB map or weighted Hall closure is claimed.
