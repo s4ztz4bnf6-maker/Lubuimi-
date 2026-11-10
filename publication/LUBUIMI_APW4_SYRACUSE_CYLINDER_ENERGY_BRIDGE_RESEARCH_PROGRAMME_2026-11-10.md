@@ -429,3 +429,13 @@ The Syracuse branch now contains the new declaration dyadicUniformFibre_partitio
 \qquad(B\leq B^*),
 ]
 which is the arithmetic count behind the common uniform fibre. Exact source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 is under compile/axiom workflow 42738528207. No pass is claimed yet. Even if it passes, it verifies the counting lemma only, not the dependent cap/tree construction, residue-atom bijection, or historical APW4 event/BIB/Hall map.
+
+
+## 25. Dyadic uniform-fibre cardinality — first Lean lemma passed
+
+Syracuse PR #9 exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 passed workflow 42738528207. The new declaration dyadicUniformFibre_partition_card proves
+[
+\sum_{b=1}^{B}2^{B^*-b}+2^{B^*-B}=2^{B^*}
+\qquad(B\leq B^*).
+]
+Its printed transitive profile is [propext, Classical.choice, Quot.sound]; the complete log contains no actual sorryAx and reports Build completed successfully (8,932 jobs). This formally verifies the cardinality conservation law behind the common dyadic refinement. It does not yet formalize the cap maximum, finite prefix tree, interval partition, residue-atom bijection, or historical APW4/BIB map.
