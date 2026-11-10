@@ -427,7 +427,7 @@ theorem PAt_nonneg
         (C := C) (A := A) a ha P0 δ j hj y hbase
       have hUpdateNonneg :
           0 ≤ BBMSTFiniteFibreUpdate.updatedWeight F
-            (δ (stageCoordinate hk)) := by
+            (δ (stageCoordinate hk)) (y (Fin.last k)) := by
         exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
           (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
           (hδhalf (stageCoordinate hk)) hpoint
