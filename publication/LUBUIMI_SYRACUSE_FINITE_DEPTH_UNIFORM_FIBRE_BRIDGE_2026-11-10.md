@@ -208,3 +208,17 @@ The exact dyadic cardinality identity for the common refinement has now passed o
 - Workflow: [42738528207](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42738528207)
 
 The complete finite-depth bridge remains unverified in Lean. In particular, the finite level/cap construction, the canonical residue-atom bijection, and the full prefix-dependent finite-fibre instantiation still require their own declarations and exact-head audits. No APW4 historical event/place map, weight-preservation theorem, DT/HT transport, BIB/Hall capacity bound, or infinite-path exclusion follows from this local cardinality result.
+
+
+## Lean integration update — 10 November 2026, 05:18 CET
+
+PR #93 in the APW4/BBMST repository adds a first formal finite-residue layer:
+
+- Source head: `fbab49639954ae749d30a884a04032ee1d4d0f0e`.
+- New generic residue model: `SyracuseDyadicResidueFibre.lean`.
+- New cardinality-only `FibreData) packaging: `SyracuseUniformFibreBridge.lean`.
+- Exact-head workflow: [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105), still running/queued at this snapshot; no PASS is claimed.
+
+The residue module proves the lift/cylinder membership equivalence modulo (2^B), exact cardinalities, candidate/tail disjointness and union, and the rational candidate-mass identity for arbitrary (r). The separate `FibreData) module proves the corresponding cardinality-only weighted-fibre conservation model. The latter is not the actual residue-cylinder construction.
+
+The next Lean step is exactly the instantiation already specified mathematically in this note: define the normalized prefix-tail residue (r) from (r_alpha), (C_k), and the odd inverse of (3^{k+1}); then prove the child-(b) congruence class is equivalent to the exact next valuation (b). The mathematical finite-word cylinder theorem and its already-derived tail-cylinder consequence are retained as established results. This is a Lean integration task, not a reopening of the mathematics.
