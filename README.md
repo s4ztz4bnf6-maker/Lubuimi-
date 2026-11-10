@@ -356,3 +356,8 @@ The next Lean module should add the tuple interface in this dependency order: (i
 The source-facing tuple bound depends on the separately specified historical Lemma 3.3 interface (c(I)\nu(J)), including the all-initial-hyperplanes maximum and the exact suffix interval. The tuple geometry does not bypass those source requirements.
 
 **Verification:** this is a source inspection and proof-obligation record, not a Lean compile. No compiler is available through this repository-editing session. The current candidate head and PR #138 status remain separately controlled by exact-head CI and transitive axiom evidence. No new theorem or CI success is claimed here.
+
+
+## Exact-head continuity — 10 November 2026, 14:01 UTC
+
+PR [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138) now points to exact head `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The intervening commit adds only a Lean comment requesting an exact-head refresh; it changes no declaration, proof term, hypothesis, or mathematical content. The exact-head workflow and status queries returned no associated run/check. The v15 local-membership repair therefore remains **OFFEN – NICHT VERIFIZIERT**. No previous candidate's CI result is transferred.
