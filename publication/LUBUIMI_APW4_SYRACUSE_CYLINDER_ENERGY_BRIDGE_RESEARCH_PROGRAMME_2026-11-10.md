@@ -419,3 +419,13 @@ Current exact-head checks at the time of this entry:
 - APW4 documentation PR #79 head 96cd9f3712b15ebcc6b1c6fe1ff28760670b55c2: run 42737972794 is in progress; the earlier successful documentation audit remains valid only for its exact prior head.
 
 No result above identifies the Syracuse valuation cylinders with historical APW4 event indices. The required explicit index map, weight transport, separate diagonal/off-diagonal accounting, and BIB/Hall capacity argument remain independent proof obligations.
+
+
+## 24. First Lean counting lemma for the uniform-fibre bridge — pending
+
+The Syracuse branch now contains the new declaration dyadicUniformFibre_partition_card in SyracuseOffsetIdentity.lean. It proves the exact finite cardinality identity
+[
+\sum_{b=1}^{B}2^{B^*-b}+2^{B^*-B}=2^{B^*}
+\qquad(B\leq B^*),
+]
+which is the arithmetic count behind the common uniform fibre. Exact source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 is under compile/axiom workflow 42738528207. No pass is claimed yet. Even if it passes, it verifies the counting lemma only, not the dependent cap/tree construction, residue-atom bijection, or historical APW4 event/BIB/Hall map.
