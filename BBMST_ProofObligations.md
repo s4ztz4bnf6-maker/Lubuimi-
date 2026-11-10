@@ -337,3 +337,8 @@ The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has comple
 The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
 
 The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
+
+
+## APW4 v8 failure / v9 candidate — 10 November 2026
+
+PR #123 / v8 head `135f76d26c3c2392039e53c135e871f09ce2e256`, run 42809132672: separate audit PASS, integrated-paranoid FAIL with type mismatches at lines 393 and 407 because endpoint membership was stated without the dependent cast; integrated error recovery includes `sorryAx`. PR #125 / v9 head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, run 42810241207, uses `(hstage.symm ▸ y (Fin.last k))` directly in both endpoint membership facts; jobs were queued at the latest poll. No v9 verification is claimed.
