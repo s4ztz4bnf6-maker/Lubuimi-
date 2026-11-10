@@ -465,3 +465,8 @@ The open bridge obligations remain: exact historical index map, preservation of 
 ## 29. PR #67 incidence-module import-order repair
 
 The first dedicated exact-head runs on e8b61d2961dadbae2915dd6754807fc1b13daf6d failed because a verification comment preceded import Mathlib. The comment was moved below the import in corrected commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4. New canonical Lean 4.28 run 42740305961 and Lean 4.35.0 paranoid run 42740306351 are queued. The three conditional incidence declarations remain unverified pending these exact-head runs.
+
+
+## 30. Initial-cylinder manuscript source-format correction
+
+The final manuscript file in Syracuse PR #35 is now at exact commit ddf366d7654a275958157daab9d3d489ad3e6fd0. The LaTeX source was regenerated with raw-string preservation; a read-back check confirms that TeX commands such as frac, tag and boxed remain intact and that no non-whitespace control characters occur. This is an editorial source-format correction only. The Lean theorem source is unchanged, and the seven exact-commit audits retain their original theorem/declaration scope.
