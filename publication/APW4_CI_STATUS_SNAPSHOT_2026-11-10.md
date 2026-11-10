@@ -709,3 +709,54 @@ PR #86's coordinate-only candidate (head `4e4b378887cc76382d9cd2e17807f96a2c277e
 The 6 November BIB note §§5–6 explicitly gives the raw compatibility indicator (I_q(x,h)=1iff b_hequiv xpmod{gcd(m_h,B_q)}), the selected cover (A_qle I_q), redundancy (Z_q=I_q-A_q), the cross-profile indicator (W_{q,r}), and the exact four-term expansion (I_qW_{q,r}I_r^{mathsf T}=AA+AZ+ZA+ZZ). It explicitly states that the three Z-containing terms have no quantitative bound yet, minimality alone does not yield the required weighted estimate, and the depth-one extraction map to divisor labels is unspecified. The claims (|U|geDelta(B)), depth-one label counts and proper-lcm consequences remain unverified and are not used.
 
 The generator/index domains of F_q,F_r,C_h remain unavailable in the recovered source record. The earlier projection-fibre completion F_q(x)=pi_q^{-1}({x}) was explicitly marked canonical but non-historical and is prohibited as a substitute. PR #85's M/Gamma theorem is only a conditional local count; it does not close the mixed-Z or weighted HT/BIB transport problem.
+
+
+## Late 10 November 2026 — q-fibre quotient specialization and exact CI chronology
+
+### Historical source boundary
+
+The complete 17-page APW4 source PDF was checked page by page. It records the DT assignment, the aggregate M/Gamma inequality, the HT demand, BIB places/capacities, incidence notation, and the weighted Hall condition. It does **not** supply elementwise definitions of the historical elementary-event universe, the BIB-place set, or the incidence relation. Therefore the historical event-to-BIB map remains open; no canonical substitute is accepted as historical.
+
+The two fixed statements remain:
+\[
+A_qW_{q,r}A_r^{\mathsf T}
+=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T},
+\qquad
+\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g).
+\]
+The first matrix identity still needs the full source-defined index and entry reconstruction. The second has the following declaration-scoped formal status.
+
+### PR #85 — local finite-set M/Gamma inequality
+
+- Exact head: d4c61399918c03715197cbe2de6356fd170463d3.
+- Canonical workflow: 42744980622; canonical job succeeded.
+- Degenerate-witness/upstream audit: 42744980640; audit job succeeded.
+- The declaration APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr has profile [propext, Classical.choice, Quot.sound].
+- The full canonical job log contains zero sorryAx occurrences for this run.
+- The separate Lean 4.35 paranoid job was still running at the last status check; no paranoid PASS is claimed.
+
+Its exact hypotheses are Fq ⊆ Vq, Fr ⊆ Vr, and pairwise disjointness of the blocks C_h. This is a local counting theorem, not the historical weighted Hall condition.
+
+### PR #89 — deriving the fibre hypotheses from arithmetic quotient maps
+
+- Parent exact head 97263bace7959337f0e923c3b602b37c34bbfb14: canonical job 42753107890 succeeded; audit job 42753107930 succeeded; canonical log has zero sorryAx occurrences.
+- The declaration APW4HistoricalQFibre.ZModQuotientProjectionModel.sum_M_qr_le_Gamma_qr_of_quotient_homs has profile [propext, Classical.choice, Quot.sound].
+- The separate Lean 4.35 paranoid job 129621200380 was still running at the last status check.
+- The subsequent source-only clarification commit is 16fd73829093e185855e48e24ad62a3d1acb2721; it labels the Fin-valued map as a coordinate model and keeps the actual ZMod quotient homomorphism separate.
+- A further q-power specialization was added at commit 0a41d35377dffb85f234ca7f0b33e57ac4348bcd. It defines B_q=N/q^a, proves B_q | N when q^a | N, and instantiates ZMod N → ZMod B_q. This newest q-power declaration is pending its own CI run.
+
+The selected supports Uq,Ur and the block-label map c remain explicit. They have not been identified with the missing historical APW4 source objects.
+
+### Canonical collision-slot candidate — isolated, not accepted
+
+A dependent-sigma candidate for canonical ordered collision slots failed to obtain a Fintype instance and its cardinality theorem left an unsolved subtype-cardinality goal. The declarations carried sorryAx and have been removed from APW4HistoricalCRTCore.lean. The candidate is archived separately in APW4_CANONICAL_COLLISION_SLOT_MODEL_CANDIDATE_2026-11-10.md. It is a possible new canonical construction, not the historical BIB-place set and not part of the proof chain.
+
+### Syracuse finite-fibre interface
+
+The former initial-interval construction is explicitly reclassified as a cardinality-only model; it does not construct an actual dyadic residue cylinder. A separate module SyracuseDyadicResidueFibre.lean now defines the tail as the lift of a specified residue class modulo 2^B into the common ambient modulus 2^Bstar, and the candidate region as its complement. It includes a membership/congruence characterization and the intended cardinality and mass identities, subject to B ≤ Bstar.
+
+At the previous exact head 7fc256607a5b94f5c2b36d147585caeee8d1ef74, the isolated Lean 4.35 build found errors in the embedding injectivity and residue-membership proofs; these were corrected in commit 5d6e50e401f86719db54ca885caac29d98a23418. Workflow 42753674029 is running on that corrected head. Until it completes, the residue-cylinder declarations remain unverified. Even after that run, the parameter r must still be instantiated by the exact tail residue of a Syracuse prefix, and the individual child-valuation cylinders must be identified before claiming the full Syracuse partition. The new residue module is not yet a FibreData object.
+
+### Cross-project transfer rule
+
+No finite dyadic count, residue-cylinder cardinality, or quotient-map result becomes a historical BIB place merely because the cardinalities agree. A transfer requires the explicit prefix-to-residue map, exact child-cylinder correspondence, preservation of indices and weights, and then a concrete event-to-slot incidence proof.
