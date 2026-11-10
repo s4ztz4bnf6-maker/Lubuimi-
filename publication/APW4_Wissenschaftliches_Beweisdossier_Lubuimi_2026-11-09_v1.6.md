@@ -1905,3 +1905,12 @@ Dies ist eine arithmetische Verfeinerung der Parameterprüfung, keine historisch
 Lean-Status: PR #85 hat den lokalen M/Gamma-Zählsatz auf seinem exakten Head kanonisch mit Standard-Axiomprofil und ohne `sorryAx` im vollständigen kanonischen Log bestanden; der Paranoid-Lauf ist noch offen. PR #91 (Prefix-Koordinatentransport) und PR #92 (kanonisches, ausdrücklich nicht-historisches Faser-Modell) haben neue exakte Prüfstände, deren Läufe noch nicht abgeschlossen sind. Das kanonische Fin-Modell ersetzt keine historischen APW4-Definitionsbereiche.
 
 Der globale APW4-Energiesatz sowie die als mathematische Ausgangspunkte festgehaltenen DT-/HT-Ergebnisse werden durch diesen Nachtrag nicht verändert oder zurückgestuft. Die historische Ereignismenge, die vollständige Ereignisabbildung, die tatsächlichen BIB-Plätze und -Kapazitäten, die Ereignis-Platz-Inzidenz und der gewichtete Hall-Nachweis bleiben als historische Brückenpflichten offen.
+
+
+## Nachtrag 1.8 — kanonischer Faser-Helfer und Prefix-CI-Diagnose (10.11.2026)
+
+PR #92 hat den kanonischen Fin-Modell-Helfer auf dem exakten Quellstand `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec` im kanonischen Lean-Job erfolgreich kompiliert. Für die beiden neuen Deklarationen gilt das Standard-Axiomprofil; der vollständige kanonische Log enthält kein `sorryAx`. Der Paranoid-Job ist noch offen. Das Ergebnis bleibt ein kanonischer Hilfssatz und keine historische Identifikation der ursprünglichen APW4-Faserobjekte.
+
+PR #91 scheiterte in der integrierten Prefix-Stufe, weil der positive Fall fälschlich einen Binder einführen wollte und der negative Fall eine bedingte Gleichung offenließ. PR #94 enthält die nächste explizite Fallnormalisierung mit `if_pos`/`if_neg` und `ring_nf`; die exakten Läufe sind noch nicht abgeschlossen.
+
+Der historische APW4-Beweisstand und die offenen Ereignis-BIB-Verpflichtungen bleiben davon unberührt.
