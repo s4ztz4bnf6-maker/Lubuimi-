@@ -339,3 +339,8 @@ The two conditional-reduction failures at lines 397 and 410 are from workflow [4
 ## Exact-head verification boundary — 10 November 2026
 
 The current v15 PR #138 head is `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The latest commit only adds a Lean comment; it does not alter mathematical or proof content. No workflow run or commit status check was returned for this exact SHA. The v15 theorem remains **OFFEN – NICHT VERIFIZIERT** until the full integrated paranoid build and transitive axiom audit pass on a code-bearing exact head.
+
+
+## Exact-head and licensing update — 10 November 2026
+
+The current repository-wide verification boundary is recorded in [APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md](APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md). APW4 research authorship remains attributed to Ta-Yoshua Lubuimi. PR #139 is a draft clarification only; no new licence is granted, commercial terms are unchanged, and third-party materials remain under their own licences. The independently finalized manuscript PDF is not modified or mirrored by this documentation update.
