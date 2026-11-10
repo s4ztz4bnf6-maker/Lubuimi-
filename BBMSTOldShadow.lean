@@ -373,7 +373,9 @@ theorem oldShadow_mergeOldShadowsList
       mergeOldShadowsList boundary Hs := by
   cases hmerge : mergeOldShadowsList boundary Hs with
   | mk f =>
-      change (fun i => if i.val < boundary.val then f i else none) = f
+      change (⟨fun i => if i.val < boundary.val then f i else none⟩ : Hyperplane C) =
+        ⟨f⟩
+      apply congrArg Hyperplane.mk
       funext i
       by_cases hlt : i.val < boundary.val
       · simp [hlt]
