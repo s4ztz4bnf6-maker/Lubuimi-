@@ -372,3 +372,8 @@ The next extension must preserve the tuple as a function `Fin t → N_k`. For pa
 The pointwise power expansion must remain over all ordered functions `Fin t → N_k`, including repetitions. Its finite-sum interchange is the exact bridge from the (t)-th moment to the tuple-intersection masses. No unordered-subset shortcut is valid.
 
 This is a formalization plan grounded in the currently inspected declarations, not a theorem or a CI result. The historical APW4 event-to-BIB reconstruction ledger remains separate; this BBMST tuple step does not redefine historical APW4 events, slots, or capacities and does not alter the completed APW4 mathematical proof status.
+
+
+## Exact-head CI continuity — 10 November 2026
+
+The v15 source branch for PR #138 advanced to `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202` with a comment-only change in `BBMSTPrefixMeasureRecursion.lean`. The commit diff confirms that no theorem declaration, proof term, hypothesis, or mathematical definition changed. The exact-commit workflow/status query returned no associated run or status check. Thus `prefixFibre_updatedWeight_eq_PAt` and dependent PAt declarations remain **OFFEN – NICHT VERIFIZIERT**. The previous v14 diagnostic remains attached only to its own source commit and is not attributed to v15.
