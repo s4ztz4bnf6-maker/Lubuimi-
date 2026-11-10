@@ -445,3 +445,8 @@ The q-fibre M/Gamma helper (PR #85) is at head `d4c61399918c03715197cbe2de6356fd
 ### Addendum 1.23 — q-fibre M/Gamma canonical Lean result
 
 APW4 PR #85's local conditional theorem `sum_M_qr_le_Gamma_qr` now passes canonical Lean CI at head `d4c61399918c03715197cbe2de6356fd170463d3`, with the standard axiom profile and no `sorryAx` in the full log. The separate audit passed. The Lean 4.35 paranoid job is still running; the original fibre-containment and block-disjointness properties and the global weighted HT/BIB bridge remain to be derived.
+
+
+### Addendum 1.24 — parallel dependent-coordinate repair
+
+APW4 PR #86 adds an explicit Fin-index equality between stageCoordinate and prefixIndex before the covered/uncovered split; exact-head runs 42745081023 and 42745062463 are in progress. PR #84 remains an alternative proof-witness/covered-fibre rewrite candidate. Neither is verified yet; keep both unmerged until an exact-head integrated paranoid run succeeds.
