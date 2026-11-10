@@ -18,3 +18,8 @@ The APW4 failure does not retroactively invalidate the successful isolated Syrac
 The APW4 dependency repair is tracked separately in [PR #114](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/114), exact source head `d09d28935c9e026f4b8297b058c3cd4169231451`. It moves the recursive covered-value case split before unfolding the fibre update. At the time of this record, the exact-head audit and integrated jobs were running; no result is asserted.
 
 **Status: isolated Syracuse module compilation PASS; isolated paranoid check PENDING; integrated/audit failure attributable to APW4 dependency.**
+
+
+## Isolated paranoid retry — 10 November 2026
+
+The first `syracuse-bridge-paranoid` attempt in run 42759653537 reached “Running Lean paranoid kernel on solution” after the minimal Syracuse dependency closure built successfully, but GitHub cancelled the operation before it returned a kernel result. It is therefore a cancelled attempt, not a paranoid PASS and not a mathematical failure. A single-job rerun was successfully requested; the replacement job id is `129651118137` and was queued/in progress at the latest poll. The audit and integrated jobs remain failed at the APW4 dependency as documented above.
