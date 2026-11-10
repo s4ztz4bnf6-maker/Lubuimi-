@@ -376,7 +376,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hhp : hprev = hprevRec := Subsingleton.elim _ _
   have hxprev : xprev = xprevRec := by
     dsimp [xprev, xprevRec]
-    rw [hhk]
   have hrec :
       PAt C (A := A) a ha P0 δ j hprev xprev =
         PAt C (A := A) a ha P0 δ j hprevRec xprevRec := by
@@ -391,7 +390,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  rw [← hhk, ← hrec, ← hvalues]
+  rw [hhk, hrec, hvalues]
   have hstage : stageCoordinate (k := a + j) hk =
       prefixIndex hj (Fin.last (a + j)) := by
     apply Fin.ext
