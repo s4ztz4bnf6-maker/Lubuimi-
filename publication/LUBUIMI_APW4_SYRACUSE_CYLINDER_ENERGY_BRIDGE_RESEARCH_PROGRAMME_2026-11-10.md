@@ -158,3 +158,26 @@ For each fixed prefix, only finitely many positive exponents satisfy this inequa
 This gives a concrete interface to finite incidence and moment methods: nodes are finite valuation prefixes, children are bounded by an explicit arithmetic cap, each child has exact cylinder weight \(2^{-b}\), and the complementary tail atom has exact mass \(2^{-B_\alpha}\) and a positive-margin descent certificate.
 
 The cap is prefix-dependent. It does not give a uniform branching bound, rule out an infinite path, or prove global Collatz. The APW4 bridge could potentially study the surviving finite-prefix tree through an index-preserving transport, but the original APW4 event indices, historical weights, diagonal/off-diagonal transport and BIB/Hall capacity must still be proved independently.
+
+
+## 10. Cross-project integration rule and exact live verification snapshot
+
+The research programme is maintained as a connected system, not as independent folders. Every new result is checked for mathematically valid reuse in the other projects, then implemented in each affected manuscript, Lean module, review and evidence register. Transfer is conditional on an explicit map and hypotheses; shared notation or structural resemblance is not enough.
+
+The current transfer candidates are:
+- **Cylinder → Collatz:** the exact child/tail partition, affine offset recurrence and state-dependent non-descent cap. The cap is necessary for a non-descending continuation, not sufficient to prove one exists or to exclude an infinite path.
+- **Collatz → cylinder:** the signed-margin recurrence gives a precise arithmetic filter on children of a realized prefix. It can be attached to the existing exact cylinder tree without changing its already-proved residue classification.
+- **Cylinder/Collatz → APW4:** the finite prefix tree and terminal tail atom are candidate finite index sets. An APW4 transfer still requires the explicit historical index map, diagonal mass domination, separate off-diagonal accounting, and BIB/Hall capacity proof.
+- **APW4 → cylinder/Collatz:** the finite weighted-fibre and incidence techniques are candidate proof methods. They may be reused only after the Syracuse source and APW4 target indices are explicitly identified and their weights are shown to correspond.
+
+### Live CI status at this snapshot
+
+- **Collatz offset/margin PR #9:** head ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc; run 42728049650 is in progress at the Lean installation stage. The three newly added margin-cap declarations are candidates only; no compile or axiom result is yet claimed.
+- **APW4 integration PR #69:** head 8e7cd3ca5b3440ee25eb6241f2aa799103b56830; exact-head runs 42728164530 and 42728171781 are in progress. The new candidate addresses dependent Fin-index transports and covered/uncovered normalization. It is not verified until both the audit and integrated-paranoid jobs finish and the relevant declarations pass transitive #print axioms and sorryAx scans.
+- **APW4 documentation PR #79:** head 81476c2b4d4c1855b990940ad406382a8aadf0a0; run 42727462725 remains queued and was triggered on an older documentation head. It therefore does not verify this current head.
+- **Finite-word and initial-cylinder projects:** the four original all-one exact-commit CI successes remain valid for their original commits. A later additional initial-cylinder audit was also successful (run 42725493567); the general finite-word theorem and terminal-congruence formalization route remain mathematically developed but not Lean-verified.
+- **Terminal-residue collision-energy project:** PR #38 now includes the explicit rational k=2 transition matrix and two-step distribution as a reproducible worked example. This is a finite-state mathematical computation; it is not an identification with APW4's historical BIB reserve and is not a Lean verification claim.
+
+A run cancelled because its source branch advanced is recorded as cancelled, not failed. A failure in one exact commit is recorded against that commit and its declarations only; it does not erase earlier successful runs or independently established mathematical theorems. No later head inherits an earlier run's verification.
+
+The operational cycle is: preserve the previous result and its scope; isolate a new diagnostic; derive the exact missing mathematical or type-theoretic obligation; repair only that obligation without weakening assumptions; run the relevant focused and integrated checks; inspect complete logs and transitive axioms; then propagate the verified mathematical improvement to every dependent project record. The project authorship remains Ta-Yoshua Lubuimi; AI tools are assistants only.
