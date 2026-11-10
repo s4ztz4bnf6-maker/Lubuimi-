@@ -528,3 +528,10 @@ The local Syracuse dyadic cardinality lemma remains a separate successful result
 The next integrated candidate is exact source commit `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. It eliminates the two proof-witness equalities before case splitting on the concrete covered predicate; this avoids the ill-typed `rw` motive seen on commit `2843f40` and the still-unsolved `simp [h, hcovered]` branch on commit `086ad916`.
 
 Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) are running the Lean audit and integrated Lean 4.35.0 paranoid build. At the latest check both were still in dependency/cache setup. No result is claimed until the compile, axiom audit, and paranoid check finish on this exact commit.
+
+
+## Addendum 1.33 — 10 November exact-head recheck
+
+At this recheck, PR #69 remained open at source head `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. Workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) were still in progress. The integrated-paranoid job had passed Lean 4.35.0 setup, sandbox installation, and Mathlib cache restoration and was compiling the integrated BBMST/APW4 modules including the full Theorem 1.2 reduction. This is `IN PROGRESS`, not PASS.
+
+PR #79 documentation head `be6dfbcdc55b2603cc6901caaa32f8e4ed24a505` had exact-head workflows [42739759284](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739759284) and [42739763639](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739763639) still in progress. No success/failure inference is made from the lack of completed logs. The next audit must inspect completed exact-head logs for `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one`, their transitive `#print axioms` profiles, and the complete `sorryAx` scan; then verify the integrated `lake check --paranoid` declaration count.
