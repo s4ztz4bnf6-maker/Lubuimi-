@@ -762,3 +762,10 @@ PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae adds a concrete ZMod N resi
 - Paranoid job: still in progress at this snapshot; no PASS claimed.
 
 The parameters Uq,Ur and c remain explicit. This does not yet identify the historical U_q/U_r or C_h, and does not close the event-to-BIB weighted Hall transport.
+
+
+## Addendum 1.43 — PR #89 residue-label specialization
+
+Exact PR #89 head `157cdcc00353c9d89e5d596720cee08d098684ae` includes the concrete finite residue-label map z |-> z.val % B into Fin B, its fibres, selected visible set, and the local q-fibre sum inequality with an explicit common block-label map. Canonical workflow 42749178635 and audit workflow 42749178673 passed. The canonical log printed standard transitive axiom profiles for the new declarations and contained no `sorryAx`. The paranoid job in 42749178635 was still in progress at the latest check.
+
+Source boundary: this is the canonical-representative residue-label map, not yet a proved quotient ring homomorphism. The theorem does not yet impose the historical divisibility B_q | N and B_r | N, and U_q,U_r plus the common block map remain source parameters. No event-to-BIB map is claimed.
