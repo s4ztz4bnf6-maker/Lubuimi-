@@ -78,3 +78,8 @@ Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4251
 ## APW4 v8 type mismatch and v9 repair candidate — 10 November 2026
 
 The v8 endpoint facts were ill-typed because they omitted the dependent transport into `C.S (stageCoordinate hk)`; integrated build errors occurred at lines 393 and 407, with `sorryAx` in dependent recursion declarations. PR #125 / v9 now states both facts with `(hstage.symm ▸ y (Fin.last k))` and derives them from `hcov` via `simpa [x]`. Workflow 42810241207 was queued at the latest poll. This is not yet a verified repair. The APW4 mathematical result record and explicit premises remain unchanged.
+
+
+## Latest APW4 v9 exact-head poll — 10 November 2026
+
+PR #125 exact head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, workflow 42810241207: audit job `129809542278` and integrated-paranoid job `129809542736` are both in progress; log artifacts were unavailable at the latest poll. No PASS is claimed. The APW4 mathematical result record and explicit assumptions remain unchanged.
