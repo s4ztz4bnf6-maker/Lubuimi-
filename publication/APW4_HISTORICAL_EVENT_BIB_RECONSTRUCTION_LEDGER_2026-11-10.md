@@ -198,3 +198,14 @@ Exact PR head: 157cdcc00353c9d89e5d596720cee08d098684ae.
 Canonical workflow 42749178635 passed; audit workflow 42749178673 passed. The canonical log reports the new residue-projection theorem with exactly [propext, Classical.choice, Quot.sound] and zero sorryAx occurrences. The separate paranoid job remains in progress; no paranoid PASS is claimed.
 
 This is a stronger formal specialization than the abstract map interface, but it is still not the historical source instantiation: the actual selected residue sets Uq, the historical block partition C_h, and the complete event-to-BIB map remain unreconstructed. The divisibility conditions are explicit, and no ZMod quotient-cast identity is assumed.
+
+
+## 13. Concrete residue-label q-fibre specialization — exact-head canonical PASS
+
+PR #89 now includes a concrete working residue-label map on the actual finite ambient type ZMod N:
+`residueProjection hB z = ⟨z.val % B, Nat.mod_lt _ hB⟩ : Fin B`, with hB : 0 < B.
+The selected support is the inverse image of Uq : Finset (Fin Bq), and the q-fibre over x is the inverse image of the singleton label x. With an arbitrary but explicit common block-label map c : ZMod N -> H, the theorem `sum_M_qr_le_Gamma_qr_of_residue_projections` proves the fixed-index sum-over-h inequality.
+
+Exact source head: `157cdcc00353c9d89e5d596720cee08d098684ae`, PR [#89](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/89). Canonical run 42749178635 and audit run 42749178673 passed. The canonical log printed standard profiles for the preimage and residue-projection declarations and contained zero `sorryAx` occurrences. The separate paranoid job in 42749178635 remained in progress at the latest check.
+
+This is a concrete arithmetic residue-label specialization of the working definitions F_q(x) and V_q. It is not yet the quotient ring homomorphism ZMod N -> ZMod B: the theorem does not impose B | N and the Fin B label map is defined through the canonical representative z.val. The next source-fidelity step is to impose the actual divisibility B_q | N and B_r | N, identify the map with canonical reduction, and recover the historical U_q,U_r and common block map c. The local theorem still does not define the historical elementary event or BIB-place incidence relation.
