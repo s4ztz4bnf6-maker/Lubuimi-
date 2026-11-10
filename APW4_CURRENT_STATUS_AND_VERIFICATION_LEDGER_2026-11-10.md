@@ -97,3 +97,11 @@ The current repair chain is stacked and must be read chronologically:
 5. Only after that can the prefix recursion be described as Lean-integrated; later APW4 interfaces remain separate obligations and must not be silently declared complete.
 
 This update changes no mathematical statement, definition, assumption, or previously established APW4 result. The distinction between the established mathematical proof record and this specific Lean integration candidate remains explicit.
+
+## v7 integrated failure and v8 endpoint-membership candidate — 10 November 2026
+
+PR #121 / v7 source `5631a527c289889db3e70bf0fb1644926e11d893`, workflow [42808470265](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42808470265): separate audit **PASS**, integrated-paranoid **FAIL**. The integrated log has two residual goals at lines 387 and 397. In the covered branch, the residual implication assumes the endpoint is not covered but the multiplier equality still needs to be reduced; in the uncovered branch, the residual implication assumes the endpoint is covered but the multiplier equality still needs to be reduced. The explicit dependent cast itself is present, but the endpoint membership fact has not been propagated to the recursive `PAt` expression. Error recovery reports `sorryAx` for the target and dependent recursion declarations.
+
+Current PR [#123](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/123) / v8 exact source `135f76d26c3c2392039e53c135e871f09ce2e256` adds explicit `hcovEndpoint` and `hnotEndpoint` facts, transporting membership and nonmembership from the cast point `x` back to `y (Fin.last k)`, so the `PAt` simplification receives the exact endpoint condition it needs. Workflow [42809116463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42809116463): integrated-paranoid was in progress and the separate audit job was queued at the latest poll. This remains **OFFEN – NICHT VERIFIZIERT**.
+
+Acceptance requires both v8 jobs to pass, the integrated dependency closure to compile without error-recovery `sorryAx`, and named `#print axioms` output for the target and dependent recursion declarations.
