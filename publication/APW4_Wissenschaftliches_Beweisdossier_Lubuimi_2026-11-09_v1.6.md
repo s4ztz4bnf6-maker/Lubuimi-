@@ -1296,3 +1296,36 @@ The new commit is a proof candidate. No exact-head CI run or Lean PASS has yet b
 - Canonical PR #107 advanced to 3534d47fcb9857109b71d1397f3976b5de35dcf1. It now defines the numerator N = 3^(k+1) r₀ + 3 Cₖ + 2^A and the canonical quotient d = N / 2^(A+1), proves the quotient multiplication identity from divisibility, and derives the affine prefix-tail factorization with that canonical d. The divisibility N mod 2^(A+1) = 0 remains an explicit hypothesis; it has not yet been derived from the full valuation-prefix residue theorem. This is a substantive narrowing of the formalization gap, not a completed APW4 bridge.
 - Stale verification mirrors #108 and #109 were closed after their source heads moved. Current verification-only draft mirrors are #110 (exact PR #101 head) and #112 (PR #107 plus one comment-only trigger commit). Their integrated/audit/paranoid jobs are queued. Canonical mathematical branches remain PR #101 and PR #107; do not merge the mirrors.
 - PR #105 documentation audit remains queued at the latest documentation head. No new PASS is claimed for any of these queued runs.
+
+
+---
+
+# VI. Exact-head formalization update — 10 November 2026, 04:50 UTC
+
+This section updates only the repository/CI audit. It does not amend, weaken, or reopen the mathematical proofs in Sections I–V.
+
+## 10. PR #101: current prefix-recursion integration result
+
+Canonical source head: `f87657c8f02f41266a43bae1fe44f43267f0c985`, branch `repair/apw4-prefix-uncovered-change-2026-11-10`.
+
+Exact workflow [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402) reports audit success and integrated-paranoid failure. The integrated log leaves two goals at `BBMSTPrefixMeasureRecursion.lean:393–394`. The update expression branches on `F.covered` and `F.points`; the recursion's `hcov) is expressed through `prefixCoveredValues`. The current proof's `simp [hcov]` does not identify these dependent membership propositions in both branches.
+
+The same log reports `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and its dependent results `PAt_nonneg`, `PAt_sum_eq_one`, `PAt_le_initial_mul_distortionProduct`, and `PAt_succ_le_prev_div_card_mul_one_sub_delta`.
+
+**Status:** the exact-head Lean integration is not verified. The mathematical pointwise update identity remains the intended bridge; the remaining task is to prove the membership transport and the two conditional reductions in the actual dependent fibre type, then rerun the exact-head integrated build and inspect the named axiom output. No PASS is asserted.
+
+## 11. PR #107: current explicit residue bridge result
+
+Canonical source head: `44d00ad20c352471795358dde2aaf24152281649`, branch `bridge/syracuse-explicit-tail-residue-2026-11-10`.
+
+Exact workflow [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002) reports failures in both `syracuse-bridge-paranoid` and `integrated-paranoid`. The compiler cannot project `.isLt` from the dependent `ZMod.val` representation at lines 276 and 485 of `SyracuseDyadicResidueFibre.lean`; line 290 also has an unsolved reverse implication. The downstream atom membership/cardinality declarations report `sorryAx`. By contrast, the normalized congruence specification/uniqueness and affine factorization have positive declaration-scoped axiom output in this run. These facts are kept separate.
+
+**Status:** formal finite-representative construction and downstream atom/cardinality chain remain unverified. This is separate from the APW4 energy theorem and is not a counterexample to the tail-coordinate arithmetic.
+
+## 12. Independent Collatz queue
+
+Collatz PR #48 exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798): all three jobs were queued at the latest poll. No new verification result is inferred.
+
+## 13. Preservation rule
+
+The established mathematical statements in Sections I and the separately documented historical proof record retain their prior status. A failed or incomplete Lean integration affects only the formal declarations and exact source head that the log names. The finalized manuscript PDF is not altered by this repository audit addendum; publication-copy changes require a separately versioned author-controlled manuscript update.
