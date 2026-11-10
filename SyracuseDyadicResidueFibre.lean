@@ -287,7 +287,8 @@ theorem explicitTailAtoms_mem_iff (B k d : ℕ)
   · intro h
     simpa [Nat.mod_eq_of_lt x.isLt] using h
   · intro h
-    simpa [h, Nat.mod_eq_of_lt x.isLt]
+    rw [h]
+    exact Nat.mod_eq_of_lt (explicitTailCoordinateFin B k d).isLt
 
 /-- The explicit tail cylinder is a singleton in the normalized
 common-refinement coordinate. -/
