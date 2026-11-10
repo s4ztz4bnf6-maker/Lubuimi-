@@ -690,3 +690,20 @@ Exact-head CI: [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/action
 ## Addendum 1.42 — PR #85 canonical q-fibre proof passes
 
 At exact head `d4c61399918c03715197cbe2de6356fd170463d3), canonical run [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) passed. The named declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` has profile `[propext, Classical.choice, Quot.sound]`; the full canonical log has no `sorryAx). Separate audit run [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) passed. The Lean 4.35 paranoid job remains in progress. This verifies the local conditional M/Gamma inequality, not the source-derived hypotheses or full weighted HT/BIB transport.
+
+
+## Addendum 1.43 — PR #86 dependent branch follow-up and PR #87 q-fibre projection candidate
+
+### PR #86: first coordinate-normalization attempt and second branch attempt
+
+The first PR #86 source commit `4e4b378887cc76382d9cd2e17807f96a2c277e23` was checked by workflow [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023). Its Lean 4.35 integrated-paranoid job failed at lines 398–399 of `BBMSTPrefixMeasureRecursion.lean`: after the explicit `Fin.ext` coordinate equality, the two covered/uncovered branches still retained conditional goals. Error recovery printed `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_sum_eq_one`, and dependent distortion declarations. This first PR #86 commit is not accepted.
+
+The branch was then amended at exact head `80c607af6efd79c9a3221ebbb7aca76bebcaa991`: the two branch scripts now use `simp_all [xprev, Finset.mem_univ] <;> ring_nf`, so the local branch hypothesis is simplified throughout the residual target. New exact-head workflow [42745711983](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745711983) was queued at the latest check. No result is claimed for the amended head until both audit and integrated-paranoid jobs finish and the declaration-level axioms are inspected.
+
+### PR #87: projection-fibre containment candidate
+
+PR #87, head `5f72cbfa539355daf59aea8c19054bdb875e6e1e`, is stacked on PR #85. It introduces an explicit finite residue projection `Fin N → Fin B`, with (0<B) and (Bmid N) supplied as parameters; defines the fibre over (x) and the lift of (U); proves fibre containment from (xin U); and instantiates the existing M/Gamma inequality for q/r projected fibres. This derives the two containment premises rather than assuming them independently.
+
+The exact block family (C_h) remains an explicit input with pairwise disjointness required. The PR does not define (U_q) from the old covering classes, reconstruct the original block family, or define the elementary event/BIB-place relation. The commit was just made ready for review; no exact-head workflow result had been returned at the time of this entry. No kernel PASS is claimed.
+
+The PR #85 canonical local theorem PASS remains scoped to head `d4c61399918c03715197cbe2de6356fd170463d3`; its paranoid job is still pending. No result from PR #85 is transferred to PR #87 without PR #87's own exact-head CI.
