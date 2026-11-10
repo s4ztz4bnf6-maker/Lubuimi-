@@ -337,3 +337,21 @@ The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has comple
 The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
 
 The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
+
+## 10. Exact-head APW4 prefix-recursion integration — 10 November 2026
+
+The established APW4 mathematical results remain part of the project record and are not reopened by a later Lean integration failure. The global energy conclusion is stated relative to the explicit premises A*, B*, and the local mass bound `m_S(x) ≤ 1`; those assumptions must remain visible.
+
+PR #115, source head `278c0c6c192e34728bace660199e1c431e96846d`, workflow [42762540736](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762540736), had a successful separate audit job and a failed integrated Lean 4.35.0 paranoid job. The separate job compiled `BBMSTPrefixMeasureRecursion.lean` and printed `prefixFibre_updatedWeight_eq_PAt` with `[propext, Classical.choice, Quot.sound]`. The integrated job failed at lines 393–394: the positive branch tried to apply a contradiction tactic to a residual multiplier equality; the negative branch did not reduce the `Finset.univ` conditional. Error recovery then printed `sorryAx` for the target and dependent recursion declarations.
+
+PR #116 is a stacked proof repair at exact head `056de39c12ce417b6c7578277bf0fe9023af145f`, workflow [42805862280](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42805862280). It explicitly proves membership/nonmembership in the concrete covered set and membership in the full fibre, then rewrites the two `updatedWeight` conditionals separately. At the latest poll, the separate audit job `129794679789` and integrated-paranoid job `129794680288` were both in progress. This is an unverified candidate; no PASS is claimed.
+
+Acceptance requires both jobs to finish, the integrated package to compile, the named axiom output to be inspected, and the integrated transitive dependency closure to contain no `sorryAx`. The separate audit result alone is not sufficient.
+
+## 11. Mathematical preservation and interface obligations
+
+The following established mathematical components remain preserved: DT and HT; historical atom identification where proved; BIBW domination and weighted Hall conditions; exact diagonal/off-diagonal decomposition; CRT fibre balance; and the algebraic energy conclusion under A*, B*, and `m_S(x) ≤ 1`. The exact scope of each remains governed by its own proof and hypotheses.
+
+APW diagonal mass, APW off-diagonal mass, and BIB pair reserve must not be identified without an explicit index-preserving map and corresponding weight/capacity transport. Historical definitions `A_q`, `A_r`, `W_{q,r}`, and `a_{q,t}` must not be guessed or replaced by canonical block sums.
+
+See `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md` for the current integrated failure, candidate repair, separate upstream sieve-axiom boundary, attribution, and licensing inventory.
