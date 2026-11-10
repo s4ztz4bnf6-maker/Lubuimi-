@@ -281,3 +281,8 @@ The detailed exact-head evidence is in [the CI status snapshot](publication/APW4
 ### 10 November 2026 — PR #101 targeted contradiction branch (04:55 UTC)
 
 A narrow proof candidate was committed to PR #101 at exact head `dbbeaf7a14ebcceb8abf97b6a9113d84a024c54c`. The positive branch now eliminates the residual implication `¬hcov → …` directly from the branch hypothesis `hcov`; the uncovered branch remains `simp [hcov]`. Runs [42758799252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758799252) and [42758803063](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758803063) were queued at the latest poll. This is a proof candidate only: no Lean PASS, no axiom-profile clearance, and no change to established APW4 mathematics are claimed.
+
+
+### Syracuse residue-coordinate repair candidate — 2026-11-10
+
+On branch `bridge/syracuse-explicit-tail-residue-2026-11-10`, commit `bd8a7857a07f4fb32bbcfe9e2b446bd5b7403028` replaces invalid projections of `.isLt` from `ZMod` values in `explicitTailCoordinateFin` and `explicitChildCoordinateFin` with the Mathlib theorem `ZMod.val_lt`. The theorem was checked against Mathlib `v4.35.0` (`Mathlib/Data/ZMod/Basic.lean`, declaration `ZMod.val_lt`). This is a source-level repair candidate only; the new CI run `42759029006` was queued at the time of this entry. It does not certify the remaining membership proof or any Syracuse theorem.
