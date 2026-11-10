@@ -1,0 +1,50 @@
+name: Odd-covering L945 exact CRT moment audit
+
+on:
+  pull_request:
+    paths:
+      - "projects/OddCoveringDistortionSieve/lean/**"
+      - ".github/workflows/odd-covering-l945-audit.yml"
+  push:
+    branches:
+      - research/odd-covering-distortion-sieve-2026-11-10
+    paths:
+      - "projects/OddCoveringDistortionSieve/lean/**"
+      - ".github/workflows/odd-covering-l945-audit.yml"
+
+jobs:
+  compile-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: projects/OddCoveringDistortionSieve/lean
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.34.1
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Resolve dependencies and restore Mathlib cache
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+          lake exe cache get
+      - name: Build exact L945 Lean module
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake build OddCoveringL945MomentAudit
+      - name: Print axioms and reject sorryAx
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          set -o pipefail
+          lake env lean OddCoveringL945MomentAudit.lean 2>&1 | tee /tmp/odd-covering-l945-axioms.log
+          if grep -q 'sorryAx' /tmp/odd-covering-l945-axioms.log; then
+            echo "Forbidden sorryAx found in L945 moment declarations."
+            exit 1
+          fi
+      - name: Paranoid kernel check
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake check --paranoid
