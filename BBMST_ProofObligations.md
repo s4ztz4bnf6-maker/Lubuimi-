@@ -513,3 +513,8 @@ The indicator expansion is over ordered tuples/functions `Fin t → N_k`; repeti
 Every failed compile must be preserved with exact commit, target file/declaration, first diagnostic, dependent-index/type context, and resulting axiom trace. The next run must change only the demonstrated cause and reuse successful prerequisite modules. A failed downstream run does not retroactively invalidate previously verified independent declarations. A successful compile is not accepted as the final result without named `#print axioms` output and a transitive `sorryAx` audit.
 
 **Current status:** design obligation recorded; no tuple Lean declaration or CI success is claimed by this entry. The established APW4 mathematical proof remains unchanged.
+
+
+## PR #138 v15 exact-head status — 10 November 2026
+
+Current PR #138 head: `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The last commit is comment-only and changes no Lean declaration or proof term. No exact-head workflow run or status check was returned. The local-membership witness repair and all downstream dependent prefix-measure declarations remain **OFFEN – NICHT VERIFIZIERT** pending integrated Lean 4.35.0 paranoid CI, named `#print axioms`, and transitive no-`sorryAx` audit.
