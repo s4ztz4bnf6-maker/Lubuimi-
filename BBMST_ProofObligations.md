@@ -342,3 +342,8 @@ The next repair must derive the exact equality/transport between `stageCoordinat
 ## APW4 v9/v10 exact-head status — 10 November 2026
 
 PR #125 / v9 integrated-paranoid failed at lines 387 and 402: the casted endpoint facts were well-typed, but the residual conditional membership tests remained at the original prefix endpoint. Error recovery reports `sorryAx` in the target and dependent recursion declarations. PR #127 / v10 eliminates `hstage` by cases before constructing the fibre, aiming to make the prefix endpoint and stage coordinate definitionally equal. No v10 CI result is available yet.
+
+
+## Latest APW4 v10 CI poll — 10 November 2026
+
+Exact-head workflow 42810911393 has audit job `129811792964` in progress and integrated-paranoid job `129811793388` queued. No compile or axiom conclusion is available yet.
