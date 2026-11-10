@@ -421,3 +421,12 @@ The historical BIB source obligation remains unchanged and is still the critical
 ### Addendum 1.20 — recovered q-fibre definitions
 
 Dossier v1.6 §48 and the 6 November BIB incidence note §5 provide the recovered q-fibre interface (B_q,V_q,P_{q,x,h},M_{q,r},Gamma_{q,r}). The historical audit has been corrected accordingly. The next formal step is the local aggregate bound (sum_h MleGamma), with fibre containment and block disjointness derived from the original (U_q,F_q(x),C_h) definitions. This remains distinct from the global weighted Hall/BIB transport.
+
+
+## 10 November 2026 — historical event-to-BIB reconstruction ledger
+
+See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md for the append-only definition-completeness matrix and the exact event-to-BIB proof obligations. The ledger preserves the identities A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T and sum_h M_{q,r}(h,g) <= Gamma_{q,r}(g), while requiring all source index spaces, entries, suppressed indices, elementary events, the original map (x,u) -> (k,I_{x,u},J_{x,u}), BIB slots/capacities, pointwise incidence, weight preservation and weighted Hall inequality to be explicit before formal transfer. It does not replace historical definitions by canonical model fibres.
+
+The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
+
+This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
