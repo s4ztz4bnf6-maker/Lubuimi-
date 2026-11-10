@@ -383,7 +383,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
   cases hhk
   cases hhp
-  dsimp [k] at *
+  -- The local abbreviation k is already unfolded by the preceding
+  -- dependent proof-witness transport; no further dsimp is required.
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
@@ -428,10 +429,13 @@ theorem PAt_nonneg
          exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y hbase
-      rw [← hlocal]
-      exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
-        (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
-        (hδhalf (stageCoordinate hk)) hpoint
+      have hUpdateNonneg :
+          0 ≤ BBMSTFiniteFibreUpdate.updatedWeight F
+            (δ (stageCoordinate hk)) (y (Fin.last k)) := by
+        exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
+          (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
+          (hδhalf (stageCoordinate hk)) hpoint
+      exact hlocal ▸ hUpdateNonneg
 
 #print axioms PAt_nonneg
 
