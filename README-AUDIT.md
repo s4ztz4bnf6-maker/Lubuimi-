@@ -108,3 +108,8 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+
+## APW4 prefix-recursion status update — v7/v8 (10 November 2026)
+
+The APW4 prefix recursion's v7 integrated failure and v8 candidate are tracked in the root `README.md` and `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md`. These are not updates to the pinned upstream `erdos_selfridge` theorem or its `sieve_criterion` / `sf_sieve_lt_one` interface. Keep the mathematical APW4 result record, the current dependent Lean integration, and the upstream sieve-axiom audit separate.
