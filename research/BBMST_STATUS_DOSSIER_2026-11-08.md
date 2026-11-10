@@ -73,3 +73,8 @@ Do not announce the overall proof as complete until Step 16 has passed on the fi
 Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) completed with failure on `e230c4508b17fccfd006392b92d39b70d7f23ca6`. The five prerequisites succeeded; the target did not. The remaining issue is dependent-index transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)`. The compiler diagnostics and `sorryAx` declarations are recorded in Section 12.5 of `BBMST_ProofObligations.md`.
 
 **No third patch is authorized by this status update.** The next code change must follow from inspection of the exact definitions and a derived equality/transport lemma, and must be limited to the demonstrated failing target.
+
+
+## APW4 v8 type mismatch and v9 repair candidate — 10 November 2026
+
+The v8 endpoint facts were ill-typed because they omitted the dependent transport into `C.S (stageCoordinate hk)`; integrated build errors occurred at lines 393 and 407, with `sorryAx` in dependent recursion declarations. PR #125 / v9 now states both facts with `(hstage.symm ▸ y (Fin.last k))` and derives them from `hcov` via `simpa [x]`. Workflow 42810241207 was queued at the latest poll. This is not yet a verified repair. The APW4 mathematical result record and explicit premises remain unchanged.
