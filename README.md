@@ -457,3 +457,8 @@ PR #90 is the latest prefix update repair candidate, head b2bd581ea79696c1d47b8b
 PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae specializes the q-fibre M/Gamma bound to explicit finite residue-label maps on ZMod N. Canonical run 42749178635 and audit run 42749178673 passed; the new theorem reports the standard axiom profile and the canonical log contains no sorryAx. The paranoid job was still pending.
 
 The selected residue sets and historical block-label map remain explicit parameters. The event-to-BIB historical reconstruction is still open; no substitute map is promoted to historical.
+
+
+### Addendum 1.24 — APW4 residue-label q-fibre PASS
+
+PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae proves the local q-fibre inequality for explicit residue-label fibres z |-> z.val % B into Fin B, selected residue sets Uq,Ur, and a common block-label map c. Canonical run 42749178635 and audit run 42749178673 passed; the canonical log contains no sorryAx and the declarations have standard profiles. The paranoid job is still pending. This is not yet the quotient homomorphism ZMod N -> ZMod B because B | N is not imposed; the historical selected sets and block map remain open.
