@@ -173,3 +173,8 @@ A dedicated draft PR #85 now adds `APW4HistoricalQFibre` to `APW4HistoricalCRTCo
 The theorem has exactly the source-structural premises made explicit: (F_q(x)subseteq V_q), (F_r(y)subseteq V_r), and pairwise disjointness of the blocks (C_h). These are not postulated in the historical main theorem; this helper exposes the exact properties that must be derived from the original projection/fibre and block definitions. The PR does not yet instantiate those sets or identify (M,Gamma) with the full weighted HT event/slot system.
 
 Exact-head runs [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626707) (canonical and paranoid jobs) and [42744626561](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626561) (audit) are in progress. No Lean pass is claimed until all exact-head jobs finish and the full logs confirm the standard axiom profile and absence of `sorryAx`.
+
+
+### 2.9 Exact-head q-fibre proof repair
+
+The first PR #85 canonical/paranoid attempt (head `33aa4f3`, run `42744626707`) failed at the application of `Finset.disjoint_left.mp): the proof supplied the element (z) as an extra explicit argument, although the element is implicit. The source-level argument itself was unchanged. The current head `d4c61399918c03715197cbe2de6356fd170463d3` removes that extra argument. Exact-head runs `42744980622` (canonical/paranoid) and `42744980640` (audit) are in progress. The conditional M/Gamma theorem is not yet verified.
