@@ -206,3 +206,8 @@ The ledger deliberately marks the exact row/column domains, quotient maps, event
 The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
 
 PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
+
+
+## Konsolidierter Fortschrittsstand — 10. November 2026, 22:54 CET
+
+Der append-only Status- und Verpflichtungsledger [APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md](APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md) bündelt den mathematischen APW4-Kern, historische Rekonstruktionsfortschritte, offene Event/BIB-/Gewichts-/Kapazitätsverpflichtungen sowie die exakten PR- und CI-Grenzen der aktuellen Reparaturkandidaten. Der mathematische Energieabschluss bleibt erhalten; die vollständige historische Lean-Hauptsatzintegration ist weiterhin nicht nachgewiesen.
