@@ -1,3 +1,5 @@
+import Mathlib
+
 /-!
 Verification note: this module is an explicit conditional algebraic
 checkpoint. Its hypotheses are supplied as theorem arguments; this file
@@ -6,7 +8,6 @@ The dedicated APW4 canonical/paranoid workflows are required to verify
 this module as part of the library roots.
 -/
 
-import Mathlib
 
 /-!
 # APW4 / BIB finite incidence arithmetic checkpoint
