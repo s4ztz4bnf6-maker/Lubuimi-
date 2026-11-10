@@ -1244,3 +1244,8 @@ The APW4 energy decomposition, DT, weighted HT, global upper energy estimate and
 - PR #107: new source head ba96a24de4df64513dd1a3dd801020544cc71dd0 adds an explicit normalized tail coordinate -d * (3^(k+1))⁻¹ in ZMod (2^B). It proves the odd coefficient is a unit, the normalized tail congruence has a unique solution, and the generic residue-cylinder tail is instantiated as a singleton with the exact candidate mass. It also proves the affine factorization from the prefix lift under the explicit divisibility identity defining d.
 - The divisibility identity for d is still an explicit hypothesis in PR #107. Deriving it from the full prefix-residue formula, proving the full exact-child sibling partition, and mapping the result to historical APW4/BIB events remain separate obligations.
 - PR #107 exact workflow [42756257770](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756257770) is queued. The new declarations are candidates, not verified PASS results.
+
+
+## Superseding source-head record — 10 November 2026
+
+PR #107 was advanced after its initial commit. Current exact source head: b5a7b83c1953927eef27b39962b044c746191066. The affine factorization proof was rewritten as an explicit three-step calc using the stated divisibility identity, avoiding a broad rewrite whose matching depended on distributivity. Exact workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) is queued; no PASS is claimed for this updated head. The earlier head ba96a24de4df64513dd1a3dd801020544cc71dd0 was superseded before verification completed.
