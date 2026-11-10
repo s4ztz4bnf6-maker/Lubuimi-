@@ -73,3 +73,13 @@ Do not announce the overall proof as complete until Step 16 has passed on the fi
 Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42515001215) completed with failure on `e230c4508b17fccfd006392b92d39b70d7f23ca6`. The five prerequisites succeeded; the target did not. The remaining issue is dependent-index transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)`. The compiler diagnostics and `sorryAx` declarations are recorded in Section 12.5 of `BBMST_ProofObligations.md`.
 
 **No third patch is authorized by this status update.** The next code change must follow from inspection of the exact definitions and a derived equality/transport lemma, and must be limited to the demonstrated failing target.
+
+
+## APW4 v10 integrated failure and v11 candidate — 10 November 2026
+
+PR #127 / v10 passed the separate audit but failed the integrated-paranoid build because the equality `hstage` was eliminated in the wrong direction. The fibre point and `F.covered` then had non-definitional dependent indices, and error recovery reported `sorryAx`. PR #129 / v11 changes to `cases hstage.symm` before fibre construction. Its exact-head result is not yet available. Established mathematical results and explicit premises remain unchanged.
+
+
+## Latest v11 APW4 CI poll — 10 November 2026
+
+PR #129 exact head `ffce6065f1489850c1c1aa156e90cf56413cebb0`, workflow 42811577591: audit job `129814055326` and integrated-paranoid job `129814055704` are both in progress. No PASS is claimed.
