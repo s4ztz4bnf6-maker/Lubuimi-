@@ -151,3 +151,8 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## Konsolidierter Fortschrittsstand — 10. November 2026, 22:54 CET
+
+Der append-only Status- und Verpflichtungsledger [APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md](APW4_INTEGRATED_STATUS_AND_PROGRESS_LEDGER_2026-11-10.md) dokumentiert den mathematischen APW4-Kern, historische Rekonstruktionsfortschritte, offene Event/BIB-/Gewichts-/Kapazitätsverpflichtungen sowie die exakten PR- und CI-Grenzen der aktuellen Reparaturkandidaten. Der mathematische Energieabschluss bleibt erhalten; die vollständige historische Lean-Hauptsatzintegration ist weiterhin nicht nachgewiesen.
