@@ -145,3 +145,78 @@ theorem intersectionCount_eq_sum_exactSupportCount (T : Finset I) :
 #print axioms historical_bib_collision_identity
 
 end APW4HistoricalCRT
+
+
+/-!
+## Recovered q-fibre incidence interface (Dossier v1.6, §48)
+
+For fixed historical labels q,r,x,y,g, the source records
+P_{q,x,h} = F_q(x) ∩ C_h,
+P_{r,y,g} = F_r(y) ∩ C_g,
+M_{q,r}((x,h),(y,g)) = |P_{q,x,h} ∩ P_{r,y,g}|,
+and Gamma_{q,r}(g) = |C_g ∩ V_q ∩ V_r|.
+
+The definitions below isolate exactly this finite-set interface. The aggregate
+bound is proved only under the explicit fibre-containment and block-disjointness
+properties that must be derived from the original definitions when the actual
+q,r,x,y,g data are instantiated. This is a local counting lemma, not the
+weighted Hall condition or the global APW4 HT theorem.
+-/
+
+namespace APW4HistoricalQFibre
+
+variable {G H : Type*} [DecidableEq G] [Fintype H] [DecidableEq H]
+
+/-- The historical q-fibre slice P_{q,x,h} = F_q(x) ∩ C_h. -/
+def Pq (Fq : Finset G) (C : H → Finset G) (h : H) : Finset G :=
+  Fq ∩ C h
+
+/-- The historical r-fibre slice P_{r,y,g} = F_r(y) ∩ C_g. -/
+def Pr (Fr : Finset G) (C : H → Finset G) (g : H) : Finset G :=
+  Fr ∩ C g
+
+/-- The q-profile intersection count M_{q,r}((x,h),(y,g)). -/
+def M_qr (Fq Fr : Finset G) (C : H → Finset G) (g h : H) : ℕ :=
+  (Pq Fq C h ∩ Pr Fr C g).card
+
+/-- The historical target capacity Gamma_{q,r}(g). -/
+def Gamma_qr (Vq Vr : Finset G) (C : H → Finset G) (g : H) : ℕ :=
+  (C g ∩ Vq ∩ Vr).card
+
+/--
+For fixed q,r,x,y,g, the sum of the historical M_{q,r} counts over h is
+bounded by Gamma_{q,r}(g), provided the q- and r-fibres lie in V_q and V_r
+and the blocks C_h are pairwise disjoint.
+-/
+theorem sum_M_qr_le_Gamma_qr
+    (Fq Fr Vq Vr : Finset G) (C : H → Finset G) (g : H)
+    (hFq : Fq ⊆ Vq) (hFr : Fr ⊆ Vr)
+    (hC : ∀ h₁ h₂, h₁ ≠ h₂ → Disjoint (C h₁) (C h₂)) :
+    (∑ h : H, M_qr Fq Fr C g h) ≤ Gamma_qr Vq Vr C g := by
+  classical
+  let E : H → Finset G := fun h => Pq Fq C h ∩ Pr Fr C g
+  have hpair : (↑(Finset.univ : Finset H) : Set H).PairwiseDisjoint E := by
+    intro h₁ hh₁ h₂ hh₂ hne
+    apply Finset.disjoint_left.mpr
+    intro z hz₁ hz₂
+    simp only [E, Pq, Pr, Finset.mem_inter] at hz₁ hz₂
+    exact (Finset.disjoint_left.mp (hC h₁ h₂ hne)) z hz₁.1.2 hz₂.1.2
+  have hsubset : Finset.univ.biUnion E ⊆ C g ∩ Vq ∩ Vr := by
+    intro z hz
+    rcases Finset.mem_biUnion.mp hz with ⟨h, hh, hzE⟩
+    simp only [E, Pq, Pr, Finset.mem_inter] at hzE
+    simp only [Finset.mem_inter]
+    exact ⟨⟨hzE.2.2, hFq hzE.1.1⟩, hFr hzE.2.1⟩
+  calc
+    (∑ h : H, M_qr Fq Fr C g h) = ∑ h : H, (E h).card := by
+      apply Finset.sum_congr rfl
+      intro h hh
+      rfl
+    _ = (Finset.univ.biUnion E).card := by
+      symm
+      simpa using (Finset.card_biUnion hpair)
+    _ ≤ (C g ∩ Vq ∩ Vr).card := Finset.card_le_card hsubset
+
+#print axioms sum_M_qr_le_Gamma_qr
+
+end APW4HistoricalQFibre
