@@ -587,3 +587,8 @@ All three declarations in the finite-incidence module remain conditional on expl
 ## Addendum 1.35 — final initial-cylinder manuscript source commit
 
 Syracuse PR #35 manuscript v1.0 is now at exact documentation commit ddf366d7654a275958157daab9d3d489ad3e6fd0. A raw-LaTeX read-back and control-character scan confirms correct TeX commands and no non-whitespace control characters. No Lean source changed; the previously recorded seven successful theorem audits remain scoped to the named initial-cylinder declaration.
+
+
+## Addendum 1.36 — PR #67 conditional incidence module Lean 4.28 PASS
+
+Corrected exact source commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4 passed canonical workflow 42740305961. The log explicitly compiles and prints incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction, each with [propext, Classical.choice, Quot.sound]; no actual sorryAx appears in the completed log. The separate Lean 4.35.0 paranoid workflow 42740306351 remains in progress. Thus the conditional finite-incidence module has a successful Lean 4.28 canonical compile/axiom audit, but its dual-toolchain paranoid verification is still pending. It does not prove historical incidence hypotheses or BIB/Hall transport.
