@@ -370,3 +370,26 @@ The APW4 theorem record and prior successful Lean 4.28 audit snapshots remain pr
 ### Exact documentation audit
 
 The preceding PR #79 head 601cff92729c52c4a8540513af1e27d13149a451 passed workflow 42736897721. This new addendum advances the documentation branch and requires a fresh exact-head audit.
+
+## 21. B=8191 archive, verified mixed cylinder and current APW4 candidate — 10 November 2026
+
+### Kolaz threshold archive through B=8191
+
+The finite archive now covers B=31,63,127,255,511,1023,2047,4095,8191. Exact-head workflow 42737593864 passed on PR #39 head 710fb173c3006bbf622f6b7b3a67ac69907fc783; all nine Python regression tests passed, including the complete CSV tables for B=511,1023,2047,4095,8191. Counts for the last three are 170,341,682; maximum excursion lengths 50,30,45; maximum heights 425645,425645,2717873. The B=4095 z0=4607 and B=8191 z0=10367 paths share an exact 29-term suffix ending at 3371. These remain finite deterministic computations, not a uniform return bound.
+
+### Syracuse mixed valuation-word cylinder: Lean pass
+
+The root-library exact-head workflow 42736159935 passed on code snapshot 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9. New declaration realizesValuationWord12_iff_mod_sixteen_eleven proves that the exact two-step valuation word (1,2), represented by odd quotient witnesses 2*n1=3*n+1 and 4*n2=3*n1+1, is equivalent to n ≡ 11 (mod 16). It prints [propext, Classical.choice, Quot.sound], with no actual sorryAx hit. The exact (1,2) example now has a genuine Lean kernel proof; the general finite-word cylinder theorem, density corollary and tail-cylinder partition remain unformalized.
+
+### APW4 latest integration candidate
+
+PR #69 has advanced to head 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768. The previous candidate fc2b5f501c4efb478d1c61af2dcb1ae529026cbc failed in Lean 4.35.0: the remaining target showed that the updatedWeight covered predicate and the recursively unfolded PAt predicate still used distinct proof-indexed prefixCoveredValues expressions; a tactic also attempted to close a goal that had already disappeared. The new candidate explicitly applies propext to the membership equivalence and rewrites the recursive predicate before splitting conditionals. Exact-head run 42737432337 is in progress with both Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs. No pass is claimed yet.
+
+### Other finite formal audits retained
+
+- Terminal-residue k=2 standalone PR #38: Lean/Mathlib 4.35.0 exact audit 42735716873 passed; seven declarations have the standard profile and no actual sorryAx.
+- Odd-covering L945 standalone PR #80: Lean/Mathlib 4.35.0 exact audit 42736499021 passed on its then-current code snapshot; seven declarations have the standard profile, lake check --paranoid passes, and no actual sorryAx.
+- Documentation PR #79 current head 7be2b35eaa38a1591808b94e0bd35911565ea2d2 has exact audit 42737658978 in progress. This section advances that branch and will require a new exact-head docs audit.
+- PR #9 current documentation/source head f4931ed84b6556640ecbcabcd0332302fe613eb6 has run 42737612625 in progress; the mixed-word theorem itself is already verified on the exact source snapshot stated above.
+
+All earlier APW4 mathematical and Lean results remain preserved at their original scopes. The new finite cylinder, Kolaz and CRT calculations do not supply the historical APW4 event-index map, diagonal/off-diagonal transport, BIB/Hall capacity, or a global Collatz proof.
