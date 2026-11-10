@@ -220,3 +220,84 @@ theorem sum_M_qr_le_Gamma_qr
 #print axioms sum_M_qr_le_Gamma_qr
 
 end APW4HistoricalQFibre
+
+
+/-!
+## Explicit preimage-fibre interface
+
+This layer derives the hypotheses of the local q-fibre counting theorem
+when fibres and blocks are genuine preimages of maps. It is a reusable
+formal interface for the eventual arithmetic projections and block labels.
+It is **not** yet the historical APW4 instantiation: the source-specific
+maps, selected sets, and block-label function must still be recovered.
+-/
+
+namespace APW4HistoricalQFibre
+
+namespace PreimageModel
+
+variable {G Xq Xr H : Type*}
+variable [Fintype G] [DecidableEq G]
+variable [DecidableEq Xq] [DecidableEq Xr]
+variable [Fintype H] [DecidableEq H]
+
+/-- Fibre over one label of a finite projection. -/
+def fibre (π : G → X) (x : X) : Finset G :=
+  Finset.univ.filter fun z => π z = x
+
+/-- The inverse image of a selected set of projection labels. -/
+def visible (π : G → X) (U : Finset X) : Finset G :=
+  Finset.univ.filter fun z => π z ∈ U
+
+/-- The block with label h under a single block-label map. -/
+def block (c : G → H) (h : H) : Finset G :=
+  Finset.univ.filter fun z => c z = h
+
+/-- A fibre over a selected label is contained in the inverse image
+of the selected label set. -/
+theorem fibre_subset_visible
+    (π : G → X) (U : Finset X) (x : X) (hx : x ∈ U) :
+    fibre π x ⊆ visible π U := by
+  intro z hz
+  have hz' : π z = x := by
+    simpa [fibre] using hz
+  simp [visible, hz', hx]
+
+/-- Distinct fibres of one block-label map are pairwise disjoint. -/
+theorem block_pairwise_disjoint
+    (c : G → H) :
+    ∀ h₁ h₂, h₁ ≠ h₂ → Disjoint (block c h₁) (block c h₂) := by
+  intro h₁ h₂ hne
+  apply Finset.disjoint_left.mpr
+  intro z hz₁ hz₂
+  have h₁z : c z = h₁ := by simpa [block] using hz₁
+  have h₂z : c z = h₂ := by simpa [block] using hz₂
+  exact hne (h₁z.symm.trans h₂z)
+
+/-- The q-fibre aggregate bound follows automatically for genuine
+preimage fibres and blocks of one label map. The arithmetic projections
+and selected label sets are explicit parameters; no historical
+identification is asserted by this generic theorem. -/
+theorem sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (πq : G → Xq) (πr : G → Xr)
+    (Uq : Finset Xq) (Ur : Finset Xr)
+    (c : G → H) (x : Xq) (y : Xr) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (fibre πq x) (fibre πr y) (block c) g h)
+      ≤
+    Gamma_qr (visible πq Uq) (visible πr Ur) (block c) g := by
+  exact sum_M_qr_le_Gamma_qr
+    (fibre πq x) (fibre πr y)
+    (visible πq Uq) (visible πr Ur) (block c) g
+    (fibre_subset_visible πq Uq x hx)
+    (fibre_subset_visible πr Ur y hy)
+    (block_pairwise_disjoint c)
+
+#print axioms fibre_subset_visible
+#print axioms block_pairwise_disjoint
+#print axioms sum_M_qr_le_Gamma_qr_of_preimage_maps
+
+end PreimageModel
+
+end APW4HistoricalQFibre
