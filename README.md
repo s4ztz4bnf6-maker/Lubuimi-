@@ -500,3 +500,20 @@ Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue i
 \]
 
 This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
+
+
+
+## Exact-head continuation — 10 November 2026, 05:18 CET
+
+This addendum supersedes no earlier mathematical result or verification record. PR #79 preserves the APW4 proof-status correction: established APW4 mathematical results remain established; later integration failures do not retroactively invalidate them. The published valuation-word cylinder theorem in Syracuse PR #9 / the author's PR #36 record is not reopened.
+
+Current source and CI work:
+
+- APW4 PR #93, head `fbab49639954ae749d30a884a04032ee1d4d0f0e`, adds a generic dyadic residue-cylinder model with exact lift cardinality, congruence membership, complement cardinality and rational mass. Its companion `SyracuseUniformFibreBridge.lean` is explicitly a cardinality-only `FibreData` model, not the residue-cylinder instantiation and not the historical APW4 event/BIB map. Exact-head workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105) is running; no PASS is claimed.
+- The mathematical residue formulas needed to instantiate the generic residue parameter are already recorded in [the finite-depth bridge note](publication/LUBUIMI_SYRACUSE_FINITE_DEPTH_UNIFORM_FIBRE_BRIDGE_2026-11-10.md). The Lean instantiation identifying the parameter with the explicit prefix-tail residue and identifying child classes with exact valuation predicates remains the next formalization target.
+- APW4 PR #100's exact-head workflow [42752093612](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42752093612) passed its Lean 4.28 audit job across the ordered source stages, including prefix recursion and subsequent incidence/moment modules. Its Lean 4.35.0 integrated-paranoid job failed in `BBMSTPrefixMeasureRecursion.lean`: the uncovered branch of `prefixFibre_updatedWeight_eq_PAt` remained unsolved and `sorryAx` propagated to dependent `PAt) declarations. This is an integration failure on that exact toolchain/head, not a counterexample to the APW4 mathematics.
+- A surgical follow-up, PR #101, commit `3625d65285e36da383f7fcd1a322ec6612d98451`, makes the uncovered endpoint nonmembership hypothesis explicit before simplification. Its exact-head workflow [42754856131](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754856131) is queued; this patch is a candidate, not yet verified.
+- Collatz PR #48, head `e1fb06eaa07190d8abfb3fc7368f3dc0663a5a66), adds the minimal-counterexample lower-bound-to-finite-cap-tree embedding and terminal-residue unit condition. Exact-head workflow [42754461228](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42754461228) is running in Lean 4.35.0 paranoid, Lean 4.34.1 and compile-drafts jobs.
+- Kolaz PR #39's exact finite-table/confluence workflow [42739986917](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42739986917) passed. This is finite reproducibility evidence, not Lean kernel verification or a global Collatz proof.
+
+All statuses above are commit- and workflow-scoped. No queued or in-progress run is described as a PASS.
