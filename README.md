@@ -192,3 +192,12 @@ PR #107 was advanced after its initial commit. Current exact source head: b5a7b8
 - PR #101 current head remains 6bad5a25400aeae8e851a38c507141ec0e092a3a. Workflow [42756335441](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756335441): integrated-paranoid is in progress and audit is queued. No PASS yet.
 - PR #107 current head is now 3534d47fcb9857109b71d1397f3976b5de35dcf1. In addition to the explicit unique tail coordinate, it now defines the prefix-tail numerator and its canonical quotient, proves the quotient multiplication identity under the exact divisibility hypothesis, and packages the lift factorization with that canonical quotient. The earlier workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) was cancelled when the branch advanced; no completed verification has been returned for the current head.
 - PR #105 documentation branch current head is cf918706cf242d04e70e2b4edd41750c33bf94ed. Its exact-head workflow [42756718300](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756718300) is queued. Earlier docs-only head bbfe91e33a09a3f1325a5d6e0952c615e6c40c52 passed its audit in run 42756393394; that PASS is scoped to that earlier head.
+
+
+## Dependent uncovered-branch repair — 10 November 2026
+
+The integrated-paranoid attempt for PR #101 at prior head 6bad5a25400aeae8e851a38c507141ec0e092a3a failed at BBMSTPrefixMeasureRecursion.lean:414. The failure was a dependent-type mismatch in the universe-membership witness: the goal expected Finset.univ over C.S (prefixIndex hj (Fin.last (a+j))), while the witness was typed over C.S (stageCoordinate hk). The source has now been corrected on PR #101 at head 30dac5cf32445326aaad1b717e125c0688bea5a0 to state the exact goal type. This is a targeted repair, not a verified result; an exact-head integrated-paranoid run remains pending.
+
+PR #93's older integrated snapshot also failed in the same recursion theorem at line 407, leaving sorryAx in downstream PAt_nonneg and PAt_sum_eq_one. PR #101 is the explicit repair line; neither failure changes the separately proved APW4 results or the published PR #36 valuation-word cylinder theorem.
+
+PR #107's previous attempt remains cancelled at its full Lean jobs; its exact current source head is 33ff0b894391e6845a81fe1a5f472671086021ef. The explicit residue candidate is still awaiting a full exact-head run and clean named axiom audit.
