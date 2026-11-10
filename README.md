@@ -368,3 +368,8 @@ PR [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138) now points to e
 Original APW4 manuscript wording, original Lean source, research notes, and project documentation are attributed to Ta-Yoshua Lubuimi to the extent he owns the relevant rights. The repository's [proprietary rights notice](LICENSE-PROPRIETARY.md) and [commercial licensing policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) govern those protected original materials. Public access or citation does not grant commercial-use permission; any commercial licence requires express written agreement.
 
 No exclusive ownership is claimed over mathematical facts, theorem statements, abstract ideas, methods, or independently developed implementations as such. Upstream Erdős–Selfridge materials, Balister et al. publications, Lean, Mathlib, packages, and other third-party components retain their own licences and rights holders. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## Repository-wide exact-head status — 10 November 2026
+
+The append-only [repository-wide APW4 status snapshot](publication/APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md) consolidates the current exact PR heads, CI outcomes, remaining source-faithful proof obligations, and licensing boundary. It preserves the established mathematical APW4 result separately from the still-open integrated historical Lean verification. The independently finalized manuscript PDF is not modified.
