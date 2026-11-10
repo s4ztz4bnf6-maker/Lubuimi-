@@ -124,3 +124,8 @@ Exact source head `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow [42809132
 ### Acceptance gate
 
 The v8 candidate is accepted only if both jobs finish successfully, the integrated build compiles without tactic errors, the named `#print axioms` outputs for `prefixFibre_updatedWeight_eq_PAt` and dependent `PAt` declarations contain only the accepted standard axioms, and the integrated dependency closure contains no `sorryAx`. Later event-mass, historical-definition, and APW4 bridge obligations remain separately tracked.
+
+
+## 9. Latest v8 poll — 10 November 2026
+
+At the latest poll, PR #123 workflow 42809132672 had both audit job `129805804074` and integrated-paranoid job `129805804376` in progress. Their log artifacts were not yet retrievable. The result remains OFFEN – NICHT VERIFIZIERT. The earlier v7 integrated failure remains recorded; no result is inferred for v8 until both jobs complete and the logs are inspected.
