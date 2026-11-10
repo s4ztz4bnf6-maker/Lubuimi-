@@ -256,3 +256,8 @@ A new narrow candidate is recorded at [PR #114](https://github.com/s4ztz4bnf6-ma
 The candidate moves the case split onto the recursive geometric membership predicate `prefixCoveredValues` before unfolding `updatedWeight` and `PAt`; it then transports the positive/negative membership fact to the concrete `F.covered` field and simplifies the corresponding branch. It changes no definitions, theorem statements, hypotheses, or mathematical claims. PR #113 was closed after identifying that its comparison base was unsuitable and its diff was not narrowly scoped; no source change from that branch is retained in PR #114.
 
 No verification result is claimed yet. The acceptance gate remains exact-head integrated-paranoid success, the separate audit, inspection of named `#print axioms`, and absence of `sorryAx` throughout the dependency closure. Established APW4 mathematical results and the published manuscript status remain untouched.
+
+
+## PR #114 exact-head workflow launched — 10 November 2026
+
+The membership-first repair candidate [PR #114](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/114) is at exact head `d09d28935c9e026f4b8297b058c3cd4169231451`. Its triggered workflow [42762133686](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762133686) has both `audit` and `integrated-paranoid` in progress. No compilation or axiom-audit outcome is claimed until those jobs complete and their logs are inspected.
