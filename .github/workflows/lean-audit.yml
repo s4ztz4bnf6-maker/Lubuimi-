@@ -85,7 +85,7 @@ jobs:
           sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.elan/bin:$PATH"
-          cp BBMST*.lean APW4*.lean SyracuseUniformFibreBridge.lean kernel-audit/
+          cp BBMST*.lean APW4*.lean SyracuseUniformFibreBridge.lean SyracuseDyadicResidueFibre.lean kernel-audit/
           cd kernel-audit
           lake update
       - name: Install bubblewrap sandbox
@@ -119,7 +119,7 @@ jobs:
       - name: Assemble minimal Syracuse fibre audit package
         run: |
           mkdir -p kernel-audit-syracuse
-          cp BBMSTFiberMeasureCore.lean BBMSTFiniteFibreUpdate.lean SyracuseUniformFibreBridge.lean kernel-audit-syracuse/
+          cp BBMSTFiberMeasureCore.lean BBMSTFiniteFibreUpdate.lean SyracuseUniformFibreBridge.lean SyracuseDyadicResidueFibre.lean kernel-audit-syracuse/
           cat > kernel-audit-syracuse/lean-toolchain <<'EOF'
           leanprover/lean4:v4.35.0
           EOF
@@ -130,12 +130,13 @@ jobs:
           require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"
           @[default_target]
           lean_lib SyracuseFibreKernelAudit where
-            roots := #[`BBMSTFiberMeasureCore, `BBMSTFiniteFibreUpdate, `SyracuseUniformFibreBridge, `SyracuseFibreKernelAudit]
+            roots := #[`BBMSTFiberMeasureCore, `BBMSTFiniteFibreUpdate, `SyracuseUniformFibreBridge, `SyracuseDyadicResidueFibre, `SyracuseFibreKernelAudit]
           EOF
           cat > kernel-audit-syracuse/SyracuseFibreKernelAudit.lean <<'EOF'
           import BBMSTFiberMeasureCore
           import BBMSTFiniteFibreUpdate
           import SyracuseUniformFibreBridge
+          import SyracuseDyadicResidueFibre
           EOF
           cd kernel-audit-syracuse
           lake update
