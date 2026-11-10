@@ -95,3 +95,12 @@ Once the recursion bridge passes the exact-head gate, continue with the historic
 ### Preservation and attribution
 
 All established APW4 results and all earlier exact-head Lean passes remain valid for their stated scope; later integration failures do not retroactively invalidate them. Do not claim that the complete historical APW4 theorem is already fully Lean-verified until its own exact release-head build, paranoid check, named axiom output, and transitive no-`sorryAx` audit pass. Original APW4 research and formalization remain attributed to Ta-Yoshua Lubuimi; AI tools are assistants only.
+
+
+### Verification chronology preservation — 10 November 2026
+
+Run [42728171781](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42728171781) has a successful Lean 4.28.0 audit for the checked declarations `prefixPointCovered_iff`, `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one), with standard axiom profile `[propext, Classical.choice, Quot.sound]` and no `sorryAx` in that audit output. Its separate integrated-paranoid job failed; the 4.28 result remains valid for its own source/toolchain/declaration scope. Later Lean 4.35 integration errors do not retroactively invalidate it.
+
+Run [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) failed both jobs on a later source candidate; the subsequent v14 exact-head log localized the remaining issue to conditional reduction using membership witnesses at the unfolded endpoint while the updated-weight conditional still used the local let-bound endpoint. PR #138 / v15 transports those witnesses to the actual local argument and remains pending exact-head verification.
+
+This chronology is not a replacement for the published mathematical manuscript and does not change the publication record or authorship. The historical c(I)/ν(J) identifications and complete integrated release audit remain formalization work.
