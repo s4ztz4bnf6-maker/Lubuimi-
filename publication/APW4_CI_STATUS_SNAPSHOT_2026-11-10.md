@@ -573,3 +573,12 @@ PR #68's source-reconstruction and chronology record is reaffirmed: the original
 ## Addendum 1.34 — PR #67 import-order correction and new exact audit
 
 The first dedicated PR #67 workflows on commit e8b61d2961dadbae2915dd6754807fc1b13daf6d failed because a verification comment had been inserted before import Mathlib. Lean correctly rejected the import position. The comment has now been moved below the import on corrected source commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4. New exact-head workflows are queued: canonical Lean 4.28 run 42740305961 and Lean 4.35.0 paranoid run 42740306351. The three conditional incidence declarations remain unverified until these runs complete with standard profiles and no actual sorryAx.
+
+
+## Addendum 1.35 — APW4 incidence import correction and scalar-transport candidate
+
+- Corrected incidence source head: `e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4`; runs [42740305961](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740305961) and [42740306351](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740306351) were in progress. The prior `e8b61d2` head failed because the import was not first in the Lean file; no theorem-level conclusion was drawn from that failure.
+- Integrated PR #69 current source head: `2c2ec3472ae2de9bfc7dc90198f48c52f21f04dd`; exact-head runs [42740134936](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740134936) and [42740144142](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740144142) were in progress.
+- Draft PR #83 proposes replacing the dependent rewrite `rw [← hlocal]` with direct equality transport of the scalar inequality. Exact candidate `2656fe9fadac25b5c79a1f217ad40fb8472738d0`; workflows [42740315350](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740315350) and [42740323488](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740323488) were queued/running.
+
+All three declarations in the finite-incidence module remain conditional on explicit arithmetic/energy hypotheses. Neither PR #67 nor PR #83 establishes the historical weighted Hall map or closes the APW4 source-to-Lean integration. No pass is claimed for these in-progress exact-head workflows. PR #82 is closed as superseded, not merged.
