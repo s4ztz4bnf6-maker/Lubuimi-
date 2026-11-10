@@ -162,7 +162,7 @@ theorem and the final axiom audit remain open.
 
 At source commit `2dfde335eafa1f4f64c691ac6a2770f5db224e22`,
 `BBMSTPrefixCylinderMass.lean` was extended with the finite cylinder
-`prefixCylinder` and its actual `PAt)-mass `prefixCylinderMass`.
+`prefixCylinder` and its actual `PAt`-mass `prefixCylinderMass`.
 The membership theorem `mem_prefixCylinder` identifies the finite filter
 with `Hyperplane.ContainsPrefix`.
 
@@ -497,9 +497,9 @@ Implement in a dedicated module (suggested name `BBMSTOldShadowTuple.lean`, impo
 3. A fold invariant showing the accumulator is compatible with each remaining entry, derived from pairwise compatibility of the original tuple.
 4. `mergeOldShadowsFin_contains_iff`: membership iff membership in every tuple shadow.
 5. `fixedCoords_mergeOldShadowsFin`: fixed-coordinate set equals the finite union of tuple profiles.
-6. `oldShadowsFin_disjoint_of_conflict): a conflicting pair makes the full tuple intersection empty.
-7. `prefixTupleShadowMass_le_profileBound): compatible case via the source-facing Lemma 3.3; conflict case via zero mass and nonnegative (c(I)\nu(J)).
-8. `orderedTuple_indicator_expansion`: expansion over `Fin t → N_k), retaining all repetitions and order.
+6. `oldShadowsFin_disjoint_of_conflict`: a conflicting pair makes the full tuple intersection empty.
+7. `prefixTupleShadowMass_le_profileBound`: compatible case via the source-facing Lemma 3.3; conflict case via zero mass and nonnegative (c(I)\nu(J)).
+8. `orderedTuple_indicator_expansion`: expansion over `Fin t → N_k`, retaining all repetitions and order.
 9. The finite weighted sum interchange and the final source Lemma 3.4 moment bound.
 
 ### Proof-engineering constraints
