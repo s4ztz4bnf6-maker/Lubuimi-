@@ -365,16 +365,10 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hprev' : k ≤ n := by omega
   have hhk : hk = hk' := Subsingleton.elim _ _
   have hhp : hprev = hprev' := Subsingleton.elim _ _
+  have hhj : hj = hk' := Subsingleton.elim _ _
+  cases hhj
   cases hhk
   cases hhp
-  have hstage : stageCoordinate (k := k) hk =
-      prefixIndex hj (Fin.last k) := by
-    apply Fin.ext
-    rfl
-  -- Eliminate the equality of dependent coordinate indices first.  This
-  -- makes the final prefix value and the fibre coordinate definitionally
-  -- identical, avoiding an opaque cast in membership goals.
-  cases hstage.symm
   let x : C.S (stageCoordinate hk) := y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
