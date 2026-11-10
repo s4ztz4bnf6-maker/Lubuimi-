@@ -356,3 +356,12 @@ The next Lean module should add the tuple interface in this dependency order: (i
 The source-facing tuple bound depends on the separately specified historical Lemma 3.3 interface (c(I)\nu(J)), including the all-initial-hyperplanes maximum and the exact suffix interval. The tuple geometry does not bypass those source requirements.
 
 **Verification:** this is a source inspection and proof-obligation record, not a Lean compile. No compiler is available through this repository-editing session. The current candidate head and PR #138 status remain separately controlled by exact-head CI and transitive axiom evidence. No new theorem or CI success is claimed here.
+
+
+## Ordered arbitrary-tuple old-shadow interface — 10 November 2026
+
+A new source-level candidate has been added to `BBMSTOldShadow.lean` at commit `b4de083bc0f8e4c061b8490a97afff1261952bd3` (blob `10a1defdfc701b50399284d8c6f0d1a7d7e9a2ed`). It introduces a list merge and a `Fin t` tuple wrapper via `List.ofFn`, which preserves the original order and repeated entries.
+
+New declarations include `mergeOldShadowsList_contains_iff`, `mergeOldShadowsTuple_contains_iff`, `fixedCoords_mergeOldShadowsTuple`, and `tupleOldShadows_disjoint_of_conflict`, together with the assignment-witness and fixed-coordinate fold helpers. The compatible case identifies the tuple intersection predicate with membership in one merged old shadow; the conflict case makes the full intersection empty; the fixed-coordinate profile is represented by the ordered fold-union.
+
+**Status: OFFEN – NICHT VERIFIZIERT.** This is a source candidate, not a Lean result. No exact-head workflow, isolated compile, integrated Lean 4.35.0 build, named axiom output, or transitive no-`sorryAx` result has been returned for commit `b4de083bc0f8e4c061b8490a97afff1261952bd3`. The full historical Lemma 3.4 is still open: the source-facing Lemma 3.3 mass bound for the merged event, the ordered-tuple indicator expansion, and the finite weighted-sum interchange have not yet been added. This interface does not establish the historical Event-to-BIB map or weight/capacity preservation.
