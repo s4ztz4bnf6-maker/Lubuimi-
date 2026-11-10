@@ -300,3 +300,10 @@ Error recovery prints sorryAx in prefixPointCovered_iff, prefixExtensionEquiv, s
 The Syracuse programme now has a genuine Lean-verified finite non-descent cap core. Workflow 42728049650 passed on exact source commit ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc using Lean 4.34.1. The declarations signedOffsetMargin_nonpos_succ_iff_exponent_cap, signedOffsetMargin_nonpos_of_nondecreasing_orbit, and nondecreasing_orbit_next_exponent_cap each printed [propext, Classical.choice, Quot.sound]; the complete job log contained no actual sorryAx occurrence and the build completed 8,930 jobs.
 
 This proves in Lean the exact margin equivalence and the necessary next-exponent cap for a nondecreasing exact affine endpoint. It does not yet formalize the maximum cap B_alpha, the exact tail-cylinder partition, or the general finite-word cylinder theorem. The Syracuse cap's Lean 4.34.1 verification is separate from the APW4 integrated Lean 4.35.0 audit. The APW4 historical index-preserving transport, diagonal/off-diagonal bounds, and BIB/Hall capacity remain open.
+
+
+## Addendum 1.17 — residual universe-membership repair and current exact-head run
+
+The Lean 4.35.0 log for PR #69 head `4c30eca56d188d144630d27b94c506c6eac0a4d0` showed that `prefixPointCovered_iff` had become axiom-clean, but `prefixFibre_updatedWeight_eq_PAt` still left two goals. Both goals had the same source: after unfolding `updatedWeight`, the finite fibre's point-membership conditional had reduced to a residual test `x ∈ Finset.univ`. The proof now explicitly includes `Finset.mem_univ` in both branch simplifications and uses the nondeprecated `ite_true) lemma in the initial reduction.
+
+The exact source head is now `1f4225ce0bdf6186fd0700612e2306ed3ff44506`. Workflow 42734929700 has both the Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs in progress. The prior 4.28 audit pass remains preserved for its own commit. The new candidate is not yet accepted: both jobs must complete, the declarations `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one` must print the standard profile, and the integrated log must contain no actual `sorryAx` occurrence.
