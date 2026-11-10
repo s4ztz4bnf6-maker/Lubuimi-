@@ -358,32 +358,33 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hk : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
   have hprev : k ≤ n := by omega
-  -- First identify the dependent proof witnesses, then normalize the
-  -- stage-coordinate index before constructing or unfolding the fibre.
   have hk' : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
   have hprev' : k ≤ n := by omega
   have hhk : hk = hk' := Subsingleton.elim _ _
   have hhp : hprev = hprev' := Subsingleton.elim _ _
   have hhj : hj = hk' := Subsingleton.elim _ _
-  cases hhk
-  cases hhj.symm
-  cases hhp
-  let x : C.S (stageCoordinate hk) := y (Fin.last k)
-  let xprev := restrictPrefix C hk y
-  have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
+  -- Substitute the proof witnesses in a fixed direction.  The primed
+  -- witnesses are retained, so every dependent prefix and coordinate below
+  -- is indexed by the same proof term.
+  subst hk
+  subst hj
+  subst hprev
+  let x : C.S (stageCoordinate hk') := y (Fin.last k)
+  let xprev := restrictPrefix C hk' y
+  have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev' xprev := by
     simpa [xprev, k] using hbase
-  let F := prefixFibreData C (A := A) (k := k) hk xprev
-    (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
+  let F := prefixFibreData C (A := A) (k := k) hk' xprev
+    (PAt C (A := A) a ha P0 δ j hprev' xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
-      (δ (stageCoordinate hk)) x =
-    PAt C (A := A) a ha P0 δ (j + 1) hj y
+      (δ (stageCoordinate hk')) x =
+    PAt C (A := A) a ha P0 δ (j + 1) hk' y
   by_cases hcov :
-      x ∈ prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y)
+      x ∈ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y)
   · have hcov' :
-        y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y) := by
+        y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y) := by
       simpa [x, k] using hcov
     have hcovF : x ∈ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
@@ -395,9 +396,10 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, hcov', xprev, k]
+    <;> ring
   · have hnot' :
-        y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y) := by
+        y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y) := by
       simpa [x, k] using hcov
     have hnotF : x ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
@@ -412,6 +414,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, hnot', xprev, k]
+    <;> ring
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
