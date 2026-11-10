@@ -171,8 +171,16 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   have hi_ne : i.val ≠ k := by omega
+  have hindex : (⟨i.val, by omega⟩ : Fin k) = i := by
+    apply Fin.ext
+    rfl
+  have hcoord :
+      prefixIndex (Nat.le_trans (Nat.le_succ k) hk) i =
+        prefixIndex hk (⟨i.val, by omega⟩ : Fin (k + 1)) := by
+    apply Fin.ext
+    rfl
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt, hi_ne]
+    prefixIndex, stageCoordinate, Function.update, i.isLt, hi_ne, hindex, hcoord]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -204,7 +212,7 @@ theorem prefixPointCovered_iff
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
   unfold prefixPointCovered prefixCoveredValues
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [stageCoordinate, Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
@@ -383,7 +391,17 @@ theorem prefixFibre_updatedWeight_eq_PAt
       stageCoordinate hk =
         stageCoordinate (show k + 1 ≤ n from by omega) := by
     rw [hhk]
-  simp only [hcovered, hstage, hPAt]
+  by_cases hcov :
+      y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev
+  · have hcov' := hcovered.mp hcov
+    simp [hcov, hcov', hstage, hPAt]
+  · have hcov' :
+        ¬ y (Fin.last k) ∈
+          prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
+            (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
+      intro h'
+      exact hcov (hcovered.mpr h')
+    simp [hcov, hcov', hstage, hPAt]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
