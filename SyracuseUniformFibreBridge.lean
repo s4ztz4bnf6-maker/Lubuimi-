@@ -106,7 +106,7 @@ def toFibreData (B Bstar : ℕ) :
   weight_nonneg := by
     intro x hx
     apply inv_nonneg.mpr
-    positivity
+    exact_mod_cast (Nat.zero_le (2 ^ Bstar))
   total_mass := by
     simp [allAtoms, uniformWeight, Finset.sum_const, Finset.card_range]
   proportion_nonneg := by
@@ -126,7 +126,7 @@ def toFibreData (B Bstar : ℕ) :
   covered_mass := by
     simp [candidateProportion, candidateAtoms, allAtoms, uniformWeight,
       Finset.sum_const, Finset.card_range]
-    ring
+    ring_nf
 
 /-- Candidate and tail cardinalities exactly conserve the common fibre. -/
 theorem candidate_tail_card_conservation (B Bstar : ℕ) :
@@ -149,7 +149,7 @@ theorem candidateProportion_eq_one_sub_tail
   push_cast
   rw [Nat.cast_sub hT]
   field_simp
-  ring_nf
+  norm_cast
 
 /-- The tail has exactly the complementary dyadic mass. -/
 theorem tailProportion_eq_dyadic
