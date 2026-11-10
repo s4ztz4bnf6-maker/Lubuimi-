@@ -198,3 +198,12 @@ The 6 November note `BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md`, §§5–6, 
 The same note explicitly warns that this expansion is **not a bound**: no quantitative control of the three terms containing (Z) is established, minimality alone has not been shown to imply the required weighted estimate, and the extraction map from selected depth-one labels to divisor labels is unspecified. The claims about depth-one label counts, proper lcm, and (|U|geDelta(B)) remain marked unverified in that note and are not to be used as proof premises.
 
 The earlier 6 November source-status discussion also records that the full generators/index domains for (F_q,F_r,C_h) were not supplied. A proposed completion (F_q(x)=pi_q^{-1}({x})) was explicitly labelled **canonical but non-historical**. It must not be substituted into the historical proof or Lean implementation. The current PR #85 theorem is therefore only a conditional local M/Gamma set-count; it does not resolve the mixed (Z)-term bounds, selected-label extraction, or weighted HT/BIB capacity transport.
+
+
+### Addendum 2.10 — formal canonical projection helper does not close historical fibre reconstruction
+
+PR #87 now contains a Lean implementation of the canonical Fin N / Fin B residue-fibre model, including the elementary inclusion of a fibre over x∈U into the lifted set. Its namespace and comments explicitly label it canonical and non-historical. It is a reusable lemma only; the source-derived equivalence with the author's actual ambient space, quotient map, base-residue index set, and block family has not been proved. Therefore it does not close the historical F_q/V_q/U_q interface and is not used as a substitute.
+
+The 6 November BIB note additionally records the q-profile formulas I_q(x,h), A_q(x,h), Z_q(x,h), D_{q,r}=N/(q^a r^b), and W_{q,r}(x,y)=1_{x≡y mod D_{q,r}}. It still leaves the exact matrix orientation, a_{q,t} vector coordinates, selected-cover construction, and all three Z-containing residual bounds unresolved. The separate finite depth-one second-moment inequality remains conditional on its explicit row-size and pair-intersection hypotheses and is not the weighted APW4 HT theorem.
+
+PR #85's local M/Gamma theorem has a canonical Lean PASS on its exact head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid check remains pending. PR #87's own canonical and audit workflows are pending. No historical event-to-BIB closure or full integrated kernel PASS is claimed.
