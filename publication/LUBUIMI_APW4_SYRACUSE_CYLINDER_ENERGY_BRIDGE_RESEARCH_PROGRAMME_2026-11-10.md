@@ -265,3 +265,12 @@ This gives an explicit finite map from a Kolaz threshold-tree edge sequence to a
 A finite k=2 terminal-residue Markov-energy Lean module is also in progress. The first attempt used `native_decide` and was rejected by the strict axiom profile because generated native axioms appeared; it also failed on a free variable in the indexed numerator theorem. The corrected module uses kernel-reduced `decide` and explicit `Fin` cases. Exact-head CI 42731846956 on PR #9 head `b999241519ecd12a931d931ea4b9e850741c6457` is in progress. The module is not yet verified; its acceptance requires the standard transitive profile and no `sorryAx`.
 
 The APW4 Lean 4.35.0 integration candidate on PR #69 head `f843e4224e5288e107200464be5c5524de650570` is being checked by run 42732094102. It uses the explicit Finset-filter split and definitional covered-set equivalence; the prior Lean 4.28 audit result remains preserved, while the integrated 4.35 outcome is pending.
+
+
+## 18. Odd-covering L945 third-order CRT checkpoint — 10 November 2026
+
+The odd-covering research branch now records the exact L=945 divisor-density sum 65/63, coprime-pair contribution 74/315, and pairwise-coprime triple contribution 13/945. The triple term comes from exactly three triples: (3,5,7), (5,7,9), and (5,7,27); there is no pairwise-coprime quadruple because all moduli use only the three primes 3,5,7. A standalone Lean 4.34.1 module and a synchronized root-library copy formalize these finite sums using kernel reduction, with exact-head unified audit 42732868146 in progress. This is a finite CRT arithmetic checkpoint only: it does not prove g(L)>0, a universal Ψ bound, or the odd covering conjecture.
+
+The cross-project lesson is that higher-order CRT intersection terms can be enumerated exactly when the moduli are pairwise coprime, while the non-coprime terms still depend on residue compatibility. The L945 third-order term is not the APW4/BIB pair reserve and is not transferred into APW4 without an explicit event-index map and weight identity.
+
+APW4 PR #69 is currently at head `13dce6216dba9499305b528f5f3c15fbc3dca681`. Its prior f843 candidate failed on the filter-membership simp no-progress issue and the mismatch between the two updated-weight membership predicates. The current candidate makes the predicates use the same point and stage coordinate, uses simp_all, and avoids a no-goal tactic. Exact-head verification remains pending.
