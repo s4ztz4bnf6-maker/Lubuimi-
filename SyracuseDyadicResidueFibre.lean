@@ -176,3 +176,221 @@ theorem candidate_mass_eq_one_sub_two_pow
 #print axioms candidate_mass_eq_one_sub_two_pow
 
 end SyracuseDyadicResidueFibre
+
+
+namespace SyracuseDyadicResidueFibre
+
+/-!
+## Explicit normalized prefix-tail residue
+
+For a fixed valuation prefix, write the initial odd integer in its
+already-established prefix cylinder as
+`r₀ + 2^(A+1) q`. If
+`2^(A+1) d = 3^(k+1) r₀ + 3 Cₖ + 2^A`,
+then the next tail condition reduces exactly to
+`3^(k+1) q + d = 0` modulo `2^B`.
+Since `3^(k+1)` is a unit modulo `2^B`, this determines one and only
+one normalized tail coordinate. This formalizes the explicit residue
+formula; the hypothesis defining d is the exact divisibility condition
+supplied by the prefix-cylinder arithmetic.
+-/
+
+/-- The unique normalized tail coordinate in the finite ring ZMod (2^B). -/
+def explicitTailCoordinate (B k d : ℕ) : ZMod (2 ^ B) :=
+  -(d : ZMod (2 ^ B)) *
+    (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹)
+
+/-- The odd coefficient 3^(k+1) is invertible modulo every dyadic modulus. -/
+theorem threePow_isUnit_mod_twoPow (B k : ℕ) :
+    IsUnit ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) := by
+  have hcop : Nat.Coprime (3 ^ (k + 1)) (2 ^ B) :=
+    Nat.Coprime.pow_right B
+      (Nat.Coprime.pow_left (k + 1) (by decide : Nat.Coprime 3 2))
+  exact (ZMod.isUnit_iff_coprime (3 ^ (k + 1)) (2 ^ B)).2 hcop
+
+/-- The explicit tail coordinate satisfies the normalized tail congruence. -/
+theorem explicitTailCoordinate_spec (B k d : ℕ) :
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
+        explicitTailCoordinate B k d +
+      (d : ZMod (2 ^ B)) = 0 := by
+  unfold explicitTailCoordinate
+  have hcop : Nat.Coprime (3 ^ (k + 1)) (2 ^ B) :=
+    Nat.Coprime.pow_right B
+      (Nat.Coprime.pow_left (k + 1) (by decide : Nat.Coprime 3 2))
+  have hinv :
+      ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
+        (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) = 1 :=
+    ZMod.coe_mul_inv_eq_one _ hcop
+  calc
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
+        (-((d : ZMod (2 ^ B))) *
+          (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹)) +
+        (d : ZMod (2 ^ B))
+      = -((d : ZMod (2 ^ B))) *
+          ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
+            (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹))) +
+          (d : ZMod (2 ^ B)) := by ring
+    _ = 0 := by rw [hinv]; ring
+
+/-- The normalized tail congruence has exactly one solution modulo 2^B. -/
+theorem explicitTailCoordinate_unique (B k d : ℕ)
+    (q : ZMod (2 ^ B)) :
+    ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) * q +
+        (d : ZMod (2 ^ B)) = 0
+      ↔ q = explicitTailCoordinate B k d := by
+  constructor
+  · intro h
+    have hmul :
+        ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) * q =
+          -((d : ZMod (2 ^ B))) :=
+      (eq_neg_iff_add_eq_zero).2 h
+    have hcop : Nat.Coprime (3 ^ (k + 1)) (2 ^ B) :=
+      Nat.Coprime.pow_right B
+        (Nat.Coprime.pow_left (k + 1) (by decide : Nat.Coprime 3 2))
+    have hinv :
+        ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
+          (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) = 1 :=
+      ZMod.coe_mul_inv_eq_one _ hcop
+    have hinv' :
+        (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) *
+          ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) = 1 := by
+      simpa [mul_comm] using hinv
+    calc
+      q = 1 * q := by simp
+      _ = ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) *
+            ((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))) * q := by rw [hinv']
+      _ = (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) *
+            (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) * q) := by ring
+      _ = (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹) *
+            (-((d : ZMod (2 ^ B)))) := by rw [hmul]
+      _ = explicitTailCoordinate B k d := by
+        unfold explicitTailCoordinate
+        ring
+  · intro h
+    rw [h]
+    exact explicitTailCoordinate_spec B k d
+
+/-- Finite representative of the explicit normalized tail coordinate. -/
+def explicitTailCoordinateFin (B k d : ℕ) : Fin (2 ^ B) :=
+  ⟨(explicitTailCoordinate B k d).val,
+    (explicitTailCoordinate B k d).isLt⟩
+
+/-- The generic residue cylinder from the first part of this file is now
+instantiated by the explicit normalized prefix-tail residue. -/
+theorem explicitTailAtoms_mem_iff (B k d : ℕ)
+    (x : Fin (2 ^ B)) :
+    x ∈ tailAtoms B B (Nat.le_refl B)
+        (explicitTailCoordinateFin B k d)
+      ↔ x.val = (explicitTailCoordinateFin B k d).val := by
+  rw [mem_tailAtoms_iff]
+  constructor
+  · intro h
+    simpa [Nat.mod_eq_of_lt x.isLt] using h
+  · intro h
+    simpa [h, Nat.mod_eq_of_lt x.isLt]
+
+/-- The explicit tail cylinder is a singleton in the normalized
+common-refinement coordinate. -/
+theorem explicitTailAtoms_card (B k d : ℕ) :
+    (tailAtoms B B (Nat.le_refl B)
+      (explicitTailCoordinateFin B k d)).card = 1 := by
+  simpa [explicitTailCoordinateFin] using
+    (card_tailAtoms B B (Nat.le_refl B)
+      (explicitTailCoordinateFin B k d))
+
+/-- If the prefix-tail numerator is divisible by 2^(A+1), its quotient d
+makes the original affine tail expression factor exactly through the
+normalized coordinate q. -/
+theorem prefixTail_lift_factorization
+    (A k r₀ Cₖ d q : ℕ)
+    (hdiv :
+      2 ^ (A + 1) * d =
+        3 ^ (k + 1) * r₀ + 3 * Cₖ + 2 ^ A) :
+    3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
+        3 * Cₖ + 2 ^ A =
+      2 ^ (A + 1) * (3 ^ (k + 1) * q + d) := by
+  calc
+    3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
+        3 * Cₖ + 2 ^ A
+      = 2 ^ (A + 1) * (3 ^ (k + 1) * q) +
+          (3 ^ (k + 1) * r₀ + 3 * Cₖ + 2 ^ A) := by ring
+    _ = 2 ^ (A + 1) * (3 ^ (k + 1) * q) +
+          2 ^ (A + 1) * d := by rw [← hdiv]
+    _ = 2 ^ (A + 1) * (3 ^ (k + 1) * q + d) := by ring
+
+/-- The explicit tail coordinate has the exact complementary candidate
+mass in the finite normalized prefix fibre. -/
+theorem explicitCandidate_mass (B k d : ℕ) :
+    ((candidateAtoms B B (Nat.le_refl B)
+        (explicitTailCoordinateFin B k d)).card : ℚ) /
+      ((allAtoms B).card : ℚ) =
+        1 - 1 / (2 : ℚ) ^ B := by
+  exact candidate_mass_eq_one_sub_two_pow B B
+    (Nat.le_refl B) (explicitTailCoordinateFin B k d)
+
+#print axioms threePow_isUnit_mod_twoPow
+#print axioms explicitTailCoordinate_spec
+#print axioms explicitTailCoordinate_unique
+#print axioms explicitTailAtoms_mem_iff
+#print axioms explicitTailAtoms_card
+#print axioms prefixTail_lift_factorization
+#print axioms explicitCandidate_mass
+
+end SyracuseDyadicResidueFibre
+
+
+/-!
+## Exact-head CI provenance — 10 November 2026
+
+This source snapshot is the explicit-tail-residue PR #107 candidate. The previous workflow attempt was associated with the preceding source snapshot and its Lean jobs were cancelled. This comment-only commit exists to request a fresh PR workflow on the current exact source head.
+
+Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No new PASS is claimed until the exact-head jobs finish.
+-/
+
+
+/-- The integer numerator defining the normalized tail offset d. -/
+def explicitPrefixTailNumerator
+    (A k r₀ Cₖ : ℕ) : ℕ :=
+  3 ^ (k + 1) * r₀ + 3 * Cₖ + 2 ^ A
+
+/-- Canonical quotient used for the normalized tail offset. -/
+def explicitPrefixTailQuotient
+    (A k r₀ Cₖ : ℕ) : ℕ :=
+  explicitPrefixTailNumerator A k r₀ Cₖ / 2 ^ (A + 1)
+
+/-- Under the exact prefix divisibility condition, the canonical quotient
+satisfies the defining multiplication identity for d. -/
+theorem explicitPrefixTailQuotient_spec
+    (A k r₀ Cₖ : ℕ)
+    (hdiv :
+      2 ^ (A + 1) ∣ explicitPrefixTailNumerator A k r₀ Cₖ) :
+    2 ^ (A + 1) * explicitPrefixTailQuotient A k r₀ Cₖ =
+      explicitPrefixTailNumerator A k r₀ Cₖ := by
+  unfold explicitPrefixTailQuotient
+  exact Nat.mul_div_cancel' hdiv
+
+/-- The prefix-lift factorization with d fixed canonically as the quotient
+of the exact prefix-tail numerator. Only divisibility of that numerator
+by the prefix modulus remains as an input. -/
+theorem explicitPrefixTail_lift_factorization
+    (A k r₀ Cₖ q : ℕ)
+    (hdiv :
+      2 ^ (A + 1) ∣ explicitPrefixTailNumerator A k r₀ Cₖ) :
+    3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
+        3 * Cₖ + 2 ^ A =
+      2 ^ (A + 1) *
+        (3 ^ (k + 1) * q + explicitPrefixTailQuotient A k r₀ Cₖ) := by
+  apply prefixTail_lift_factorization A k r₀ Cₖ
+    (explicitPrefixTailQuotient A k r₀ Cₖ) q
+  simpa [explicitPrefixTailNumerator] using
+    explicitPrefixTailQuotient_spec A k r₀ Cₖ hdiv
+
+#print axioms explicitPrefixTailQuotient_spec
+#print axioms explicitPrefixTail_lift_factorization
+
+
+/-!
+Verification-mirror-only comment: request a fresh exact-head workflow for
+the canonical PR #107 source snapshot. This comment changes no definitions,
+proof terms, theorem statements, or assumptions.
+-/
