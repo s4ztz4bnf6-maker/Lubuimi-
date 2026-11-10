@@ -214,3 +214,10 @@ PR #85's local M/Gamma theorem has a canonical Lean PASS on its exact head with 
 The 6 November source note now records explicit formulas for I_q, A_q, Z_q, D_{q,r}, and W_{q,r}. A separate new auxiliary divisor envelope μ*(B)=max{τ(d):d|B,d<B} gives μ*(B)=τ(B)/2 for squarefree B and yields the conditional threshold τ(B)^2<2(q−1)^2 in the depth-one second-moment lemma. It is not identified with historical μ(B); the selected-label extraction and proper-LCM hypotheses remain unproved for the original system.
 
 PR #85's local M/Gamma theorem has a canonical PASS on its exact source head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid run remains pending. PR #91 and PR #92 are the current exact-head prefix-repair and canonical-model verification candidates, respectively; both remain in progress. PR #92 is expressly not a historical instantiation. No historical event-to-BIB map or weighted Hall closure is claimed.
+
+
+### Addendum 2.12 — PR92 canonical PASS and PR94 prefix candidate
+
+PR #92's canonical helper job passed at exact source head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec, with the standard axiom profile and zero sorryAx occurrences in the complete canonical log. Its paranoid job is still pending. The helper is explicitly canonical-only and does not identify the historical APW4 fibres.
+
+PR #91's integrated prefix job failed because the covered branch attempted to introduce a nonexistent binder and the uncovered branch retained a conditional equality. PR #94 is the next exact-head candidate, using explicit if_pos / if_neg rewrites followed by ring_nf; its workflows were queued at the latest check. No integrated prefix PASS is claimed.
