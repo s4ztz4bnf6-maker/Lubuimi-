@@ -209,3 +209,8 @@ The selected support is the inverse image of Uq : Finset (Fin Bq), and the q-fib
 Exact source head: `157cdcc00353c9d89e5d596720cee08d098684ae`, PR [#89](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/89). Canonical run 42749178635 and audit run 42749178673 passed. The canonical log printed standard profiles for the preimage and residue-projection declarations and contained zero `sorryAx` occurrences. The separate paranoid job in 42749178635 remained in progress at the latest check.
 
 This is a concrete arithmetic residue-label specialization of the working definitions F_q(x) and V_q. It is not yet the quotient ring homomorphism ZMod N -> ZMod B: the theorem does not impose B | N and the Fin B label map is defined through the canonical representative z.val. The next source-fidelity step is to impose the actual divisibility B_q | N and B_r | N, identify the map with canonical reduction, and recover the historical U_q,U_r and common block map c. The local theorem still does not define the historical elementary event or BIB-place incidence relation.
+
+
+## Erratum 1.24.1 — divisibility is explicit in the current PR #89 head
+
+The earlier Addendum 1.24 sentence stating that B ∣ N was not imposed is superseded. In exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae, the residue-projection theorem explicitly requires Bq ∣ N and Br ∣ N. The projection is represented as ZMod N → Fin B by z ↦ z.val % B. It is still not asserted to be a ring homomorphism ZMod N → ZMod B; no quotient-cast theorem is used. The selected sets and common block-label map remain parameters, so historical source instantiation is still open.
