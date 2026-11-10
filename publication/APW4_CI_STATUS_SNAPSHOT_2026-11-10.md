@@ -178,3 +178,13 @@ The finalized manuscript PDF is not silently rewritten by this CI ledger. This a
 ## Follow-up: Syracuse residue-coordinate repair candidate (10 Nov 2026)
 
 A source-level patch was committed on `bridge/syracuse-explicit-tail-residue-2026-11-10`: `bd8a7857a07f4fb32bbcfe9e2b446bd5b7403028`. In `SyracuseDyadicResidueFibre.lean`, both finite-coordinate constructors now use `ZMod.val_lt` rather than the nonexistent projection `.isLt` on a `ZMod` expression. The API was verified in Mathlib v4.35.0 at `Mathlib/Data/ZMod/Basic.lean`, theorem `ZMod.val_lt`. The commit triggered workflow run `42759029006` (queued at observation). Status: **unverified candidate**. The previous run `42757388002` failed in `SyracuseDyadicResidueFibre` at the finite-coordinate bound and membership proof; its `sorryAx`-dependent declarations remain disallowed. This bridge remains separate from APW4.
+
+### Exact-head update — 10 November 2026 (after 04:58 UTC)
+
+**PR #101:** the complete log of integrated run `42758803063` showed that the positive branch of `prefixFibre_updatedWeight_eq_PAt` had no remaining binder: its goal was an equality. The attempted `intro hnot` branch was therefore rejected by Lean. Exact head `0be00b2161ad8f2676779b90582f30b34083c008` replaces both branches with `simp [hcov]`. Its own workflow `42759210844` now exists; both `audit` and `integrated-paranoid` were QUEUED at the latest poll. This is an unverified candidate.
+
+**Syracuse #107:** run `42759029006` has progressed beyond setup. `integrated-paranoid` is in the integrated Lean compilation step; `audit` has started Lean/manifest setup; `syracuse-bridge-paranoid` is QUEUED. The `ZMod.val_lt` change is still only an API/type repair candidate. The prior `sorryAx` dependencies in the explicit atom/membership/cardinality declarations remain unresolved until exact logs show otherwise.
+
+**Collatz #48:** exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8` remains on run `42757504798`; `kernel-check-lean-435-paranoid`, `compile-drafts`, and `kernel-check-lean-434` are all QUEUED. No new theorem evidence is claimed.
+
+**New formalization route, not yet proved:** the current minimal-counterexample wrapper assumes `hminimal : ∀ j, n j < n₀ → ∃ k, n (j+k)=1`. To derive it from minimality rather than assume it, formalize the exact accelerated-step relation, prove each `n j` is odd using `a j > 0`, prove the quotient `n (j+1)` is odd and hence `a j` is the exact 2-adic valuation, and establish by deterministic recursion that the tail from `n j` is the same Syracuse orbit. Then the least-odd-counterexample premise yields the suffix return. Until these links are proved, `hminimal` remains an explicit hypothesis and the minimal-counterexample theorem is conditional.
