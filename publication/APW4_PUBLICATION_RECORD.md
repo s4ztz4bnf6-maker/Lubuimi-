@@ -647,3 +647,10 @@ New formal interface candidates: PR #89 (generic preimage-fibre derivation; corr
 PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae canonically proves and audits the local q-fibre M/Gamma inequality for explicit finite residue projections on ZMod N. Runs 42749178635 and 42749178673 passed; the new theorem has the standard axiom profile and the canonical log contains zero sorryAx. The paranoid job remained pending at the recorded time.
 
 This is a formal finite-residue specialization, not a claim that the original historical U_q/U_r sets, C_h partition, or event-to-BIB incidence have been recovered. Authorship and repository licensing notices are unchanged.
+
+
+## CRT modulus and weighted-bridge reconciliation — 10 November 2026
+
+The 1 November working record fixes D_{q,r}=N/(q^{a_q}r^{a_r}) for q≠r and describes W_{q,r} as the residue-class compatibility matrix. It records the block factorization A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T and the local fibre bound sum_h M_{q,r}(h,g) ≤ Gamma_{q,r}(g). Thus the modulus formula is known; exact matrix index types, W entries, vector coordinates and normalization still require reconstruction.
+
+The remaining mathematical interfaces are now tracked as (A) full higher-order support-profile preservation under CRT compression C_t, because pairwise intersection bounds alone do not imply equality of all higher intersections; and (B) the exact weighted APW-to-BIB allocation, with omega_ell, Phi, P_S, k_S, actual slot set and incidence relation defined side by side. The recorded identities for the APW collision sum and BIB reserve remain fixed in their stated scopes. The local q-fibre inequality does not by itself close the weighted Hall bridge.
