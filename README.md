@@ -49,3 +49,8 @@ PR #120 / v6 workflow 42807701621 completed with `audit` PASS and `integrated-pa
 ## Update after v7 integrated result — 10 November 2026
 
 The v7 audit printed `[propext, Classical.choice, Quot.sound]` for `prefixFibre_updatedWeight_eq_PAt` and `PAt_nonneg`, with no `sorryAx` in that separate job. The v7 integrated-paranoid job failed: after the explicit cast, the remaining goals still compared the covered/uncovered predicate at the original endpoint with the case split at the transported endpoint. Error recovery printed `sorryAx` for the target and dependent recursion declarations. PR #123 / v8 adds explicit membership and nonmembership equivalences; its exact-head jobs were queued at the latest poll. This is still an integration gap, not a mathematical counterexample.
+
+
+### Latest v8 poll — 10 November 2026
+
+PR #123 / v8 head `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow [42809132672](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42809132672): audit job `129805804074` and integrated-paranoid job `129805804376` are now both **in progress**. Logs were not yet available at this poll. No PASS or failure is inferred from an unavailable log.
