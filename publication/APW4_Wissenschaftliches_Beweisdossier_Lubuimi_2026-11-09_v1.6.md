@@ -2031,3 +2031,14 @@ PR #80 head `a8ddea87d171eac1848147d023b35982d05916ff` has two successful exact-
 - [42739809459](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739809459): upstream/source audit passed.
 
 The seven L945 declarations for divisor density (65/63), 16 coprime pairs and pair density (74/315), and three coprime triples and triple density (13/945) print the standard profile `[propext, Classical.choice, Quot.sound]). This is a finite CRT/moment certificate; it is not a proof of the odd-covering conjecture or a private-mass bound.
+
+
+## Addendum 1.16 — latest exact-head job states, 10 November 2026
+
+- PR #89's Lean audit workflow [42754828631](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754828631) completed successfully. Its separate paranoid workflow 42754828642 failed at the previously documented missing (0<q^a) witness.
+- PR #97's audit and canonical jobs passed, but its paranoid job was **cancelled**, not passed. No paranoid verification is claimed for PR #97.
+- PR #102's audit job [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical job in [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) both completed successfully. The canonical log compiled the full APW4HistoricalCRTCore.lean file, including the q-power quotient declarations, with no Lean errors or actual sorryAx; the named quotient and aggregate declarations show standard axiom profiles. The separate paranoid job in 42755236653 was still running at this snapshot. Therefore PR #102 has audit/canonical PASS, paranoid pending—not a full PASS yet.
+- PR #103 exact-head workflow [42755396032](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755396032) is now running both integrated-paranoid and audit jobs. The new explicit if_neg / if_pos rewrite is still a candidate until the uncovered branch and all downstream named axiom outputs are checked.
+- PR #93 remains split: audit PASS; integrated-paranoid FAIL from the same prefix-recursion sorryAx; isolated Syracuse paranoid job still running.
+
+No status above changes the APW4 mathematical proof record or converts a source-reconstruction obligation into a proved historical identity.
