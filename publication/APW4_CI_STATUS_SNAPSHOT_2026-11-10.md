@@ -769,3 +769,8 @@ The parameters Uq,Ur and c remain explicit. This does not yet identify the histo
 Exact PR #89 head `157cdcc00353c9d89e5d596720cee08d098684ae` includes the concrete finite residue-label map z |-> z.val % B into Fin B, its fibres, selected visible set, and the local q-fibre sum inequality with an explicit common block-label map. Canonical workflow 42749178635 and audit workflow 42749178673 passed. The canonical log printed standard transitive axiom profiles for the new declarations and contained no `sorryAx`. The paranoid job in 42749178635 was still in progress at the latest check.
 
 Source boundary: this is the canonical-representative residue-label map, not yet a proved quotient ring homomorphism. The theorem does not yet impose the historical divisibility B_q | N and B_r | N, and U_q,U_r plus the common block map remain source parameters. No event-to-BIB map is claimed.
+
+
+## Erratum 1.24.1 — divisibility is explicit in the current PR #89 head
+
+The earlier Addendum 1.24 sentence stating that B ∣ N was not imposed is superseded. In exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae, the residue-projection theorem explicitly requires Bq ∣ N and Br ∣ N. The projection is represented as ZMod N → Fin B by z ↦ z.val % B. It is still not asserted to be a ring homomorphism ZMod N → ZMod B; no quotient-cast theorem is used. The selected sets and common block-label map remain parameters, so historical source instantiation is still open.
