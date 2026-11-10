@@ -432,7 +432,7 @@ theorem explicitChildCoordinate_spec
             (d : ZMod (2 ^ b))) *
           ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b)) *
             (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ b))⁻¹))) +
-          (d : ZMod (2 ^ b) := by ring
+          (d : ZMod (2 ^ b)) := by ring
     _ = (2 ^ (b - 1) : ℕ) := by rw [hinv]; ring
 
 /-- The normalized exact-child congruence has a unique solution modulo 2^b. -/
