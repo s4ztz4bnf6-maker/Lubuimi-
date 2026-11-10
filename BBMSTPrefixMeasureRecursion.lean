@@ -390,9 +390,10 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k] <;>
-        intro hnot
-    exact hnot hcov
-  · simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov,
+        (intro hnot; exact hnot hcov)
+  · have hpoint : y (Fin.last (a + j)) ∈ Finset.univ :=
+      Finset.mem_univ _
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hpoint,
       F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
