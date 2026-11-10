@@ -73,3 +73,10 @@ Source head `5800a53c8c7fd9a59023cddf84d63ccc8cd920e3`, workflow [42807200407](h
 Current candidate: [PR #120](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/120), exact head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [42807684437](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807684437). It states the transport equality directly as `stageCoordinate hk = prefixIndex hj (Fin.last k)` and uses the same `y (Fin.last k)` term in the target and membership cases. At the latest poll, the separate audit and integrated-paranoid jobs were in progress. **OFFEN – NICHT VERIFIZIERT.**
 
 Do not infer success from the improved diagnostics. Acceptance still requires integrated compilation, exact named axiom output, and no `sorryAx` in the integrated dependency closure.
+## Dependent-coordinate correction: v6 failure and v7 candidate — 10 November 2026
+
+PR #120 / v6 source head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [42807684437](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807684437): the separate `audit` job **PASS**; the integrated-paranoid job **FAIL**. The failure confirms that `cases hstage` did not transport the dependent point. Lean still sees `y (Fin.last k)` at `C.S (prefixIndex hj (Fin.last k))`, while `F.covered` expects `C.S (stageCoordinate hk)`. Error recovery therefore emits `sorryAx` for the target and dependent recursion results. No integrated verification is claimed.
+
+Current PR [#121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/121), v7 exact source head `5631a527c289889db3e70bf0fb1644926e11d893`, uses an explicit dependent cast `hstage.symm ▸ y (Fin.last k)` into `C.S (stageCoordinate hk)` and uses that transported point consistently in the update and membership cases. Workflow status was pending at the latest poll. This is a new candidate, not a verified repair.
+
+Acceptance still requires the v7 exact-head separate audit and integrated-paranoid jobs to complete, successful integrated compilation, named `#print axioms` inspection, and a no-`sorryAx` scan of the integrated dependency closure.
