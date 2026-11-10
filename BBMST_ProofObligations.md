@@ -337,3 +337,8 @@ The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has comple
 The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
 
 The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
+
+
+## APW4 v10 failure / v11 equality-orientation candidate — 10 November 2026
+
+PR #127 / v10 workflow 42810911393: separate audit PASS; integrated-paranoid FAIL at lines 393 and 406 because `cases hstage` substituted the equality in the wrong direction, leaving the fibre point indexed by `prefixIndex` but the fibre data indexed by `stageCoordinate`. Integrated error recovery reports `sorryAx`. PR #129 / v11 changes the elimination to `cases hstage.symm` before constructing the fibre. No v11 verification is claimed.
