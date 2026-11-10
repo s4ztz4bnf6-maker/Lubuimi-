@@ -200,7 +200,7 @@ theorem sum_M_qr_le_Gamma_qr
     apply Finset.disjoint_left.mpr
     intro z hz₁ hz₂
     simp only [E, Pq, Pr, Finset.mem_inter] at hz₁ hz₂
-    exact (Finset.disjoint_left.mp (hC h₁ h₂ hne)) z hz₁.1.2 hz₂.1.2
+    exact (Finset.disjoint_left.mp (hC h₁ h₂ hne)) hz₁.1.2 hz₂.1.2
   have hsubset : Finset.univ.biUnion E ⊆ C g ∩ Vq ∩ Vr := by
     intro z hz
     rcases Finset.mem_biUnion.mp hz with ⟨h, hh, hzE⟩
