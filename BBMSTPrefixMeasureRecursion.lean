@@ -384,21 +384,29 @@ theorem prefixFibre_updatedWeight_eq_PAt
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov,
-      F, prefixFibreData, prefixUniformFibre,
+  · have hcovF :
+        y (Fin.last (a + j)) ∈ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData] using hcov
+    rw [BBMSTFiniteFibreUpdate.updatedWeight, if_pos hcovF]
+    simp [F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k] <;>
-        (intro hnot; exact hnot hcov)
-  · have hpoint : y (Fin.last (a + j)) ∈ Finset.univ :=
-      Finset.mem_univ _
-    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hpoint,
-      F, prefixFibreData, prefixUniformFibre,
+      PAt, hcov, xprev, k]
+  · have hnotF :
+        y (Fin.last (a + j)) ∉ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData] using hcov
+    have hpointF : y (Fin.last (a + j)) ∈ F.points := by
+      simp [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData]
+    rw [BBMSTFiniteFibreUpdate.updatedWeight, if_neg hnotF, if_pos hpointF]
+    simp [F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k]
+      PAt, hcov, xprev, k]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
