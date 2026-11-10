@@ -221,7 +221,7 @@ theorem prefixPointCovered_iff
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
   unfold prefixPointCovered prefixCoveredValues
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  simp_all only [Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
@@ -392,12 +392,14 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
   have hcovered :
-      (y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev) ↔
+      (y (Fin.last (a + j)) ∈
+        prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)) ↔
       (y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) (by omega)
           (restrictPrefix C (by omega) y)) := by
     rfl
-  split_ifs <;> simp_all [hcovered] <;> ring_nf
+  split_ifs <;> simp_all [hcovered]
+  all_goals ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
