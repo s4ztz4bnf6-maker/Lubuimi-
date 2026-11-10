@@ -113,3 +113,8 @@ No prize eligibility or award is guaranteed by this audit.
 ## APW4 v10 coordinate-substitution candidate — 10 November 2026
 
 The v9 integrated conditional mismatch and v10 `cases hstage` candidate are documented in the root README and APW4 exact-head ledger. This remains separate from the upstream `erdos_selfridge` / `sieve_criterion` interface audit.
+
+
+## APW4 v10 CI poll — 10 November 2026
+
+Workflow 42810911393 is running the separate audit and has the integrated-paranoid job queued. This remains a distinct APW4 prefix-recursion track; it does not alter the upstream sieve-axiom audit.
