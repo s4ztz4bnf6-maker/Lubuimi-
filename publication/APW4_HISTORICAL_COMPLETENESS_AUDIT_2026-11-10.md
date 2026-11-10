@@ -164,3 +164,12 @@ The v1.6 record still does not, by itself, spell out every underlying domain and
 3. the exact bridge from these q-fibre counts (M,Gamma) to the APW4 HT event set (Gamma_{m off}), BIB slots, capacities, and the historical relation (gammasim b).
 
 The next formal target is now sharper: encode the exact (P,M,Gamma) definitions from §48 and prove the local aggregate inequality (sum_h M_{q,r}((x,h),(y,g))leGamma_{q,r}(g)) from the source-derived fibre-containment and block-disjointness properties. This is a local q-fibre incidence lemma, not yet the full weighted Hall condition (H) or the global APW4 HT theorem.
+
+
+### 2.8 Lean formalization of the recovered local M/Gamma interface
+
+A dedicated draft PR #85 now adds `APW4HistoricalQFibre` to `APW4HistoricalCRTCore.lean` (head `33aa4f395fd6b8e66bd683da08fe4c98df1e2fc8`, stacked on PR #67). It encodes the v1.6 §48 definitions of (P_q,P_r,M_{q,r},Gamma_{q,r}) as finite-set intersections/cardinalities and proves `sum_M_qr_le_Gamma_qr` by a disjoint-union cardinality argument.
+
+The theorem has exactly the source-structural premises made explicit: (F_q(x)subseteq V_q), (F_r(y)subseteq V_r), and pairwise disjointness of the blocks (C_h). These are not postulated in the historical main theorem; this helper exposes the exact properties that must be derived from the original projection/fibre and block definitions. The PR does not yet instantiate those sets or identify (M,Gamma) with the full weighted HT event/slot system.
+
+Exact-head runs [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626707) (canonical and paranoid jobs) and [42744626561](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744626561) (audit) are in progress. No Lean pass is claimed until all exact-head jobs finish and the full logs confirm the standard axiom profile and absence of `sorryAx`.
