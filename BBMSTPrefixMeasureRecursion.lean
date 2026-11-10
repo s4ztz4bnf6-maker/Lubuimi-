@@ -404,7 +404,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   · have hnot' :
         y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y) := by
-      simpa [x, k] using hcov
+      simpa [x, hstage, k] using hcov
     have hnotF : x ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
@@ -413,7 +413,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       exact Finset.mem_univ _
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     simp only [if_neg hnotF, if_pos hpointF]
-    simp [x, F, prefixFibreData, prefixUniformFibre,
+    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
