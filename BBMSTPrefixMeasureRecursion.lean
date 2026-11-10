@@ -367,8 +367,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hhp : hprev = hprev' := Subsingleton.elim _ _
   cases hhk
   cases hhp
-  have hstage : stageCoordinate (k := a + j) hk =
-      prefixIndex hj (Fin.last (a + j)) := by
+  have hstage : stageCoordinate (k := k) hk =
+      prefixIndex hj (Fin.last k) := by
     apply Fin.ext
     rfl
   cases hstage
@@ -378,14 +378,14 @@ theorem prefixFibre_updatedWeight_eq_PAt
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
-      (δ (stageCoordinate hk)) (y (Fin.last (a + j))) =
+      (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
   by_cases hcov :
-      y (Fin.last (a + j)) ∈
+      y (Fin.last k) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
   · have hcovF :
-        y (Fin.last (a + j)) ∈ F.covered := by
+        y (Fin.last k) ∈ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
     unfold BBMSTFiniteFibreUpdate.updatedWeight
@@ -396,11 +396,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, hcov, xprev, k]
   · have hnotF :
-        y (Fin.last (a + j)) ∉ F.covered := by
+        y (Fin.last k) ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
-    have hpointF : y (Fin.last (a + j)) ∈ F.points := by
-      change y (Fin.last (a + j)) ∈ Finset.univ
+    have hpointF : y (Fin.last k) ∈ F.points := by
+      change y (Fin.last k) ∈ Finset.univ
       exact Finset.mem_univ _
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     rw [if_neg hnotF, if_pos hpointF]
