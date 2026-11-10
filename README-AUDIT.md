@@ -118,3 +118,8 @@ The v9 integrated conditional mismatch and v10 `cases hstage` candidate are docu
 ## APW4 v10 CI poll — 10 November 2026
 
 Workflow 42810911393 is running the separate audit and has the integrated-paranoid job queued. This remains a distinct APW4 prefix-recursion track; it does not alter the upstream sieve-axiom audit.
+
+
+## v9 audit completion — 10 November 2026
+
+PR #125's separate audit job passed, while its integrated-paranoid job failed. This remains an APW4-specific split result and does not change the upstream `erdos_selfridge` audit.
