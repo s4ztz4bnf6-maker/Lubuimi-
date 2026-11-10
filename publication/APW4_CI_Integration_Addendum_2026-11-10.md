@@ -355,3 +355,8 @@ PR #85: local q-fibre aggregate inequality; canonical and audit jobs passed on e
 PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae now includes the residue-projection specialization. The new local theorem has canonical PASS (42749178635) and audit PASS (42749178673), exact axiom profile [propext, Classical.choice, Quot.sound], and zero sorryAx in the canonical log. The paranoid job remained in progress at the time of this entry.
 
 The map is ZMod N → Fin B, z ↦ z.val % B, with B ∣ N explicit. The selected sets and block-label map are still parameters. This is not the historical event-to-BIB map.
+
+
+## 1.9 Residue-label specialization — exact-head result
+
+PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae proves the local q-fibre inequality for canonical residue labels z.val % B into Fin B, selected supports, and a common block-label map. Canonical workflow 42749178635 and audit workflow 42749178673 passed; the canonical log has zero sorryAx and standard axiom profiles. Paranoid remained in progress. Divisibility B_q | N and B_r | N, the quotient-homomorphism identification, historical U_q,U_r, and the actual C_h block map remain open.
