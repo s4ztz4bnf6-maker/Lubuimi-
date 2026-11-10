@@ -436,7 +436,7 @@ theorem mergeOldShadowsList_contains_iff
               (mergeOldShadowsList boundary Hs).assignment i ≠ none := by
             exact mergeOldShadowsList_assignment_ne_none_of_mem
               boundary Hs H hH i (by
-                simp [oldShadow, hlt, hHassign])
+                simp [oldShadow, hlt, hltFin, hHassign])
           cases hAgg : (mergeOldShadowsList boundary Hs).assignment i with
           | none => exact (hAggNe hAgg).elim
           | some t =>
