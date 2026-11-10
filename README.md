@@ -460,3 +460,8 @@ The coordinate-only PR #86 did not close the covered/uncovered goals. PR #84 now
 ### Addendum 1.26 — historical BIB mixed-term frontier
 
 The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four-term expansion, but explicitly does not bound the three terms containing the redundancy Z. The selected depth-one label extraction map and the full F_q/F_r/C_h generator/index definitions remain unresolved in the accessible source record. The canonical projection-fibre completion was explicitly non-historical and must not be used. PR #85's local M/Gamma theorem is conditional and does not close this weighted transport gap.
+
+
+## Licensing and attribution record (10 November 2026)
+
+The project-wide authorship, third-party exclusions, current absence of repository `LICENSE` files, and proposed licensing architecture are recorded in [LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md](publication/LICENSING_REGISTER_AND_RELEASE_PLAN_2026-11-10.md). No public reuse licence is claimed until Ta-Yoshua Lubuimi selects the licence scheme.
