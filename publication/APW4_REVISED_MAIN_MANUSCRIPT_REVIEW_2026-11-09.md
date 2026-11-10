@@ -811,3 +811,10 @@ The PR #85 local q-fibre inequality is a conditional finite-set theorem; PR #89 
 The q-fibre preimage model has now been specialized to canonical finite residue labels on ZMod N, with the divisibility hypotheses Bq ∣ N and Br ∣ N explicit. The local theorem sum_M_qr_le_Gamma_qr_of_residue_projections is canonically compiled and audited on exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae; runs 42749178635 and 42749178673 passed. Its reported profile is [propext, Classical.choice, Quot.sound], and the canonical log contains no sorryAx.
 
 The selected sets and common block-label map remain parameters. Therefore this formalization is a residue-projection specialization of the local q-fibre inequality, not the historical event/BIB instantiation. The separate paranoid check was still pending when recorded.
+
+
+## CRT modulus and weighted-bridge reconciliation — 10 November 2026
+
+The 1 November working record fixes D_{q,r}=N/(q^{a_q}r^{a_r}) for q≠r and describes W_{q,r} as the residue-class compatibility matrix. It records the block factorization A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T and the local fibre bound sum_h M_{q,r}(h,g) ≤ Gamma_{q,r}(g). Thus the modulus formula is known; exact matrix index types, W entries, vector coordinates and normalization still require reconstruction.
+
+The remaining mathematical interfaces are now tracked as (A) full higher-order support-profile preservation under CRT compression C_t, because pairwise intersection bounds alone do not imply equality of all higher intersections; and (B) the exact weighted APW-to-BIB allocation, with omega_ell, Phi, P_S, k_S, actual slot set and incidence relation defined side by side. The recorded identities for the APW collision sum and BIB reserve remain fixed in their stated scopes. The local q-fibre inequality does not by itself close the weighted Hall bridge.
