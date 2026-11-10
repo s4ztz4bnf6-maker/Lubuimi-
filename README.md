@@ -432,6 +432,12 @@ The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c7
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
 
 
-### Addendum 1.21 — local q-fibre M/Gamma Lean draft
+### Addendum 1.21 — local q-fibre M/Gamma Lean checkpoint
 
-APW4 PR #85 now formalizes the recovered finite-set definitions (P_q,P_r,M_{q,r},Gamma_{q,r}) from Dossier v1.6 §48 and proves the local aggregate count under explicit fibre-containment and pairwise-disjoint-block hypotheses. Exact-head canonical/paranoid and audit CI runs are in progress; no verification claim is made yet. The remaining task is to derive those hypotheses from the original (U_q,F_q(x),C_h) definitions and connect the local count to the actual weighted HT/BIB transport.
+APW4 PR #85 formalizes the recovered finite-set definitions (P_q,P_r,M_{q,r},Gamma_{q,r}) from Dossier v1.6 §48 and proves the local aggregate count under explicit fibre-containment and pairwise-disjoint-block hypotheses. On exact head `d4c61399918c03715197cbe2de6356fd170463d3`, canonical workflow 42744980622 passed; `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` printed [propext, Classical.choice, Quot.sound], and the complete canonical log had no `sorryAx`. Its separate audit run 42744980640 also passed. The Lean 4.35 paranoid job in 42744980622 was still in progress at the latest check, so no paranoid pass is claimed. The remaining task is to derive the structural hypotheses from the original (U_q,F_q(x),C_h) definitions and connect the local count to the actual weighted HT/BIB transport.
+
+### Addendum 1.22 — exact dependent-prefix repair status
+
+PR #69 head `b8d98215ed2d8d401c1e27805a193666e093f067` failed exact-head workflow 42740835775 in both audit and integrated-paranoid jobs. The first prefix-recursion error is a no-op `dsimp [k] at *` at line 386; the elaborator then exposes the dependent index mismatch between `stageCoordinate hk` and `prefixIndex hj (Fin.last (a+j))`. Error recovery includes `sorryAx` in the affected prefix-mass declarations. Stacked PR #86 (head `4e4b378887cc76382d9cd2e17807f96a2c277e23`) now introduces an explicit `Fin.ext` coordinate equality and goal-sensitive `simp ... <;> ring_nf`. Exact-head workflow 42745081023 is in progress in both jobs; no pass is claimed. PR #84's workflow 42745022363 was cancelled after branch advancement and is not counted as a proof failure or success.
+
+The APW4 mathematical theorem record, previous exact-commit PASS results, and proprietary/commercial licensing notices remain unchanged.
