@@ -267,3 +267,8 @@ It also records \(I_q=A_q+Z_q\) and the full four-term expansion of \(I_qW_{q,r}
 The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
 
 PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
+
+
+## Exact-head update — PR #138 v15, 10 November 2026
+
+PR #138 currently points to `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. Its latest change is a comment-only CI-refresh marker in the source file. Exact-commit workflow and status queries returned no associated run/check. Therefore the v15 local-witness repair remains **OFFEN – NICHT VERIFIZIERT**; this update does not certify compilation, axiom profile, or absence of `sorryAx`.
