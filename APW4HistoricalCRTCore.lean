@@ -244,12 +244,12 @@ def liftedUncoveredSet {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N)
 
 theorem mem_qFibre_iff
     {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) (z : Fin N) :
-    z ∈ qFibre hB x ↔ residueProjection hB z = x := by
+    z ∈ qFibre hB hdiv x ↔ residueProjection hB hdiv z = x := by
   simp [qFibre, residueProjection]
 
 theorem mem_liftedUncoveredSet_iff
     {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) (z : Fin N) :
-    z ∈ liftedUncoveredSet hB U ↔ residueProjection hB z ∈ U := by
+    z ∈ liftedUncoveredSet hB hdiv U ↔ residueProjection hB hdiv z ∈ U := by
   simp [liftedUncoveredSet, residueProjection]
 
 /-- A congruence fibre over an old-uncovered base residue lies in the
