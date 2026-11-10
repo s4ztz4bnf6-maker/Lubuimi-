@@ -274,3 +274,8 @@ The first exact-head integrated run [42762133686](https://github.com/s4ztz4bnf6-
 - In the negative branch, the update reduces to an `if endpoint ∈ Finset.univ then ... else 0`; the proof must provide the concrete `Finset.mem_univ` witness and simplify it explicitly.
 
 A second proof-body adjustment is now at exact source head `278c0c6c192e34728bace660199e1c431e96846d`: it removes the unused `hcovF) rewrite, discharges the positive residual by `intro hnot; exact hnot hcov`, and supplies the explicit universal-membership witness in the negative branch. This is a targeted repair candidate, not a verified fix. A fresh exact-head integrated run and audit are still required; the earlier run's audit job was cancelled and cannot certify the newer source head.
+
+
+## Fresh exact-head verification run — PR #115, 10 November 2026
+
+The corrected membership-first candidate is now tracked by [PR #115](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/115), exact source head `278c0c6c192e34728bace660199e1c431e96846d`. Its new workflow [42762540736](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762540736) has `audit` in progress and `integrated-paranoid` queued at the latest poll. PR #114 was closed as the preceding candidate after its first integrated attempt exposed the two residual goals; its source history is retained on the branch, and PR #115 presents the corrected exact head as a one-file diff against the canonical PR #101 base. No verification result is claimed until both jobs finish and the named axiom output is inspected.
