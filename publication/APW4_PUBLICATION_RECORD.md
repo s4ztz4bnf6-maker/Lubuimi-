@@ -280,3 +280,10 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## Formalization status addendum — 10 November 2026 (13:43 CET)
+
+The mathematical publication record is unchanged. The latest Lean candidate is PR #137 / v14, source head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`, which normalizes the dependent coordinate equality before constructing the prefix fibre. It is not yet verified by an exact-head workflow. The preceding PR #133 integrated run 42812910651 failed with a dependent-coordinate mismatch and error-recovery `sorryAx` in the recursion dependency chain. Neither event changes the mathematical proof status recorded in this publication record.
+
+The finalized PDF held by the author is not mirrored or modified by this repository update. No publication DOI, external repository identifier, or new machine-verification claim is added here.
