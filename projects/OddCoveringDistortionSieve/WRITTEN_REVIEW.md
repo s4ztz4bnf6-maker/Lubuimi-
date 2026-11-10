@@ -21,7 +21,7 @@ R(i\mid T)=m_i/\gcd(m_i,L_T)
 \]
 is also exact. For odd moduli, any strict growth factor is at least three, giving a finite divisor-chain bound.
 
-The L=15 private-set example and the L=945 divisor-density/coprime-pair calculation are reproducible finite facts. In particular, L=945 has total divisor density 65/63 and coprime-pair contribution 74/315.
+The L=15 private-set example and the L=945 divisor-density/coprime-pair calculation are reproducible finite facts. In particular, L=945 has total divisor density 65/63 and coprime-pair contribution 74/315. The exact pairwise-coprime triple contribution is 13/945 from exactly (3,5,7), (5,7,9), and (5,7,27); there is no pairwise-coprime quadruple in this three-prime divisor family.
 
 ## 2. What these facts do not prove
 
@@ -37,6 +37,6 @@ The exact historical definitions of g(L), Ψ, the compatibility graph, the cross
 
 The main unresolved obligation is a quantitative positive lower bound for private mass in the required irredundant odd-modulus setting, strong enough to survive the CRT-fibre aggregation and produce a global contradiction. A bound involving \(\omega(L)\) and a transfer from local fibres to the global discrepancy remain open.
 
-**Verdict:** There are exact finite identities, a useful LCM-chain bound, and informative test configurations. The universal private-mass/distortion estimate is not proved; the odd covering conjecture is not solved.
+**Verdict:** There are exact finite identities, a useful LCM-chain bound, and informative test configurations. A standalone Lean 4.34.1 project now contains a kernel-reduction candidate for the exact L945 density, pair, and triple sums; the same module is mirrored into the unified Syracuse/Collatz audit library. Its current exact-head CI is pending, so no Lean verification is claimed yet. The universal private-mass/distortion estimate is not proved; the odd covering conjecture is not solved.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI tools are assistants only, not authors or independent mathematical verifiers.
