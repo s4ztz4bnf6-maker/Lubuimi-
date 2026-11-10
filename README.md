@@ -199,3 +199,10 @@ M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|,\qquad
 The ledger also preserves the block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\), the fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\), and the exact four-term residual expansion obtained from \(I_q=A_q+Z_q\). The four-term matrix expansion contains three Z-residual contributions; it is not a third term in the two-term APW4 energy decomposition.
 
 The ledger deliberately marks the exact row/column domains, quotient maps, event universe, full event map, BIB slot universe, incidence predicate, and weight-preserving weighted-Hall verification as remaining source-reconstruction obligations. The historical DT map \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) must be expanded componentwise. APW off-diagonal atoms \((\ell,\ell')\) must not be identified with within-fibre pairs \((u,v)\) without an explicit proved projection/quotient map. These distinctions guide the remaining Lean instantiation; they do not reopen the established APW4 mathematical proof.
+
+
+### Exact run/commit attribution correction — 10 November 2026
+
+The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
+
+PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
