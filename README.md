@@ -403,3 +403,8 @@ The integrated PR #69 is now at `2c2ec3472ae2de9bfc7dc90198f48c52f21f04dd`. Exac
 A narrowly scoped alternative is proposed in draft [PR #83](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/83), exact source commit `2656fe9fadac25b5c79a1f217ad40fb8472738d0`. It proves nonnegativity of the scalar update first and transports `0 ≤ updatedWeight` across the exact scalar equality by equality elimination, avoiding rewriting inside the dependent fibre expression. Exact-head workflows [42740315350](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740315350) and [42740323488](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740323488) are queued/running. This remains a proof candidate until both compile and integrated paranoid/audit checks pass with the required declaration-level axiom profile and no `sorryAx`.
 
 Draft PR #82 was closed as superseded; its branch is retained, and no code from it was merged. No historical APW4 definitions, theorem statements, or prior successful results were replaced by these candidates.
+
+
+### Addendum 1.19 — historical source audit and support-layer formalization
+
+The historical completeness audit now includes a page-indexed review of the author's project PDF, a provenance warning for the proposed q-matrix notation, and the distinction between a single APW4 off-diagonal atom and a collision of two such atoms. The exact CRT support-layer relation is being formalized on APW4 PR #67; canonical CI has passed, while the Lean 4.35 paranoid run remains pending. See `publication/APW4_HISTORICAL_COMPLETENESS_AUDIT_2026-11-10.md` and the CI snapshot for exact heads and run IDs. No historical matrix or BIB incidence definition has been invented or merged.
