@@ -91,3 +91,18 @@ The following established mathematical components remain preserved: DT and HT; h
 APW diagonal mass, APW off-diagonal mass, and BIB pair reserve must not be identified without an explicit index-preserving map and corresponding weight/capacity transport. Historical definitions `A_q`, `A_r`, `W_{q,r}`, and `a_{q,t}` must not be guessed or replaced by canonical block sums.
 
 See `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md` for the current integrated failure, candidate repair, separate upstream sieve-axiom boundary, attribution, and licensing inventory.
+## Further APW4 exact-head diagnostics — 10 November 2026
+
+### PR #118 / v4 candidate
+
+Source head `0523bfce7a5daed0802f2ffb7141547301337b17`, workflow [42806636524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42806636524): the integrated build failed. Unfolding `updatedWeight` fixed the earlier equation-theorem rewrite failure, and the full-fibre membership witness was made explicit, but Lean exposed a dependent-index mismatch between `y (Fin.last k)` at `prefixIndex hj (Fin.last k)` and the expected fibre index `stageCoordinate hk`. This candidate is superseded; no result is accepted from it.
+
+### PR #119 / v5 candidate
+
+Source head `5800a53c8c7fd9a59023cddf84d63ccc8cd920e3`, workflow [42807200407](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807200407): the integrated build still failed on the same dependent-index transport. Changing only the point term in the local `change` target was insufficient because Lean normalized the local let-bound index back to `k` in the dependent type. This candidate is superseded.
+
+### PR #120 / v6 candidate
+
+Current candidate: [PR #120](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/120), exact head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [42807684437](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807684437). It states the transport equality directly as `stageCoordinate hk = prefixIndex hj (Fin.last k)` and uses the same `y (Fin.last k)` term in the target and membership cases. At the latest poll, the separate audit and integrated-paranoid jobs were in progress. **OFFEN – NICHT VERIFIZIERT.**
+
+Do not infer success from the improved diagnostics. Acceptance still requires integrated compilation, exact named axiom output, and no `sorryAx` in the integrated dependency closure.
