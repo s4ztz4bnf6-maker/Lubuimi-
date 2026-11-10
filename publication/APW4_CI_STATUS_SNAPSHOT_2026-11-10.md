@@ -752,3 +752,14 @@ m_0\leq
 ]
 
 This is a mathematical conditional derivation recorded in the research note; it has not yet been Lean-formalized. Its application still depends on proving the distinct-divisor, proper-LCM, and row-size hypotheses for the actual selected q-fibre entries. It does not identify the historical (mu(B)), does not close the extraction map (A_q(x,h)\to S_x), and does not establish the APW4 weighted HT event/BIB-slot transport.
+
+
+## Addendum 1.48 — fresh stacked PR verification heads
+
+The repair and model candidates now have fresh stacked PRs created from their latest source commits so the exact current snapshots receive new CI events:
+
+- PR #91, APW4 prefix-coordinate repair, head `837fc31de5f574e6fea912b5d70ea8fac05413cb`: workflow 42746685650 has both integrated-paranoid and audit jobs in progress; a follow-up audit run 42746746659 is queued. No pass is claimed.
+- PR #92, canonical q-fibre helper, head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`: canonical workflow 42746644499 and audit are in progress; follow-up runs 42746751151 and 42746751226 are queued. The earlier run 42746080147 on the prior head was cancelled after the branch advanced. No pass is claimed.
+- PR #85, local historical-q-fibre M/Gamma theorem, remains at head `d4c61399918c03715197cbe2de6356fd170463d3`: canonical job passed in 42744980622 with standard axiom profile and zero `sorryAx` occurrences in the complete log; paranoid remains in progress.
+
+The current documentation PR #88 head is `d78e06f2790190ac3e7ad7e173d5ff2eff72be5f). Audit run 42746179850 passed on the earlier docs head `88946cbaa591ce423fcfff16ec022964dda4c07e`; that result is not transferred to the newer documentation head. No new docs-audit PASS is claimed.
