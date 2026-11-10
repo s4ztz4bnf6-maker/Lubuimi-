@@ -230,3 +230,12 @@ Der vom Autor unabhängig finalisierte und gesicherte PDF-Release wird durch die
 ### Exact-head refresh after v15 local-witness repair — 10 November 2026
 
 The v15 proof-term repair remains the code change identified above: the endpoint membership/non-membership/point witnesses are transported from the geometric endpoint to the let-bound local value used by `updatedWeight`. A comment-only exact-head refresh was then committed as `3bb0e4ab45d74cbece76edbc5be14bca0043cdc9`; it changes no declaration, theorem statement, definition, hypothesis, or proof term. The exact-head workflow lookup returned no workflow run and no commit status for this refresh. Therefore the v15 candidate remains **OFFEN – NICHT VERIFIZIERT**; no earlier successful module audit is extended to it.
+
+
+## 17. Formalization addendum — arbitrary-t Lemma 3.4 geometry (10 November 2026)
+
+This addendum records a separate Lean implementation obligation and does not amend the mathematical APW4 manuscript or its established conclusions. The repository currently has binary old-shadow compatibility/merge and pair-level incidence identities. These are not the arbitrary-t version of BBMST Lemma 3.4.
+
+The next formalization step is a `Fin t)-indexed finite merge with a proved induction invariant, followed by the exact intersection predicate, fixed-coordinate union, conflict-to-empty-intersection case, and ordered tuple indicator expansion. The tuple indexing must preserve repetitions. Only after this geometry is established can the source-facing (c(I)\nu(J)) bound be applied to every tuple intersection and summed to obtain Lemma 3.4.
+
+This formalization task is not a mathematical gap in the already established APW4 DT/HT/energy proof. It is a remaining source-to-Lean integration obligation in the separate BBMST moment chain. The APW4 proof status, exact two-term energy decomposition, ordered off-diagonal convention, and independently finalized author-held PDF remain unchanged. This note is not a replacement PDF and claims no new Lean verification.
