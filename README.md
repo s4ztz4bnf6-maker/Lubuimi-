@@ -206,3 +206,8 @@ The ledger deliberately marks the exact row/column domains, quotient maps, event
 The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
 
 PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
+
+
+### Exact-head refresh after v15 local-witness repair — 10 November 2026
+
+The v15 proof-term repair remains the code change identified above: the endpoint membership/non-membership/point witnesses are transported from the geometric endpoint to the let-bound local value used by `updatedWeight`. A comment-only exact-head refresh was then committed as `3bb0e4ab45d74cbece76edbc5be14bca0043cdc9`; it changes no declaration, theorem statement, definition, hypothesis, or proof term. The exact-head workflow lookup returned no workflow run and no commit status for this refresh. Therefore the v15 candidate remains **OFFEN – NICHT VERIFIZIERT**; no earlier successful module audit is extended to it.
