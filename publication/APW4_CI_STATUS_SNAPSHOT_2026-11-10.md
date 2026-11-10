@@ -749,3 +749,16 @@ The preceding exact integrated-paranoid run 42746539942 still failed at the cove
 Current exact head: `dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4`.
 The first audit run 42746931108 failed because `SyracuseUniformFibreBridge` was imported by `AuditCheck.lean` but not declared as a Lake library root. The lakefile has now registered the module. Exact-head run 42747404273 is queued. The module's mathematical scope is the finite uniform-fibre data and its mass/cardinality equations only; historical event/BIB transport and global Collatz exclusion remain unproved by this module.
 
+
+
+## 6.2 Residue-projection q-fibre specialization — exact-head status
+
+PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae adds a concrete ZMod N residue-label model with Bq ∣ N and Br ∣ N. Its theorem APW4HistoricalQFibre.ResidueProjectionModel.sum_M_qr_le_Gamma_qr_of_residue_projections derives the local M/Gamma inequality by instantiating the generic preimage-map result.
+
+- Canonical run 42749178635: PASS.
+- Audit run 42749178673: PASS.
+- New theorem axiom profile: [propext, Classical.choice, Quot.sound].
+- Canonical log sorryAx count: 0.
+- Paranoid job: still in progress at this snapshot; no PASS claimed.
+
+The parameters Uq,Ur and c remain explicit. This does not yet identify the historical U_q/U_r or C_h, and does not close the event-to-BIB weighted Hall transport.
