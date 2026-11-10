@@ -415,3 +415,14 @@ A standalone Lean 4.34.1 project has been added under `projects/OddCoveringDisto
 - The prior documentation-head audit 42732365176 passed on PR #79 head `f92132ba85f382a6fdb3ff50f2d8eb2d5e213faf`. This new addendum advances the documentation branch and therefore requires a fresh exact-head audit.
 
 All earlier successful exact-commit results and the established APW4 mathematical theorem record remain preserved. The L945 finite arithmetic does not identify with the historical APW4/BIB pair reserve without an explicit index-preserving map and weight correspondence.
+
+
+## Addendum 1.22 — current exact-head verification snapshot, 10 November 2026
+
+- Unified Syracuse/Collatz root audit: PR #9 head `63851fe25f8bbc19c198cf1e8ec9d59a35dd4722`, workflow 42733657952 PASS. This compiles and audits the three signed-margin cap declarations, the k=2 terminal-residue matrix/energy declarations, and the L945 finite CRT moment module. The checked declarations print the standard profile [propext, Classical.choice, Quot.sound] and no actual `sorryAx` hit.
+- Standalone terminal-residue k=2 project: PR #38 head `26c7b92fd529bf03582995e1bee301b0d07c131c`, workflow 42735188229 in progress after changing both Lean and Mathlib from 4.34.1 to 4.35.0. The prior run 42733693279 compiled and axiom-audited the module but failed only because `lake check --paranoid` is not supported by Lean 4.34.1.
+- Kolaz threshold-return: PR #39 head `821579ea5555a6f5e2e38fa771f8797dc4650106`, workflow 42732216205 PASS; all seven exact Python regression tests pass, including both extended CSV tables and the x=731 bridge.
+- APW4 integration: PR #69 head `1f4225ce0bdf6186fd0700612e2306ed3ff44506`, workflow 42734929700 in progress. The latest repair explicitly normalizes the residual `Finset.univ` membership in the two updated-weight branches. Both Lean 4.28 audit and Lean 4.35.0 integrated-paranoid results are pending.
+- Documentation: PR #79 head `799eba5a2a478b130ea780de3c53ef17d8f87e1f`, workflow 42733244916 PASS. This addendum changes the docs head and requires a new exact-head audit.
+
+All statuses above are scoped to the exact listed commits and jobs. Earlier successes remain valid for their own commits; no current-head claim is inferred from an older run.
