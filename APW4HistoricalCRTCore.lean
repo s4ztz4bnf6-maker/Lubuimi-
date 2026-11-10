@@ -220,3 +220,310 @@ theorem sum_M_qr_le_Gamma_qr
 #print axioms sum_M_qr_le_Gamma_qr
 
 end APW4HistoricalQFibre
+
+
+/-!
+## Explicit preimage-fibre interface
+
+This layer derives the hypotheses of the local q-fibre counting theorem
+when fibres and blocks are genuine preimages of maps. It is a reusable
+formal interface for the eventual arithmetic projections and block labels.
+It is **not** yet the historical APW4 instantiation: the source-specific
+maps, selected sets, and block-label function must still be recovered.
+-/
+
+namespace APW4HistoricalQFibre
+
+namespace PreimageModel
+
+variable {G X Xq Xr H : Type*}
+variable [Fintype G] [DecidableEq G]
+variable [DecidableEq X] [DecidableEq Xq] [DecidableEq Xr]
+variable [Fintype H] [DecidableEq H]
+
+/-- Fibre over one label of a finite projection. -/
+def fibre (π : G → X) (x : X) : Finset G :=
+  Finset.univ.filter fun z => π z = x
+
+/-- The inverse image of a selected set of projection labels. -/
+def visible (π : G → X) (U : Finset X) : Finset G :=
+  Finset.univ.filter fun z => π z ∈ U
+
+/-- The block with label h under a single block-label map. -/
+def block (c : G → H) (h : H) : Finset G :=
+  Finset.univ.filter fun z => c z = h
+
+/-- A fibre over a selected label is contained in the inverse image
+of the selected label set. -/
+theorem fibre_subset_visible
+    (π : G → X) (U : Finset X) (x : X) (hx : x ∈ U) :
+    fibre π x ⊆ visible π U := by
+  intro z hz
+  have hz' : π z = x := by
+    simpa [fibre] using hz
+  simp [visible, hz', hx]
+
+/-- Distinct fibres of one block-label map are pairwise disjoint. -/
+theorem block_pairwise_disjoint
+    (c : G → H) :
+    ∀ h₁ h₂, h₁ ≠ h₂ → Disjoint (block c h₁) (block c h₂) := by
+  intro h₁ h₂ hne
+  apply Finset.disjoint_left.mpr
+  intro z hz₁ hz₂
+  have h₁z : c z = h₁ := by simpa [block] using hz₁
+  have h₂z : c z = h₂ := by simpa [block] using hz₂
+  exact hne (h₁z.symm.trans h₂z)
+
+/-- The q-fibre aggregate bound follows automatically for genuine
+preimage fibres and blocks of one label map. The arithmetic projections
+and selected label sets are explicit parameters; no historical
+identification is asserted by this generic theorem. -/
+theorem sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (πq : G → Xq) (πr : G → Xr)
+    (Uq : Finset Xq) (Ur : Finset Xr)
+    (c : G → H) (x : Xq) (y : Xr) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (fibre πq x) (fibre πr y) (block c) g h)
+      ≤
+    Gamma_qr (visible πq Uq) (visible πr Ur) (block c) g := by
+  exact sum_M_qr_le_Gamma_qr
+    (fibre πq x) (fibre πr y)
+    (visible πq Uq) (visible πr Ur) (block c) g
+    (fibre_subset_visible πq Uq x hx)
+    (fibre_subset_visible πr Ur y hy)
+    (block_pairwise_disjoint c)
+
+#print axioms fibre_subset_visible
+#print axioms block_pairwise_disjoint
+#print axioms sum_M_qr_le_Gamma_qr_of_preimage_maps
+
+end PreimageModel
+
+end APW4HistoricalQFibre
+
+
+/-!
+## Coordinate-only residue labels for the preimage model
+
+This is a set-level coordinate representation in Fin B, not a quotient
+ring homomorphism. Its divisor argument is retained only to record the
+intended arithmetic context; it is not used by the coordinate map. For the
+genuine reduction map ZMod N → ZMod B when B divides N, use the separate
+ZModQuotientProjectionModel below. In both models the selected supports and
+block-label map remain explicit because their historical APW4 definitions
+are not supplied by the 17-page source manuscript.
+-/
+
+namespace APW4HistoricalQFibre
+
+namespace ResidueCoordinateModel
+
+/-- Canonical residue label of a point of ZMod N modulo a positive
+working fibre modulus B. -/
+def residueProjection
+    {N B : ℕ} (hB : 0 < B) (_hdiv : B ∣ N) :
+    ZMod N → Fin B :=
+  fun z => ⟨z.val % B, Nat.mod_lt _ hB⟩
+
+@[simp] theorem residueProjection_val
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (z : ZMod N) :
+    (residueProjection hB hdiv z).val = z.val % B :=
+  rfl
+
+/-- Working q-fibre: the inverse image of one residue label modulo B. -/
+def residueFibre
+    {N B : ℕ} [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) :
+    Finset (ZMod N) :=
+  PreimageModel.fibre (residueProjection hB hdiv) x
+
+/-- Working visible set V_q: the inverse image of the selected residue
+set U_q under the same canonical residue projection. -/
+def residueVisible
+    {N B : ℕ} [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) :
+    Finset (ZMod N) :=
+  PreimageModel.visible (residueProjection hB hdiv) U
+
+/-- The local aggregate q-fibre inequality for the concrete residue
+projections on ZMod N. The selected residue sets U_q,U_r and the block
+label map c are explicit parameters; no source-specific identification
+of C_h is assumed. -/
+theorem sum_M_qr_le_Gamma_qr_of_residue_projections
+    {N Bq Br : ℕ} [NeZero N] [Fintype (ZMod N)]
+    [DecidableEq (ZMod N)]
+    (hBq : 0 < Bq) (hdivq : Bq ∣ N)
+    (hBr : 0 < Br) (hdivr : Br ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
+    (c : ZMod N → H)
+    (x : Fin Bq) (y : Fin Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (residueFibre hBq hdivq x) (residueFibre hBr hdivr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (residueVisible hBq hdivq Uq) (residueVisible hBr hdivr Ur)
+      (PreimageModel.block c) g := by
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (residueProjection hBq hdivq) (residueProjection hBr hdivr)
+    Uq Ur c x y g hx hy
+
+#print axioms residueProjection_val
+#print axioms sum_M_qr_le_Gamma_qr_of_residue_projections
+
+end ResidueCoordinateModel
+
+
+/-!
+## Genuine quotient-homomorphism specialization
+
+Unlike the coordinate-valued residue map above, this version uses the
+actual reduction homomorphisms ZMod N → ZMod B for divisors B | N.
+It derives the local aggregate inequality for their inverse-image fibres.
+The selected supports Uq,Ur and the common block-label map c remain explicit
+inputs; their identification with the historical APW4 objects is still open.
+-/
+
+namespace ZModQuotientProjectionModel
+
+/-- The genuine quotient ring homomorphism ZMod N → ZMod B. -/
+def quotientProjection
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) :
+    ZMod N →+* ZMod B :=
+  ZMod.castHom hdiv (ZMod B)
+
+/-- The inverse image of one residue modulo B under the quotient map. -/
+def quotientFibre
+    {N B : ℕ} [NeZero N] [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (x : ZMod B) : Finset (ZMod N) :=
+  PreimageModel.fibre (quotientProjection hdiv) x
+
+/-- The selected support in ZMod N, obtained as the inverse image of U. -/
+def quotientVisible
+    {N B : ℕ} [NeZero N] [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (U : Finset (ZMod B)) : Finset (ZMod N) :=
+  PreimageModel.visible (quotientProjection hdiv) U
+
+/-- The q-fibre aggregate bound for the actual quotient homomorphisms
+ZMod N → ZMod Bq and ZMod N → ZMod Br. -/
+theorem sum_M_qr_le_Gamma_qr_of_quotient_homs
+    {N Bq Br : ℕ} [NeZero N] [NeZero Bq] [NeZero Br]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hq : Bq ∣ N) (hr : Br ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod Bq)) (Ur : Finset (ZMod Br))
+    (c : ZMod N → H)
+    (x : ZMod Bq) (y : ZMod Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (quotientFibre hq x) (quotientFibre hr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (quotientVisible hq Uq) (quotientVisible hr Ur)
+      (PreimageModel.block c) g := by
+  classical
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (quotientProjection hq) (quotientProjection hr)
+    Uq Ur c x y g hx hy
+
+#print axioms quotientProjection
+#print axioms sum_M_qr_le_Gamma_qr_of_quotient_homs
+
+end ZModQuotientProjectionModel
+
+
+/-!
+## Exact q-power quotient specialization of the historical working fibres
+
+The working arithmetic modulus is B_q = N / q^a when q^a divides N.
+This section proves the divisor fact and instantiates the actual reduction
+homomorphism ZMod N → ZMod B_q. It is still conditional on the selected
+support U_q and the historical block-label map c; those source objects are
+not reconstructed by this arithmetic projection alone.
+-/
+
+namespace QPowerQuotientModel
+
+/-- The working q-fibre modulus B_q = N / q^a. -/
+def qFibreModulus (N q a : ℕ) : ℕ := N / q ^ a
+
+/-- If q^a divides N, then the working modulus B_q divides N. -/
+theorem qFibreModulus_dvd_N
+    {N q a : ℕ} (hdiv : q ^ a ∣ N) :
+    qFibreModulus N q a ∣ N := by
+  refine ⟨q ^ a, ?_⟩
+  exact (Nat.div_mul_cancel hdiv).symm
+
+/-- Positivity of B_q follows from N>0 and q>0. -/
+theorem qFibreModulus_pos
+    {N q a : ℕ} (hN : 0 < N) (hq : 0 < q)
+    (hdiv : q ^ a ∣ N) :
+    0 < qFibreModulus N q a := by
+  have hle : q ^ a ≤ N := Nat.le_of_dvd hN hdiv
+  exact Nat.div_pos hle
+
+/-- The actual quotient homomorphism for B_q=N/q^a. -/
+def qFibreProjection
+    {N q a : ℕ} [NeZero N]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N) :
+    ZMod N →+* ZMod (qFibreModulus N q a) := by
+  letI : NeZero (qFibreModulus N q a) :=
+    ⟨Nat.ne_of_gt (qFibreModulus_pos hN hq hdiv)⟩
+  exact ZMod.castHom (qFibreModulus_dvd_N hdiv)
+    (ZMod (qFibreModulus N q a))
+
+/-- The working q-fibre F_q(x), as the inverse image of x under the
+actual quotient homomorphism modulo N/q^a. -/
+def qFibre
+    {N q a : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N)
+    (x : ZMod (qFibreModulus N q a)) : Finset (ZMod N) :=
+  PreimageModel.fibre (qFibreProjection hN hq hdiv) x
+
+/-- The working visible set V_q, as the inverse image of U_q under
+the same quotient homomorphism. -/
+def qVisible
+    {N q a : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N)
+    (U : Finset (ZMod (qFibreModulus N q a))) : Finset (ZMod N) :=
+  PreimageModel.visible (qFibreProjection hN hq hdiv) U
+
+/-- The local M/Gamma inequality for the exact q-power quotient fibres
+B_q=N/q^a and B_r=N/r^b. The supports and block map remain explicit. -/
+theorem sum_M_qr_le_Gamma_qr_of_q_power_quotients
+    {N q r a b : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hr : 0 < r)
+    (hqdvd : q ^ a ∣ N) (hrdvd : r ^ b ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod (qFibreModulus N q a)))
+    (Ur : Finset (ZMod (qFibreModulus N r b)))
+    (c : ZMod N → H)
+    (x : ZMod (qFibreModulus N q a))
+    (y : ZMod (qFibreModulus N r b)) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (qFibre hN hq hqdvd x) (qFibre hN hr hrdvd y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (qVisible hN hq hqdvd Uq)
+      (qVisible hN hr hrdvd Ur) (PreimageModel.block c) g := by
+  classical
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (qFibreProjection hN hq hqdvd)
+    (qFibreProjection hN hr hrdvd)
+    Uq Ur c x y g hx hy
+
+#print axioms qFibreModulus_dvd_N
+#print axioms qFibreProjection
+#print axioms sum_M_qr_le_Gamma_qr_of_q_power_quotients
+
+end QPowerQuotientModel
+
+end APW4HistoricalQFibre
