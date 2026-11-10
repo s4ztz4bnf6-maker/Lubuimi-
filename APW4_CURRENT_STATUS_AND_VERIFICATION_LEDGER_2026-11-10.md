@@ -138,3 +138,8 @@ PR #123 / v8 exact head `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow [42
 PR #125 / v9 exact head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, workflow [42810241207](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42810241207), uses the transported endpoint `(hstage.symm ▸ y (Fin.last k))` in both covered and uncovered membership facts and proves each by `simpa [x] using hcov`. At the latest poll both jobs were queued. This is a focused type-correction candidate; no v9 verification is claimed.
 
 Acceptance remains: exact-head integrated build PASS, named axiom profiles for `prefixFibre_updatedWeight_eq_PAt` and dependent declarations, and no `sorryAx` in the integrated dependency closure.
+
+
+## 11. Latest v9 poll — 10 November 2026
+
+PR #125 workflow 42810241207 has audit job `129809542278` and integrated-paranoid job `129809542736` in progress. Job logs were not yet retrievable. The result remains OFFEN – NICHT VERIFIZIERT until both jobs finish and the exact outputs are inspected.
