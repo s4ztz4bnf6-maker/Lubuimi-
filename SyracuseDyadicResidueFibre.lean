@@ -88,11 +88,16 @@ theorem mem_tailAtoms_iff (B Bstar : ℕ)
       rw [← pow_add]
       congr 1
       omega
+    have hpowDiv : 2 ^ (Bstar - B) * 2 ^ B = 2 ^ Bstar := by
+      rw [Nat.mul_comm, ← pow_add]
+      congr 1
+      omega
     have hq :
         x.val / 2 ^ B < 2 ^ (Bstar - B) := by
       apply (Nat.div_lt_iff_lt_mul (by positivity : 0 < 2 ^ B)).2
-      rw [hpow]
-      exact x.isLt
+      calc
+        x.val < 2 ^ Bstar := x.isLt
+        _ = 2 ^ (Bstar - B) * 2 ^ B := hpowDiv.symm
     let q : Fin (2 ^ (Bstar - B)) := ⟨x.val / 2 ^ B, hq⟩
     have hdecomp : x.val % 2 ^ B + 2 ^ B * (x.val / 2 ^ B) = x.val :=
       Nat.mod_add_div _ _
@@ -101,7 +106,7 @@ theorem mem_tailAtoms_iff (B Bstar : ℕ)
     apply Finset.mem_map.mpr
     refine ⟨q, Finset.mem_univ _, ?_⟩
     apply Fin.ext
-    simpa [liftTailEmbedding] using hval.symm
+    simpa [liftTailEmbedding] using hval
 
 @[simp] theorem card_candidateAtoms (B Bstar : ℕ)
     (hB : B ≤ Bstar) (r : Fin (2 ^ B)) :
@@ -135,14 +140,15 @@ theorem candidate_mass_eq_one_sub_two_pow
         ((allAtoms Bstar).card : ℚ) =
       1 - 1 / (2 : ℚ) ^ B := by
   rw [card_candidateAtoms, card_allAtoms]
+  have hnat : 2 ^ (Bstar - B) ≤ 2 ^ Bstar :=
+    Nat.pow_le_pow_right (by omega : 1 ≤ 2) (Nat.sub_le _ _)
+  rw [Nat.cast_sub hnat]
+  push_cast
   have hpow : (2 : ℚ) ^ Bstar =
       (2 : ℚ) ^ (Bstar - B) * (2 : ℚ) ^ B := by
     rw [← pow_add]
     congr 1
     omega
-  have htail : (2 : ℚ) ^ (Bstar - B) ≠ 0 := by positivity
-  push_cast
-  rw [Nat.cast_sub (Nat.pow_le_pow_right (by omega : 1 ≤ 2) (Nat.sub_le _ _))]
   rw [hpow]
   field_simp
   ring
