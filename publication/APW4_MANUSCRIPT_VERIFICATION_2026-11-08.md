@@ -272,3 +272,8 @@ PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v
 ## Exact-head update — PR #138 v15, 10 November 2026
 
 PR #138 currently points to `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. Its latest change is a comment-only CI-refresh marker in the source file. Exact-commit workflow and status queries returned no associated run/check. Therefore the v15 local-witness repair remains **OFFEN – NICHT VERIFIZIERT**; this update does not certify compilation, axiom profile, or absence of `sorryAx`.
+
+
+## Repository-wide verification boundary — 10 November 2026
+
+The latest exact-head PR/CI snapshot and the remaining historical Lean obligations are consolidated in [APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md](APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md). The manuscript/PDF is not altered by this status update. Declaration-scoped positive CI records retain their original exact-commit scope; no full historical APW4 main-theorem kernel pass is claimed.
