@@ -450,3 +450,8 @@ APW4 PR #85's local conditional theorem `sum_M_qr_le_Gamma_qr` now passes canoni
 ### Addendum 1.24 — parallel dependent-coordinate repair
 
 APW4 PR #86 adds an explicit Fin-index equality between stageCoordinate and prefixIndex before the covered/uncovered split; exact-head runs 42745081023 and 42745062463 are in progress. PR #84 remains an alternative proof-witness/covered-fibre rewrite candidate. Neither is verified yet; keep both unmerged until an exact-head integrated paranoid run succeeds.
+
+
+### Addendum 1.25 — combined dependent-prefix repair candidate
+
+The coordinate-only PR #86 did not close the covered/uncovered goals. PR #84 now combines the explicit stage-coordinate equality with transport of the recursive PAt value and covered-value finset. Exact-head run 42745642769 is pending; no verification claim or merge has been made.
