@@ -380,37 +380,25 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  by_cases hcovF : y (Fin.last k) ∈ F.covered
-  · have hcov :
-        y (Fin.last (a + j)) ∈
-          prefixCoveredValues C (A := A) hk
-            (restrictPrefix C hk y) := by
-      simpa [F, prefixFibreData, prefixUniformFibre,
-        BBMSTUniformFibreInstantiation.toFibreData, xprev] using hcovF
-    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcovF, hcov,
+  by_cases hcov :
+      y (Fin.last (a + j)) ∈
+        prefixCoveredValues C (A := A) hk
+          (restrictPrefix C hk y)
+  · simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov,
       F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, xprev, k]
-  · have hcov :
-        y (Fin.last (a + j)) ∉
-          prefixCoveredValues C (A := A) hk
-            (restrictPrefix C hk y) := by
-      simpa [F, prefixFibreData, prefixUniformFibre,
-        BBMSTUniformFibreInstantiation.toFibreData, xprev] using hcovF
-    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcovF, hcov,
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k] <;>
+        (intro hnot; exact hnot hcov)
+  · have hpoint : y (Fin.last (a + j)) ∈ Finset.univ :=
+      Finset.mem_univ _
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hpoint,
       F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, xprev, k]
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
