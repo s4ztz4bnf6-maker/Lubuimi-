@@ -114,3 +114,8 @@ The expansion `I_q W I_r^T = A_q W A_r^T + A_q W Z_r^T + Z_q W A_r^T + Z_q W Z_r
 ### 2.4 Provenance warning for the proposed q-matrix model
 
 The later reconstruction dossier's section 15 proposes the indicator notation `I_q(x,h)` for complete congruence compatibility, `A_q(x,h)` for a selected fibre cover, and `Z_q=I_q-A_q), subject to `A_q≤I_q`. This is a useful candidate model for testing the four-term expansion. It is **not**, on the presently recovered evidence, a primary-source proof that these are the original historical APW4 matrix definitions or that their index sets coincide with those in the historical identity (7.2). The exact source matrices and their domains must still be supplied independently. The candidate model remains segregated from the historical Lean core.
+
+
+### 2.5 Off-diagonal atom versus collision-of-atoms distinction
+
+The reconstruction dossier also records a nontrivial event-index ambiguity: if an elementary `ell` is an APW4 off-diagonal atom `(x,u,v)`, then a pair `(ell,ell')` in the q-profile collision identity is a collision of two such atoms. It is not automatically the same object as the original within-fibre ordered pair `(u,v)) appearing in `C_APW4`. A valid HT reconstruction must state which of these is the actual event `gamma`, how its demand is obtained, and how it is related to the source energy sum. The present source material explicitly flags this distinction; no equality between these event types is assumed.
