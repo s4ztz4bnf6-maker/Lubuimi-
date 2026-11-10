@@ -254,3 +254,110 @@ BBMST Lemma 3.3 states P_k(A)≤c(I)ν(J) when F(A)=I∪J, I⊆[a], J⊆[a+1,k].
 This corrects the earlier shorthand “actual finite family of initial profiles”: c's profile domain is all I⊆[a], and its maximization domain is all initial hyperplanes with that profile. The selected cover enters through N_k in Lemma 3.4, not in c(I). The current hyperplaneSuffixFactor has the correct fixed-coordinate charging pattern but the existing cylinder theorem still uses the actual initial cylinder mass; it has not yet been identified with c(I). Exact Lean integration and the normalization Σ_x P0(x)=1 remain open. See publication/APW4_BBMST_LEMMAS_3_3_3_4_SOURCE_TO_LEAN_INTERFACE_2026-11-10.md for the detailed interface and proof decomposition.
 
 Source: Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), equations (9)–(11), Lemmas 3.3–3.4, DOI 10.2140/ant.2021.15.609.
+
+## 10 November 2026 — finite-profile closure and exact suffix product (proof design)
+
+This entry fixes the two remaining interfaces as finite constructions, without
+claiming a Lean compilation.
+
+### Initial profile family
+
+Use the existing full-coordinate representation
+`Hyperplane C`, but represent a hyperplane of the initial box (Q_a) by
+requiring every coordinate after (a) to be free. For
+(I\subseteq\mathrm{Finset.Iio}(a)), define the finite family
+[
+\mathscr H_a(I)=\{H:\mathrm{Hyperplane}(C):
+                   \mathrm{fixedCoords}(H)=I\}.
+]
+The equality already forces all suffix coordinates to be free. This is
+exactly the family of all partial assignments in (Q_a) with fixed profile
+(I), not a subfamily selected from the cover.
+
+The family is nonempty: choose the existing nonempty-coordinate default
+(d_i=\texttt{coordinateDefault}(C,i)), and set
+(H_I(i)=\texttt{some}(d_i)) for (i\in I), and
+(H_I(i)=\texttt{none}) otherwise. Then
+(mathrm{fixedCoords}(H_I)=I). It is finite because every coordinate type
+is finite and there are finitely many coordinates.
+
+Define the initial cylinder mass
+[
+m_a(H)=\sum_{x\in Q_a,;H\text{ agrees with }x}P_0(x).
+]
+The source coefficient is therefore the actual finite maximum
+[
+c(I)=\max_{H\in\mathscr H_a(I)}m_a(H).
+]
+In Lean, the intended construction is a filtered `Finset.univ` of
+`Hyperplane C`, with the nonemptiness witness above, followed by
+`Finset.max'` (or `Finset.sup'`) over the rational-valued
+`prefixCylinderMass ... 0 ha`. This definition must quantify over all
+hyperplanes, not over (A).
+
+For a source hyperplane (H) with
+(mathrm{FixedInsidePrefix}(a+j)), let (H^{(a)}) agree with (H)
+on coordinates (i<a) and be free on (i\ge a). Then
+[
+\mathrm{fixedCoords}(H^{(a)})=
+ I:=\mathrm{fixedCoords}(H)\cap\mathrm{Iio}(a),
+\qquad
+m_a(H^{(a)})=m_a(H).
+]
+The equality of masses is definitional at prefix length (a): the
+(j=0) cylinder inspects only the first (a) coordinates. Since
+(H^{(a)}\in\mathscr H_a(I)), the defining maximum gives
+(m_a(H)\le c(I)). If (I=\varnothing), the cylinder is all of
+(Q_a), so normalization (sum_xP_0(x)=1) gives (c(\varnothing)=1).
+
+### Suffix product identity
+
+For (i_r=\texttt{stageCoordinate}(a+r+1\le n)), the definition of
+`stageCoordinate` reduces to the coordinate with zero-based value
+(a+r). Thus the recursive suffix factor is
+[
+F_0(H)=1,\qquad
+F_{r+1}(H)=F_r(H)\,
+\begin{cases}
+d_{a+r},&H(a+r)\text{ is fixed},\\
+1,&H(a+r)\text{ is free},
+\end{cases}
+\quad
+d_i=\frac1{|S_i|(1-\delta_i)}.
+]
+Induction on (j), followed by `Finset.prod_filter`, identifies this with
+[
+F_j(H)=
+\prod_{i\in\mathrm{fixedCoords}(H)\cap
+                    \mathrm{Finset.Ico}(a,a+j)}d_i.
+]
+The endpoint is right-open: the recursion has exposed exactly the
+zero-based coordinates (a,a+1,\ldots,a+j-1). Under the paper's
+one-based labels (r=i.val+1), this is precisely
+(J=F(H)\cap[a+1,a+j]), and the displayed product is (
+u(J)).
+The index conversion must be a named lemma, not an informal change of
+notation.
+
+### Resulting source-facing theorem
+
+Combining (i) the finite-maximum initial bound, (ii) the suffix-product
+identity, (iii) the existing
+`prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`, and
+(iv) `Hyperplane.containsPrefix_iff_full` under
+`H.FixedInsidePrefix (a+j)`, gives
+[
+\mathbb P_{a+j}(H)\le c(I)\nu(J),
+\quad I=F(H)\cap[a],\quad J=F(H)\cap[a+1,a+j].
+]
+This is the exact source shape of BBMST Lemma 3.3. The proof still needs
+its Lean implementation and exact-head integrated CI; this entry is a
+proof design and mathematical identification only.
+
+The next dependent task is Lemma 3.4: for every ordered tuple
+((F_1,\ldots,F_t)\in\mathcal N_k^t), prove that the intersection of
+their (Q_{k-1})-shadows is empty or is the cylinder of the partial
+assignment whose fixed set is the union of the fixed sets. Apply the
+source-facing Lemma 3.3 to that union, then sum over the ordered tuple
+without quotienting by permutations or removing repetitions. This is the
+exact point where the (c(I)\nu(J)) bound enters the moment estimate.
