@@ -245,12 +245,20 @@ def liftedUncoveredSet {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N)
 theorem mem_qFibre_iff
     {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) (z : Fin N) :
     z ∈ qFibre hB hdiv x ↔ residueProjection hB hdiv z = x := by
-  simp [qFibre, residueProjection]
+  constructor
+  · intro hz
+    exact (Finset.mem_filter.mp hz).2
+  · intro hz
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hz⟩
 
 theorem mem_liftedUncoveredSet_iff
     {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) (z : Fin N) :
     z ∈ liftedUncoveredSet hB hdiv U ↔ residueProjection hB hdiv z ∈ U := by
-  simp [liftedUncoveredSet, residueProjection]
+  constructor
+  · intro hz
+    exact (Finset.mem_filter.mp hz).2
+  · intro hz
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hz⟩
 
 /-- In the canonical model, a fibre over x ∈ U lies in the lift of U. This
 is a reusable set-theoretic lemma; it is not a proof that the historical
