@@ -120,3 +120,67 @@ Conversely, APW4 finite weighted-fibre and incidence methods may be applied to S
 This file is a research ledger and contains no new Lean theorem. The established mathematical APW4 results remain recorded as established under their historical hypotheses. The current integrated Lean 4.35 prefix-recursion repair is a separate technical gate; failed runs and their exact commits remain in the chronology and do not retroactively alter earlier successful checks.
 
 **Authorship:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## 14. Source-fidelity correction: canonical projection model is not the historical fibre map
+
+A separate canonical helper has been formalized on PR #87 under namespace `APW4CanonicalQFibreProjection`. It uses canonical representatives (mathrm{Fin} N) and (mathrm{Fin} B), with (0<B) and (Bmid N), and defines a residue-reduction function, its fibres, and the lift of a base subset. The resulting fibre-containment lemma is an elementary fact about that model.
+
+**This is not accepted as the historical APW4 definition of (F_q(x)), (V_q), or (U_q).** The helper is deliberately marked canonical and non-historical. A separate source-derived theorem must still identify the author's actual ambient space, base-residue type, reduction map, old-uncovered subset, and block indices with the Fin-based model, preserving all indices and multiplicities. Until that equivalence is proved, no historical theorem may use the canonical helper as a silent replacement.
+
+This correction preserves the value of the generic finite-set lemma while preventing it from closing a source-reconstruction obligation it has not actually closed.
+
+## 15. Current exact formal checkpoints
+
+- PR #85's `sum_M_qr_le_Gamma_qr` is a canonical Lean PASS on its exact head, conditional on the explicit fibre-containment and pairwise-disjoint-block premises. Its Lean 4.35 paranoid check remains a separate gate.
+- PR #87's canonical projection-fibre helper is at head `4d4fd074b78a475723b3cc46d65bd7b438e35de0`; its canonical and audit workflows are pending. No kernel PASS is claimed.
+- The original matrix identity (2.1), local aggregate inequality (2.2), and recovered q-profile formulas in Section 11 remain fixed. The canonical helper does not alter their historical domains or supply the missing (a_{q,t}) vectors.
+- The event universe, full map ((x,u)mapsto(k,I_{x,u},J_{x,u})), actual BIB-place incidence and capacities, and weighted Hall proof remain open source-reconstruction/formalization obligations.
+
+
+## 16. New divisor-envelope sharpening of the conditional BIB second moment
+
+The 6 November incidence note now contains a separate addendum defining a new auxiliary parameter
+[
+\mu^*(B)=\max\{\tau(d):d\mid B,\ d<B\}.
+]
+This is **not** asserted to be the historical meaning of the previously recorded symbol (mu(B)). If the common selected labels are distinct divisors of (B) and their least common multiple is a proper divisor of (B), then their number is at most (mu^*(B)).
+
+For (B=\prod_i p_i^{e_i}), the exact arithmetic formula is
+[
+\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1}.
+]
+For squarefree (B), this is (	au(B)/2). Thus, with (r=q-1), the three numerical assumptions in the conditional BIB second-moment lemma reduce to
+[
+\tau(B)^2<2(q-1)^2,
+]
+and yield
+[
+m_0\leq
+\frac{\tau(B)(2(q-1)-\tau(B))}
+{2(q-1)^2-\tau(B)^2}.
+]
+
+This is a new arithmetic parameter sharpening, not a Lean-verified theorem and not a historical definition. Its use still requires proving that the actual selected labels are distinct divisors, that every pairwise common-label family has proper LCM, and that the row-size lower bound (q-1) holds. The extraction map from (A_q(x,h)) to (S_x) remains open. It does not close the weighted HT event/BIB-slot transport.
+
+
+## 17. Exact formal status of the canonical projection helper
+
+PR #92's canonical Lean job passed on source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`. Its complete log has no Lean errors and no `sorryAx), and the two helper declarations have the standard axiom profile. The paranoid job remains pending. This is a valid kernel-checked finite-model result, but it remains expressly separate from the historical APW4 objects until a source-derived equivalence is proved.
+
+The prefix-integration candidate PR #91 failed on its exact head because its covered branch attempted to introduce a binder where the goal was an equality, and its uncovered branch retained a conditional equality. The dependent coordinate equality was established. PR #94 is the next explicit-if-rewrite candidate; both exact-head workflows were queued at the latest check. No prefix integration PASS is recorded.
+
+The historical obligations listed in Sections 11–16 remain unchanged: exact old-class/index universes, selected-cover construction and residual bounds, vector coordinates and matrix orientation, actual block family and disjointness, event universe and event map, BIB slots/capacities/incidence, and the weighted Hall transport.
+
+
+## 18. Finite incidence second-moment kernel checkpoint
+
+The PR #92 canonical build on exact source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec` also compiled and printed the standard axiom profile for the three declarations:
+[
+	exttt{incidence_bound_from_second_moment},quad
+	exttt{offDiagonal_exceeds_reserve},quad
+	exttt{apw4_energy_contradiction}
+]
+in namespace `APW4IncidenceSecondMoment`. The complete canonical log contains no `sorryAx`.
+
+This closes the formal finite incidence implication under its explicit hypotheses. It does not prove the historical extraction (A_q(x,h)mapsto S_x), the row-size lower bound, the proper-LCM/pair-intersection bound, or the identification of this incidence capacity with the historical BIB reserve in the weighted HT theorem. The auxiliary (mu^*(B)) specialization is not yet Lean-verified. These distinctions remain mandatory.

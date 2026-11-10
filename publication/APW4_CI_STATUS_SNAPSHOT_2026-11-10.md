@@ -709,3 +709,86 @@ PR #86's coordinate-only candidate (head `4e4b378887cc76382d9cd2e17807f96a2c277e
 The 6 November BIB note §§5–6 explicitly gives the raw compatibility indicator (I_q(x,h)=1iff b_hequiv xpmod{gcd(m_h,B_q)}), the selected cover (A_qle I_q), redundancy (Z_q=I_q-A_q), the cross-profile indicator (W_{q,r}), and the exact four-term expansion (I_qW_{q,r}I_r^{mathsf T}=AA+AZ+ZA+ZZ). It explicitly states that the three Z-containing terms have no quantitative bound yet, minimality alone does not yield the required weighted estimate, and the depth-one extraction map to divisor labels is unspecified. The claims (|U|geDelta(B)), depth-one label counts and proper-lcm consequences remain unverified and are not used.
 
 The generator/index domains of F_q,F_r,C_h remain unavailable in the recovered source record. The earlier projection-fibre completion F_q(x)=pi_q^{-1}({x}) was explicitly marked canonical but non-historical and is prohibited as a substitute. PR #85's M/Gamma theorem is only a conditional local count; it does not close the mixed-Z or weighted HT/BIB transport problem.
+
+
+## Addendum 1.46 — canonical residue-fibre helper explicitly separated from historical reconstruction
+
+PR #87 was deliberately relabelled at source head `4d4fd074b78a475723b3cc46d65bd7b438e35de0` as a **canonical finite residue-fibre model helper, not a historical APW4 instantiation**. Its namespace is `APW4CanonicalQFibreProjection`. It defines a map on canonical representatives `Fin N → Fin B`, with (0<B) and (Bmid N), and proves the elementary fibre-in-lift inclusion for a base subset (U). It then applies the conditional local M/Gamma counting theorem to those model fibres.
+
+This helper is reusable only after a separate source proof identifies the original historical domains and maps with this canonical Fin model. It does not establish that identification, does not define the original (U_q) or (C_h), and cannot be used as a replacement for the historical APW4 definitions. This explicit boundary follows the source-fidelity warning in Addendum 1.45.
+
+Exact-head workflows for PR #87 are pending:
+- canonical kernel workflow [42746080147](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746080147);
+- degenerate-witness audit [42746080378](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746080378).
+
+No PASS is claimed for PR #87. Even a successful run will verify only the canonical helper and its finite set-theoretic consequences.
+
+### Prefix repair status cross-check
+
+The first PR #86 coordinate-only commit `4e4b378887cc76382d9cd2e17807f96a2c277e23` failed its integrated job in run 42745081023 because the covered/uncovered goals remained after the coordinate equality. The branch now has amended head `80c607af6efd79c9a3221ebbb7aca76bebcaa991`, replacing branch simplification with `simp_all ... <;> ring_nf`; exact-head run [42745711983](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745711983) was queued. PR #84 remains a separate proof-witness/recursive-mass transport candidate. No prefix integration pass is claimed.
+
+
+## Addendum 1.47 — conditional BIB divisor-envelope sharpening
+
+The BIB incidence note on PR #57 was extended at exact source commit `e7eca4d8a6ed6398d7ca641699401592da485569` with the new auxiliary parameter
+[
+\mu^*(B)=\max_{d\mid B,,d<B}\tau(d).
+]
+It is explicitly **not** identified with the historical (mu(B)). If the actual common selected labels are distinct divisors of (B) whose LCM is a proper divisor, then their intersection size is bounded by (mu^*(B)).
+
+For (B=\prod_i p_i^{e_i}),
+[
+\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1},
+]
+and for squarefree (B), (mu^*(B)=\tau(B)/2). With (r=q-1), the three numerical conditions of the finite second-moment lemma then follow from the single condition
+[
+\tau(B)^2<2(q-1)^2,
+]
+and the conditional bound becomes
+[
+m_0\leq
+\frac{\tau(B)(2(q-1)-\tau(B))}
+{2(q-1)^2-\tau(B)^2}.
+]
+
+This is a mathematical conditional derivation recorded in the research note; it has not yet been Lean-formalized. Its application still depends on proving the distinct-divisor, proper-LCM, and row-size hypotheses for the actual selected q-fibre entries. It does not identify the historical (mu(B)), does not close the extraction map (A_q(x,h)\to S_x), and does not establish the APW4 weighted HT event/BIB-slot transport.
+
+
+## Addendum 1.48 — fresh stacked PR verification heads
+
+The repair and model candidates now have fresh stacked PRs created from their latest source commits so the exact current snapshots receive new CI events:
+
+- PR #91, APW4 prefix-coordinate repair, head `837fc31de5f574e6fea912b5d70ea8fac05413cb`: workflow 42746685650 has both integrated-paranoid and audit jobs in progress; a follow-up audit run 42746746659 is queued. No pass is claimed.
+- PR #92, canonical q-fibre helper, head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`: canonical workflow 42746644499 and audit are in progress; follow-up runs 42746751151 and 42746751226 are queued. The earlier run 42746080147 on the prior head was cancelled after the branch advanced. No pass is claimed.
+- PR #85, local historical-q-fibre M/Gamma theorem, remains at head `d4c61399918c03715197cbe2de6356fd170463d3`: canonical job passed in 42744980622 with standard axiom profile and zero `sorryAx` occurrences in the complete log; paranoid remains in progress.
+
+The current documentation PR #88 head is `d78e06f2790190ac3e7ad7e173d5ff2eff72be5f). Audit run 42746179850 passed on the earlier docs head `88946cbaa591ce423fcfff16ec022964dda4c07e`; that result is not transferred to the newer documentation head. No new docs-audit PASS is claimed.
+
+
+## Addendum 1.49 — canonical q-fibre helper PASS and latest prefix repair diagnostics
+
+### PR #92 canonical helper
+
+On exact source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`, canonical workflow [42746644499](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746644499) completed successfully. The complete job log has zero `sorryAx` occurrences and no Lean errors. It prints the standard profile `[propext, Classical.choice, Quot.sound]` for:
+- `APW4CanonicalQFibreProjection.qFibre_subset_liftedUncoveredSet`;
+- `APW4CanonicalQFibreProjection.sum_M_qr_le_Gamma_of_projected_fibres).
+
+The Lean 4.35 paranoid job in the same workflow remained in progress at this check. This PASS verifies only the canonical Fin-based model; it is not a historical source equivalence and does not close the event-to-BIB map.
+
+### PR #91 prefix repair failure and PR #94 explicit conditional rewrite
+
+PR #91 head `837fc31de5f574e6fea912b5d70ea8fac05413cb` failed its integrated job in workflow 42746685650. The covered branch used `intro` although the target was an equality, causing `introN failed: no additional binders`; the uncovered branch retained a conditional equality. The dependent coordinate-index equality itself elaborated. The audit job and follow-up run were not a completed PASS.
+
+The next candidate is PR #94, exact head `2b34742e996527d04cd47cba0a95e68a1575fd14`. It rewrites the covered branch with `if_pos hcov`, the uncovered branch with `if_neg hcov` and the universal-membership fact, then applies `ring_nf`. Exact-head workflows [42747180121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747180121) and [42747175085](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747175085) were queued at this check. No PASS is claimed.
+
+PR #85's separate local M/Gamma theorem still has its canonical PASS and zero-`sorryAx` canonical log; its paranoid job remains in progress. The latest documentation head is `26370bb7860d09561d07c8008a910e8507f7c5de`; the earlier documentation audit applies only to the earlier commit 88946cbaa591ce423fcfff16ec022964dda4c07e.
+
+
+## Addendum 1.50 — finite incidence second-moment declarations in the PR #92 canonical build
+
+The successful canonical job 42746644499 on PR #92 also printed standard axiom profiles for:
+- `APW4IncidenceSecondMoment.incidence_bound_from_second_moment`;
+- `APW4IncidenceSecondMoment.offDiagonal_exceeds_reserve`;
+- `APW4IncidenceSecondMoment.apw4_energy_contradiction`.
+
+The complete canonical log has zero `sorryAx) occurrences. This verifies the finite incidence second-moment argument and its stated conditional consequences at that exact source head. It does not verify that the historical APW4 selected q-fibre entries generate the finite sets (S_x), that their row-size and pair-intersection hypotheses hold, or that their capacities are the historical weighted HT/BIB capacities. The new (mu^*(B)) squarefree parameter specialization remains a mathematical conditional addendum and has not yet been Lean-formalized.

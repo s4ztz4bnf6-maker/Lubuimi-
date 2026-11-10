@@ -460,3 +460,30 @@ The coordinate-only PR #86 did not close the covered/uncovered goals. PR #84 now
 ### Addendum 1.26 — historical BIB mixed-term frontier
 
 The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four-term expansion, but explicitly does not bound the three terms containing the redundancy Z. The selected depth-one label extraction map and the full F_q/F_r/C_h generator/index definitions remain unresolved in the accessible source record. The canonical projection-fibre completion was explicitly non-historical and must not be used. PR #85's local M/Gamma theorem is conditional and does not close this weighted transport gap.
+
+
+### Addendum 1.27 — canonical projection-fibre helper, not a historical replacement
+
+PR #87 now explicitly labels its Fin N / Fin B residue-fibre construction as a canonical helper, not an instantiation of the historical APW4 F_q, V_q, U_q or C_h. It proves a reusable fibre-in-lift inclusion in that model; a separate source-derived equivalence preserving the original domains and indices is still required before any historical transfer. Exact-head canonical workflow 42746080147 and audit workflow 42746080378 are pending. No PASS is claimed.
+
+
+### Addendum 1.28 — conditional squarefree BIB parameter test
+
+A new, explicitly auxiliary divisor envelope μ*(B)=max{τ(d): d|B, d<B} gives μ*(B)=τ(B)/2 when B is squarefree. If the actual common selected labels are distinct divisors with proper LCM, then the BIB second-moment hypotheses reduce, for r=q−1, to τ(B)^2<2(q−1)^2. The resulting bound is recorded in the BIB incidence note and historical ledger. This is a conditional arithmetic sharpening, not the historical definition of μ(B), not yet Lean-verified, and not a completed APW4 event-to-BIB transport.
+
+
+### Addendum 1.29 — exact PR91/PR92 verification state
+
+PR #91 now checks the current APW4 dependent-prefix repair at head 837fc31de5f574e6fea912b5d70ea8fac05413cb; its integrated-paranoid and audit jobs are in progress. PR #92 checks the canonical-only residue-fibre helper at head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec; its canonical and audit jobs are in progress. Neither has a PASS yet. PR #85's local M/Gamma theorem retains its canonical PASS, while the paranoid job is still running. The current documentation head has not received its own audit; the earlier documentation audit applies only to its earlier commit.
+
+
+### Addendum 1.30 — canonical helper verified; historical bridge still separate
+
+PR #92's canonical job passed on exact head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec. Both canonical helper declarations have the standard axiom profile and the complete log has no sorryAx. The paranoid job is pending. This verifies only the Fin-based helper model, not a historical APW4 fibre identification.
+
+PR #91's prefix branch proof failed because the positive case introduced a nonexistent binder and the negative case retained a conditional equality. PR #94 is the current explicit-if rewrite candidate; its exact-head workflows are queued, not yet passed.
+
+
+### Addendum 1.31 — finite incidence second moment is kernel-checked conditionally
+
+The PR #92 canonical build also verifies the finite incidence second-moment declarations and their stated consequences with the standard axiom profile and no sorryAx in the complete log. This is conditional on the explicit row-size and pair-intersection hypotheses. The historical extraction from A_q(x,h) to S_x, the proper-LCM bound, and the identification with the weighted HT/BIB capacity remain open. The auxiliary squarefree μ*(B) specialization is not yet Lean-formalized.

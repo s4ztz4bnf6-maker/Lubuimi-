@@ -198,3 +198,26 @@ The 6 November note `BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md`, §§5–6, 
 The same note explicitly warns that this expansion is **not a bound**: no quantitative control of the three terms containing (Z) is established, minimality alone has not been shown to imply the required weighted estimate, and the extraction map from selected depth-one labels to divisor labels is unspecified. The claims about depth-one label counts, proper lcm, and (|U|geDelta(B)) remain marked unverified in that note and are not to be used as proof premises.
 
 The earlier 6 November source-status discussion also records that the full generators/index domains for (F_q,F_r,C_h) were not supplied. A proposed completion (F_q(x)=pi_q^{-1}({x})) was explicitly labelled **canonical but non-historical**. It must not be substituted into the historical proof or Lean implementation. The current PR #85 theorem is therefore only a conditional local M/Gamma set-count; it does not resolve the mixed (Z)-term bounds, selected-label extraction, or weighted HT/BIB capacity transport.
+
+
+### Addendum 2.10 — formal canonical projection helper does not close historical fibre reconstruction
+
+PR #87 now contains a Lean implementation of the canonical Fin N / Fin B residue-fibre model, including the elementary inclusion of a fibre over x∈U into the lifted set. Its namespace and comments explicitly label it canonical and non-historical. It is a reusable lemma only; the source-derived equivalence with the author's actual ambient space, quotient map, base-residue index set, and block family has not been proved. Therefore it does not close the historical F_q/V_q/U_q interface and is not used as a substitute.
+
+The 6 November BIB note additionally records the q-profile formulas I_q(x,h), A_q(x,h), Z_q(x,h), D_{q,r}=N/(q^a r^b), and W_{q,r}(x,y)=1_{x≡y mod D_{q,r}}. It still leaves the exact matrix orientation, a_{q,t} vector coordinates, selected-cover construction, and all three Z-containing residual bounds unresolved. The separate finite depth-one second-moment inequality remains conditional on its explicit row-size and pair-intersection hypotheses and is not the weighted APW4 HT theorem.
+
+PR #85's local M/Gamma theorem has a canonical Lean PASS on its exact head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid check remains pending. PR #87's own canonical and audit workflows are pending. No historical event-to-BIB closure or full integrated kernel PASS is claimed.
+
+
+### Addendum 2.11 — current q-profile and conditional BIB parameter record
+
+The 6 November source note now records explicit formulas for I_q, A_q, Z_q, D_{q,r}, and W_{q,r}. A separate new auxiliary divisor envelope μ*(B)=max{τ(d):d|B,d<B} gives μ*(B)=τ(B)/2 for squarefree B and yields the conditional threshold τ(B)^2<2(q−1)^2 in the depth-one second-moment lemma. It is not identified with historical μ(B); the selected-label extraction and proper-LCM hypotheses remain unproved for the original system.
+
+PR #85's local M/Gamma theorem has a canonical PASS on its exact source head with the standard axiom profile and no sorryAx in the complete canonical log; its paranoid run remains pending. PR #91 and PR #92 are the current exact-head prefix-repair and canonical-model verification candidates, respectively; both remain in progress. PR #92 is expressly not a historical instantiation. No historical event-to-BIB map or weighted Hall closure is claimed.
+
+
+### Addendum 2.12 — PR92 canonical PASS and PR94 prefix candidate
+
+PR #92's canonical helper job passed at exact source head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec, with the standard axiom profile and zero sorryAx occurrences in the complete canonical log. Its paranoid job is still pending. The helper is explicitly canonical-only and does not identify the historical APW4 fibres.
+
+PR #91's integrated prefix job failed because the covered branch attempted to introduce a nonexistent binder and the uncovered branch retained a conditional equality. PR #94 is the next exact-head candidate, using explicit if_pos / if_neg rewrites followed by ring_nf; its workflows were queued at the latest check. No integrated prefix PASS is claimed.
