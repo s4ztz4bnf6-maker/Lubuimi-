@@ -327,3 +327,27 @@ The latest PR #69 candidate is 4edf44ce8232d0b9be9f9b9f9f69671740c0f921. The pre
 The previous documentation head 388b788d0c5623eab8e2cdf1755e426b8f7f2100 passed exact-head audit 42735453999. This new section advances PR #79 and requires its own exact-head documentation audit.
 
 All earlier mathematical and formal results remain preserved at their exact scopes. In particular, neither the new finite-word cylinder example nor the terminal-residue and L945 finite sums discharges the APW4 historical event-index mapping, separate diagonal/off-diagonal transport, BIB/Hall capacity, or the global Collatz problem.
+
+
+## 21. Initial-cylinder manuscript v1.0 and current exact project links — 10 November 2026
+
+### Initial valuation-one cylinder: manuscript consolidated
+
+The standalone manuscript in the Syracuse repository has been revised to version 1.0 at PR #35 head 6dd47a9b18b373c274b0bc4d4001d9fad4e8ba24. It now contains the complete two-way proof, exact orbit formula, exact initial-run stopping time, odd-start and all-integer natural densities, signed-offset recurrence and recovery threshold, a worked example, literature context, scope limitations, references, and the seven exact-commit Lean audit records. The underlying Lean declaration was not changed by this editorial revision; the seven previously completed exact-commit compile/axiom audits remain the formal evidence for that declaration. The revision is a research-note/preprint manuscript, not a claim of journal acceptance or independent peer review.
+
+### Cross-project finite witness: x=731
+
+The exact finite bridge remains:
+731 -> 1097 -> 823, valuation word (1,2), total exponent A=3, offset C=5, terminal identity 8*823=9*731+5=6584, and cylinder residue 11 mod 16. The signed margins are D_0=0, D_1=-2, D_2=-6; the two local non-descent cap inequalities hold. PR #39's expanded B=511/B=1023 table and this certificate passed exact finite regression workflow 42735880399 on head 012c8717e9d80025e7aa6cbb99f0b7ed5affd176. This is a finite consistency certificate, not a uniform orbit theorem.
+
+### Terminal-residue k=2 formalization
+
+Standalone PR #38 workflow 42735716873 passed on code snapshot 4e30c083f3e1657edd08b0945cdda4e16c8b0e14, Lean/Mathlib 4.35.0. The seven named declarations in LubuimiTerminalResidueEnergyK2.lean compiled; the exact two-step mass is (8,16,11,4,2,22)/63 and the energy is 5/21. The checked declarations use the standard transitive profile [propext, Classical.choice, Quot.sound]; the completed log contains no actual sorryAx, and lake check --paranoid passed. Scope is the finite k=2 Markov computation only. The general k theorem and the APW4/BIB identification remain separate obligations.
+
+### Current APW4 integration state
+
+PR #69 exact source head 4edf44ce8232d0b9be9f9b9f9f69671740c0f921 has workflow 42736373195 in progress. Both Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs are pending at this snapshot. The candidate rewrites the covered-membership equivalence before the finite-fibre case split. No integrated pass is claimed. The APW4 mathematical theorem record and its earlier successful exact-commit evidence remain preserved; the Syracuse-to-historical-APW4 index/weight map, separate diagonal/off-diagonal transport, and BIB/Hall capacity argument are not thereby completed.
+
+### Documentation verification boundary
+
+The previous PR #79 head f984c36f2fff7629b8e6f591acd10b36511bb714 is the source snapshot before this addendum. Its previous successful documentation audit 42735453999 was for an earlier head 388b788d0c5623eab8e2cdf1755e426b8f7f2100, not for this newer content. A fresh exact-head audit is required after this update.
