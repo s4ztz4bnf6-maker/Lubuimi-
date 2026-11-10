@@ -372,3 +372,24 @@ A further scope distinction is recorded for run 42728171781. The APW4/BBMST decl
 The Syracuse programme now has a genuine Lean-verified finite non-descent cap core. Workflow 42728049650 passed on exact source commit ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc using Lean 4.34.1. The declarations signedOffsetMargin_nonpos_succ_iff_exponent_cap, signedOffsetMargin_nonpos_of_nondecreasing_orbit, and nondecreasing_orbit_next_exponent_cap each printed [propext, Classical.choice, Quot.sound]; the complete job log contained no actual sorryAx occurrence and the build completed 8,930 jobs.
 
 This proves in Lean the exact margin equivalence and the necessary next-exponent cap for a nondecreasing exact affine endpoint. It does not yet formalize the maximum cap B_alpha, the exact tail-cylinder partition, or the general finite-word cylinder theorem. The Syracuse cap's Lean 4.34.1 verification is separate from the APW4 integrated Lean 4.35.0 audit. The APW4 historical index-preserving transport, diagonal/off-diagonal bounds, and BIB/Hall capacity remain open.
+
+
+## Addendum 1.20 — multi-project exact status and new finite bridge, 10 November 2026
+
+### Kolaz threshold-return archive — exact finite expansion passed
+
+Kolaz PR #39 has expanded the exact threshold tables from B=31,63,127,255 to include B=511 and B=1023. Complete row-by-row CSV tables are checked against fresh enumeration. The B=511 table has 42 escape sources, maximum excursion length 24, maximum height 13,121; B=1023 has 85, maximum length 50, maximum height 83,501. Two new cross-threshold common suffixes (lengths 10 and 7) are regression-tested. Exact-head run 42732032993 passed on source head `5a01e5e56d203c0ed987f6bb70c1519b107e9f23`, job 129552163491.
+
+A worked finite cross-project certificate is now included: B=1023 source x=731 follows valuation word (1,2), with z0=1097 and endpoint 823; A=3, C=5, cylinder modulus 16 and unique residue 11, and exact affine identity 8·823=9·731+5=6584. The signed margins are D0=0, D1=-2, D2=-6, and both local cap inequalities hold. This is a finite consistency check, not a global result. The distinct old “1097 threshold/count” lead remains unresolved.
+
+### Terminal-residue k=2 formalization candidate
+
+A finite k=2 Lean module `LubuimiTerminalResidueEnergyK2.lean` was added both to the Syracuse/Collatz draft library and as a standalone Lean 4.34.1 project in PR #38. It defines the six unit residues modulo 9, exact integer row numerators, row-sum theorems, the two-step numerator vector (8,16,11,4,2,22), and rational energy 5/21. The first CI attempt 42730248268 failed because `native_decide` introduced generated native axioms and the variable-index theorem was not closed. The source was corrected: all `native_decide` uses were replaced by kernel reduction (`decide`), and the variable-index statement now uses explicit `Fin) cases. The current exact-head run 42731846956 is in progress on PR #9 head `b999241519ecd12a931d931ea4b9e850741c6457`. Until that run prints only the standard profile and no `sorryAx), the k=2 module remains an unverified candidate. The standalone PR #38 workflow is separate; no result is inferred from the root-library run.
+
+### APW4 Lean 4.35 repair candidate
+
+PR #69 current source head is `f843e4224e5288e107200464be5c5524de650570`, with exact-head run 42732094102 queued/in progress at the last inspection. The previous candidate on head `d8035b90a2f24aaf4f4850418d42e9b6bd3214b2`, run 42731006745, retained the Lean 4.28.0 audit PASS but the Lean 4.35.0 integrated job failed. The latest source change uses an explicit filter-membership decomposition for `prefixPointCovered_iff` and a definitional covered-set equivalence plus `split_ifs) for the updated-weight identity, following the most promising independent repair shape from PR #76. The new run must decide whether those exact proofs elaborate in the integrated Lean 4.35.0 package. No success is claimed yet.
+
+### Documentation audit
+
+PR #79 documentation head `e93ac41fb2c377e3b55bc959875dee0f6694c5db` passed its exact-head documentation audit in run 42729583336. This status applies only to that head; this addendum will advance the documentation branch and requires a new exact-head audit. The APW4 mathematical theorem record and earlier successful exact-commit checks remain unchanged.
