@@ -181,3 +181,16 @@ The current transfer candidates are:
 A run cancelled because its source branch advanced is recorded as cancelled, not failed. A failure in one exact commit is recorded against that commit and its declarations only; it does not erase earlier successful runs or independently established mathematical theorems. No later head inherits an earlier run's verification.
 
 The operational cycle is: preserve the previous result and its scope; isolate a new diagnostic; derive the exact missing mathematical or type-theoretic obligation; repair only that obligation without weakening assumptions; run the relevant focused and integrated checks; inspect complete logs and transitive axioms; then propagate the verified mathematical improvement to every dependent project record. The project authorship remains Ta-Yoshua Lubuimi; AI tools are assistants only.
+
+
+## 12. Exact-head diagnostic update — 10 November 2026
+
+The APW4 prefix-recursion repair candidate at PR #69 head `8e7cd3ca5b3440ee25eb6241f2aa799103b56830` has now received two integrated-paranoid attempts (runs 42728164530 and 42728171781); both integrated jobs failed. The later completed log gives three sharply localized proof obligations:
+
+1. The restriction-after-extension inverse still leaves a dependent equality between nested `Eq.mp` transports at `BBMSTPrefixMeasureRecursion.lean:171:55`, even though the underlying Fin indices have been made explicit.
+2. The covered-predicate equivalence still has not reduced `prefixCoveredValues) membership to its filter predicate. The resulting `Quot.lift` expression at lines 220–223 cannot be destructured with `rcases`; isolate the Finset membership reduction in a dedicated lemma first.
+3. The covered and uncovered cases of `prefixFibre_updatedWeight_eq_PAt` remain open at lines 396 and 398. Both branches need explicit transport of the membership predicate and stage coordinate into the exact types used by recursive `PAt).
+
+The completed integrated log reports `sorryAx` in the dependent prefix chain and downstream PAt declarations. Therefore this candidate is not formally verified and no integrated/paranoid success is claimed. The independent hyperplane incidence declarations continue to compile with the standard profile, but are not a substitute for the prefix recursion. At the same check, the separate audit job for run 42728171781 was still in progress.
+
+The immediate repair architecture is now explicit: prove a named coordinate-transport lemma; prove `mem_prefixCoveredValues` independently from the geometric existential; then prove the updated-weight identity using those two interfaces and exact dependent transports. This preserves the original geometric definitions and hypotheses. The Collatz offset/margin run 42728049650 remains in progress; documentation PR #79 is at head `b1fe62a30d1f78de4fb858b1d8a492f4b714925a` with exact-head audit 42728550895 in progress. Earlier successful APW4 results and the established mathematical APW4 theorem record are unchanged.
