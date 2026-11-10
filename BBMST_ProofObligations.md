@@ -342,3 +342,8 @@ The next repair must derive the exact equality/transport between `stageCoordinat
 ## APW4 v8 failure / v9 candidate — 10 November 2026
 
 PR #123 / v8 head `135f76d26c3c2392039e53c135e871f09ce2e256`, run 42809132672: separate audit PASS, integrated-paranoid FAIL with type mismatches at lines 393 and 407 because endpoint membership was stated without the dependent cast; integrated error recovery includes `sorryAx`. PR #125 / v9 head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, run 42810241207, uses `(hstage.symm ▸ y (Fin.last k))` directly in both endpoint membership facts; jobs were queued at the latest poll. No v9 verification is claimed.
+
+
+## Latest v9 exact-head poll — 10 November 2026
+
+PR #125 / v9 workflow 42810241207: audit `129809542278` and integrated-paranoid `129809542736` are both in progress. No v9 verification or axiom result is claimed. The acceptance gate remains integrated build success plus declaration-scoped axiom and no-`sorryAx` checks.
