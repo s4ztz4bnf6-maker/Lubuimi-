@@ -152,3 +152,8 @@ PR #125 / v9 exact head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, workflow [42
 PR #127 / v10 exact head `3afd9de4e05b75af08579f9961f8cc28cada72af` removes the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` with `cases hstage` before constructing the fibre, then uses `y (Fin.last k)` as the common endpoint. This is a new candidate only; no exact-head workflow was visible at the latest poll. Status: OFFEN – NICHT VERIFIZIERT.
 
 The v10 acceptance gate remains integrated compilation without errors, named axiom outputs for `prefixFibre_updatedWeight_eq_PAt` and dependent `PAt` declarations, and a no-`sorryAx` integrated dependency scan.
+
+
+## 13. Latest v10 exact-head poll — 10 November 2026
+
+Workflow 42810911393 is attached to exact head `3afd9de4e05b75af08579f9961f8cc28cada72af`: audit job `129811792964` in progress; integrated-paranoid job `129811793388` queued. The proof remains OFFEN – NICHT VERIFIZIERT.
