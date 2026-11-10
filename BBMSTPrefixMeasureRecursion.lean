@@ -171,7 +171,7 @@ theorem restrictPrefix_extendPrefix
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> omega <;> rfl
+    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> rfl
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -202,6 +202,8 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
+  have hcoord : stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
+  rw [hcoord]
   unfold prefixPointCovered prefixCoveredValues
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
@@ -345,7 +347,22 @@ theorem prefixFibre_updatedWeight_eq_PAt
     omega
   have hprev : k ≤ n := by omega
   let xprev := restrictPrefix C hk y
+  have hhk : hk = (show k + 1 ≤ n from by omega) :=
+    Subsingleton.elim _ _
+  have hprevEq : hprev = (show k ≤ n from by omega) :=
+    Subsingleton.elim _ _
+  have hxprev :
+      xprev = restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y := by
+    dsimp [xprev]
+    rw [hhk]
+  have hPAt :
+      PAt C (A := A) a ha P0 δ j hprev xprev =
+        PAt C (A := A) a ha P0 δ j
+          (show k ≤ n from by omega)
+          (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
+    rw [hprevEq, hxprev]
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
+    rw [← hPAt]
     exact hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
@@ -361,14 +378,14 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hcovered :
       y (Fin.last k) ∈ prefixCoveredValues C hk xprev ↔
         y (Fin.last k) ∈
-          prefixCoveredValues C (by omega) (restrictPrefix C (by omega) y) := by
-    dsimp [xprev, k]
-    rfl
+          prefixCoveredValues C (show k + 1 ≤ n from by omega)
+            (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
+    rw [hhk, hxprev]
   have hstage :
-      stageCoordinate hk = stageCoordinate (by omega) := by
-    apply Fin.ext
-    rfl
-  rw [hcovered, hstage]
+      stageCoordinate hk =
+        stageCoordinate (show k + 1 ≤ n from by omega) := by
+    rw [hhk]
+  rw [hcovered, hstage, hPAt]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
