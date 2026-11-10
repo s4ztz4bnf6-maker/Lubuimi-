@@ -240,3 +240,11 @@ Die laufende Lean-Übertragung ist davon getrennt. PR #138 (Kandidat v15, Head 8
 Die weiterhin explizit zu schließenden historischen Lean-Verbindungen sind: prefixFixedCoords, die tatsächliche endliche Anfangsprofilfamilie, historisches c(I) einschließlich des leeren Profils, die exakte Gleichheit des Suffixfaktors mit nu(J), die vollständige historische Lemma-3.3-Instanziierung und die anschließende Lemma-3.4-Momentenkette. Diese formalen Restarbeiten ändern nicht den Status des mathematischen Manuskriptbeweises.
 
 Der vom Autor unabhängig finalisierte und gesicherte PDF-Release wird durch diesen Repository-Nachtrag nicht ersetzt oder verändert. Dieser Nachtrag ist eine Status- und Reproduzierbarkeitsnotiz, keine neue PDF-Ausgabe.
+
+## Quellen- und Rekonstruktionsnachtrag — 10. November 2026
+
+Die ergänzende historische Definitionstabelle und die noch erforderlichen Index-/Inzidenzverbindungen sind in der separaten [APW4 Historical Event-to-BIB Reconstruction Ledger](APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md) festgehalten. Der Nachtrag präzisiert die rekonstruierten q-Faserobjekte \(B_q,V_q,F_q(x),P_{q,x,h}\), die Schnittzahlen \(M_{q,r}\), die Schranke \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\), die Blockidentität und die Residualmatrixentwicklung. Er ersetzt keine historische Definition und ändert weder den mathematischen DT-/HT-Schluss noch die Energiezerlegung dieses Manuskripts.
+
+Die Matrixidentität mit \(Z_q=I_q-A_q\) hat vier algebraische Beiträge, darunter drei Z-haltige Residualbeiträge. Diese Matrixentwicklung ist strikt von der hier bewiesenen zweigliedrigen Energiezerlegung \(\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4}\) zu unterscheiden; es entsteht kein dritter Energiebeitrag.
+
+Die Quellindizes der historischen Ereignisse, die vollständige Abbildung \((x,u)\mapsto(k,I_{x,u},J_{x,u})\), die tatsächlichen BIB-Plätze und ihre Inzidenz bleiben in der formalen Übertragung quellengesteuert zu instanziieren. Die mathematischen Transportaussagen werden dadurch nicht erneut zur offenen Frage.
