@@ -690,3 +690,10 @@ Exact-head CI: [42744626707](https://github.com/s4ztz4bnf6-maker/Lubuimi-/action
 ## Addendum 1.42 — PR #85 canonical q-fibre proof passes
 
 At exact head `d4c61399918c03715197cbe2de6356fd170463d3), canonical run [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) passed. The named declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` has profile `[propext, Classical.choice, Quot.sound]`; the full canonical log has no `sorryAx). Separate audit run [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) passed. The Lean 4.35 paranoid job remains in progress. This verifies the local conditional M/Gamma inequality, not the source-derived hypotheses or full weighted HT/BIB transport.
+
+
+## Addendum 1.43 — parallel stage-coordinate repair candidate
+
+A second, more direct repair candidate is open as PR #86, head `4e4b378887cc76382d9cd2e17807f96a2c277e23`. It explicitly proves the dependent coordinate equality
+`stageCoordinate hk = prefixIndex hj (Fin.last (a+j))`
+using `Fin.ext`, then eliminates that equality before the covered/uncovered split. Exact-head runs [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023) and [42745062463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745062463) are in progress. PR #84 remains a parallel alternative using explicit recursive PAt/covered-finset rewrites; its latest run [42745244942](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745244942) is pending. Do not merge either until one exact-head repair passes the full integrated and paranoid checks.
