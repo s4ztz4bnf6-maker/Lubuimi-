@@ -59,3 +59,8 @@ PR #123 / v8 head `135f76d26c3c2392039e53c135e871f09ce2e256`, workflow [42809132
 ## v8 integrated failure and v9 cast-endpoint candidate — 10 November 2026
 
 The v8 integrated log confirms that the two endpoint facts were stated at `y (Fin.last k)` without the dependent cast required by the fibre element type `C.S (stageCoordinate hk)`. Both branches failed with type mismatches after simplification (lines 393 and 407); the target and downstream recursion declarations then carried error-recovery `sorryAx`. PR #125 / v9 fixes the type mismatch by stating both facts using `(hstage.symm ▸ y (Fin.last k))` and deriving them directly from the already transported point `x` with `simpa [x] using hcov`. The theorem statement, mathematical assumptions, and fibre definitions are unchanged. Workflow 42810241207 is queued; status remains **OFFEN – NICHT VERIFIZIERT**.
+
+
+### Latest v9 poll — 10 November 2026
+
+PR #125 / v9 head `c72345ef32776ce9548b236f4b47e2b3688b5ddc`, workflow [42810241207](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42810241207): audit job `129809542278` and integrated-paranoid job `129809542736` are now both **in progress**. Logs were not yet retrievable at this poll. No success or failure is inferred from unavailable logs.
