@@ -296,3 +296,15 @@ Syracuse run [42759029006](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/
 Collatz PR #48 exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8` remains under run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798); its three jobs remain QUEUED. No result is inferred.
 
 A concrete next formalization target is now isolated for the Collatz minimal-counterexample bridge: from the actual accelerated Syracuse step equation `2^(a j) * n(j+1) = 3*n(j)+1` and positivity of `a j`, derive oddness of `n j`. Since the next odd iterate is also odd, the displayed quotient is odd and `a j` is the exact 2-adic valuation. Then prove the shifted tail is the deterministic Syracuse orbit from `n j`; minimality among odd nonterminating starts can then supply the currently assumed suffix-return premise. This is a proof plan, not yet a Lean theorem or a verified result.
+
+
+### Syracuse #107 — first integrated CI diagnosis and membership follow-up (10 Nov 2026)
+
+Run 42759029006 completed with failures in all three verification paths: integrated-paranoid, audit, and the dedicated Syracuse bridge. The exact compiler failures were isolated:
+
+- SyracuseDyadicResidueFibre.lean:290: the reverse direction of explicitTailAtoms_mem_iff left the representative bound coord.val % 2^B = coord.val open. The resulting declaration printed sorryAx and must not be accepted.
+- BBMSTPrefixMeasureRecursion.lean:386 on the PR #107 integration branch: the endpoint y (Fin.last ...) was not transported from prefixIndex hj ... to stageCoordinate hk; Lean reported an explicit dependent-coordinate type mismatch. This is separate from the PR #101 exact-head candidate, which contains additional proof-witness/index normalization and is being checked in its own workflow.
+
+A targeted follow-up was committed to PR #107: 5139df8b55279011862084c453105a13926b03cc. In the reverse membership direction it now rewrites by the representative equality and proves the remaining modulo identity using the actual bound (explicitTailCoordinateFin B k d).isLt. New exact-head run 42759653537 is QUEUED at the latest poll. This is only a candidate; no sorryAx clearance is claimed until the exact new log and axiom output confirm it.
+
+The APW4 integration mismatch in the PR #107 branch is not silently patched by this Syracuse-only change. PR #101 head 0be00b2161ad8f2676779b90582f30b34083c008 has its own exact-head run 42759210844, with audit and integrated-paranoid still running at the latest poll. The established APW4 mathematical results remain unchanged.
