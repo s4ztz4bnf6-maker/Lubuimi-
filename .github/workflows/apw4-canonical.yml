@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - "audit/apw4-diagonal-majorization-2026-11-04"
+      - "audit/apw4-incidence-second-moment-2026-11-09"
     paths:
       - "APW4CanonicalMajorization.lean"
       - "APW4HistoricalCRTCore.lean"
+      - "APW4IncidenceSecondMoment.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - "lake-manifest.json"
@@ -15,6 +17,7 @@ on:
     paths:
       - "APW4CanonicalMajorization.lean"
       - "APW4HistoricalCRTCore.lean"
+      - "APW4IncidenceSecondMoment.lean"
       - "lakefile.lean"
       - "lean-toolchain"
       - "lake-manifest.json"
@@ -47,3 +50,37 @@ jobs:
         run: |
           lake env lean APW4CanonicalMajorization.lean
           lake env lean APW4HistoricalCRTCore.lean
+          lake env lean APW4IncidenceSecondMoment.lean
+
+  paranoid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.35.0 and prepare isolated APW4 package
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          cp APW4CanonicalMajorization.lean fiber-audit/APW4CanonicalMajorization.lean
+          cp APW4DiagonalAudit.lean fiber-audit/APW4DiagonalAudit.lean
+          cp APW4HistoricalCRTCore.lean fiber-audit/APW4HistoricalCRTCore.lean
+          cp APW4IncidenceSecondMoment.lean fiber-audit/APW4IncidenceSecondMoment.lean
+          cd fiber-audit
+          lake update
+      - name: Install bubblewrap sandbox
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bubblewrap
+      - name: Restore Mathlib cache for isolated APW4 package
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: fiber-audit
+          build: false
+          use-mathlib-cache: true
+      - name: Check all APW4 modules with Lean and paranoid checkers
+        working-directory: fiber-audit
+        run: |
+          lake build APW4Audit
+          lake check --paranoid

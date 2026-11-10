@@ -82,6 +82,64 @@ theorem historical_bib_collision_identity :
     _ = S.card * (S.card - 1) := by
           simp [Finset.sum_const]
 
+
+/-- The exact support layer consists of the CRT points lying in precisely
+the original congruence classes indexed by S. -/
+def exactSupportLayer (S : Finset I) : Finset (ZMod N) :=
+  Finset.univ.filter (fun x => supportAt N m a x = S)
+
+/-- Cardinality of one exact support layer. -/
+def exactSupportCount (S : Finset I) : ℕ :=
+  ∑ x : ZMod N, if supportAt N m a x = S then 1 else 0
+
+/-- Number of CRT points lying in every congruence indexed by T. -/
+def intersectionCount (T : Finset I) : ℕ :=
+  (Finset.univ.filter (fun x => T ⊆ supportAt N m a x)).card
+
+/-- Exact support layers partition each intersection count:
+the points containing every index in T are precisely the disjoint union
+of exact support layers indexed by S ⊇ T. This is the incidence identity
+underlying the support-layer Möbius inversion. -/
+theorem intersectionCount_eq_sum_exactSupportCount (T : Finset I) :
+    intersectionCount N m a T =
+      ∑ S : Finset I,
+        if T ⊆ S then exactSupportCount N m a S else 0 := by
+  classical
+  unfold intersectionCount
+  simp only [Finset.card_filter]
+  calc
+    (∑ x : ZMod N, if T ⊆ supportAt N m a x then 1 else 0) =
+        ∑ x : ZMod N, ∑ S : Finset I,
+          if T ⊆ S ∧ supportAt N m a x = S then 1 else 0 := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      rw [Finset.sum_eq_single (supportAt N m a x)]
+      · simp
+      · intro S hS hne
+        have hne' : supportAt N m a x ≠ S := by
+          intro h
+          exact hne h.symm
+        simp [hne']
+      · intro h
+        exact (h (Finset.mem_univ _)).elim
+    _ = ∑ S : Finset I, ∑ x : ZMod N,
+          if T ⊆ S ∧ supportAt N m a x = S then 1 else 0 := by
+      exact Finset.sum_comm
+    _ = ∑ S : Finset I,
+          if T ⊆ S then
+            (∑ x : ZMod N, if supportAt N m a x = S then 1 else 0)
+          else 0 := by
+      apply Finset.sum_congr rfl
+      intro S hS
+      by_cases hTS : T ⊆ S
+      · simp [hTS]
+      · simp [hTS]
+    _ = ∑ S : Finset I,
+          if T ⊆ S then exactSupportCount N m a S else 0 := by
+      rfl
+
+#print axioms intersectionCount_eq_sum_exactSupportCount
+
 #print axioms mem_congruenceSet_iff
 #print axioms mem_supportAt_iff
 #print axioms historical_bib_collision_identity
