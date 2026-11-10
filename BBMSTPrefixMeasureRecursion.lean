@@ -380,18 +380,28 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov]
-  · simp [hcov]
+  · have hcovF : y (Fin.last k) ∈ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData, k, xprev] using hcov
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hcovF,
+      F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData,
+      BBMSTUniformFibreInstantiation.uniformWeight,
+      BBMSTUniformFibreInstantiation.coveredProportion,
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
+  · have hcovF : y (Fin.last k) ∉ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData, k, xprev] using hcov
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hcovF,
+      F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData,
+      BBMSTUniformFibreInstantiation.uniformWeight,
+      BBMSTUniformFibreInstantiation.coveredProportion,
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
