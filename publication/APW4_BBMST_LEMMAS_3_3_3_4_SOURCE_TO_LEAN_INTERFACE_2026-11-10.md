@@ -232,3 +232,12 @@ A new source-level candidate has been added to `BBMSTOldShadow.lean` at commit `
 New declarations include `mergeOldShadowsList_contains_iff`, `mergeOldShadowsTuple_contains_iff`, `fixedCoords_mergeOldShadowsTuple`, and `tupleOldShadows_disjoint_of_conflict`, together with the assignment-witness and fixed-coordinate fold helpers. The compatible case identifies the tuple intersection predicate with membership in one merged old shadow; the conflict case makes the full intersection empty; the fixed-coordinate profile is represented by the ordered fold-union.
 
 **Status: OFFEN – NICHT VERIFIZIERT.** This is a source candidate, not a Lean result. No exact-head workflow, isolated compile, integrated Lean 4.35.0 build, named axiom output, or transitive no-`sorryAx` result has been returned for commit `b4de083bc0f8e4c061b8490a97afff1261952bd3`. The full historical Lemma 3.4 is still open: the source-facing Lemma 3.3 mass bound for the merged event, the ordered-tuple indicator expansion, and the finite weighted-sum interchange have not yet been added. This interface does not establish the historical Event-to-BIB map or weight/capacity preservation.
+
+
+## Ordered-tuple expansion update — 10 November 2026
+
+The source candidate now also contains the generic weighted ordered-tuple identity `weighted_sum_power_expansion`. It expands a weighted t-th power over functions `Fin t → β` and interchanges the two finite sums. This is the exact ordered-tuple combinatorial expansion needed after specializing `term x H` to the indicator of an old-shadow event. It retains repetitions and does not replace ordered tuples by subsets or permutation classes.
+
+The current source head is `04f574b3eddc75cb56beb387c4c3a6868dafddca` (file blob `e9531b86229361cad9c070c4baaff5530d7fdce2`). The code now reopens `BBMSTOldShadow` explicitly for the appended tuple declarations; the earlier list/tuple block is in that namespace.
+
+**OFFEN – NICHT VERIFIZIERT:** no Lean compile, exact-head workflow, named axiom output, or transitive no-`sorryAx` evidence has been returned for this head. The complete Lemma 3.4 still requires the source-faithful Lemma 3.3 bound for the merged hyperplane/event, the exact identification of its initial and suffix profiles with the unions in the source formula, and the weighted moment estimate after inserting the tuple-intersection mass bound. This is a genuine geometric/algebraic interface advance, not yet the full historical Lemma 3.4.
