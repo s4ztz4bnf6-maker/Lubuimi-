@@ -385,7 +385,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
+    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   have hstage :
       stageCoordinate hk = stageCoordinate (show k + 1 ≤ n from by omega) := by
     rw [hhk]
@@ -400,14 +400,14 @@ theorem prefixFibre_updatedWeight_eq_PAt
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
   · have hcov' := hcovered.mp hcov
-    simp [hcov, hcov', hstage, hPAt]
+    simp [Finset.mem_univ, hcov, hcov', hstage, hPAt]
   · have hcov' :
         ¬ y (Fin.last (a + j)) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
             (restrictPrefix C (show k + 1 ≤ n from by omega) y) := by
       intro h'
       exact hcov (hcovered.mpr h')
-    simp [hcov, hcov', hstage, hPAt]
+    simp [Finset.mem_univ, hcov, hcov', hstage, hPAt]
   all_goals ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
