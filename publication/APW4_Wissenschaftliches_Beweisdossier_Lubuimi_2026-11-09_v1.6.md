@@ -1238,3 +1238,31 @@ PR #137 / v14 (head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`) changes the proo
 The remaining formal sequence is: integrated verification of the concrete recursion identity; its dependent nonnegativity and normalization results; the full distortion-product estimate; then the source-faithful fixed-coordinate/profile interface identifying the historical `c(I)` and `ν(J)`, including the empty-profile case and the subsequent moment lemma. These are formal connection tasks; they do not retroactively reopen the established APW4 energy proof.
 
 The published PDF is not replaced by this addendum. The author-held finalized manuscript remains a separate publication artifact.
+
+
+## Exact-head update — v14 diagnosis and v15 repair (10 November 2026, 13:50 CET)
+
+This is an append-only Lean-integration status update. It does not replace, reopen, or downgrade the established APW4 mathematical proof record. The mathematical energy decomposition, DT, HT, the upper energy estimate, the strict lower-bound implication, and the resulting contradiction remain retained at their stated hypotheses and exact definitions. The historical APW4 quantities and the separate CRT/BIB reconstruction remain distinct where the required index-preserving identifications have not yet been formalized. The published manuscript/PDF is not silently rewritten by a CI repair.
+
+### Exact v14 finding
+
+- PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137), source head `175c50c75d537ef32687c63cb1219e8ff1ace257`, uses the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` and rewrites the dependent context before constructing the fibre. This removes the earlier coordinate-type mismatch.
+- The exact integrated and standalone logs for this candidate now isolate a narrower proof-script defect at `BBMSTPrefixMeasureRecursion.lean:397` and `:410`: `simp only [if_pos hcovF]` / `simp only [if_neg hnotF, if_pos hpointF]` make no progress.
+- The reason is syntactic but type-relevant: the witnesses `hcovF`, `hnotF`, and `hpointF` are stated at the unfolded endpoint `y (Fin.last k)`, while `updatedWeight` is still applied to the local let-bound argument `x := y (Fin.last k)`. The conditional matcher sees `x ∈ F.covered` and `x ∉ F.covered`; it is not supplied those exact propositions. The compiler's error recovery consequently reports `sorryAx` in `prefixFibre_updatedWeight_eq_PAt` and downstream recursion declarations. Those declarations are not integrated-verified at this source head.
+
+### v15 exact repair candidate
+
+- PR [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138), source head `800d752e626951505d9dbcb312dfe09555ee6f2f`, transports the already-proved endpoint witnesses to the actual local argument before reducing the conditionals:
+  - `hcovFx : x ∈ F.covered` from `hcovF`;
+  - `hnotFx : x ∉ F.covered` from `hnotF`;
+  - `hpointFx : x ∈ F.points` from `hpointF`.
+  It then rewrites the exact conditional branches using those local-argument witnesses. This is a focused elaboration repair: theorem statements, assumptions, fibre definitions, and mathematical content are unchanged.
+- PR #138 is **PENDING exact-head verification**. It must pass the integrated paranoid build and separate audit on the same head, print the named axiom profiles for `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, and `PAt_sum_eq_one`, and show no transitive `sorryAx`. No verification is claimed yet.
+
+### Remaining APW4 formalization after this local repair
+
+Once the recursion bridge passes the exact-head gate, continue with the historical identifications already tracked in the proof-obligation map: `prefixFixedCoords`, `initialProfileFamily`, the historical `c(I)) profile including the empty profile, the exact suffix-factor identification with `ν(J)), the full Lemma 3.3 cylinder inequality, and the Lemma 3.4 moment step. Then connect the resulting source-indexed prefix statements to the historical DT indices and actual BIB-place weighted-Hall transport without replacing those objects by arbitrary abstract maps. Preserve the two-term energy decomposition and ordered off-diagonal convention.
+
+### Preservation and attribution
+
+All established APW4 results and all earlier exact-head Lean passes remain valid for their stated scope; later integration failures do not retroactively invalidate them. Do not claim that the complete historical APW4 theorem is already fully Lean-verified until its own exact release-head build, paranoid check, named axiom output, and transitive no-`sorryAx` audit pass. Original APW4 research and formalization remain attributed to Ta-Yoshua Lubuimi; AI tools are assistants only.
