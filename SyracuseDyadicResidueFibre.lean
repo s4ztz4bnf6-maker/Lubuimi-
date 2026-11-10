@@ -347,6 +347,7 @@ This source snapshot is the explicit-tail-residue PR #107 candidate. The previou
 Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No new PASS is claimed until the exact-head jobs finish.
 -/
 
+namespace SyracuseDyadicResidueFibre
 
 /-- The integer numerator defining the normalized tail offset d. -/
 def explicitPrefixTailNumerator
@@ -511,3 +512,6 @@ theorem explicitChildAtoms_card
 #print axioms explicitChildCoordinate_unique
 #print axioms explicitChildAtoms_mem_iff
 #print axioms explicitChildAtoms_card
+
+
+end SyracuseDyadicResidueFibre
