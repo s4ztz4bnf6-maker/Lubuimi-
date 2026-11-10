@@ -78,3 +78,8 @@ Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4251
 ## APW4 v9 integrated failure and v10 candidate — 10 November 2026
 
 PR #125 / v9 left two unsolved conditional membership goals because the target used the original prefix endpoint while the case split used the transported fibre point; the integrated dependency closure reported `sorryAx`. PR #127 / v10 eliminates the coordinate equality before constructing the fibre, so the dependent endpoint should become definitionally equal to the stage coordinate. The exact-head run was not visible at the latest poll. This is a proof-script candidate, not a verified repair and not a mathematical counterexample. Previously established APW4 results and their explicit premises remain unchanged.
+
+
+## Latest v10 APW4 CI poll — 10 November 2026
+
+PR #127 exact head `3afd9de4e05b75af08579f9961f8cc28cada72af`, workflow 42810911393: audit job `129811792964` in progress, integrated-paranoid job `129811793388` queued. No v10 PASS is claimed.
