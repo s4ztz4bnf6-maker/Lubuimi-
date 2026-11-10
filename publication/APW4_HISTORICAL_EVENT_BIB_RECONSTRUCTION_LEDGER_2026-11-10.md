@@ -257,3 +257,14 @@ PR #103 head `9db2c26ae444f2cb01332ac1129e72ebe8cb147f` is stacked on PR #101 an
 - PR #102: exact repair head `343b2d3ad8e276311bdff61e9cdf759f6117b82e`; audit [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical/paranoid workflow [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) were still running/queued. No PASS is claimed.
 
 The source-defined historical (U_q,U_r,C_h), the actual event/slot identification, the weighted Hall demand/capacity condition and the historical BIB transport remain distinct obligations. None of these CI states changes the established APW4 mathematical proof record.
+
+
+## Addendum 1.16 — latest exact-head job states, 10 November 2026
+
+- PR #89's Lean audit workflow [42754828631](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754828631) completed successfully. Its separate paranoid workflow 42754828642 failed at the previously documented missing (0<q^a) witness.
+- PR #97's audit and canonical jobs passed, but its paranoid job was **cancelled**, not passed. No paranoid verification is claimed for PR #97.
+- PR #102's audit job [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical job in [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) both completed successfully. The canonical log compiled the full APW4HistoricalCRTCore.lean file, including the q-power quotient declarations, with no Lean errors or actual sorryAx; the named quotient and aggregate declarations show standard axiom profiles. The separate paranoid job in 42755236653 was still running at this snapshot. Therefore PR #102 has audit/canonical PASS, paranoid pending—not a full PASS yet.
+- PR #103 exact-head workflow [42755396032](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755396032) is now running both integrated-paranoid and audit jobs. The new explicit if_neg / if_pos rewrite is still a candidate until the uncovered branch and all downstream named axiom outputs are checked.
+- PR #93 remains split: audit PASS; integrated-paranoid FAIL from the same prefix-recursion sorryAx; isolated Syracuse paranoid job still running.
+
+No status above changes the APW4 mathematical proof record or converts a source-reconstruction obligation into a proved historical identity.
