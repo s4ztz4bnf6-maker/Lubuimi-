@@ -116,3 +116,18 @@ These are queued states, not PASS results. The previously verified Collatz Lean 
 - Collatz PR #48 documentation/workflow head cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8: run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798), all three jobs queued.
 
 No queued or in-progress job is a PASS. The previously recorded Collatz Lean 4.35.0 paranoid PASS remains scoped to its exact source head and run.
+
+
+## Exact-head status reconciliation — 10 November 2026 (follow-up)
+
+**APW4 PR #101** remains open on branch `repair/apw4-prefix-uncovered-change-2026-11-10`, exact head `f87657c8f02f41266a43bae1fe44f43267f0c985`.
+
+- Run [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237) belongs to the earlier `f5aff142` source and failed. Its error was at `BBMSTPrefixMeasureRecursion.lean:411:23`; the report showed `sorryAx` propagated into `PAt_nonneg` and `PAt_sum_eq_one`.
+- Run [42757047779](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757047779), associated with the current `f87657c8` head, has audit = success while integrated-paranoid is still in progress at this check.
+- Run [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402), also associated with `f87657c8`, has audit = in progress and integrated-paranoid = queued at this check.
+
+No integrated Lean-4.35 PASS and no clean dependent-theorem axiom audit are claimed yet for PR #101. The earlier `f5aff142` failure remains attached only to that exact source.
+
+**APW4 PR #107** remains open on branch `bridge/syracuse-explicit-tail-residue-2026-11-10`, exact head `44d00ad20c352471795358dde2aaf24152281649`. Run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002) was queued at this check. No PASS is claimed for this head.
+
+This ledger update changes documentation only. It does not alter any mathematical theorem status, the PR source branches, or the previously established independent APW4 results.
