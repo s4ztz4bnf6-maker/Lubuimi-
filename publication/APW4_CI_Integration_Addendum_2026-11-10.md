@@ -311,3 +311,10 @@ The exact source head is now `1f4225ce0bdf6186fd0700612e2306ed3ff44506`. Workflo
 ## Addendum 1.18 — proof-indexed covered predicate normalized with propext
 
 On PR #69 head fc2b5f501c4efb478d1c61af2dcb1ae529026cbc, run 42736917706 still failed in Lean 4.35.0. The exact target showed that the updatedWeight conditional and the recursively unfolded PAt conditional referred to distinct proof-indexed prefixCoveredValues terms. The source also reported a no-goal tactic after simplification. The new candidate 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768 defines hcovered, converts it to an equality of propositions using propext, and rewrites the target before splitting the conditional. Exact-head run 42737432337 is in progress. The Lean 4.28 audit and Lean 4.35.0 integrated-paranoid outcomes remain pending; no success is claimed.
+
+
+## Addendum 1.19 — exact finite-depth Syracuse uniform fibre and current candidate
+
+A separate mathematical note now proves a finite-depth uniformization of the Syracuse child/tail cylinders. At a fixed depth, the set of prefixes that are not excluded by their local cap is finite. Taking the maximum cap B*_k over that finite level yields a common fibre of size 2^(B*_k). Each exact child b occupies 2^(B*_k-b) equal micro-atoms and the tail occupies 2^(B*_k-B_α); the distinguished cap-compatible subset therefore has proportion 1-2^-B_α. The tail complement has exact mass 2^-B_α and is forced to descend below the initial start. This is an APW4-style uniform-fibre model, not a proof of the historical hyperplane/BIB event identification. It remains to be Lean-formalized.
+
+The APW4 candidate 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768 failed both toolchains. The attempted propext rewrite left the covered/uncovered update branches misaligned, with downstream sorryAx in error recovery. A new candidate f02f8d28f0d06735bab9ec1a591839704c6bb9ac changes the rewrite orientation. Exact-head dual-toolchain run 42738073791 is queued; no pass is claimed.
