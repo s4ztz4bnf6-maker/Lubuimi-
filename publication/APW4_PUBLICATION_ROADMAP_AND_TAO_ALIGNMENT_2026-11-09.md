@@ -109,3 +109,8 @@ This chronology is not a replacement for the published mathematical manuscript a
 ### Source reconstruction supplement — 10 November 2026
 
 The APW4 publication documentation now links the [Historical Event-to-BIB Reconstruction Ledger](APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). It preserves the recovered q-fibre definitions \(B_q,V_q,F_q(x),P_{q,x,h}\), the quantities \(M_{q,r},\Gamma_{q,r}\), the block outer-product identity, the local fibre-count inequality, and the exact four-term residual matrix expansion. The three Z-residual contributions belong to matrix accounting, not to the two-term APW4 energy decomposition. The remaining source-level event-index and BIB incidence identifications are listed explicitly; no replacement definitions are introduced.
+
+
+### Exact run/commit attribution correction — 10 November 2026
+
+The two conditional-reduction failures at lines 397 and 410 are from workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330`, not PR #137. The exact source applies `updatedWeight` to local `x) but provides the conditional witnesses at `y (Fin.last k)`; the local witness transport in PR #138 addresses that mismatch. PR #137 head `175c50c75d537ef32687c63cb1219e8ff1ace257` is a separate candidate with no associated exact-head run returned in this check. PR #138 must be verified at its own current head.
