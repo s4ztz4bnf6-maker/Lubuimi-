@@ -416,7 +416,11 @@ theorem incidence_card_reindex
   Fintype.card_congr (incidence_reindex_equiv oldData newData hMq)
 
 /-- Exact double-counting formula: count each new class by the number
-of old-uncovered base residues in its projected congruence class. -/
+of old-uncovered base residues in its projected congruence class.
+
+The dependent-sum cardinality step below uses Mathlib's elaborated
+`Fintype.card_sigma` theorem at its expected type; it is not a function
+that accepts an explicit family argument. -/
 theorem incidence_card_eq_sum_of_class_supports
     {M q : ℕ} {O N : Type*} [Fintype N] [NeZero M]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
