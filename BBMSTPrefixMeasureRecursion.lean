@@ -372,19 +372,39 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  have hcovered :
-      (y (Fin.last k) ∈ prefixCoveredValues C hk xprev) ↔
-      (y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (by omega)
-          (restrictPrefix C (by omega) y)) := by
-    rfl
-  -- Transport the recursive PAt membership proposition to the exact
-  -- covered-set membership used by the finite-fibre point update before
-  -- splitting the conditional. This avoids proof-indexed prefix variants
-  -- appearing as unrelated branches after simplification.
-  have hcoveredEq := propext hcovered
-  rw [hcoveredEq]
-  split_ifs <;> simp_all <;> ring_nf
+  -- Give the recursive PAt unfolding named proof witnesses and
+  -- transport the whole prefix fibre, not only one membership proposition.
+  have hk' : k + 1 ≤ n := by
+    simpa only [k, Nat.add_succ] using hj
+  have hprev' : k ≤ n := by omega
+  have hhk : hk = hk' := Subsingleton.elim _ _
+  have hhp : hprev = hprev' := Subsingleton.elim _ _
+  have hxprev : xprev = restrictPrefix C hk' y := by
+    dsimp [xprev]
+    rw [hhk]
+  have hstage :
+      stageCoordinate (k := k) hk =
+        stageCoordinate (k := k) hk' := by
+    exact congrArg (stageCoordinate (k := k)) hhk
+  have hvalues :
+      prefixCoveredValues C (A := A) hk xprev =
+        prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y) := by
+    rw [hhk, hxprev]
+  have hmass :
+      PAt C (A := A) a ha P0 δ j hprev xprev =
+        PAt C (A := A) a ha P0 δ j hprev'
+          (restrictPrefix C hk' y) := by
+    rw [hhp, hxprev]
+  rw [hstage, hvalues, hmass]
+  by_cases hcov :
+      y (Fin.last k) ∈
+        prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y)
+  · simp [hcov, Finset.mem_univ]
+    ring
+  · simp [hcov, Finset.mem_univ]
+    ring
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
