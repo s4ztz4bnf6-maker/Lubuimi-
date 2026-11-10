@@ -426,3 +426,14 @@ All earlier successful exact-commit results and the established APW4 mathematica
 - Documentation: PR #79 head `799eba5a2a478b130ea780de3c53ef17d8f87e1f`, workflow 42733244916 PASS. This addendum changes the docs head and requires a new exact-head audit.
 
 All statuses above are scoped to the exact listed commits and jobs. Earlier successes remain valid for their own commits; no current-head claim is inferred from an older run.
+
+## Addendum 1.23 — exact finite Lean passes and current APW4/Syracuse heads, 10 November 2026
+
+- Terminal-residue k=2 standalone project: workflow 42735716873 PASS on source snapshot 4e30c083f3e1657edd08b0945cdda4e16c8b0e14, Lean/Mathlib 4.35.0, seven declarations standard profile, lake check --paranoid pass, no actual sorryAx.
+- Odd-covering L945 standalone finite CRT project: workflow 42736060742 PASS on source snapshot f81a08296c88e5ee2877dd88adaf932927ecb7a7, Lean/Mathlib 4.35.0, seven declarations standard profile, lake check --paranoid pass, no actual sorryAx.
+- Kolaz threshold-return archive: exact-head workflow 42735880399 PASS on PR #39 head 012c8717e9d80025e7aa6cbb99f0b7ed5affd176; seven Python regression tests pass, including B=511/B=1023 CSV and x=731 bridge.
+- Syracuse mixed word (1,2): new theorem realizesValuationWord12_iff_mod_sixteen_eleven added to SyracuseOffsetIdentity.lean; exact-head unified run 42736159935 in progress on 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9. Formal status pending.
+- APW4 PR #69: candidate 4edf44ce8232d0b9be9f9b9f9f69671740c0f921, run 42736373195 in progress. The new proof rewrites the covered-membership equivalence before splitting the finite-fibre update. No pass claimed.
+- PR #79 previous docs head 388b788d0c5623eab8e2cdf1755e426b8f7f2100 passed workflow 42735453999. This addendum changes the docs head and requires a new audit.
+
+All statuses are scoped to the stated source snapshots. The standalone finite modules do not prove global Collatz or the full odd-covering conjecture, and do not establish APW4/BIB identification.
