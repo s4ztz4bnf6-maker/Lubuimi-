@@ -337,3 +337,12 @@ theorem explicitCandidate_mass (B k d : ℕ) :
 #print axioms explicitCandidate_mass
 
 end SyracuseDyadicResidueFibre
+
+
+/-!
+## Exact-head CI provenance — 10 November 2026
+
+This source snapshot is the explicit-tail-residue PR #107 candidate. The previous workflow attempt was associated with the preceding source snapshot and its Lean jobs were cancelled. This comment-only commit exists to request a fresh PR workflow on the current exact source head.
+
+Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No new PASS is claimed until the exact-head jobs finish.
+-/
