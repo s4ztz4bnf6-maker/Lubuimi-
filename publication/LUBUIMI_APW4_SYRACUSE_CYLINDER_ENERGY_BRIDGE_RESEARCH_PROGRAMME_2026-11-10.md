@@ -231,3 +231,21 @@ The APW4 integration remains toolchain-split: Lean 4.28.0 source audit passes on
 ## 16. Declaration-scoped axiom boundary for the APW4 audit
 
 The Lean 4.28.0 audit log contains unrelated legacy Erdős–Selfridge declarations (`degenerate_axiom_acceptance`, `erdos_selfridge`, `sieve_criterion`, and `sf_sieve_lt_one`) that explicitly depend on the named sieve axioms. These are not dependencies of the APW4/BBMST prefix, moment, and incidence declarations whose profiles were checked in Addendum 14. The APW4 claim is therefore declaration-scoped: those named APW4 declarations have only `[propext, Classical.choice, Quot.sound]) and no `sorryAx) in the completed audit log. The mixed repository audit is not globally free of the legacy sieve axioms, and must not be represented as such.
+
+
+## 12. Lean-verified Syracuse margin-cap interface — 10 November 2026
+
+The state-dependent non-descent cap now has a Lean-verified algebraic/orbit core in the Syracuse programme. On exact source commit ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc, full compile-drafts workflow 42728049650 passed using Lean 4.34.1. The declarations
+- signedOffsetMargin_nonpos_succ_iff_exponent_cap,
+- signedOffsetMargin_nonpos_of_nondecreasing_orbit,
+- nondecreasing_orbit_next_exponent_cap
+
+all printed [propext, Classical.choice, Quot.sound]; the complete log had no actual sorryAx occurrence and the build completed 8,930 jobs.
+
+This formally verifies that a nondecreasing exact affine endpoint must have nonpositive signed margin and therefore its next valuation must satisfy
+\[
+2^{A_j+a_j}+3D_j\le4\cdot2^{A_j}.
+\]
+It does not yet formalize the maximum cap B_alpha, the finite surviving-child set, the exact tail-cylinder partition, or the general finite-word cylinder theorem. This Lean result is a concrete Syracuse-side interface candidate for APW4 transport, not an APW4 theorem.
+
+The APW4 integration remains on its separate Lean 4.35.0 target. No cross-toolchain success is inferred, and the historical APW4 index map, separate diagonal/off-diagonal transport, and BIB/Hall capacity proof remain open.
