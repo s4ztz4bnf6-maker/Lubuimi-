@@ -451,3 +451,12 @@ Standalone PR #38 current head 50492a880f5b8a2c4bb96838e16dfed2339dd501 passed e
 The APW4IncidenceSecondMoment.lean file was not actually included in the earlier successful general audit 42603327843; its log did not compile or print the three new declarations. The dedicated APW4 workflows for that head were cancelled. This module must therefore remain marked as a conditional mathematical/Lean candidate, not as previously verified.
 
 A source comment update on commit e8b61d2961dadbae2915dd6754807fc1b13daf6d has now triggered exact-head canonical Lean 4.28 run 42739947391 and Lean 4.35.0 paranoid run 42739947626. Both are in progress. The required declarations are incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction. A successful audit would verify only this conditional finite-incidence algebra, not the historical APW4 event map or BIB/Hall capacity argument.
+
+
+## 28. Historical APW4 definition and transport boundary — reaffirmed
+
+PR #68's source-reconstruction record remains the controlling reference for the historical-definition boundary. The original Balister source and supplementary material are catalogued, but the available reconstruction does not yet supply a complete end-to-end index-preserving identification of historical A_q, A_r, W_{q,r}, a_{q,t} with the current APW4 prefix/fibre atoms and weights. The canonical finite-fibre model and unweighted CRT allocation checkpoints are not, by themselves, the historical weighted Hall transport.
+
+The source dossier also records that the available 17-page PDF copy omits the strict comparison on page 11 and does not reproduce the complete intermediate arithmetic derivation. This is a source/document completeness issue, not a reason to downgrade the user's separately published APW4 mathematical theorem record. It does mean that a claim that every historical definition and bridge step is already reconstructed in the current Lean/GitHub chain would be too strong.
+
+The open bridge obligations remain: exact historical index map, preservation of original weights, separate diagonal/off-diagonal transport, and the BIB/Hall capacity inequality. The finite-depth Syracuse uniform fibre is a new abstract candidate structure, not yet identified with those historical objects.
