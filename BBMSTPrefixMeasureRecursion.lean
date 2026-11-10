@@ -385,12 +385,17 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, if_true, k, xprev]
+  have hvalues :
+      prefixCoveredValues C (A := A) hk xprev =
+        prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
+          (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
+    rw [hhk, hxprev]
   have hcovered :
       y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev ↔
         y (Fin.last k) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
             (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
-    rw [hhk, hxprev]
+    rw [hvalues]
   have hstage :
       stageCoordinate hk =
         stageCoordinate (show k + 1 ≤ n from by omega) := by
@@ -402,7 +407,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
         y (Fin.last (a + j)) ∈
           prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) := by
       simpa [xprev, k] using hcov
-    simp [hcov₁, hcov', hstage, hPAt, k, Finset.mem_univ]
+    simp [hcov₁, hcov', hvalues, hstage, hPAt, xprev, k, Finset.mem_univ]
   · have hcov' :
         ¬ y (Fin.last k) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
