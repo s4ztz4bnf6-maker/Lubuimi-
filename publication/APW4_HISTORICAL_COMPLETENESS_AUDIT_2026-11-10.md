@@ -119,3 +119,8 @@ The later reconstruction dossier's section 15 proposes the indicator notation `I
 ### 2.5 Off-diagonal atom versus collision-of-atoms distinction
 
 The reconstruction dossier also records a nontrivial event-index ambiguity: if an elementary `ell` is an APW4 off-diagonal atom `(x,u,v)`, then a pair `(ell,ell')` in the q-profile collision identity is a collision of two such atoms. It is not automatically the same object as the original within-fibre ordered pair `(u,v)) appearing in `C_APW4`. A valid HT reconstruction must state which of these is the actual event `gamma`, how its demand is obtained, and how it is related to the source energy sum. The present source material explicitly flags this distinction; no equality between these event types is assumed.
+
+
+### 2.6 Scope of this audit
+
+This is a statement about the contents currently retrievable from the connected Library and the inspected repository branches. It is **not** a claim that the author has not derived, proved, or documented the historical DT/HT/BIB definitions in the complete APW4 research record. The author's established mathematical status, including DT, HT, the global energy upper bound, and the strict lower-bound contradiction, remains preserved as the accepted mathematical starting point. The present task is to recover the exact source artifact containing the element-level definitions and then bind the repository/Lean reconstruction to it without changing the mathematical proof.
