@@ -288,3 +288,18 @@ The audit log confirms sorryAx in prefixPointCovered_iff, prefixExtensionEquiv, 
 A new source candidate is at head 8e7cd3ca5b3440ee25eb6241f2aa799103b56830. It adds explicit Fin-index equalities to the restriction proof, unfolds stageCoordinate in the covered-predicate reduction, and splits the covered/uncovered cases using the named membership equivalence. Two duplicate exact-head workflows, 42728164530 and 42728171781, were queued on this same commit. No pass is claimed pending both audit and integrated-paranoid completion and a clean transitive axiom audit.
 
 The current documentation branch itself is at head fc9625629cabed0a5f009023e4626dc77a641dae, with exact-head documentation audit 42727462725 queued. Earlier successful documentation audits checked older heads only.
+
+
+## Addendum 1.15 — exact-head follow-up for candidate 8e7cd3ca, 10 November 2026
+
+PR #69 remains on exact source head `8e7cd3ca5b3440ee25eb6241f2aa799103b56830`. The duplicate integrated-paranoid jobs in runs 42728164530 and 42728171781 have now both completed with failure; the audit job in 42728171781 was still in progress at this inspection. The completed integrated-paranoid log for run 42728171781 pinpoints the remaining issues:
+
+- `BBMSTPrefixMeasureRecursion.lean:171:55`: `restrictPrefix_extendPrefix` still leaves a nested dependent-coordinate transport goal, after the explicit Fin-index equalities. The residual target is equality after two `Eq.mp` transports, not merely equality of the underlying Fin indices.
+- Lines 220–223 in `prefixPointCovered_iff`: the attempted `rcases` treats a residual `Quot.lift` membership expression as an inductive existential. The filter-membership reduction has not exposed the intended predicate; a dedicated lemma reducing membership in `prefixCoveredValues` is needed before destructuring the existential.
+- Lines 396 and 398 in `prefixFibre_updatedWeight_eq_PAt`: both covered and uncovered branches leave goals after the current `simp` calls. The proof must explicitly transport the covered-membership predicate and the stage-coordinate equality, then rewrite the recursive `PAt) value; the current case split does not close the dependent update identity.
+
+The same log prints `sorryAx` in `prefixPointCovered_iff`, `prefixExtensionEquiv`, `sum_prefix_eq_sum_extensions`, `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and downstream PAt inequalities/sums. These declarations are not verified on this candidate. The independent hyperplane-incidence module still compiles with the standard profile, but this does not bypass the failed prefix recursion. No integrated build or paranoid pass is claimed.
+
+The next repair should be split into three independently testable lemmas: (i) an explicit coordinate-transport lemma for the two `Eq.mp` casts in restriction-after-extension; (ii) a standalone `mem_prefixCoveredValues` theorem that reduces the Finset filter to the geometric existential without destructuring a quotient representation; and (iii) a branchwise update identity whose hypotheses are stated directly in the same stage-coordinate and restricted-prefix types as the recursive `PAt) definition. Do not weaken the geometric coverage definition or add axioms/sorries.
+
+At this inspection, PR #69 run 42728171781 still had its audit job in progress. The earlier integrated failure is final for that job and exact head; the audit result remains pending. The separate Collatz run 42728049650 is still running, and PR #79 documentation head `b1fe62a30d1f78de4fb858b1d8a492f4b714925a` has exact-head audit run 42728550895 in progress. These states are not conflated.
