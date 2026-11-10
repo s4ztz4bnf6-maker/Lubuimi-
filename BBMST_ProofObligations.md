@@ -377,3 +377,11 @@ PR #120 / v6 source head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [4
 Current PR [#121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/121), v7 exact source head `5631a527c289889db3e70bf0fb1644926e11d893`, uses an explicit dependent cast `hstage.symm ▸ y (Fin.last k)` into `C.S (stageCoordinate hk)` and uses that transported point consistently in the update and membership cases. Workflow status was pending at the latest poll. This is a new candidate, not a verified repair.
 
 Acceptance still requires the v7 exact-head separate audit and integrated-paranoid jobs to complete, successful integrated compilation, named `#print axioms` inspection, and a no-`sorryAx` scan of the integrated dependency closure.
+
+## Exact closure boundary — 10 November 2026 afternoon
+
+The established APW4 mathematical results remain preserved and are not reopened by later integration diagnostics. The current formalization boundary is explicit: the implemented shadow-merge and reserve declarations are pair-level (t=2), not the ordered arbitrary-t Lemma 3.4. The arbitrary-t architecture is indexed by `Fin t → N_k`, preserves order and repetitions, and requires a conflict/empty-intersection branch or an iterated compatible merge followed by the source-facing Lemma 3.3 bound. It is not yet a Lean theorem or CI-verified result.
+
+The historical Event-to-BIB transport is also not yet closed. Recovered q-fibre and generic/canonical residue-fibre results are partial helpers. The exact historical event map, index preservation, weight preservation, BIB-slot incidence, capacity bound, and weighted Hall inequality remain to be derived from the historical definitions. APW diagonal mass, APW off-diagonal mass, and BIB pair reserve must remain separate until those identities/inequalities are proved.
+
+PR #138's latest recorded source head is `94b89a2c5bda9a494c0c42e79ad054aabacabdd8`; no exact-head integrated Lean 4.35.0 run was returned for it. Therefore the dependent prefix update remains **OFFEN – NICHT VERIFIZIERT** pending integrated build, `lake check --paranoid`, named `#print axioms`, and transitive no-`sorryAx` audit. This status update is documentation only and does not change theorem statements, historical definitions, or the author-held manuscript PDF.
