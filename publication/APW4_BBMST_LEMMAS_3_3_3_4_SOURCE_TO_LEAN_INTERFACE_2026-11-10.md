@@ -174,3 +174,52 @@ expansion, or the arbitrary-t source-profile mass bound. Those are the
 next exact declarations; t=2 must be recovered as a specialization, not
 mistaken for the general theorem. This is a proof architecture, not a
 claim of compilation or CI verification.
+
+
+## 9. Repository inspection and finite-fold proof obligations — 10 November 2026
+
+A fresh source inspection of the current working branch confirms the precise implementation boundary:
+
+- `BBMSTOldShadow.lean` defines a binary `mergeOldShadows`, binary `OldCompatible`, the binary predicate-intersection theorem, the binary conflict-disjointness theorem, and the binary fixed-coordinate-union theorem.
+- `BBMSTPrefixIncidenceBridge.lean` identifies actual stage-compatible hyperplanes with old-shadow prefix membership and provides pair-indexed masses, pair reserve, and the exact ordered-pair count. It also contains the concrete first- and second-moment incidence bridges.
+- There is no current declaration for a `Fin t)-indexed merge, an arbitrary-t tuple intersection mass bound, or the arbitrary-t indicator expansion. The pair reserve identity is not the general moment theorem.
+
+### Required induction invariant
+
+For a tuple (H : mathrm{Fin}(t)\to\mathrm{Hyperplane}(C)), define
+[
+\operatorname{PairwiseOldCompatible}(b,H)
+:=
+\forall r,s,\ \operatorname{OldCompatible}(b,H(r),H(s)).
+]
+A left fold of the tuple's old shadows is sound only after proving the invariant that the accumulated merge is compatible with every remaining tuple member. At a coordinate (i<b), if the accumulator has an assigned value, that value came from some earlier tuple member; pairwise compatibility with the next member forces equality. If the accumulator is free, the next assignment is simply adopted. This is the exact local argument needed to lift the binary merge theorem.
+
+The induction must establish both properties together:
+[
+\operatorname{Contains}(M_t,x)
+\iff \forall r:t,\ \operatorname{Contains}(\operatorname{oldShadow}(b,H_r),x),
+]
+and
+[
+\operatorname{fixedCoords}(M_t)
+=\bigcup_{r:t}\operatorname{fixedCoords}(\operatorname{oldShadow}(b,H_r)).
+]
+The same prefix-support proof used by `mergeOldShadows_containsPrefix_iff` then transports the full-point predicate identity to genuine prefix points. The empty tuple requires the everywhere-free hyperplane as identity; the singleton tuple reduces to its old shadow.
+
+If pairwise compatibility fails, extract (r,s,i) and distinct values. The existing `oldShadows_disjoint_of_conflict` gives disjointness of those two factors; the full tuple intersection is therefore empty. The mass-zero conclusion then uses only nonnegativity of the weight. This branch must not invoke Lemma 3.3.
+
+### Ordered moment expansion
+
+The exact tuple domain is `Fin t → N_k` (equivalently the finite product (N_k^t)); repetitions are retained. The pointwise expansion is the finite distributive identity
+[
+\left(\sum_{H\in N_k}1_{\operatorname{oldShadow}(H)}(x)\right)^t
+=\sum_{\mathbf H\in (\mathrm{Fin}(t)\to N_k)}
+1_{\bigcap_{r:t}\operatorname{oldShadow}(H_r)}(x).
+]
+After multiplying by (P_{k-1}(x)), sum over genuine prefix points, interchange the two finite sums, and apply the tuple-intersection profile bound. The normalization denominator is (|S_k|^t). Do not quotient by permutations or replace tuples by subsets.
+
+### Source-boundary and status
+
+The compatible tuple case invokes the source-facing Lemma 3.3 for the merged hyperplane, with the initial profile equal to the union of the tuple's initial fixed profiles and the suffix profile equal to the union in the exact interval ([a+1,k-1]). The conflict case uses (c(I)\ge0) and (\nu(J)\ge0). Thus arbitrary-t geometry is necessary but not sufficient: the already documented all-hyperplanes definition of (c(I)), initial probability normalization, suffix-product identity, and (Q_{k-1})-measurability condition remain prerequisites.
+
+**No Lean declaration was added by this documentation checkpoint.** The exact-head CI and axiom audit have not been refreshed by source inspection. The established APW4 mathematical results (DT, HT/weighted Hall transport, exact two-term energy decomposition, upper and strict lower bounds, and contradiction under their stated hypotheses) are unchanged and are not reopened by this separate BBMST formalization task.
