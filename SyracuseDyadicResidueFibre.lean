@@ -4,15 +4,30 @@ import BBMSTFiniteFibreUpdate
 /-!
 # Finite dyadic residue cylinders for the Syracuse tail
 
-This module is a genuine finite residue-class model, unlike an interval
-chosen only to have the same cardinality. A tail is a specified residue
-class modulo 2^B inside the common ambient group of residues modulo
-2^Bstar. Its complement is the union of all finite refinements which leave
-that tail cylinder.
+Author: Ta-Yoshua Lubuimi.
 
-The remaining Syracuse-specific obligation is to instantiate the tail
-residue from the exact prefix word and prove that the child valuation
-cylinders are precisely the corresponding sibling residue classes.
+The mathematical input is the already-proved finite valuation-word cylinder
+theorem. For a word alpha=(a_0,...,a_{k-1}), with
+A=sum_j a_j, A_j=sum_{i<j} a_i and
+C_k=sum_{j<k} 3^(k-1-j) 2^A_j, it gives
+2^A n_k = 3^k n_0 + C_k and the unique prefix class
+n_0 = (2^A-C_k) (3^k)^(-1) modulo 2^(A+1).
+
+For a cutoff B, the already-derived tail condition is the unique class
+3^(k+1)n_0 + 3C_k + 2^A = 0 modulo 2^(A+B+1). The exact next-valuation-b
+child is given by
+3^(k+1)n_0 + 3C_k + 2^A = 2^(A+b) modulo 2^(A+b+1).
+In the common refinement, the prefix has 2^B lifts, child b has 2^(B-b)
+lifts, and the tail has one lift. These are established mathematical
+residue-class facts, not conjectures or cardinality-only heuristics.
+
+This file currently formalizes the generic finite residue cylinder and its
+lift structure. The remaining task in this PR is the Lean instantiation of
+the parameter r with the explicit prefix/tail formulas above and the proof
+that the exact valuation predicates coincide with the stated sibling
+residue classes. That is a formal integration task; it does not reopen the
+mathematical theorem. The historical APW4 BIB/event-incidence transport is
+a separate, source-dependent question and is not asserted here.
 -/
 
 namespace SyracuseDyadicResidueFibre
