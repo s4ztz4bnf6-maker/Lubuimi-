@@ -2021,3 +2021,13 @@ PR #103 head `9db2c26ae444f2cb01332ac1129e72ebe8cb147f` is stacked on PR #101 an
 - PR #102: exact repair head `343b2d3ad8e276311bdff61e9cdf759f6117b82e`; audit [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical/paranoid workflow [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) were still running/queued. No PASS is claimed.
 
 The source-defined historical (U_q,U_r,C_h), the actual event/slot identification, the weighted Hall demand/capacity condition and the historical BIB transport remain distinct obligations. None of these CI states changes the established APW4 mathematical proof record.
+
+
+## Separate odd-covering line — PR #80 exact audit PASS
+
+PR #80 head `a8ddea87d171eac1848147d023b35982d05916ff` has two successful exact-head workflows:
+
+- [42739809486](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739809486): exact L945 Lean module build, `#print axioms), forbidden-`sorryAx` guard and paranoid kernel check all passed.
+- [42739809459](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739809459): upstream/source audit passed.
+
+The seven L945 declarations for divisor density (65/63), 16 coprime pairs and pair density (74/315), and three coprime triples and triple density (13/945) print the standard profile `[propext, Classical.choice, Quot.sound]). This is a finite CRT/moment certificate; it is not a proof of the odd-covering conjecture or a private-mass bound.
