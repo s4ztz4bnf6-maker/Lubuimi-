@@ -315,3 +315,15 @@ Run 42728171781 has now completed both jobs on PR #69 head `8e7cd3ca5b3440ee25eb
 These are not to be collapsed into a single status. The audit job's clean named declarations must be preserved as a successful result for its audited upstream source; the integrated package's failure remains a separate outstanding integration defect. The discrepancy is currently localized to the different build surfaces and must be reconciled by checking the source/package inputs and generated integrated tree, rather than by discarding either log or claiming the integrated pass. The next technical task is to diff the exact audited upstream source against the integrated package copy of `BBMSTPrefixMeasureRecursion.lean` and its imports at merge checkout `65febae`.
 
 At the same inspection, Collatz PR #9 run 42728049650 remained in progress; PR #79 documentation head `db3b2b7e3d5060a44f9b516aec686218c9b40ead` had exact-head audit 42728958465 queued. Earlier APW4 successful runs and the APW4 mathematical proof record remain unchanged.
+
+
+## Addendum 1.17 — toolchain reconciliation for the split APW4 result, 10 November 2026
+
+The difference between the two jobs in run 42728171781 is now explained by the workflow definition, not by an assumed stale source copy. The `audit` job explicitly installs Lean 4.28.0 and compiles the root source modules directly. The `integrated-paranoid` job explicitly installs Lean 4.35.0, copies the root `BBMST*.lean` and `APW4*.lean` modules into `kernel-audit/`, then runs `lake build ResearchKernelAudit` and `lake check --paranoid`. Both jobs check out the same merge commit `65febae`, but they use different Lean toolchains and package contexts.
+
+Therefore the precise result is:
+
+- **Lean 4.28.0 audit: PASS.** The full listed source-module chain, including prefix recursion and downstream moment/incidence modules, compiled. Named prefix declarations printed only `[propext, Classical.choice, Quot.sound]`; the complete audit log contains no `sorryAx`.
+- **Lean 4.35.0 integrated package: FAIL.** The newer-toolchain build reports the dependent-coordinate transport goal at line 171, the quotient/filter membership issue at lines 220–223, and covered/uncovered update goals at lines 396 and 398. Error-recovery output contains `sorryAx`; the integrated build did not reach a successful `lake build), and `lake check --paranoid) did not pass.
+
+This is a toolchain-compatibility gap, not a contradictory result and not evidence that the Lean 4.28.0 audit failed. Preserve both exact outcomes. The next repair should make the modules robust under Lean 4.35.0 (without weakening definitions), or explicitly pin and justify a single supported toolchain if the project scope permits. The integrated-paranoid job remains the acceptance gate for the Lean 4.35.0 package.
