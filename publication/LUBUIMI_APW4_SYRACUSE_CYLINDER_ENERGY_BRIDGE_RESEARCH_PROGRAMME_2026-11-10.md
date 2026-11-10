@@ -214,3 +214,15 @@ The split outcome in PR #69 run 42728171781 has been traced to the workflow's ex
 On Lean 4.28.0, the audit job passes the complete listed chain through prefix recursion, prefix cylinder mass, moment/incidence bridges, old-shadow geometry, finite union/noncoverage and moment recurrence. The named prefix declarations have the standard transitive profile `[propext, Classical.choice, Quot.sound]`, with no `sorryAx) in the completed audit log. On Lean 4.35.0, the integrated build still fails in `BBMSTPrefixMeasureRecursion.lean` at the dependent coordinate transport, Finset filter-membership reduction, and updated-weight branch goals; error recovery introduces `sorryAx). Consequently the integrated build and paranoid check are not passed.
 
 This is now classified as a **Lean 4.35.0 compatibility defect** for the integrated package, not a stale-copy hypothesis. Keep the Lean 4.28.0 audit success and Lean 4.35.0 failure as separate evidence. The repair target is to make the same mathematical declarations elaborate and verify under the integrated 4.35.0 toolchain, without weakening the geometry or recursion assumptions. The project’s established APW4 mathematical theorem record remains unchanged.
+
+
+## 15. Lean-audited Syracuse cap and APW4 transport interface — 10 November 2026
+
+The Collatz/Syracuse offset-margin candidate has now passed its exact-head compile audit. Run 42728049650 succeeded on PR #9 head `ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc`. The three declarations `signedOffsetMargin_nonpos_succ_iff_exponent_cap`, `signedOffsetMargin_nonpos_of_nondecreasing_orbit), and `nondecreasing_orbit_next_exponent_cap` all have transitive axiom profile `[propext, Classical.choice, Quot.sound]`; the complete log has no actual `sorryAx). This is a verified local result: a nondecreasing endpoint forces nonpositive next margin, equivalently the exact exponent cap
+\[
+2^{A_j+a_j}+3D_j\le 4\cdot2^{A_j}.
+\]
+
+This sharpens the finite-prefix interface available to the APW4 programme. Each node now carries (i) an exact cylinder index and weight from the finite-word theorem, (ii) a signed-margin state, and (iii) a formally verified finite set of possible next exponents for any nondecreasing continuation. The cap is state-dependent and necessary only; it does not bound branching uniformly over all nodes or exclude an infinite path. Any APW4 use still requires an explicit map from these prefix nodes/edges to the historical APW4 event indices, preservation or domination of historical weights, separate diagonal/off-diagonal transport, and the BIB/Hall capacity inequality.
+
+The APW4 integration remains toolchain-split: Lean 4.28.0 source audit passes on PR #69, while the Lean 4.35.0 integrated package still fails at dependent prefix-recursion elaboration. The successful Syracuse audit does not resolve that APW4 integration issue, and the APW4 mathematical theorem record remains unchanged.
