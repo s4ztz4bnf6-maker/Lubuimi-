@@ -383,7 +383,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- splitting the conditional. This avoids proof-indexed prefix variants
   -- appearing as unrelated branches after simplification.
   have hcoveredEq := propext hcovered
-  rw [← hcoveredEq]
+  rw [hcoveredEq]
   split_ifs <;> simp_all <;> ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
