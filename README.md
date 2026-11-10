@@ -245,3 +245,13 @@ No completed exact-head CI result has yet been returned for 44d00ad20c3524717953
 - Collatz PR #48 current head 7920b26f8a230c6f9fdc144be40fb2070eba5f00: exact workflow [42756479069](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42756479069), Lean 4.34.1 build, compile-drafts and Lean 4.35.0 paranoid jobs queued.
 
 These are queued states, not PASS results. The previously verified Collatz Lean 4.35.0 finite-cap source result remains scoped to exact commit e1fb06eaa07190d8abfb3fc7368f3dc0663a5a66 and workflow 42754461228.
+
+
+## Workflow status refresh — 10 November 2026
+
+- PR #101 head f87657c8f02f41266a43bae1fe44f43267f0c985: run [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402); audit is in progress, integrated-paranoid queued.
+- PR #107 head 44d00ad20c352471795358dde2aaf24152281649: run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002); audit, isolated Syracuse paranoid and integrated-paranoid queued.
+- PR #105 documentation head 8866fa2600c0de9bd41becefda77d157fc8f6465: run [42757470737](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757470737), audit queued.
+- Collatz PR #48 documentation/workflow head cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8: run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798), all three jobs queued.
+
+No queued or in-progress job is a PASS. The previously recorded Collatz Lean 4.35.0 paranoid PASS remains scoped to its exact source head and run.
