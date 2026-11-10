@@ -365,3 +365,10 @@ The APW4 side remains split by toolchain on PR #69 head `8e7cd3ca5b3440ee25eb624
 ## Addendum 1.19 — scope of the Lean 4.28.0 audit axiom output
 
 A further scope distinction is recorded for run 42728171781. The APW4/BBMST declarations named in Addendum 1.16 have the standard transitive profile and no `sorryAx). The same audit log also prints separate legacy Erdős–Selfridge declarations `degenerate_axiom_acceptance`, `erdos_selfridge`, `sieve_criterion`, and `sf_sieve_lt_one` with the explicitly named sieve axioms. Those are not part of the named APW4 prefix/moment/incidence dependency chain, but their presence means the entire mixed audit log or repository must not be described as globally free of those legacy axioms. The acceptance claim is strictly declaration-scoped to the APW4/BBMST names listed above.
+
+
+## Addendum 1.16 — Lean-verified Syracuse cap core
+
+The Syracuse programme now has a genuine Lean-verified finite non-descent cap core. Workflow 42728049650 passed on exact source commit ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc using Lean 4.34.1. The declarations signedOffsetMargin_nonpos_succ_iff_exponent_cap, signedOffsetMargin_nonpos_of_nondecreasing_orbit, and nondecreasing_orbit_next_exponent_cap each printed [propext, Classical.choice, Quot.sound]; the complete job log contained no actual sorryAx occurrence and the build completed 8,930 jobs.
+
+This proves in Lean the exact margin equivalence and the necessary next-exponent cap for a nondecreasing exact affine endpoint. It does not yet formalize the maximum cap B_alpha, the exact tail-cylinder partition, or the general finite-word cylinder theorem. The Syracuse cap's Lean 4.34.1 verification is separate from the APW4 integrated Lean 4.35.0 audit. The APW4 historical index-preserving transport, diagonal/off-diagonal bounds, and BIB/Hall capacity remain open.
