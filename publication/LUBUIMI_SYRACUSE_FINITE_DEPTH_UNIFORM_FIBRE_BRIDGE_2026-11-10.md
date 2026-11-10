@@ -163,3 +163,12 @@ The Lean development should be isolated from the historical APW4 proof until eac
 The initial all-one cylinder theorem, the signed-margin cap core, and the finite (k=2) terminal-residue module have their own successful Lean audits. None of those audits is evidence that this new finite-depth uniformization note has already been compiled.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## Exact-head formalization continuation — 10 November 2026
+
+The finite valuation-word cylinder theorem and its already-derived tail-cylinder consequence remain established mathematical results. The Lean bridge work is an implementation of those results, not a reopening of them.
+
+PR #93 adds a generic dyadic residue cylinder with exact lift cardinality, congruence membership, candidate complement, disjointness, union and rational mass. A separate `FibreData` module packages only cardinality conservation. The remaining formal bridge is to instantiate the arbitrary residue (r) using the normalized prefix-tail residue already derived in this note, then identify the exact next-valuation-(b) predicates with the corresponding sibling residue classes.
+
+PR #93 exact workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105) had isolated audit success, integrated-paranoid failure in the independent prefix recursion, and an isolated Syracuse paranoid job still in progress at last poll. PR #101's updated head `f5aff142fcdf6c3893ef1c890f3be45a67da68aa` addresses the residual `Finset.univ` branch; exact workflow [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237) was queued. No PASS is claimed until exact-head kernel checks and named axiom outputs are complete.
