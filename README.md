@@ -455,3 +455,8 @@ APW4 PR #86 adds an explicit Fin-index equality between stageCoordinate and pref
 ### Addendum 1.25 — combined dependent-prefix repair candidate
 
 The coordinate-only PR #86 did not close the covered/uncovered goals. PR #84 now combines the explicit stage-coordinate equality with transport of the recursive PAt value and covered-value finset. Exact-head run 42745642769 is pending; no verification claim or merge has been made.
+
+
+### Addendum 1.26 — historical BIB mixed-term frontier
+
+The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four-term expansion, but explicitly does not bound the three terms containing the redundancy Z. The selected depth-one label extraction map and the full F_q/F_r/C_h generator/index definitions remain unresolved in the accessible source record. The canonical projection-fibre completion was explicitly non-historical and must not be used. PR #85's local M/Gamma theorem is conditional and does not close this weighted transport gap.
