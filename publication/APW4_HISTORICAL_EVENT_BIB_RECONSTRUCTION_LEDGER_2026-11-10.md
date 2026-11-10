@@ -120,3 +120,70 @@ Conversely, APW4 finite weighted-fibre and incidence methods may be applied to S
 This file is a research ledger and contains no new Lean theorem. The established mathematical APW4 results remain recorded as established under their historical hypotheses. The current integrated Lean 4.35 prefix-recursion repair is a separate technical gate; failed runs and their exact commits remain in the chronology and do not retroactively alter earlier successful checks.
 
 **Authorship:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## 11. Further recovered q-profile data from the 6 November BIB incidence note
+
+The recovered working note `BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md` (PR #57, head `0e59e9ddb783102c85d897fc24da0d06e8f6c6be`) sharpens the earlier matrix-definition ledger. It records the following source-shaped data:
+
+For (q^aparallel N),
+[
+B_q=N/q^a,
+]
+and (U_q) is the set of base residues modulo (B_q) not covered by the old classes. For a class (h) with residue (b_h) and modulus (m_h), the raw compatibility indicator is
+[
+I_q(x,h)=1quadLongleftrightarrowquad
+b_hequiv xpmod{gcd(m_h,B_q)}.
+]
+The selected fibre-cover indicator is (A_q(x,h)in{0,1}), with
+[
+A_q(x,h)le I_q(x,h),qquad
+Z_q(x,h)=I_q(x,h)-A_q(x,h)ge0,qquad I_q=A_q+Z_q.
+]
+For distinct directions (q,r), with (q^aparallel N) and (r^bparallel N), the note records
+[
+D_{q,r}=N/(q^ar^b),qquad
+W_{q,r}(x,y)=mathbf 1_{xequiv ypmod{D_{q,r}}}.
+]
+It also records the exact four-term expansion of (I_qW_{q,r}I_r^{mathsf T}).
+
+These are recovered q-profile working definitions and are now part of the source ledger. They sharpen the prior status of (W_{q,r}) and (D_{q,r}): their compatibility formula and modulus are recorded, not wholly unknown.
+
+The following details remain open and must not be filled by guesswork:
+- exact finite types and admissibility predicates for (x,y,h), including the complete old-class index universe and the precise relationship between (m_h,b_h) and the original covering system;
+- row/column orientation of (A_q,A_r,W_{q,r}) in the displayed matrix product;
+- exact coordinate set, entries, normalization and source construction of the vectors (a_{q,t},a_{r,t}) in the fixed identity (2.1);
+- a line-by-line construction of the inclusion-minimal selected fibre cover (A_q) and any uniqueness/choice convention;
+- quantitative control of the three (Z)-containing residual terms. The identity (I=A+Z), nonnegativity of (Z), and minimality alone do not bound them.
+
+The q-fibre count interface (P_{q,x,h}=F_q(x)cap C_h), (M_{q,r}), and (Gamma_{q,r}) remains a distinct layer. The exact definition and index universe of the block family (C_h), and the proof of its required pairwise disjointness, are not supplied by the matrix note.
+
+## 12. BIB depth-one second moment: exact conditional theorem and non-transfer boundary
+
+The same PR #57 note proves a separate finite incidence statement. For finite row set (U), finite label set (D), and selected label sets (S_xsubseteq D), define
+[
+m_0=|U|,quad 	au=|D|,quad
+n_d=|{x:din S_x}|,quad T=sum_d n_d.
+]
+Under the explicit hypotheses
+[
+|S_x|ge r,qquad |S_xcap S_y|lemuquad(x
+e y),
+]
+the double count and Cauchy–Schwarz give
+[
+T^2le	auigl(T+mu m_0(m_0-1)igr).
+]
+With the additional assumptions (m_0>0), (	aule2r), (mu<r), and (	aumu<r^2), the note derives
+[
+m_0lerac{	au(r-mu)}{r^2-	aumu}.
+]
+This finite combinatorial theorem is proved from its stated hypotheses. The note explicitly does **not** reconstruct the original (S_x) from the selected q-fibre cover, prove the row-size/intersection hypotheses for the historical covering system, or connect the resulting bound to (B(m)=2m-sigma(m)), APW4 energy, or the weighted HT event/BIB-slot system.
+
+The proposed specialization (r=q-1), (D={d:dmid B}), and (S_x) equal to selected depth-one divisor labels is therefore still conditional. The extraction map from the actual selected entries (A_q(x,h)) to these divisor-label sets, and the proof of its multiplicities and pair intersections, remain open.
+
+## 13. Projection-fibre formalization candidate
+
+PR #87, source head `5f72cbfa539355daf59aea8c19054bdb875e6e1e`, adds a finite representative model for the recovered formulas (F_q(x)={z:zmod B_q=x}) and (V_q={z:zmod B_qin U_q}). It represents residues by (mathrm{Fin} N), base residues by (mathrm{Fin} B), and carries (0<B) and (Bmid N) explicitly. It proves that a fibre over (xin U) is contained in the lift of (U), then uses that result to instantiate the local M/Gamma inequality for q/r projected fibres.
+
+This is a formal candidate matching the recorded projection/fibre formulas; it does not define the actual old-uncovered set (U_q), the original class family (C_h), or the historical event-to-BIB map. Its exact-head CI was not yet available at the time of this entry. It must remain marked unverified until canonical and paranoid runs, declaration axiom traces, and the full no-`sorryAx` scan complete.
