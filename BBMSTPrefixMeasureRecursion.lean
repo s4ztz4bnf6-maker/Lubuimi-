@@ -391,6 +391,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
     apply Fin.ext
     rfl
   cases hstage
+  -- Use the exact membership decision in both definitions of the update;
+  -- avoid simp_all, which leaves a negated-branch implication here.
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
