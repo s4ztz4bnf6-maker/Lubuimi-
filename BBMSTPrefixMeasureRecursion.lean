@@ -760,3 +760,6 @@ end BBMSTPrefixMeasure
 
 
 /- Exact-head v15 CI trigger; no declaration or mathematical content changed. -/
+
+
+/- Exact-head CI refresh — 10 November 2026. No declaration or proof content changed. -/
