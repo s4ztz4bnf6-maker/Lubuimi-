@@ -62,3 +62,8 @@ As of 9 November 2026, no DOI and no arXiv identifier exist. The author has cont
 ## 9. Attribution
 
 APW4 research and authorship belong to Ta-Yoshua Lubuimi. AI tools may be acknowledged as assistants, never as authors or independent mathematical verifiers.
+
+
+## 10 November 2026 — formalization checkpoint
+
+The next formalization milestone is an exact-head integrated Lean 4.35.0 paranoid pass for the source-indexed prefix recursion. PR #137 / v14 attempts to resolve the dependent-coordinate issue by rewriting the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` throughout the proof context before fibre construction. This candidate remains unverified. Once the recursion identity, nonnegativity, normalization, and distortion-product bound have clean named axiom profiles and no `sorryAx`, the source-defined initial-profile and suffix-factor statements can be connected to the historical `c(I)` and `ν(J)` quantities. This work does not alter the established mathematical APW4 proof or assert endorsement by any external researcher.
