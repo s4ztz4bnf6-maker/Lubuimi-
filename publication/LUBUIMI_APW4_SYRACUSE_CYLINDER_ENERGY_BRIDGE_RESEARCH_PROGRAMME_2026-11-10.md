@@ -496,3 +496,18 @@ The latest PR #69 exact-head workflow 42739454140 completed with both audit and 
 PR #84's workflow 42743406155 also remains unsuccessful as a complete verification: integrated-paranoid failed and the audit job was cancelled. No exact-head dual-toolchain pass is claimed for that repair branch.
 
 These failures do not alter the earlier successful APW4 module audits or the established mathematical theorem record. The historical event-to-BIB transport remains an independent open source-reconstruction/proof obligation.
+
+
+## Cross-project finite-fibre and terminal-energy synchronization — 10 November 2026
+
+The Syracuse side now has two separate exact finite checkpoints relevant as candidate APW4 index-set technology: (i) the mixed valuation word (1,2) residue cylinder, formally checked on exact source commit 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9 in run 42736159935; and (ii) the dyadic common-fibre cardinality conservation identity, formally checked on exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 in run 42738528207. The latter proves only the finite child-block plus tail-block count, not the dependent prefix fibre, its historical event interpretation, or the APW4 BIB map.
+
+The terminal-residue collision-energy project has its standalone k=2 finite Markov/energy module verified on Lean 4.35.0 in run 42735716873: all seven named declarations have [propext, Classical.choice, Quot.sound], the log has no actual sorryAx, and lake check --paranoid passed. This is a Syracuse-side finite-state result only. Its collision reserve is not identified with the historical APW4 BIB reserve.
+
+The Kolaz archive's exact finite threshold tables through B=8191 and the stated confluence checks passed reproducibility workflow 42737593864. These finite computations are independent of Lean kernel verification and do not provide a uniform bound or universal Collatz descent theorem.
+
+Integration rule: these results may supply finite candidate coordinate sets and exact counting lemmas to APW4 or Collatz only after an explicit map preserving the original indices, weights, and incidence relations is proved. The new APW4 event-to-BIB reconstruction ledger is the checklist for that transport. No theorem is transferred solely because the same dyadic cardinality or second-moment expression appears in both projects.
+
+## Documentation update chronology
+
+The event-to-BIB reconstruction ledger was added in commit 9a3aec51cd7d4696d6220a548c8f711c45ca9d20. The bridge programme and APW4 CI snapshot were then appended with its exact identities, missing definitions, and current run 42739454140 diagnostic. The subsequent cross-project synchronization is appended here; all earlier CI snapshots remain preserved with their exact commit scopes.
