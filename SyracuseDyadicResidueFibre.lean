@@ -229,7 +229,7 @@ theorem explicitTailCoordinate_spec (B k d : ℕ) :
       = -((d : ZMod (2 ^ B))) *
           ((((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B)) *
             (((3 ^ (k + 1) : ℕ) : ZMod (2 ^ B))⁻¹))) +
-          (d : ZMod (2 ^ B) := by ring
+          (d : ZMod (2 ^ B)) := by ring
     _ = 0 := by rw [hinv]; ring
 
 /-- The normalized tail congruence has exactly one solution modulo 2^B. -/
