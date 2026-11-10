@@ -425,10 +425,16 @@ theorem PAt_nonneg
          exact Finset.mem_univ _
       have hlocal := prefixFibre_updatedWeight_eq_PAt
         (C := C) (A := A) a ha P0 δ j hj y hbase
-      rw [← hlocal]
-      exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
-        (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
-        (hδhalf (stageCoordinate hk)) hpoint
+      have hUpdateNonneg :
+          0 ≤ BBMSTFiniteFibreUpdate.updatedWeight F
+            (δ (stageCoordinate hk)) := by
+        exact BBMSTFiniteFibreUpdate.updatedWeight_nonneg F
+          (δ (stageCoordinate hk)) (hδ (stageCoordinate hk))
+          (hδhalf (stageCoordinate hk)) hpoint
+      -- The update identity is an equality of scalar weights. Transport
+      -- the inequality through that equality directly, rather than asking
+      -- rw to abstract a motive containing the dependent stageCoordinate.
+      exact hlocal ▸ hUpdateNonneg
 
 #print axioms PAt_nonneg
 
