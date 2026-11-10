@@ -1865,3 +1865,12 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+## 49. Source audit and formal interfaces — 10 November 2026
+
+The complete 17-page original proof PDF was inspected. It gives the historical diagonal assignment (x,u) -> (k,I_xu,J_xu), its aggregate fibre-weight estimate, the off-diagonal demand d(gamma)=omega_l*omega_l', BIB places/capacities/incidence notation, weighted Hall condition, and equations (7.2)-(7.3). It does not spell out the element-level definitions of the source/target index spaces, W_x, rho_x, pi_x, w_x, the elementary event set, BIB-place set, or incidence predicate. The missing historical definitions are therefore confirmed absent from the currently inspected manuscript archive; no generic substitute is treated as historical.
+
+The literal profile formula P_S = sum_x w_x sum_{(u,v) in W_x^2, pi_x(u,v)=S} rho_x(u)rho_x(v) includes u=v because its written domain is W_x^2. This must remain distinct from the separately defined off-diagonal sum over u != v. Earlier candidate notation ell=(x,u,v), omega_ell=w_x rho_x(u)rho_x(v), and candidate BIB slots indexed by (u,v,i) remain reconstruction hypotheses only.
+
+PR #85's local q-fibre theorem has canonical and audit PASS on its exact source head; paranoid remains pending. PR #89 adds the generic preimage-fibre interface, corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a, with audit/canonical rechecks pending. PR #93 adds the Syracuse common dyadic uniform fibre as an APW4 FibreData object, corrected Lake-root head dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued. These results do not identify historical BIB places or close weighted Hall transport.
