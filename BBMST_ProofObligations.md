@@ -409,3 +409,63 @@ No historical definition is inferred merely from the matching shape of the formu
 ### Manuscript synchronization
 
 The corresponding main-text note is a formalization-status addendum only. It does not change the established APW4 mathematical proof, its hypotheses, or the exact two-term energy identity. It also does not assert that this intermediate BBMST cylinder theorem alone completes the historical APW4 event-to-BIB map or weighted Hall construction.
+
+
+
+
+## Source-exact reconciliation of c(I), nu(J), and the current cylinder theorem — 10 November 2026
+
+The published source has now been checked directly at the definitions and proof of Lemma 3.3 (Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *Algebra & Number Theory* 15 (2021), pp. 614–617; equations (9), (10), (15)).
+
+The exact definitions are:
+[
+c(I)=max{mathbb P_a(H): H	ext{ is a hyperplane in }Q_a, F(H)=I},
+qquad Isubseteq[a],
+]
+and
+[
+
+u(J)=prod_{jin J}rac{1}{(1-delta_j)|S_j|},
+qquad Jsubseteq[a+1,n].
+]
+The paper explicitly states (c(arnothing)=
+u(arnothing)=1). The empty-profile identity uses that (mathbb P_a) is a probability measure: the only hyperplane with no fixed coordinates is the full box (Q_a), whose mass is 1.
+
+**Important profile-domain correction:** (c(I)) is a maximum over *all* hyperplanes of the initial box (Q_a) whose fixed-coordinate set is exactly (I), not merely over the hyperplanes in the particular covering family (mathcal A). A Lean definition restricted to the members of (mathcal A) would be too small and would not be source-faithful. The initial profile family must therefore enumerate all partial assignments on (I), with every coordinate outside (I) free, and evaluate their (mathbb P_a)-cylinder masses.
+
+The current `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` has precisely the induction shape of (15). For a hyperplane (H) whose fixed-coordinate set splits as
+[
+F(H)=Icup J,quad Isubseteq[a],quad Jsubseteq[a+1,a+j],
+]
+the current recursion charges one factor
+[
+rac{1}{(1-delta_i)|S_i|}
+]
+exactly when the newly exposed coordinate (i) is fixed by (H), and charges 1 when it is free. Thus the remaining equality is a finite-product/index identification:
+[
+	exttt{hyperplaneSuffixFactor}(a,delta,H,j)
+=
+prod_{rin F(H)cap[a+1,a+j]}
+rac{1}{(1-delta_r)|S_r|}.
+]
+The one-based paper coordinate (r) corresponds to Lean's `Fin n` value (r-1); in the present recursion the suffix interval is `Finset.Ico a (a+j)`. This index shift and the right-open endpoint must be explicit in the Lean theorem.
+
+Consequently, the source-faithful Lemma 3.3 closure should be organized as two separate lemmas:
+1. initial-block bound (mathbb P_a(H)le c(F(H)cap[a])), by the defining finite maximum;
+2. suffix-factor identity above, followed by the already-present cylinder induction.
+
+This yields (mathbb P_{a+j}(H)le c(I)
+u(J)) for the exact split of fixed coordinates. It does not require inventing another distortion estimate.
+
+**Lemma 3.4 dependency:** its exact right-hand side is
+[
+rac{1}{|S_k|^t}
+sum_{F_1,ldots,F_tinmathcal N_k}
+c!left((F_1cupcdotscup F_t)cap[a]ight)
+
+u!left((F_1cupcdotscup F_t)cap[a+1,k-1]ight).
+]
+The proof first bounds (alpha_k(x)) by the number of compatible new hyperplanes divided by (|S_k|), expands the (t)-th power as an ordered (t)-tuple sum, identifies intersections of hyperplane shadows as either empty or a hyperplane with fixed set the union, and applies Lemma 3.3. The current `BBMSTPrefixMomentBridge` supplies the actual (P_{k-1})-weighted first/second moments and the hyperplane-incidence modules supply a union-bound intermediate; the missing connection is the exact (c(I)
+u(J)) bound on each shadow intersection, followed by the ordered tuple summation. The tuple order and multiplicity must be preserved.
+
+Primary source pages: [published article PDF, pp. 614–617](https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s). This source reconciliation is distinct from Lean verification: the definitions and proof architecture are source-checked; the v15 integrated candidate remains unverified on its exact head.
