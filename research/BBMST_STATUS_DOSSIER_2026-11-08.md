@@ -78,3 +78,8 @@ Run [42515001215](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4251
 ## APW4 v10 integrated failure and v11 candidate — 10 November 2026
 
 PR #127 / v10 passed the separate audit but failed the integrated-paranoid build because the equality `hstage` was eliminated in the wrong direction. The fibre point and `F.covered` then had non-definitional dependent indices, and error recovery reported `sorryAx`. PR #129 / v11 changes to `cases hstage.symm` before fibre construction. Its exact-head result is not yet available. Established mathematical results and explicit premises remain unchanged.
+
+
+## Latest v11 APW4 CI poll — 10 November 2026
+
+PR #129 exact head `ffce6065f1489850c1c1aa156e90cf56413cebb0`, workflow 42811577591: audit job `129814055326` and integrated-paranoid job `129814055704` are both in progress. No PASS is claimed.
