@@ -200,3 +200,8 @@ Workflow 42759029006 completed with integrated-paranoid, audit, and dedicated Sy
 The Syracuse membership issue has a narrow follow-up on PR #107: exact head 5139df8b55279011862084c453105a13926b03cc rewrites the representative equality and closes the modulo bound using (explicitTailCoordinateFin B k d).isLt. Its own workflow 42759653537 was QUEUED at the latest poll. No pass is claimed.
 
 The PR #107 APW4 source mismatch remains open pending the separate PR #101 verification. PR #101 exact head 0be00b2161ad8f2676779b90582f30b34083c008 has workflow 42759210844; audit is restoring dependencies and integrated-paranoid is assembling the Lean package. Both remain in progress. No established APW4 theorem is downgraded by these integration failures.
+
+
+## Exact-head progression — 10 November 2026
+
+PR #101 exact head 0be00b2161ad8f2676779b90582f30b34083c008, workflow 42759210844: the audit has successfully completed all stages up to and including uniform-stage source moment instantiation, and is now compiling the source-indexed BBMST prefix measure recursion. The integrated-paranoid job has completed integrated package assembly, bubblewrap setup, and Mathlib cache restoration and is compiling all integrated BBMST/APW4 modules, including the full Theorem 1.2 reduction. Both remain IN_PROGRESS. The key uncovered-branch equality is now under direct compilation; no result is inferred before the step and complete run finish.
