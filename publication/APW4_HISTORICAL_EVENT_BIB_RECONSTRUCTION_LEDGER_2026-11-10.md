@@ -214,3 +214,14 @@ This is a concrete arithmetic residue-label specialization of the working defini
 ## Erratum 1.24.1 — divisibility is explicit in the current PR #89 head
 
 The earlier Addendum 1.24 sentence stating that B ∣ N was not imposed is superseded. In exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae, the residue-projection theorem explicitly requires Bq ∣ N and Br ∣ N. The projection is represented as ZMod N → Fin B by z ↦ z.val % B. It is still not asserted to be a ring homomorphism ZMod N → ZMod B; no quotient-cast theorem is used. The selected sets and common block-label map remain parameters, so historical source instantiation is still open.
+
+
+## Source-location erratum — 10 November 2026
+
+A prior paragraph in this audit referred to a file named BAB_BIB_Incidence_Bound_Lubuimi_2026-11-06.md, §5, as though that artifact had been recovered and inspected. That claim is not supported by the currently accessible record: the file is not present in the inspected GitHub tree or the connected Library search results, and the prior retrieval record says its literal section-5 definitions were not actually recovered. Treat the file's contents as unavailable until the exact artifact is supplied or located. No theorem or definition may be attributed to that filename on the basis of the earlier reference alone.
+
+The exact accessible source checkpoint is Dossier v1.6, §48. It records the working q-fibre notation B_q=N/q^{a_q}, V_q={z : z mod B_q ∈ U_q}, P_{q,x,h}=F_q(x)∩C_h, M_{q,r}((x,h),(y,g))=|P_{q,x,h}∩P_{r,y,g}|, and Gamma_{q,r}(g)=|C_g∩V_q∩V_r|. It does not give the complete element-level definitions of U_q, F_q(x), C_h, the domains and entries of A_q/A_r/W_{q,r}/a_{q,t}, or the historical event and BIB-place incidence. These are retained as the accessible working definitions and fixed identities, not silently expanded with guessed predicates.
+
+The separate notation I_q(x,h), A_q(x,h), Z_q=I_q-A_q in older dossier §15 is an algebraic candidate decomposition under A_q≤I_q. It is not promoted to a primary-source definition of the historical APW4 matrices. The explicit finite residue projection in PR #89 is a formal specialization of the local q-fibre inequality, not evidence that the unavailable historical U_q or C_h definitions have been reconstructed.
+
+The source-to-BIB event map, actual event set, BIB slot objects, capacities, incidence predicate, and weighted Hall allocation therefore remain open at the source-reconstruction/formal-instantiation layer. This correction preserves the established mathematical DT/HT/energy results; it narrows only the evidence claim about the missing artifact.
