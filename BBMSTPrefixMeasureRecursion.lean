@@ -383,15 +383,20 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
   cases hhk
   cases hhp
-  dsimp [k] at *
+  -- The two proofs of the stage bound are propositionally equal, but the
+  -- coordinate family still carries their dependent Fin index. Normalize
+  -- that index explicitly before forming the covered/uncovered split.
+  have hstage : stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) := by
+    apply Fin.ext
+    rfl
+  cases hstage
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring_nf
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring_nf
+  · simp [hcov, xprev, Finset.mem_univ] <;> ring_nf
+  · simp [hcov, xprev, Finset.mem_univ] <;> ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
