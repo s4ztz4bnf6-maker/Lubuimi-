@@ -371,40 +371,38 @@ theorem prefixFibre_updatedWeight_eq_PAt
       prefixIndex hj (Fin.last k) := by
     apply Fin.ext
     rfl
-  cases hstage
+  let x : C.S (stageCoordinate hk) :=
+    hstage.symm ▸ y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
     simpa [xprev, k] using hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
-      (δ (stageCoordinate hk)) (y (Fin.last k)) =
+      (δ (stageCoordinate hk)) x =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
   by_cases hcov :
-      y (Fin.last k) ∈
-        prefixCoveredValues C (A := A) hk
+      x ∈ prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · have hcovF :
-        y (Fin.last k) ∈ F.covered := by
+  · have hcovF : x ∈ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     rw [if_pos hcovF]
-    simp [F, prefixFibreData, prefixUniformFibre,
+    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, hcov, xprev, k]
-  · have hnotF :
-        y (Fin.last k) ∉ F.covered := by
+  · have hnotF : x ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
-    have hpointF : y (Fin.last k) ∈ F.points := by
-      change y (Fin.last k) ∈ Finset.univ
+    have hpointF : x ∈ F.points := by
+      change x ∈ Finset.univ
       exact Finset.mem_univ _
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     rw [if_neg hnotF, if_pos hpointF]
-    simp [F, prefixFibreData, prefixUniformFibre,
+    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
