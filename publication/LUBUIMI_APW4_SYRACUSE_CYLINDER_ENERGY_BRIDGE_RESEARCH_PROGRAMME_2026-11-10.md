@@ -393,3 +393,12 @@ PR #69 has advanced to head 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768. The previo
 - PR #9 current documentation/source head f4931ed84b6556640ecbcabcd0332302fe613eb6 has run 42737612625 in progress; the mixed-word theorem itself is already verified on the exact source snapshot stated above.
 
 All earlier APW4 mathematical and Lean results remain preserved at their original scopes. The new finite cylinder, Kolaz and CRT calculations do not supply the historical APW4 event-index map, diagonal/off-diagonal transport, BIB/Hall capacity, or a global Collatz proof.
+
+
+## 23. Finite-depth uniformization into an APW4-style fibre — 10 November 2026
+
+A new standalone mathematical note, publication/LUBUIMI_SYRACUSE_FINITE_DEPTH_UNIFORM_FIBRE_BRIDGE_2026-11-10.md, gives an explicit finite-depth bridge. At each realized prefix α, the Lean-verified margin cap defines a finite initial segment of candidate next exponents 1,...,B_α; the exact cylinder theorem gives child masses 2^-b and one tail mass 2^-B_α. The tail is guaranteed to descend below the initial odd start; the retained children are only not excluded by the necessary cap, not necessarily all non-descending.
+
+The surviving prefix tree is finite at every fixed depth. Taking B*_k=max B_α over that finite level and M_k=2^(B*_k), each local child/tail partition can be refined to a common uniform fibre X_k={0,...,M_k-1}. The child-b block has 2^(B*_k-b) points, and the tail block has 2^(B*_k-B_α) points. Thus each point has mass 1/M_k, the distinguished cap-compatible subset has exact proportion 1-2^-B_α, and the complement has proportion 2^-B_α. The micro-atoms correspond to genuine refined residue cylinders at a common parent-dependent modulus.
+
+This is a mathematical finite-depth uniform-fibre construction and a concrete APW4-style model. It is not yet Lean-formalized. It does not identify the distinguished subset with historical APW4 hyperplane-covered events, does not map to historical BIB places/event indices, and does not prove the APW4 diagonal/off-diagonal or BIB/Hall capacity inequalities. It also does not exclude an infinite surviving Collatz path. The note records a precise formalization plan.
