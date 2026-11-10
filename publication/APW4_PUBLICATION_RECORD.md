@@ -324,3 +324,8 @@ Run [42728171781](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/4272
 Run [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) failed both jobs on a later source candidate; the subsequent v14 exact-head log localized the remaining issue to conditional reduction using membership witnesses at the unfolded endpoint while the updated-weight conditional still used the local let-bound endpoint. PR #138 / v15 transports those witnesses to the actual local argument and remains pending exact-head verification.
 
 This chronology is not a replacement for the published mathematical manuscript and does not change the publication record or authorship. The historical c(I)/ν(J) identifications and complete integrated release audit remain formalization work.
+
+
+### Source reconstruction supplement — 10 November 2026
+
+The APW4 publication documentation now links the [Historical Event-to-BIB Reconstruction Ledger](APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). It preserves the recovered q-fibre definitions \(B_q,V_q,F_q(x),P_{q,x,h}\), the quantities \(M_{q,r},\Gamma_{q,r}\), the block outer-product identity, the local fibre-count inequality, and the exact four-term residual matrix expansion. The three Z-residual contributions belong to matrix accounting, not to the two-term APW4 energy decomposition. The remaining source-level event-index and BIB incidence identifications are listed explicitly; no replacement definitions are introduced.
