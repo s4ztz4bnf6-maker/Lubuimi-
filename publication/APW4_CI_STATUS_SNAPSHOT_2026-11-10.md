@@ -582,3 +582,8 @@ The first dedicated PR #67 workflows on commit e8b61d2961dadbae2915dd6754807fc1b
 - Draft PR #83 proposes replacing the dependent rewrite `rw [← hlocal]` with direct equality transport of the scalar inequality. Exact candidate `2656fe9fadac25b5c79a1f217ad40fb8472738d0`; workflows [42740315350](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740315350) and [42740323488](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740323488) were queued/running.
 
 All three declarations in the finite-incidence module remain conditional on explicit arithmetic/energy hypotheses. Neither PR #67 nor PR #83 establishes the historical weighted Hall map or closes the APW4 source-to-Lean integration. No pass is claimed for these in-progress exact-head workflows. PR #82 is closed as superseded, not merged.
+
+
+## Addendum 1.35 — final initial-cylinder manuscript source commit
+
+Syracuse PR #35 manuscript v1.0 is now at exact documentation commit ddf366d7654a275958157daab9d3d489ad3e6fd0. A raw-LaTeX read-back and control-character scan confirms correct TeX commands and no non-whitespace control characters. No Lean source changed; the previously recorded seven successful theorem audits remain scoped to the named initial-cylinder declaration.
