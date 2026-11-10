@@ -165,3 +165,11 @@ This entry supersedes the earlier queue snapshot above for the exact PR heads na
 The established APW4 results recorded in the main proof dossier — DT, HT, historical atom identification, BIBW dominance, weighted Hall conditions, exact energy decomposition, CRT fibre balance, and the global energy inequality — remain established at their previously recorded mathematical status. The failures above are formal integration results attached only to the exact Lean source heads. PR #107 is a separate Syracuse formal bridge, not a new premise of the APW4 energy theorem.
 
 The finalized manuscript PDF is not silently rewritten by this CI ledger. This append-only record is the current repository-side verification addendum; the author's publication copy remains under the author's control.
+
+
+### PR #101 targeted follow-up — 10 November 2026, 04:55 UTC
+
+- New exact source head: `dbbeaf7a14ebcceb8abf97b6a9113d84a024c54c` on `repair/apw4-prefix-uncovered-change-2026-11-10`.
+- The preceding exact log for head `f87657c8f02f41266a43bae1fe44f43267f0c985` shows the positive branch goal as an implication whose antecedent is precisely the negation of the active branch hypothesis. The candidate replaces that branch's `simp [hcov]` with explicit contradiction elimination: `intro hnot; exact (hnot hcov).elim`. The uncovered branch remains unchanged and is still a proof obligation.
+- Exact-head workflows [42758799252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758799252) (push) and [42758803063](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758803063) (pull_request) were queued at the latest poll. No result is inferred from queue state.
+- Status: **PROOF CANDIDATE — NOT VERIFIED**. Await both exact-head jobs, inspect the remaining branch goals, then check declaration-scoped `#print axioms` for the recursion identity and dependent `PAt` results. The previously established APW4 mathematical results are unchanged.
