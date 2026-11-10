@@ -255,3 +255,13 @@ These are queued states, not PASS results. The previously verified Collatz Lean 
 - Collatz PR #48 documentation/workflow head cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8: run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798), all three jobs queued.
 
 No queued or in-progress job is a PASS. The previously recorded Collatz Lean 4.35.0 paranoid PASS remains scoped to its exact source head and run.
+
+
+### 10 November 2026 — exact-head CI reconciliation
+
+- APW4 PR #101 current source head: `f87657c8f02f41266a43bae1fe44f43267f0c985`. Run [42757047779](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757047779): audit passed; integrated-paranoid was still running at the latest check. Run [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402): audit and integrated-paranoid were running. No integrated PASS claimed.
+- Earlier PR #101 head `f5aff142fcdf6c3893ef1c890f3be45a67da68aa`, run [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237), failed at `BBMSTPrefixMeasureRecursion.lean:411:23`; `sorryAx` appeared in dependent recursion theorems. This failure remains scoped to that exact head.
+- APW4 PR #107 current head: `44d00ad20c352471795358dde2aaf24152281649`; run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002) was queued. No PASS claimed.
+- Collatz PR #48 run [42756479069](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42756479069): Lean 4.34 kernel check, draft compilation, and Lean 4.35 paranoid kernel check were all queued at the latest check.
+
+The detailed run-by-run ledger is in `publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md`. Documentation commit `cc7612b0530f4abf857a4b5dc49d9100dc5413cd` records the APW4 exact-head reconciliation. Previously established mathematical results, including the PR #36 valuation-word cylinder theorem, are not downgraded by these integration statuses.
