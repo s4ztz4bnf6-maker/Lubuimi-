@@ -465,3 +465,8 @@ The recovered 6 November BIB note gives the exact raw I/A/Z/W interface and four
 ### Addendum 1.27 — canonical projection-fibre helper, not a historical replacement
 
 PR #87 now explicitly labels its Fin N / Fin B residue-fibre construction as a canonical helper, not an instantiation of the historical APW4 F_q, V_q, U_q or C_h. It proves a reusable fibre-in-lift inclusion in that model; a separate source-derived equivalence preserving the original domains and indices is still required before any historical transfer. Exact-head canonical workflow 42746080147 and audit workflow 42746080378 are pending. No PASS is claimed.
+
+
+### Addendum 1.28 — conditional squarefree BIB parameter test
+
+A new, explicitly auxiliary divisor envelope μ*(B)=max{τ(d): d|B, d<B} gives μ*(B)=τ(B)/2 when B is squarefree. If the actual common selected labels are distinct divisors with proper LCM, then the BIB second-moment hypotheses reduce, for r=q−1, to τ(B)^2<2(q−1)^2. The resulting bound is recorded in the BIB incidence note and historical ledger. This is a conditional arithmetic sharpening, not the historical definition of μ(B), not yet Lean-verified, and not a completed APW4 event-to-BIB transport.
