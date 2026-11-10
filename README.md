@@ -40,3 +40,28 @@ See [APW4 attribution and licensing status](APW4_ATTRIBUTION_AND_LICENSING_STATU
 - [BBMST audit README](README-AUDIT.md)
 - [BBMST status dossier](research/BBMST_STATUS_DOSSIER_2026-11-08.md)
 - [Upstream sieve axiom-interface audit](research/BBMST_SIEVE_AXIOM_INTERFACE_AUDIT_2026-11-06.md)
+
+## Exact APW4 closure ledger — 10 November 2026, afternoon checkpoint
+
+This addendum is append-only. It does not reopen or downgrade the established APW4 mathematical results (exact two-term energy split, DT, weighted HT, global upper bound, and strict lower bound under the historical hypotheses).
+
+### Current formal-integration source
+
+- Historical prefix-fibre conditional repair: [PR #138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138), current source head recorded by the PR as `94b89a2c5bda9a494c0c42e79ad054aabacabdd8`.
+- The latest repair makes the covered/uncovered witnesses explicit at the local let-bound endpoint. No exact-head workflow result was returned for this head. Therefore the source declaration `prefixFibre_updatedWeight_eq_PAt` and downstream prefix recursion remain **OFFEN – NICHT VERIFIZIERT** pending Lean 4.35.0 integrated build, `lake check --paranoid`, named `#print axioms`, and transitive no-`sorryAx` audit.
+
+### Lemma 3.4: ordered arbitrary-t tuples
+
+The existing `OldCompatible`, `mergeOldShadows`, `fixedCoords_mergeOldShadows`, and `prefixPairReserve` source declarations are pair-level (t=2). They are not a general ordered-t-tuple theorem. The arbitrary-t proof architecture is documented: index by `Fin t → N_k`, retain order and repetitions, split on an old-coordinate conflict (empty intersection / zero mass) or iteratively merge compatible shadows, prove intersection predicate and fixed-coordinate union, and apply the source-facing Lemma 3.3 bound. No arbitrary-t Lean theorem or CI pass is claimed yet.
+
+### Historical Event-to-BIB transport
+
+The recovered q-fibre work and local M/Gamma incidence lemmas are partial interfaces only. Generic preimage-map and canonical ZMod quotient-fibre helpers do not by themselves instantiate the author's historical event sets, block labels, BIB slots, or capacities. The remaining historical obligations are: exact source-domain/event map; index-preserving incidence relation; preservation of historical weights; BIB-slot capacity accounting; weighted Hall/capacity inequality; and the final identification with the already established HT mass. APW diagonal mass, APW off-diagonal mass, and BIB pair reserve remain distinct until that map and the weight/capacity equalities or inequalities are proved.
+
+### Licensing boundary
+
+The APW4 repository's inspected snapshot still has no explicit project licence file. The separate Collatz/Syracuse repository's proprietary and commercial-use notices are not imported here. No licence is created or granted by this addendum. Any APW4 legal notice requires explicit rights-holder approval of its exact text; third-party materials retain their own licences.
+
+### Acceptance rule
+
+A full APW4 formal-integration closeout requires the arbitrary-t theorem, historical Event-to-BIB map with weight and capacity preservation, and a single exact-head Lean 4.35.0 integration run covering the intended roots, followed by named axiom profiles and a complete transitive no-`sorryAx` audit. Until then, these are open formalization/reconstruction tasks, not reasons to reopen the established mathematical proof record.
