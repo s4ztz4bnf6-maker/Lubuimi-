@@ -370,3 +370,60 @@ theorem sum_M_qr_le_Gamma_qr_of_residue_projections
 end ResidueProjectionModel
 
 end APW4HistoricalQFibre
+
+
+namespace APW4HistoricalQFibre
+
+namespace ZModProjectionModel
+
+/-- The genuine reduction homomorphism ZMod N -> ZMod B for B | N. -/
+def residueProjectionHom
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) :
+    ZMod N →+* ZMod B :=
+  ZMod.castHom hdiv (ZMod B)
+
+@[simp] theorem residueProjectionHom_val
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) (z : ZMod N) :
+    (residueProjectionHom hdiv z).val = z.val % B := by
+  simp [residueProjectionHom, ZMod.castHom_apply, ZMod.cast_eq_val]
+
+/-- The actual residue fibre over x modulo B. -/
+def residueFibre
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) (x : ZMod B) :
+    Finset (ZMod N) :=
+  PreimageModel.fibre (residueProjectionHom hdiv) x
+
+/-- The selected residue support V, as the inverse image of U. -/
+def residueVisible
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N)
+    (U : Finset (ZMod B)) :
+    Finset (ZMod N) :=
+  PreimageModel.visible (residueProjectionHom hdiv) U
+
+/-- The local q-fibre inequality for genuine quotient homomorphisms
+ZMod N -> ZMod Bq and ZMod N -> ZMod Br. The selected sets Uq,Ur and
+the block-label map c remain explicit parameters. -/
+theorem sum_M_qr_le_Gamma_qr_of_ZMod_projections
+    {N Bq Br : ℕ} [NeZero N] [NeZero Bq] [NeZero Br]
+    (hq : Bq ∣ N) (hr : Br ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod Bq)) (Ur : Finset (ZMod Br))
+    (c : ZMod N → H)
+    (x : ZMod Bq) (y : ZMod Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (residueFibre hq x) (residueFibre hr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (residueVisible hq Uq) (residueVisible hr Ur)
+      (PreimageModel.block c) g := by
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (residueProjectionHom hq) (residueProjectionHom hr)
+    Uq Ur c x y g hx hy
+
+#print axioms residueProjectionHom_val
+#print axioms sum_M_qr_le_Gamma_qr_of_ZMod_projections
+
+end ZModProjectionModel
+
+end APW4HistoricalQFibre
