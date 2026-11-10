@@ -1948,3 +1948,25 @@ Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue i
 \]
 
 This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
+
+
+## Addendum 1.14 — exact-head APW4/Syracuse bridge and integration repair, 10 November 2026
+
+This addendum preserves the mathematical status of the established APW4 results. The energy decomposition, DT, weighted HT, global upper energy estimate and strict lower-bound implication remain established under the full historical APW4 hypotheses. A later Lean integration failure does not retroactively invalidate them. The published finite valuation-word cylinder theorem is likewise not reopened.
+
+### Finite-depth residue-cylinder formalization — PR #93
+
+PR #93 adds two distinct Lean objects, which must not be conflated:
+
+1. `SyracuseDyadicResidueFibre.lean` defines the actual generic residue cylinder of a residue (r : mathrm{Fin}(2^B)) inside (mathrm{Fin}(2^{B^star})). It proves the lift embedding, exact tail cardinality, membership iff congruence modulo (2^B), candidate complement cardinality, disjointness, union, and exact rational candidate mass.
+2. `SyracuseUniformFibreBridge.lean` packages an initial-interval/complement cardinality model as `BBMSTFiniteFibreUpdate.FibreData`. By its own declaration comments, it is cardinality-only and is not the residue-cylinder construction.
+
+The remaining Lean task is to connect the already-derived mathematical normalized prefix-tail residue to the generic (r), and to prove that the exact next-valuation-(b) predicates are precisely the sibling residue classes. The existing mathematical theorem is not an open conjecture merely because this Lean instantiation is incomplete.
+
+Exact source head: `fbab49639954ae749d30a884a04032ee1d4d0f0e`. Workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105) was in progress/queued at this snapshot. No Lean or paranoid PASS is claimed.
+
+### Prefix recursion integration — PR #100 and repair PR #101
+
+PR #100's Lean 4.28 audit completed its ordered module stages successfully. Its Lean 4.35.0 integrated-paranoid job failed in the uncovered conditional branch of `prefixFibre_updatedWeight_eq_PAt`; the error-recovered declaration and dependent (PAt) results printed `sorryAx`. PR #101 now makes the exact endpoint nonmembership hypothesis explicit before simplifying that branch. Its commit `3625d65285e36da383f7fcd1a322ec6612d98451` has queued exact-head workflow [42754856131](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754856131). It remains a candidate until CI and named axiom outputs are inspected.
+
+The exact diagnostic and scope boundary are recorded in [the CI status snapshot](APW4_CI_STATUS_SNAPSHOT_2026-11-10.md). None of these integration attempts changes the historical APW4 definitions or the previously established mathematical proof record.
