@@ -287,3 +287,8 @@ A job-level inspection refines the preceding run summary:
 - The PR #136 docs-branch workflow [42835240615](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42835240615) is an upstream/degenerate-witness audit of `ErdosSelfridge_v17_fixed.lean` and `AuditCheck.lean`; it is not an APW4 integrated build and does not verify the historical APW4 theorem. Its output still lists `sf_sieve_lt_one` and `sieve_criterion` in `erdos_selfridge`.
 
 This job-level correction supersedes any wording above that called run 42760198290 an audit-job failure. The accurate status is: audit job passes, integrated-paranoid fails, and the dependent prefix recursion still contains `sorryAx`. The mathematical APW4 results remain unchanged.
+
+
+## Research continuity and exact-head status — 10 November 2026, 22:58 CET
+
+The [consolidated research continuity checkpoint](RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md) is the current cross-project index for APW4/BBMST and Syracuse. It preserves the APW4 mathematical result at its stated historical hypotheses while recording the open historical Event-to-BIB/weight/capacity reconstruction and the current Lean 4.35.0 integration blocker. In particular, PR #69 head `17eb308d106c770ab559d254bcee2bdfd2ead6c4` failed workflow 42739454140 in the prefix recursion; PR #138 v15 at `94b89a2c5bda9a494c0c42e79ad054aabacabdd8` has no exact-head workflow result and remains **OFFEN – NICHT VERIFIZIERT**. No publication PDF or mathematical theorem statement is modified by this status note.
