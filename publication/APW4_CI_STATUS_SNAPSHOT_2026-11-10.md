@@ -471,3 +471,8 @@ Latest active verification snapshot:
 - APW4 documentation PR #79 run 42737972794 completed successfully on the prior head 96cd9f3712b15ebcc6b1c6fe1ff28760670b55c2. The current documentation head has since advanced to b7e1099e8afe585e51c6fc2547dee2cc04f3e539; the prior success does not audit this newer head.
 
 The APW4 historical event-index map, weight-preserving transport, separate diagonal/off-diagonal estimates, and BIB/Hall capacity proof remain distinct obligations. No finite Syracuse/Collatz result is being used as a substitute for them.
+
+
+## Addendum 1.26 — first Lean counting lemma for the Syracuse uniform fibre
+
+Syracuse PR #9 source head a1becbc8e837f10abcd952a2e03832cb057fb2b8 adds dyadicUniformFibre_partition_card, the exact finite count of child blocks plus tail block at common refinement depth B*. Exact compile/axiom workflow 42738528207 is in progress. No formal verification claim is made until the full job finishes with the standard profile and no actual sorryAx. This lemma is only the finite cardinality conservation law; it does not formalize the cap maximum, finite tree, residue-atom bijection, or historical APW4/BIB transport.
