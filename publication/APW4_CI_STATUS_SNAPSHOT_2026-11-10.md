@@ -393,3 +393,25 @@ PR #69 current source head is `f843e4224e5288e107200464be5c5524de650570`, with e
 ### Documentation audit
 
 PR #79 documentation head `e93ac41fb2c377e3b55bc959875dee0f6694c5db` passed its exact-head documentation audit in run 42729583336. This status applies only to that head; this addendum will advance the documentation branch and requires a new exact-head audit. The APW4 mathematical theorem record and earlier successful exact-commit checks remain unchanged.
+
+
+## Addendum 1.21 — odd-covering third-order finite CRT statistic and current audit heads, 10 November 2026
+
+### Odd-covering L=945: exact third-order CRT statistic
+
+The separate odd-covering research record (PR #80) now includes the exact pairwise-coprime triple contribution for
+\(D=\{3,5,7,9,15,21,27,35,45,63,105,135,189,315,945\}\):
+\[
+\sum_{\substack{d<e<f\in D\\\gcd(d,e)=\gcd(d,f)=\gcd(e,f)=1}}\frac1{def}=\frac{13}{945}.
+\]
+The only such triples are (3,5,7), (5,7,9), and (5,7,27); no pairwise-coprime quadruple exists because the family uses only primes 3,5,7. The pairwise-coprime pair contribution remains 74/315 and the total divisor density is 65/63. This is the CRT-compatible part of the third-order moment only. Triples with nontrivial gcds are placement-dependent, and no private-mass lower bound or odd-covering contradiction follows.
+
+A standalone Lean 4.34.1 project has been added under `projects/OddCoveringDistortionSieve/lean/`; the same source module is mirrored into the unified Syracuse/Collatz audit package. The module uses kernel reduction (`decide`), not `native_decide`, and prints axioms for all five finite declarations. Unified exact-head run 42732868146 on PR #9 head `a58321e7c053b9784556c7fd702996c3557aeacb` is in progress. Until the run passes with only the standard transitive profile and no `sorryAx`, this remains a formalization candidate.
+
+### Current APW4 and Collatz integration candidates
+
+- APW4 PR #69 current source head: `13dce6216dba9499305b528f5f3c15fbc3dca681`. The previous candidate run 42732094102 failed both audit and integrated-paranoid. The integrated Lean 4.35.0 diagnostics included a no-progress simp after unfolding the covered filter and an unresolved equivalence between the exact covered membership predicates in the updated-weight recursion. The new candidate replaces the brittle simp-only step with simp_all, aligns both membership propositions at the same stage coordinate, and removes the no-goal ring_nf failure. The next exact-head run must decide whether this repairs both Lean 4.28.0 audit and Lean 4.35.0 integrated package; no pass is claimed yet.
+- The unified Syracuse/Collatz/terminal-residue/odd-covering root audit is run 42732868146, still in progress at this snapshot. It includes the corrected kernel-only k=2 terminal-residue module and the new L945 finite CRT moment module.
+- The prior documentation-head audit 42732365176 passed on PR #79 head `f92132ba85f382a6fdb3ff50f2d8eb2d5e213faf`. This new addendum advances the documentation branch and therefore requires a fresh exact-head audit.
+
+All earlier successful exact-commit results and the established APW4 mathematical theorem record remain preserved. The L945 finite arithmetic does not identify with the historical APW4/BIB pair reserve without an explicit index-preserving map and weight correspondence.
