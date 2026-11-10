@@ -490,3 +490,8 @@ The residual target shows that the updatedWeight branch uses membership in prefi
 The Lean 4.28 audit job for run 42738073791 is still in progress at this snapshot. Therefore no dual-toolchain conclusion is claimed yet. The integrated Lean 4.35 job is a confirmed failure for this exact candidate.
 
 **Next exact repair:** isolate named equality lemmas for stageCoordinate across proof witnesses, restriction-prefix values across proof witnesses, and the resulting prefixCoveredValues finset/membership transport. Rewrite both the generic finite-fibre update and recursive PAt formula to one canonical set of stage/prefix terms before case splitting. Alternatively refactor PAt through a shared raw point-update expression that avoids rebuilding proof-indexed terms. Do not weaken hypotheses or accept error-recovery sorryAx.
+
+
+## Addendum 1.28 — dyadic uniform-fibre cardinality Lean pass
+
+Syracuse PR #9 exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 passed compile-drafts workflow 42738528207. The declaration dyadicUniformFibre_partition_card proves the exact child-block plus tail-block cardinality identity for B≤B*. Its transitive axiom profile is [propext, Classical.choice, Quot.sound], the completed log contains no actual sorryAx, and the build reports successful completion of 8,932 jobs. This verifies the finite counting identity only. The full cap/tree/interval/residue-bijection construction remains to be formalized.
