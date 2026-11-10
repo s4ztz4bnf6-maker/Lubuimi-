@@ -1236,3 +1236,11 @@ PR #101's updated source head is `f5aff142fcdf6c3893ef1c890f3be45a67da68aa`. The
 PR #93's generic dyadic residue-cylinder model proves finite lift/cardinality/mass identities for arbitrary residue (r). Its separate `FibreData` wrapper is cardinality-only. The remaining formal task is to instantiate (r) by the already-derived normalized prefix-tail residue and prove exact equivalence between the child residue classes and next-valuation predicates. This formalization gap does not reopen the existing mathematical finite-word cylinder theorem.
 
 The APW4 energy decomposition, DT, weighted HT, global upper energy estimate and strict lower-bound implication remain established under their stated full historical hypotheses. No later CI failure changes those mathematical claims.
+
+
+## Additional exact-head repair and explicit tail-residue candidate — 10 November 2026
+
+- PR #101: the prior explicit Finset.univ proof failed because the rewrite witness did not match the dependent stage-fibre type. The new head 6bad5a25400aeae8e851a38c507141ec0e092a3a gives the witness the explicit type Finset (C.S (stageCoordinate hk)) and separates the two conditional rewrites. Exact workflow [42756335441](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756335441) is queued; no PASS is claimed.
+- PR #107: new source head ba96a24de4df64513dd1a3dd801020544cc71dd0 adds an explicit normalized tail coordinate -d * (3^(k+1))⁻¹ in ZMod (2^B). It proves the odd coefficient is a unit, the normalized tail congruence has a unique solution, and the generic residue-cylinder tail is instantiated as a singleton with the exact candidate mass. It also proves the affine factorization from the prefix lift under the explicit divisibility identity defining d.
+- The divisibility identity for d is still an explicit hypothesis in PR #107. Deriving it from the full prefix-residue formula, proving the full exact-child sibling partition, and mapping the result to historical APW4/BIB events remain separate obligations.
+- PR #107 exact workflow [42756257770](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756257770) is queued. The new declarations are candidates, not verified PASS results.
