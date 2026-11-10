@@ -374,7 +374,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- Eliminate the equality of dependent coordinate indices first.  This
   -- makes the final prefix value and the fibre coordinate definitionally
   -- identical, avoiding an opaque cast in membership goals.
-  cases hstage
+  cases hstage.symm
   let x : C.S (stageCoordinate hk) := y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
@@ -404,7 +404,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   · have hnot' :
         y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y) := by
-      simpa [x, hstage, k] using hcov
+      simpa [x, k] using hcov
     have hnotF : x ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
@@ -413,7 +413,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       exact Finset.mem_univ _
     unfold BBMSTFiniteFibreUpdate.updatedWeight
     simp only [if_neg hnotF, if_pos hpointF]
-    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
+    simp [x, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
