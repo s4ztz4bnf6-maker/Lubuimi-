@@ -371,11 +371,10 @@ theorem prefixFibre_updatedWeight_eq_PAt
       prefixIndex hj (Fin.last k) := by
     apply Fin.ext
     rfl
-  -- Rewrite the prefix endpoint into the stage-coordinate type.  The
-  -- fibre data is indexed by stageCoordinate hk, so the dependent value
-  -- y (Fin.last k) must be transported in this direction.
-  rw [← hstage] at *
-  let x := y (Fin.last k)
+  -- The fibre data is indexed by stageCoordinate hk.  Transport the
+  -- terminal prefix value into that exact dependent coordinate type.
+  let x : C.S (stageCoordinate hk) :=
+    cast (congrArg C.S hstage.symm) (y (Fin.last k))
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
     simpa [xprev, k] using hbase
@@ -387,31 +386,25 @@ theorem prefixFibre_updatedWeight_eq_PAt
   by_cases hcov :
       x ∈ prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · have hcovF : y (Fin.last k) ∈ F.covered := by
-      simpa [x, F, prefixFibreData, prefixUniformFibre,
+  · have hcovF : x ∈ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
-    have hcovFx : x ∈ F.covered := by
-      simpa [x] using hcovF
     unfold BBMSTFiniteFibreUpdate.updatedWeight
-    simp only [if_pos hcovFx]
-    simp [x, F, prefixFibreData, prefixUniformFibre,
+    simp only [if_pos hcovF]
+    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
       PAt, hcov, xprev, k]
-  · have hnotF : y (Fin.last k) ∉ F.covered := by
-      simpa [x, F, prefixFibreData, prefixUniformFibre,
+  · have hnotF : x ∉ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
-    have hpointF : y (Fin.last k) ∈ F.points := by
-      change y (Fin.last k) ∈ Finset.univ
+    have hpointF : x ∈ F.points := by
+      change x ∈ Finset.univ
       exact Finset.mem_univ _
-    have hnotFx : x ∉ F.covered := by
-      simpa [x] using hnotF
-    have hpointFx : x ∈ F.points := by
-      simpa [x] using hpointF
     unfold BBMSTFiniteFibreUpdate.updatedWeight
-    simp only [if_neg hnotFx, if_pos hpointFx]
-    simp [x, F, prefixFibreData, prefixUniformFibre,
+    simp only [if_neg hnotF, if_pos hpointF]
+    simp [x, hstage, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
