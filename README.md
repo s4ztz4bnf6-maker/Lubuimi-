@@ -408,3 +408,11 @@ Draft PR #82 was closed as superseded; its branch is retained, and no code from 
 ### Addendum 1.19 — historical source audit and support-layer formalization
 
 The historical completeness audit now includes a page-indexed review of the author's project PDF, a provenance warning for the proposed q-matrix notation, and the distinction between a single APW4 off-diagonal atom and a collision of two such atoms. The exact CRT support-layer relation is being formalized on APW4 PR #67; canonical CI has passed, while the Lean 4.35 paranoid run remains pending. See `publication/APW4_HISTORICAL_COMPLETENESS_AUDIT_2026-11-10.md` and the CI snapshot for exact heads and run IDs. No historical matrix or BIB incidence definition has been invented or merged.
+
+
+
+## Addendum 1.20 — exact-head repair and historical source boundary
+
+The latest integrated PR #69 exact-head run [42740835775](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42740835775) failed at a no-op `dsimp` in `BBMSTPrefixMeasureRecursion.lean:386`; error recovery emitted `sorryAx` for the affected declarations. Draft PR #84 at `f681650c102d011e0bc715c93b5d4a94ffb866ca` removes that no-op and uses pointwise scalar equality transport. Its exact-head workflow [42743406155](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42743406155) is still in progress. It is not merged or accepted.
+
+The historical BIB source obligation remains unchanged and is still the critical mathematical reconstruction task: the recovered source records the identities involving `A_q W_{q,r} A_r^T), `a_{q,t}`, `M_{q,r}`, and `Gamma_{q,r}`, but does not yet provide all element-level index domains, summand definitions, event weights, the exact map `Phi`, or the APW-event-to-BIB-place incidence/capacity relation. No candidate q-matrix notation is promoted to historical definition without primary-source evidence. The finite support-layer identity on PR #67 is only an underlying CRT counting lemma, not the weighted Hall/BIB bridge.
