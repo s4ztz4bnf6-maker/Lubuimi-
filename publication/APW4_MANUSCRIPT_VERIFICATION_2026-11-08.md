@@ -226,3 +226,7 @@ Die laufende Lean-Übertragung ist davon getrennt. PR #138 (Kandidat v15, Head 8
 Die weiterhin explizit zu schließenden historischen Lean-Verbindungen sind: prefixFixedCoords, die tatsächliche endliche Anfangsprofilfamilie, historisches c(I) einschließlich des leeren Profils, die exakte Gleichheit des Suffixfaktors mit nu(J), die vollständige historische Lemma-3.3-Instanziierung und die anschließende Lemma-3.4-Momentenkette. Diese formalen Restarbeiten ändern nicht den Status des mathematischen Manuskriptbeweises.
 
 Der vom Autor unabhängig finalisierte und gesicherte PDF-Release wird durch diesen Repository-Nachtrag nicht ersetzt oder verändert. Dieser Nachtrag ist eine Status- und Reproduzierbarkeitsnotiz, keine neue PDF-Ausgabe.
+
+### Exact-head refresh after v15 local-witness repair — 10 November 2026
+
+The v15 proof-term repair remains the code change identified above: the endpoint membership/non-membership/point witnesses are transported from the geometric endpoint to the let-bound local value used by `updatedWeight`. A comment-only exact-head refresh was then committed as `3bb0e4ab45d74cbece76edbc5be14bca0043cdc9`; it changes no declaration, theorem statement, definition, hypothesis, or proof term. The exact-head workflow lookup returned no workflow run and no commit status for this refresh. Therefore the v15 candidate remains **OFFEN – NICHT VERIFIZIERT**; no earlier successful module audit is extended to it.
