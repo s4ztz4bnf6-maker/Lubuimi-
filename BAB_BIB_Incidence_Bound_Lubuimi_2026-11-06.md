@@ -203,3 +203,46 @@ This recovered interface identifies the missing quantitative step more sharply: 
 | Unconditional Erdős–Selfridge conclusion | Not established by this note |
 
 **Integrity rule:** this file records a proved finite combinatorial lemma and its exact assumptions. It does not rename that lemma as the missing BAB/BIB density-transfer theorem.
+
+
+## 7. New explicit divisor-envelope parameter (conditional extension, not a historical definition)
+
+The note's symbol μ(B) was not defined in the recovered source record. A natural **new auxiliary parameter**, which must not be silently identified with a historical μ(B), is
+[
+\mu^*(B):=\max\{\tau(d):d\mid B,\ d<B\},\qquad B>1.
+]
+If the selected common labels (S_x\cap S_y) are distinct divisors of (B) and their least common multiple is a proper divisor (d_{x,y}<B), then every common label divides (d_{x,y}). Hence
+[
+|S_x\cap S_y|\leq\tau(d_{x,y})\leq\mu^*(B).
+]
+This turns the stated proper-LCM property into a precise pair-intersection bound, **conditional on** distinct divisor labels and on the proper-LCM property itself being proved for the actual selected sets.
+
+For (B=\prod_{i=1}^s p_i^{e_i}), the auxiliary parameter has the exact formula
+[
+\boxed{\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1}.}
+]
+Indeed, any proper divisor lowers at least one exponent (e_j), so its divisor count is at most (\tau(B)e_j/(e_j+1)), which is at most the displayed maximum. Equality is attained by (B/p_j) for an index (j) with maximal exponent (e_j).
+
+In particular, if (B) is squarefree, then
+[
+\mu^*(B)=\frac{\tau(B)}2.
+]
+Writing (r=q-1), the three numerical hypotheses of the second-moment lemma,
+[
+\tau(B)\leq2r,\qquad \mu^*(B)<r,\qquad
+\tau(B)\mu^*(B)<r^2,
+]
+then reduce to the single strict condition
+[
+\boxed{\tau(B)^2<2(q-1)^2.}
+]
+Under the row-size hypothesis (|S_x|\geq q-1), and the proper-LCM condition above, the second-moment theorem therefore gives the explicit squarefree-(B) conditional bound
+[
+\boxed{
+m_0\leq
+\frac{\tau(B)\bigl(2(q-1)-\tau(B)\bigr)}
+{2(q-1)^2-\tau(B)^2}.
+}
+]
+
+This is a new arithmetic sharpening of the *parameter test* for the finite incidence lemma. It is not a reconstruction of the historical μ(B), not a proof that the selected sets have the stated row sizes or proper-LCM property, and not an APW4 HT/event-to-BIB transport theorem. The extraction map from the original selected entries (A_q(x,h)) to distinct divisor labels (S_x) remains open.
