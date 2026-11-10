@@ -48,9 +48,10 @@ def liftTailEmbedding (B Bstar : ℕ) (hB : B ≤ Bstar)
     intro q₁ q₂ h
     apply Fin.ext
     have hv := congrArg Fin.val h
+    change r.val + 2 ^ B * q₁.val = r.val + 2 ^ B * q₂.val at hv
     have hmul :
-        2 ^ B * q₁.val = 2 ^ B * q₂.val := by
-      exact Nat.add_left_cancel (by simpa [liftTailEmbedding] using hv)
+        2 ^ B * q₁.val = 2 ^ B * q₂.val :=
+      Nat.add_left_cancel hv
     exact Nat.eq_of_mul_eq_mul_left (by positivity : 0 < 2 ^ B) hmul
 
 /-- The actual tail cylinder: all lifts of one fixed residue r modulo
@@ -84,8 +85,9 @@ theorem mem_tailAtoms_iff (B Bstar : ℕ)
   · intro hx
     rcases Finset.mem_map.mp hx with ⟨q, hq, hqx⟩
     have hv := congrArg Fin.val hqx
+    change r.val + 2 ^ B * q.val = x.val at hv
     rw [← hv]
-    simp [liftTailEmbedding, Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt r.isLt]
+    simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt r.isLt]
   · intro hx
     have hpowDiv : 2 ^ (Bstar - B) * 2 ^ B = 2 ^ Bstar := by
       rw [Nat.mul_comm, ← pow_add]
@@ -105,7 +107,8 @@ theorem mem_tailAtoms_iff (B Bstar : ℕ)
     apply Finset.mem_map.mpr
     refine ⟨q, Finset.mem_univ _, ?_⟩
     apply Fin.ext
-    simpa [liftTailEmbedding] using hval
+    change r.val + 2 ^ B * q.val = x.val
+    exact hval
 
 @[simp] theorem card_candidateAtoms (B Bstar : ℕ)
     (hB : B ≤ Bstar) (r : Fin (2 ^ B)) :
@@ -149,7 +152,7 @@ theorem candidate_mass_eq_one_sub_two_pow
     congr 1
     omega
   rw [hpow]
-  field_simp <;> ring
+  field_simp
 
 #print axioms liftTailEmbedding
 #print axioms mem_tailAtoms_iff
