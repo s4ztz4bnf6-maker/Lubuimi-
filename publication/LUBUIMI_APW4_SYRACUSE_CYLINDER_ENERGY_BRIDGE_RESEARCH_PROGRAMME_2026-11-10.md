@@ -73,3 +73,20 @@ F. Only after A–E, derive a transported finite-block statement and connect it 
 A zero-density exceptional set may still contain individual integers. Exact cylinder densities alone do not establish a universal orbitwise descent result. The global Collatz conjecture is not claimed proved here.
 
 APW4 and the Syracuse cylinder theorems remain independent mathematical results until the bridge theorem is actually established. This programme is authored by Ta-Yoshua Lubuimi. AI tools are assistants only, not authors or independent mathematical verifiers.
+
+
+## 8. New finite-tail margin interface — 10 November 2026
+
+The general finite-word cylinder manuscript now proves a local tail-pruning lemma. For a Syracuse prefix \(\alpha\) of length \(k\), total exponent \(A\), and signed margin \(D(\alpha)\), extension by exponent \(b\) obeys
+\[
+D(\alpha b)=3D(\alpha)+(2^b-4)2^A.
+\]
+For a finite cutoff \(B\), the exact tail cylinder \(a_k\ge B+1\) has relative parent mass \(2^{-B}\). If
+\[
+3D(\alpha)+(2^{B+1}-4)2^A>0,
+\]
+then every start in that tail cylinder has positive next signed margin and therefore a strict decrease of its accelerated odd iterate. The remaining exact children \(b=1,\ldots,B\) are the finite unresolved branches.
+
+This gives the bridge programme a concrete arithmetic object: a finite prefix node, its exact cylinder mass, a finite list of unresolved children, and one terminal tail atom carrying a certified descent bound. It may support a finite incidence/moment formulation. It does not yet supply the historical APW4 index map, the BIB/Hall capacity, or a uniform bound across all prefix nodes. The bridge remains unproved until those separate obligations are discharged.
+
+The lemma is recorded as a mathematical manuscript result in the standalone Syracuse finite-word project; it is not yet Lean-compiled. The APW4 theorem record and its hypotheses are unchanged.
