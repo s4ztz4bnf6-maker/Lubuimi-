@@ -1225,3 +1225,16 @@ Es handelt sich um eine Dokumentations- und Review-Korrektur, nicht um eine neue
 **Lean-Status:** Die benannten Teildeklarationen haben echte erfolgreiche Kernel-/Axiomprüfungen. Der integrierte PR #69 ist fehlgeschlagen; ein vollständiger historischer APW4-Hauptsatz mit sämtlichen historischen Prämissen in seiner transitiven Lean-Abhängigkeit ist nicht nachgewiesen. Der separate universelle `erdos_selfridge`-Siebstrang behält seine Projektaxiome `sf_sieve_lt_one` und `sieve_criterion`.
 
 **Attribution:** Sämtliche APW4-Forschung und Urheberschaft sind Ta-Yoshua Lubuimi zugeordnet. KI-Werkzeuge sind Hilfsmittel, keine Autoren und keine unabhängigen mathematischen Prüfer.
+
+
+## Addendum — APW4 exact-head Lean integration, 10 November 2026 (13:43 CET)
+
+The mathematical APW4 proof record is preserved at its stated hypotheses. This addendum records only the formalization state and does not amend the mathematical argument.
+
+The exact integrated diagnostic on PR #133 (head `dada662cc35b42d760bec7b1848ec85c8111ee7c`, workflow 42812910651) is a dependent-coordinate mismatch in `prefixFibre_updatedWeight_eq_PAt`: `y (Fin.last k)` is typed over `prefixIndex hj (Fin.last k)`, while the concrete fibre is indexed by `stageCoordinate hk`. The separate audit passed, but the integrated-paranoid job failed and error recovery reported `sorryAx` in the target and dependent recursion declarations.
+
+PR #137 / v14 (head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`) changes the proof order: derive the coordinate equality and rewrite it throughout the local context before constructing the endpoint and fibre. This is a technically relevant candidate because it addresses the dependent family at construction time rather than casting membership evidence afterwards. It has no exact-head CI result at this addendum's cut-off and is **OFFEN – NICHT VERIFIZIERT**.
+
+The remaining formal sequence is: integrated verification of the concrete recursion identity; its dependent nonnegativity and normalization results; the full distortion-product estimate; then the source-faithful fixed-coordinate/profile interface identifying the historical `c(I)` and `ν(J)`, including the empty-profile case and the subsequent moment lemma. These are formal connection tasks; they do not retroactively reopen the established APW4 energy proof.
+
+The published PDF is not replaced by this addendum. The author-held finalized manuscript remains a separate publication artifact.
