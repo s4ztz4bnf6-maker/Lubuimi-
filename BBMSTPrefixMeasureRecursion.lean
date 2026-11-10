@@ -170,8 +170,9 @@ theorem restrictPrefix_extendPrefix
     (s : C.S (stageCoordinate hk)) :
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
+  have hi_ne : i.val ≠ k := by omega
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt] <;> rfl
+    prefixIndex, stageCoordinate, Function.update, i.isLt, hi_ne]
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -203,8 +204,8 @@ theorem prefixPointCovered_iff
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
   have hcoord : stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
-  rw [hcoord]
   unfold prefixPointCovered prefixCoveredValues
+  rw [hcoord]
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
@@ -354,7 +355,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hxprev :
       xprev = restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y := by
     dsimp [xprev]
-    rw [hhk]
   have hPAt :
       PAt C (A := A) a ha P0 δ j hprev xprev =
         PAt C (A := A) a ha P0 δ j
@@ -385,7 +385,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       stageCoordinate hk =
         stageCoordinate (show k + 1 ≤ n from by omega) := by
     rw [hhk]
-  rw [hcovered, hstage, hPAt]
+  simp only [hcovered, hstage, hPAt]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
