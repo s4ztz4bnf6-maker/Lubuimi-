@@ -640,3 +640,10 @@ This technical failure does not alter the separately recorded APW4 mathematical 
 The complete 17-page source manuscript was inspected. It states the DT assignment, aggregate fibre estimate, HT event demand, BIB places/capacities/incidence notation, weighted Hall condition, and fixed matrix/fibre identities, but omits element-level definitions for the historical event set, BIB-place set, and incidence relation. The source-to-BIB reconstruction remains open and no substitute definition is accepted as historical.
 
 New formal interface candidates: PR #89 (generic preimage-fibre derivation; corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a, exact-head rechecks pending) and PR #93 (Syracuse common dyadic uniform fibre as APW4 FibreData; corrected head dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued). Existing publication authorship and licensing notices remain unchanged.
+
+
+## 8. Formal residue-projection milestone — 10 November 2026
+
+PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae canonically proves and audits the local q-fibre M/Gamma inequality for explicit finite residue projections on ZMod N. Runs 42749178635 and 42749178673 passed; the new theorem has the standard axiom profile and the canonical log contains zero sorryAx. The paranoid job remained pending at the recorded time.
+
+This is a formal finite-residue specialization, not a claim that the original historical U_q/U_r sets, C_h partition, or event-to-BIB incidence have been recovered. Authorship and repository licensing notices are unchanged.
