@@ -795,3 +795,12 @@ See publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md fo
 The latest exact PR #69 workflow 42739454140 failed on source head 17eb308d106c770ab559d254bcee2bdfd2ead6c4. The two branches of prefixFibre_updatedWeight_eq_PAt expose a cross-toolchain tactic sequencing issue: simp closes the branch under Lean 4.28, making a following ring invalid; Lean 4.35 leaves algebraic residue that ring does not close and recommends ring_nf. Error-recovered sorryAx in PAt_nonneg/PAt_sum_eq_one is downstream. No integrated pass is claimed on this head. The proposed simp ... <;> ring_nf sequencing is a next experiment, not yet a verified repair.
 
 This technical failure does not alter the separately recorded APW4 mathematical status under its historical hypotheses or earlier successful declaration-scoped audits. The event-to-BIB transport and source reconstruction remain explicit open obligations.
+
+
+## 8. Source-fidelity review update — 10 November 2026
+
+A complete page-by-page review of the 17-page APW4 proof PDF confirms that the manuscript states the historical DT assignment and aggregate fibre estimate, HT demand d(gamma)=omega_l*omega_l', BIB place/capacity/incidence notation, weighted Hall condition, and matrix/fibre identities (7.2)-(7.3). It does not provide the underlying element-level definitions of the historical event universe, BIB places, or incidence relation. The manuscript therefore does not by itself close the source-to-BIB reconstruction.
+
+The formula for P_S uses W_x^2, so diagonal pairs are literally included there; the separate off-diagonal energy explicitly excludes them. Any revised exposition must preserve this distinction. Candidate atom and BIB-slot notation from earlier working sessions remains explicitly unverified and must not be silently promoted to historical source data.
+
+The PR #85 local q-fibre inequality is a conditional finite-set theorem; PR #89 supplies a generic preimage model for its structural premises; PR #93 supplies a Syracuse-derived uniform finite-fibre datum in the APW4 FibreData type. These are useful formal interfaces, not a proof of the historical event-to-BIB map or weighted Hall condition.
