@@ -286,3 +286,13 @@ A narrow proof candidate was committed to PR #101 at exact head `dbbeaf7a14ebcce
 ### Syracuse residue-coordinate repair candidate — 2026-11-10
 
 On branch `bridge/syracuse-explicit-tail-residue-2026-11-10`, commit `bd8a7857a07f4fb32bbcfe9e2b446bd5b7403028` replaces invalid projections of `.isLt` from `ZMod` values in `explicitTailCoordinateFin` and `explicitChildCoordinateFin` with the Mathlib theorem `ZMod.val_lt`. The theorem was checked against Mathlib `v4.35.0` (`Mathlib/Data/ZMod/Basic.lean`, declaration `ZMod.val_lt`). This is a source-level repair candidate only; the new CI run `42759029006` was queued at the time of this entry. It does not certify the remaining membership proof or any Syracuse theorem.
+
+### 10 November 2026 — PR #101 equality-branch correction and exact-head workflow
+
+The complete integrated log for run [42758803063](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758803063) corrects the earlier diagnosis: the positive branch goal was already an equality, not an implication, so `intro hnot` had no binder to introduce. Exact source head `0be00b2161ad8f2676779b90582f30b34083c008` now uses `simp [hcov]` in both membership branches. The exact-head workflow [42759210844](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42759210844) has been created, but its audit and integrated-paranoid jobs are still QUEUED at this observation. No compile, axiom, or paranoid PASS is claimed.
+
+Syracuse run [42759029006](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42759029006) has advanced: the integrated job is compiling the full integrated package; the audit job has started its setup; the dedicated Syracuse-paranoid job remains QUEUED. The ZMod.val_lt source repair remains unverified pending all jobs and named declaration audits.
+
+Collatz PR #48 exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8` remains under run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798); its three jobs remain QUEUED. No result is inferred.
+
+A concrete next formalization target is now isolated for the Collatz minimal-counterexample bridge: from the actual accelerated Syracuse step equation `2^(a j) * n(j+1) = 3*n(j)+1` and positivity of `a j`, derive oddness of `n j`. Since the next odd iterate is also odd, the displayed quotient is odd and `a j` is the exact 2-adic valuation. Then prove the shifted tail is the deterministic Syracuse orbit from `n j`; minimality among odd nonterminating starts can then supply the currently assumed suffix-return premise. This is a proof plan, not yet a Lean theorem or a verified result.
