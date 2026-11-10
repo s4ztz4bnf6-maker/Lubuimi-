@@ -337,3 +337,8 @@ The focused run for commit `e230c4508b17fccfd006392b92d39b70d7f23ca6` has comple
 The log's `#print axioms` output explicitly includes `sorryAx` in `containsPrefix_extend_iff`, its free/fixed specializations, the dependent cylinder extension equivalences and mass reindexing results, and `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor`. Therefore the current Step 16 source is not accepted as complete. A successful compile of the unrelated prerequisites does not remove these blockers.
 
 The next repair must derive the exact equality/transport between `stageCoordinate hk` and `prefixIndex hk (Fin.last k)` from their definitions, then transport the dependent assignment value and the extended-prefix coordinate consistently. Do not replace this with a textual rewrite or a guessed `simp` call. After the minimal repair, rerun the focused diagnostic and verify that the target declarations no longer depend on `sorryAx`.
+
+
+## APW4 v7/v8 exact-head continuation — 10 November 2026
+
+PR #121 / v7 head `5631a527c289889db3e70bf0fb1644926e11d893`, run 42808470265: separate audit PASS with standard axiom profile for the prefix update; integrated-paranoid FAIL at lines 387 and 397 because membership hypotheses did not transport through the dependent endpoint cast. Integrated error recovery reports `sorryAx` in the target and dependent recursion. PR #123 / v8 head `135f76d26c3c2392039e53c135e871f09ce2e256`, run 42809132672, adds explicit covered/uncovered endpoint membership equivalences; both jobs were queued at the latest poll. No v8 verification is claimed. This remains separate from the upstream sieve-axiom interface audit.
