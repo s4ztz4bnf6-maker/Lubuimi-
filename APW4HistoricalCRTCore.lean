@@ -375,3 +375,67 @@ end ResidueProjectionModel
 
 end APW4HistoricalQFibre
 
+
+
+/-!
+## Canonical ordered collision-slot realization
+
+The following sigma type is a concrete finite set of witnesses for the
+ordered pairwise-intersection reserve. It is deliberately called a
+canonical reserve realization: it realizes the scalar identity
+sum_{i != j} |S_i ∩ S_j| as actual triples (x,i,j), but it does not assert
+that these triples are the historically named APW4 BIB places or that
+historical off-diagonal events are already mapped to them.
+-/
+
+namespace APW4HistoricalBIBSlotModel
+
+variable {I : Type*} [Fintype I] [DecidableEq I]
+variable (N : ℕ) [NeZero N]
+variable (m a : I → ℕ)
+variable (hm : ∀ i, 0 < m i)
+variable (hdiv : ∀ i, m i ∣ N)
+
+include hm hdiv
+
+/-- Ordered distinct-index collision witnesses over a fixed ambient point. -/
+def slotsAt (x : ZMod N) :=
+  Σ i : {i : I // i ∈ APW4HistoricalCRT.supportAt N m a x},
+    {j : I //
+      j ∈ (APW4HistoricalCRT.supportAt N m a x).erase i.1}
+
+/-- Every canonical reserve slot is an ambient point together with an
+ordered pair of distinct original congruence indices both containing it. -/
+def canonicalBIBSlots :=
+  Σ x : ZMod N, slotsAt N m a x
+
+/-- The cardinality of the canonical slot type is exactly the ordered
+collision count. -/
+theorem card_canonicalBIBSlots_eq_orderedBIBPairs
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)] :
+    Fintype.card (canonicalBIBSlots N m a) =
+      APW4HistoricalCRT.orderedBIBPairs N m a := by
+  classical
+  simp [canonicalBIBSlots, slotsAt,
+    APW4HistoricalCRT.orderedBIBPairs,
+    Finset.card_erase_of_mem]
+
+/-- The canonical slot set has exactly the historical CRT BIB reserve
+cardinality. This is a set-level realization of the reserve count, not
+the missing APW4 event-to-historical-place incidence theorem. -/
+theorem card_canonicalBIBSlots_eq_bibReserve
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)] :
+    Fintype.card (canonicalBIBSlots N m a) =
+      APW4HistoricalCRT.bibReserve N m a := by
+  calc
+    Fintype.card (canonicalBIBSlots N m a) =
+        APW4HistoricalCRT.orderedBIBPairs N m a :=
+      card_canonicalBIBSlots_eq_orderedBIBPairs N m a hm hdiv
+    _ = APW4HistoricalCRT.bibReserve N m a :=
+      (APW4HistoricalCRT.historical_bib_collision_identity
+        N m a hm hdiv).symm
+
+#print axioms card_canonicalBIBSlots_eq_orderedBIBPairs
+#print axioms card_canonicalBIBSlots_eq_bibReserve
+
+end APW4HistoricalBIBSlotModel
