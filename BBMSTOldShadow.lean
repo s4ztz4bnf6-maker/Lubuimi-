@@ -361,10 +361,10 @@ theorem mergeOldShadowsList_assignment_ne_none_of_mem
             ih H htail hassign
         cases hGval : G.assignment i with
         | some s =>
-            simp [mergeOldShadowsList, mergeOldShadows, hlt, hGval]
+            simp [mergeOldShadowsList, mergeOldShadows, hlt, hltFin, hGval]
         | none =>
             simpa only [mergeOldShadowsList, mergeOldShadows,
-              if_pos hlt, hGval] using htail'
+              if_pos hlt, hltFin, hGval] using htail'
 
 /-- Every list merge is undefined at and after its boundary. -/
 theorem mergeOldShadowsList_assignment_eq_none_of_not_lt
