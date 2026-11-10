@@ -249,3 +249,19 @@ This formally verifies that a nondecreasing exact affine endpoint must have nonp
 It does not yet formalize the maximum cap B_alpha, the finite surviving-child set, the exact tail-cylinder partition, or the general finite-word cylinder theorem. This Lean result is a concrete Syracuse-side interface candidate for APW4 transport, not an APW4 theorem.
 
 The APW4 integration remains on its separate Lean 4.35.0 target. No cross-toolchain success is inferred, and the historical APW4 index map, separate diagonal/off-diagonal transport, and BIB/Hall capacity proof remain open.
+
+
+## 17. Kolaz finite-return bridge and k=2 Lean candidate — 10 November 2026
+
+The Kolaz threshold-return archive now extends through B=511 and B=1023, with complete CSV tables and exact regression checks. Run 42732032993 passed on the archive source head `5a01e5e56d203c0ed987f6bb70c1519b107e9f23`. It confirms 42 and 85 escape sources, maximum lengths 24 and 50, and maximum heights 13,121 and 83,501. Two new exact confluence suffixes connect B=511 to B=1023.
+
+The new worked node x=731 at B=1023 provides a concrete common index across three project languages:
+- threshold-return path: (731\to1097\to823);
+- valuation cylinder: word ((1,2)), total exponent (A=3), offset (C=5), unique odd residue (731\equiv11\pmod{16});
+- signed margin: (D_0=0,D_1=-2,D_2=-6), with both one-step cap inequalities satisfied.
+
+This gives an explicit finite map from a Kolaz threshold-tree edge sequence to a valuation-word cylinder and its margin state. It does not yet give a uniform path bound, and it does not create an APW4 historical event-index map. APW4 transfer still requires the original index-preserving map, weight correspondence, separate diagonal/off-diagonal mass transport, and BIB/Hall capacity proof.
+
+A finite k=2 terminal-residue Markov-energy Lean module is also in progress. The first attempt used `native_decide` and was rejected by the strict axiom profile because generated native axioms appeared; it also failed on a free variable in the indexed numerator theorem. The corrected module uses kernel-reduced `decide` and explicit `Fin) cases. Exact-head CI 42731846956 on PR #9 head `b999241519ecd12a931d931ea4b9e850741c6457` is in progress. The module is not yet verified; its acceptance requires the standard transitive profile and no `sorryAx`.
+
+The APW4 Lean 4.35.0 integration candidate on PR #69 head `f843e4224e5288e107200464be5c5524de650570` is being checked by run 42732094102. It uses the explicit Finset-filter split and definitional covered-set equivalence; the prior Lean 4.28 audit result remains preserved, while the integrated 4.35 outcome is pending.
