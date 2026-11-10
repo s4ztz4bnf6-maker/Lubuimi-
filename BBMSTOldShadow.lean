@@ -343,6 +343,7 @@ theorem mergeOldShadowsList_assignment_ne_none_of_mem
     have hz : (oldShadow boundary H).assignment i = none := by
       simp only [oldShadow, if_neg hnot]
     exact hassign hz
+  have hltFin : i < boundary := by simpa using hlt
   induction Hs generalizing H with
   | nil =>
       simp at hmem
@@ -354,7 +355,7 @@ theorem mergeOldShadowsList_assignment_ne_none_of_mem
         cases hGval : G.assignment i with
         | none => exact (hG hGval).elim
         | some s =>
-            simp [mergeOldShadowsList, mergeOldShadows, hlt, hGval]
+            simp [mergeOldShadowsList, mergeOldShadows, hlt, hltFin, hGval]
       · have htail' :
           (mergeOldShadowsList boundary Hs).assignment i ≠ none :=
             ih H htail hassign
@@ -370,10 +371,11 @@ theorem mergeOldShadowsList_assignment_eq_none_of_not_lt
     (boundary : Fin n) (Hs : List (Hyperplane C)) (i : Fin n)
     (hlt : ¬ i.val < boundary.val) :
     (mergeOldShadowsList boundary Hs).assignment i = none := by
+  have hltFin : ¬ i < boundary := by simpa using hlt
   induction Hs with
   | nil => simp [mergeOldShadowsList]
   | cons H Hs ih =>
-      simp [mergeOldShadowsList, mergeOldShadows, hlt, ih]
+      simp [mergeOldShadowsList, mergeOldShadows, hlt, hltFin, ih]
 
 /-- The list merge is supported strictly before the boundary. -/
 theorem oldShadow_mergeOldShadowsList
@@ -425,7 +427,8 @@ theorem mergeOldShadowsList_contains_iff
   constructor
   · intro hmerge H hH i
     by_cases hlt : i.val < boundary.val
-    · cases hHassign : H.assignment i with
+    · have hltFin : i < boundary := by simpa using hlt
+      cases hHassign : H.assignment i with
       | none =>
           simp [Hyperplane.Contains, oldShadow, hlt, hHassign]
       | some s =>
@@ -433,7 +436,7 @@ theorem mergeOldShadowsList_contains_iff
               (mergeOldShadowsList boundary Hs).assignment i ≠ none := by
             exact mergeOldShadowsList_assignment_ne_none_of_mem
               boundary Hs H hH i (by
-                simp only [oldShadow, if_pos hlt, hHassign])
+                simp [oldShadow, hlt, hHassign])
           cases hAgg : (mergeOldShadowsList boundary Hs).assignment i with
           | none => exact (hAggNe hAgg).elim
           | some t =>
@@ -449,7 +452,8 @@ theorem mergeOldShadowsList_contains_iff
               have hxs : x i = s := hx.trans hEq.symm
               simpa only [Hyperplane.Contains, oldShadow, if_pos hlt,
                 hHassign] using hxs
-    · simp [Hyperplane.Contains, oldShadow, hlt]
+    · have hltFin : ¬ i < boundary := by simpa using hlt
+      simp [Hyperplane.Contains, oldShadow, hlt, hltFin]
   · intro hall i
     cases hAgg : (mergeOldShadowsList boundary Hs).assignment i with
     | none =>
