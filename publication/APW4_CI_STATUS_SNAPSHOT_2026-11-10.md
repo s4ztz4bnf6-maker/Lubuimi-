@@ -801,3 +801,6 @@ PR #93 source head `abbba013765cbddd9f5dca0d141da21e70966756` adds the explicit 
 - `syracuse-bridge-paranoid`: the minimal Lean 4.35.0 package build, including SyracuseDyadicResidueFibre.lean, succeeded; lake check --paranoid was still running at the last check.
 
 The root Lean 4.28 audit in this workflow did not yet explicitly compile SyracuseDyadicResidueFibre.lean. A new explicit Lean 4.28 compile plus sorryAx scan was added to the workflow in commit fbab49639954ae749d30a884a04032ee1d4d0f0e. Its exact-head workflow is pending. Thus the new residue module has a successful isolated Lean 4.35.0 build, but no completed paranoid PASS and no Lean 4.28 module-specific PASS yet.
+### PR #89 q-power modulus positivity correction
+
+The first q-power quotient build (workflow 42754520297, Lean 4.35.0 paranoid job) failed at qFibreModulus_pos: in this Mathlib/Lean version Nat.div_pos takes the divisor bound q^a ≤ N, not the positivity proof 0 < N. The divisibility hypothesis already supplies that bound via Nat.le_of_dvd hN hdiv. The proof was corrected to `Nat.div_pos hle` at exact source commit `bc7479016b2cf21ff44fb7cc83d00f8419b3d44f`. The failed run's printed q-power declarations showed only the standard profiles, but the build failure means they are not accepted as an exact-head PASS. New exact-head workflows 42754828642 and 42754828631 are queued.
