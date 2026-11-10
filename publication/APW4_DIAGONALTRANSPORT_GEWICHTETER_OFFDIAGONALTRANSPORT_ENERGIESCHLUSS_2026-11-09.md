@@ -248,3 +248,8 @@ Die ergänzende historische Definitionstabelle und die noch erforderlichen Index
 Die Matrixidentität mit \(Z_q=I_q-A_q\) hat vier algebraische Beiträge, darunter drei Z-haltige Residualbeiträge. Diese Matrixentwicklung ist strikt von der hier bewiesenen zweigliedrigen Energiezerlegung \(\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4}\) zu unterscheiden; es entsteht kein dritter Energiebeitrag.
 
 Die Quellindizes der historischen Ereignisse, die vollständige Abbildung \((x,u)\mapsto(k,I_{x,u},J_{x,u})\), die tatsächlichen BIB-Plätze und ihre Inzidenz bleiben in der formalen Übertragung quellengesteuert zu instanziieren. Die mathematischen Transportaussagen werden dadurch nicht erneut zur offenen Frage.
+
+
+### Exact-head refresh after v15 local-witness repair — 10 November 2026
+
+The v15 proof-term repair remains the code change identified above: the endpoint membership/non-membership/point witnesses are transported from the geometric endpoint to the let-bound local value used by `updatedWeight`. A comment-only exact-head refresh was then committed as `3bb0e4ab45d74cbece76edbc5be14bca0043cdc9`; it changes no declaration, theorem statement, definition, hypothesis, or proof term. The exact-head workflow lookup returned no workflow run and no commit status for this refresh. Therefore the v15 candidate remains **OFFEN – NICHT VERIFIZIERT**; no earlier successful module audit is extended to it.
