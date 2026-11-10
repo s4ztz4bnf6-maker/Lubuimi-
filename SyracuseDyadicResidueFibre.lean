@@ -382,7 +382,7 @@ theorem explicitPrefixTail_lift_factorization
         3 * Cₖ + 2 ^ A =
       2 ^ (A + 1) *
         (3 ^ (k + 1) * q + explicitPrefixTailQuotient A k r₀ Cₖ) := by
-  apply prefixTail_lift_factorization A k r₀ Cₖ
+  apply SyracuseDyadicResidueFibre.prefixTail_lift_factorization A k r₀ Cₖ
     (explicitPrefixTailQuotient A k r₀ Cₖ) q
   simpa [explicitPrefixTailNumerator] using
     explicitPrefixTailQuotient_spec A k r₀ Cₖ hdiv
