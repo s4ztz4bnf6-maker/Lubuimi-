@@ -480,3 +480,36 @@ The published Lemma 3.3 assumes that (A) is (Q_k)-measurable, equivalently every
 H.mathrm{FixedInsidePrefix}(a+j).
 ]
 This is not needed for the internal induction, but it is needed for the exact historical event identification. The final theorem should state the decomposition (F(H)=Isqcup J), with (Isubseteq[a]), (Jsubseteq[a+1,a+j]), and prove that the Lean fixed-coordinate profile and the paper's (F(H)) agree under the one-based/zero-based index conversion.
+
+
+## 18. Arbitrary-t shadow intersection: next implementation obligation — 10 November 2026
+
+### Source inspection result
+
+On the current PR #138 working branch, `BBMSTOldShadow.lean` provides only the binary merge and its binary compatibility, intersection, conflict, and fixed-coordinate-union lemmas. `BBMSTPrefixIncidenceBridge.lean` provides the concrete stage-to-shadow membership bridge and ordered-pair incidence/mass identities. There is no arbitrary-t merge, tuple mass bound, or arbitrary-t indicator expansion declaration.
+
+### Exact next declarations
+
+Implement in a dedicated module (suggested name `BBMSTOldShadowTuple.lean`, imported after `BBMSTOldShadow`):
+
+1. `PairwiseOldCompatible boundary H`: compatibility for every pair of tuple indices, including the reflexive case.
+2. `mergeOldShadowsFin boundary H`: deterministic fold of the tuple's old shadows; define the (t=0) identity as the everywhere-free hyperplane.
+3. A fold invariant showing the accumulator is compatible with each remaining entry, derived from pairwise compatibility of the original tuple.
+4. `mergeOldShadowsFin_contains_iff`: membership iff membership in every tuple shadow.
+5. `fixedCoords_mergeOldShadowsFin`: fixed-coordinate set equals the finite union of tuple profiles.
+6. `oldShadowsFin_disjoint_of_conflict): a conflicting pair makes the full tuple intersection empty.
+7. `prefixTupleShadowMass_le_profileBound): compatible case via the source-facing Lemma 3.3; conflict case via zero mass and nonnegative (c(I)\nu(J)).
+8. `orderedTuple_indicator_expansion`: expansion over `Fin t → N_k), retaining all repetitions and order.
+9. The finite weighted sum interchange and the final source Lemma 3.4 moment bound.
+
+### Proof-engineering constraints
+
+The fold induction must prove compatibility of the accumulated merge with the next tuple member; it is not enough to repeatedly invoke the binary theorem without this invariant. Predicate intersection and fixed-coordinate union must refer to the same fold. Prefix membership must be transported using the actual `FixedInsidePrefix` proof. The conflict branch must extract the two conflicting indices and use the existing binary disjointness theorem. The (t=0) and (t=1) cases must be explicit.
+
+The indicator expansion is over ordered tuples/functions `Fin t → N_k`; repetitions are included. Do not replace the domain by unordered subsets or deduplicate the tuple.
+
+### Run discipline
+
+Every failed compile must be preserved with exact commit, target file/declaration, first diagnostic, dependent-index/type context, and resulting axiom trace. The next run must change only the demonstrated cause and reuse successful prerequisite modules. A failed downstream run does not retroactively invalidate previously verified independent declarations. A successful compile is not accepted as the final result without named `#print axioms` output and a transitive `sorryAx` audit.
+
+**Current status:** design obligation recorded; no tuple Lean declaration or CI success is claimed by this entry. The established APW4 mathematical proof remains unchanged.
