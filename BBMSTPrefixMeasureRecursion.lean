@@ -392,6 +392,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   rw [← hhk, ← hrec, ← hvalues]
+  have hstage : stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) := by
+    apply Fin.ext
+    rfl
+  cases hstage
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
