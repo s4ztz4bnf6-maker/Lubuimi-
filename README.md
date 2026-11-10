@@ -151,3 +151,242 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## APW4 exact-head repair ledger — 10 November 2026 (append-only)
+
+The established APW4 mathematical record above is retained. The exact energy decomposition, diagonal transport (DT), weighted-Hall/off-diagonal transport (HT), global upper energy estimate, strict lower-bound implication, and contradiction remain part of the author's completed mathematical proof at their stated hypotheses. The historical CRT/BIB reconstruction recorded in the APW4 dossier is preserved; no abstract replacement map is substituted for the historical indices, events, BIB slots, or capacities.
+
+### Historical reconstruction checkpoint
+
+Commit `9a3aec51cd7d4696d6220a548c8f711c45ca9d20` records the definition-completeness matrix and dependency order for the historical objects `A_q, A_r, W_{q,r}, a_{q,t}, D_{q,r}, U_q, F_q, C_h`), elementary events, event map, BIB slots/incidence, and weighted Hall criterion. It records the block identity
+`A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T`
+and the marginal bound
+`sum_h M_{q,r}(h,g) <= Gamma_{q,r}(g)`.
+These are retained as reconstruction results with the source definitions and historical index sets controlling their formal instantiation; no residual term or incidence map is to be invented to fill a missing source definition.
+
+### Prefix recursion repair — exact v15 candidate
+
+The v14 integrated-paranoid log narrowed the remaining failure to the conditional reductions in `BBMSTPrefixMeasureRecursion.lean` at the local endpoint: the proof witnesses were stated for `y (Fin.last k)`, whereas `updatedWeight` was applied to the let-bound local term `x`. The current candidate derives the matching local witnesses
+`hcovFx : x ∈ F.covered`,
+`hnotFx : x ∉ F.covered`, and
+`hpointFx : x ∈ F.points`
+by simplifying the existing endpoint witnesses with `[x]`, and then uses those witnesses for the two conditional reductions. This changes only proof-term normalization; it does not change the theorem statement, definitions, hypotheses, or mathematical content.
+
+Candidate branch: `repair/apw4-membership-witness-local-let-v15-2026-11-10`. Candidate head: `800d752e626951505d9dbcb312dfe09555ee6f2f`. PR: [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138). **OFFEN – NICHT VERIFIZIERT** until the exact head completes the integrated Lean 4.35.0 paranoid workflow, the named `#print axioms` outputs are inspected, and the transitive dependency closure is confirmed free of `sorryAx`. No CI result is inherited from an earlier candidate.
+
+The remaining historical formalization tasks are still tracked separately: the source-faithful `prefixFixedCoords` / initial profile family, historical `c(I)) including the empty profile, exact identification of the suffix factor with `nu(J)), the full historical Lemma 3.3 statement, and the Lemma 3.4 moment chain. The v15 proof-script candidate does not by itself close those bridges.
+
+This entry does not modify or replace the author's independently finalized manuscript PDF. Any manuscript-source edit must preserve the existing mathematical exposition and be checked against the author's release copy before publication.
+
+
+## Historical event-to-BIB reconstruction checkpoint — 10 November 2026
+
+The source-reconstruction ledger is now included at [publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md](publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). It records the recovered q-fibre working definitions
+
+\[
+B_q=N/q^{a_q},\quad V_q=\{z:z\bmod B_q\in U_q\},\quad
+F_q(x)=\{z:z\equiv x\pmod{B_q}\},\quad P_{q,x,h}=F_q(x)\cap C_h,
+\]
+
+and the corresponding intersection-count quantities
+
+\[
+M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|,\qquad
+\Gamma_{q,r}(g)=|C_g\cap V_q\cap V_r|.
+\]
+
+The ledger also preserves the block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\), the fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\), and the exact four-term residual expansion obtained from \(I_q=A_q+Z_q\). The four-term matrix expansion contains three Z-residual contributions; it is not a third term in the two-term APW4 energy decomposition.
+
+The ledger deliberately marks the exact row/column domains, quotient maps, event universe, full event map, BIB slot universe, incidence predicate, and weight-preserving weighted-Hall verification as remaining source-reconstruction obligations. The historical DT map \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) must be expanded componentwise. APW off-diagonal atoms \((\ell,\ell')\) must not be identified with within-fibre pairs \((u,v)\) without an explicit proved projection/quotient map. These distinctions guide the remaining Lean instantiation; they do not reopen the established APW4 mathematical proof.
+
+
+### Exact run/commit attribution correction — 10 November 2026
+
+The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
+
+PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
+
+
+### Exact-head refresh after v15 local-witness repair — 10 November 2026
+
+The v15 proof-term repair remains the code change identified above: the endpoint membership/non-membership/point witnesses are transported from the geometric endpoint to the let-bound local value used by `updatedWeight`. A comment-only exact-head refresh was then committed as `3bb0e4ab45d74cbece76edbc5be14bca0043cdc9`; it changes no declaration, theorem statement, definition, hypothesis, or proof term. The exact-head workflow lookup returned no workflow run and no commit status for this refresh. Therefore the v15 candidate remains **OFFEN – NICHT VERIFIZIERT**; no earlier successful module audit is extended to it.
+
+
+
+
+## Prefix-cylinder event-mass bridge — 10 November 2026
+
+The source-indexed prefix recursion now contains a stronger intermediate result than the pointwise distortion estimate alone. In `BBMSTPrefixCylinderMass.lean`, the following declarations provide the exact one-coordinate event-mass dichotomy:
+
+1. `containsPrefix_extend_iff` decomposes a next-prefix hyperplane constraint into the old-prefix constraint and the boundary-coordinate constraint.
+2. `prefixCylinderExtensionEquivFree` and `prefixCylinderExtensionEquivFixed` give the actual subtype equivalences for free and fixed boundary coordinates.
+3. `prefixCylinder_free_mass_reindex` and `prefixCylinder_fixed_mass_reindex` reindex the cylinder mass through those equivalences.
+4. `prefixCylinder_free_mass_eq` proves exact mass conservation when the new coordinate is free.
+5. `prefixCylinder_fixed_mass_le` proves the one-coordinate distortion bound when the new coordinate is fixed:
+   [
+   mu_{j+1}(H)le
+   rac{mu_j(H)}{|S_i|(1-delta_i)}.
+   ]
+6. `hyperplaneSuffixFactor` charges precisely the fixed coordinates and assigns factor (1) to free coordinates.
+7. `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` iterates the dichotomy and proves
+   [
+   mu_j(H)le mu_0(H),
+u_H([a,a+j)),
+   ]
+   where the suffix factor is the product of (1/(|S_i|(1-delta_i))) over exactly those suffix coordinates at which (H) has a fixed assignment.
+
+This is the concrete cylinder-level mechanism needed for the suffix part of BBMST Lemma 3.3: free coordinates preserve cylinder mass; fixed coordinates incur exactly one distortion factor. It is not merely the unrestricted total-mass identity.
+
+**Scope boundary:** these are declarations present in the v15 source candidate. They are not yet promoted to integrated Lean-verification results: PR #138's exact head is `6d6bcacedab9c0c98a21156d4e90601b7cb87a5f`, and no exact-head workflow/status was returned. The v15 local-membership repair in `BBMSTPrefixMeasureRecursion.lean` is a dependency of this chain and remains subject to the same exact-head integrated paranoid and transitive axiom audit.
+
+### Exact remaining bridge after the cylinder estimate
+
+The current theorem has the form
+[
+mu_j(H)le mu_0(H),
+u_H(J).
+]
+To obtain the historical Lemma 3.3 form, the remaining source-faithful work is now sharply localized:
+
+- define the actual initial profile (I(H)) from the source's fixed coordinates in the initial block;
+- define the source's finite profile family from the actual initial hyperplane family, not from all formally possible subsets;
+- identify (mu_0(H)) with the historical initial cylinder quantity and prove its bound by the exact (c(I(H)));
+- identify the suffix product above with the paper's (
+u(J(H))), including its exact interval convention and endpoint exclusions;
+- handle the empty initial profile as an explicit case of the historical definition;
+- then instantiate Lemma 3.3 and feed its output into Lemma 3.4's moment recurrence.
+
+No historical definition is inferred merely from the matching shape of the formula. The exact source index sets, coordinate deletion/preprocessing, and profile restrictions remain controlling.
+
+### Manuscript synchronization
+
+The corresponding main-text note is a formalization-status addendum only. It does not change the established APW4 mathematical proof, its hypotheses, or the exact two-term energy identity. It also does not assert that this intermediate BBMST cylinder theorem alone completes the historical APW4 event-to-BIB map or weighted Hall construction.
+
+
+
+
+## Source-exact reconciliation of c(I), nu(J), and the current cylinder theorem — 10 November 2026
+
+The published source has now been checked directly at the definitions and proof of Lemma 3.3 (Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *Algebra & Number Theory* 15 (2021), pp. 614–617; equations (9), (10), (15)).
+
+The exact definitions are:
+[
+c(I)=max{mathbb P_a(H): H	ext{ is a hyperplane in }Q_a, F(H)=I},
+qquad Isubseteq[a],
+]
+and
+[
+
+u(J)=prod_{jin J}rac{1}{(1-delta_j)|S_j|},
+qquad Jsubseteq[a+1,n].
+]
+The paper explicitly states (c(arnothing)=
+u(arnothing)=1). The empty-profile identity uses that (mathbb P_a) is a probability measure: the only hyperplane with no fixed coordinates is the full box (Q_a), whose mass is 1.
+
+**Important profile-domain correction:** (c(I)) is a maximum over *all* hyperplanes of the initial box (Q_a) whose fixed-coordinate set is exactly (I), not merely over the hyperplanes in the particular covering family (mathcal A). A Lean definition restricted to the members of (mathcal A) would be too small and would not be source-faithful. The initial profile family must therefore enumerate all partial assignments on (I), with every coordinate outside (I) free, and evaluate their (mathbb P_a)-cylinder masses.
+
+The current `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` has precisely the induction shape of (15). For a hyperplane (H) whose fixed-coordinate set splits as
+[
+F(H)=Icup J,quad Isubseteq[a],quad Jsubseteq[a+1,a+j],
+]
+the current recursion charges one factor
+[
+rac{1}{(1-delta_i)|S_i|}
+]
+exactly when the newly exposed coordinate (i) is fixed by (H), and charges 1 when it is free. Thus the remaining equality is a finite-product/index identification:
+[
+	exttt{hyperplaneSuffixFactor}(a,delta,H,j)
+=
+prod_{rin F(H)cap[a+1,a+j]}
+rac{1}{(1-delta_r)|S_r|}.
+]
+The one-based paper coordinate (r) corresponds to Lean's `Fin n` value (r-1); in the present recursion the suffix interval is `Finset.Ico a (a+j)`. This index shift and the right-open endpoint must be explicit in the Lean theorem.
+
+Consequently, the source-faithful Lemma 3.3 closure should be organized as two separate lemmas:
+1. initial-block bound (mathbb P_a(H)le c(F(H)cap[a])), by the defining finite maximum;
+2. suffix-factor identity above, followed by the already-present cylinder induction.
+
+This yields (mathbb P_{a+j}(H)le c(I)
+u(J)) for the exact split of fixed coordinates. It does not require inventing another distortion estimate.
+
+**Lemma 3.4 dependency:** its exact right-hand side is
+[
+rac{1}{|S_k|^t}
+sum_{F_1,ldots,F_tinmathcal N_k}
+c!left((F_1cupcdotscup F_t)cap[a]ight)
+
+u!left((F_1cupcdotscup F_t)cap[a+1,k-1]ight).
+]
+The proof first bounds (alpha_k(x)) by the number of compatible new hyperplanes divided by (|S_k|), expands the (t)-th power as an ordered (t)-tuple sum, identifies intersections of hyperplane shadows as either empty or a hyperplane with fixed set the union, and applies Lemma 3.3. The current `BBMSTPrefixMomentBridge` supplies the actual (P_{k-1})-weighted first/second moments and the hyperplane-incidence modules supply a union-bound intermediate; the missing connection is the exact (c(I)
+u(J)) bound on each shadow intersection, followed by the ordered tuple summation. The tuple order and multiplicity must be preserved.
+
+Primary source pages: [published article PDF, pp. 614–617](https://ora.ox.ac.uk/objects/uuid%3A3c55267c-60be-4652-89a7-db3db5f62c25/files/rdv13zt50s). This source reconciliation is distinct from Lean verification: the definitions and proof architecture are source-checked; the v15 integrated candidate remains unverified on its exact head.
+
+
+
+
+### Additional exact interface condition: Q_k-measurability
+
+The published Lemma 3.3 assumes that (A) is (Q_k)-measurable, equivalently every fixed coordinate of (A) lies in the first (k) coordinates. The current `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` is stated for an arbitrary full `Hyperplane C`; because `prefixCylinder` tests only the first (a+j) coordinates, it bounds the cylinder of the **prefix projection** of (H). To identify that cylinder with the original source event (Asubseteq Q_k), the final source-facing theorem must carry and use
+[
+H.mathrm{FixedInsidePrefix}(a+j).
+]
+This is not needed for the internal induction, but it is needed for the exact historical event identification. The final theorem should state the decomposition (F(H)=Isqcup J), with (Isubseteq[a]), (Jsubseteq[a+1,a+j]), and prove that the Lean fixed-coordinate profile and the paper's (F(H)) agree under the one-based/zero-based index conversion.
+
+## Source-faithful BBMST Lemma 3.3/3.4 correction — 10 November 2026
+
+The published paper's equations (9)–(11) settle the historical profile definitions. For every I⊆[a], c(I) is the maximum of P_a(H) over **all hyperplanes H in Q_a with F(H)=I**; it is not a maximum over the selected cover A and not a family of only occurring profiles. The profile index set is the full power set P([a]). The suffix factor is ν(J)=product over j∈J of 1/((1−δ_j)|S_j|), for J⊆[a+1,n]. Since P_a is a probability distribution, c(∅)=1; this does not follow from nonnegativity alone. The generating polynomial is c_k(x)=Σ_{I⊆[a]}Σ_{J⊆[a+1,k]}c(I)ν(J)x^{|I|+|J|}.
+
+BBMST Lemma 3.3 states P_k(A)≤c(I)ν(J) when F(A)=I∪J, I⊆[a], J⊆[a+1,k]. Its induction has the free-coordinate branch (Lemma 2.1(4), no new factor) and fixed-coordinate branch (Lemma 2.1(5) plus uniform fibre extension, giving exactly 1/((1−δ_k)|S_k|)). Lemma 3.4 is the ordered t-tuple moment bound over (F_1,…,F_t)∈N_k^t; repetitions are included. It follows from the union bound, unique extension value, ordered expansion, and Lemma 3.3 on intersections of projected hyperplanes.
+
+This corrects the earlier shorthand “actual finite family of initial profiles”: c's profile domain is all I⊆[a], and its maximization domain is all initial hyperplanes with that profile. The selected cover enters through N_k in Lemma 3.4, not in c(I). The current hyperplaneSuffixFactor has the correct fixed-coordinate charging pattern but the existing cylinder theorem still uses the actual initial cylinder mass; it has not yet been identified with c(I). Exact Lean integration and the normalization Σ_x P0(x)=1 remain open. See publication/APW4_BBMST_LEMMAS_3_3_3_4_SOURCE_TO_LEAN_INTERFACE_2026-11-10.md for the detailed interface and proof decomposition.
+
+Source: Balister–Bollobás–Morris–Sahasrabudhe–Tiba, *The Erdős–Selfridge problem with square-free moduli*, Algebra & Number Theory 15 (2021), equations (9)–(11), Lemmas 3.3–3.4, DOI 10.2140/ant.2021.15.609.
+
+
+## Arbitrary-t shadow geometry — implementation checkpoint, 10 November 2026
+
+The next source-faithful Lemma 3.4 task is the general ordered-tuple intersection, not a restart of the already established APW4 proof. Repository inspection on the current working branch confirms that `BBMSTOldShadow.lean` contains only the binary operations `OldCompatible`, `mergeOldShadows`, `mergeOldShadows_contains_iff`, `oldShadows_disjoint_of_conflict`, and `fixedCoords_mergeOldShadows`. `BBMSTPrefixIncidenceBridge.lean` contains the pair-level masses and `prefixPairReserve_eq_weightedPairCount`, plus the concrete first/second incidence bridges. These declarations are genuinely pair-level; none is being relabelled as arbitrary (t).
+
+The next Lean module should add the tuple interface in this dependency order: (i) pairwise compatibility on `Fin t`; (ii) a deterministic finite fold of old shadows; (iii) induction proving the fold predicate is the intersection and its fixed-coordinate set is the union; (iv) the conflict branch, reducing a failed pairwise compatibility witness to a disjoint pair and hence empty total intersection; (v) the exact prefix tuple-mass identity/bound; (vi) the ordered `Fin t → N_k` indicator expansion and finite-sum interchange. The (t=0) and (t=1) cases must be explicit, and repetitions must remain present.
+
+**Important proof-engineering constraint:** a binary merge theorem alone does not justify iterating the merge. The induction step must prove that the accumulated merge remains compatible with the next tuple entry, using the original pairwise compatibility hypotheses. The fixed-coordinate union theorem and the point-predicate intersection theorem must be proved for the same fold and same tuple order. No associativity or order-independence is assumed without proof.
+
+The source-facing tuple bound depends on the separately specified historical Lemma 3.3 interface (c(I)\nu(J)), including the all-initial-hyperplanes maximum and the exact suffix interval. The tuple geometry does not bypass those source requirements.
+
+**Verification:** this is a source inspection and proof-obligation record, not a Lean compile. No compiler is available through this repository-editing session. The current candidate head and PR #138 status remain separately controlled by exact-head CI and transitive axiom evidence. No new theorem or CI success is claimed here.
+
+
+## Exact-head continuity — 10 November 2026, 14:01 UTC
+
+PR [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138) now points to exact head `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The intervening commit adds only a Lean comment requesting an exact-head refresh; it changes no declaration, proof term, hypothesis, or mathematical content. The exact-head workflow and status queries returned no associated run/check. The v15 local-membership repair therefore remains **OFFEN – NICHT VERIFIZIERT**. No previous candidate's CI result is transferred.
+
+
+## Rights, attribution, and licences
+
+Original APW4 manuscript wording, original Lean source, research notes, and project documentation are attributed to Ta-Yoshua Lubuimi to the extent he owns the relevant rights. The repository's [proprietary rights notice](LICENSE-PROPRIETARY.md) and [commercial licensing policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) govern those protected original materials. Public access or citation does not grant commercial-use permission; any commercial licence requires express written agreement.
+
+No exclusive ownership is claimed over mathematical facts, theorem statements, abstract ideas, methods, or independently developed implementations as such. Upstream Erdős–Selfridge materials, Balister et al. publications, Lean, Mathlib, packages, and other third-party components retain their own licences and rights holders. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## Repository-wide exact-head status — 10 November 2026
+
+The append-only [repository-wide APW4 status snapshot](publication/APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md) consolidates the current exact PR heads, CI outcomes, remaining source-faithful proof obligations, and licensing boundary. It preserves the established mathematical APW4 result separately from the still-open integrated historical Lean verification. The independently finalized manuscript PDF is not modified.
+
+
+## CI interpretation correction — 10 November 2026
+
+A job-level inspection refines the preceding run summary:
+
+- For PR #101 exact head `31cc94993fdcb481cea919ca762a29c568948a7a`, workflow [42760198290](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42760198290) had **audit = success** and **integrated-paranoid = failure**. The audit job's success does not remove the reported `sorryAx`: its log prints `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`. The integrated job fails while compiling the integrated BBMST/APW4 modules. The overall workflow is therefore not a passing integrated verification.
+- The PR #136 docs-branch workflow [42835240615](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42835240615) is an upstream/degenerate-witness audit of `ErdosSelfridge_v17_fixed.lean` and `AuditCheck.lean`; it is not an APW4 integrated build and does not verify the historical APW4 theorem. Its output still lists `sf_sieve_lt_one` and `sieve_criterion` in `erdos_selfridge`.
+
+This job-level correction supersedes any wording above that called run 42760198290 an audit-job failure. The accurate status is: audit job passes, integrated-paranoid fails, and the dependent prefix recursion still contains `sorryAx`. The mathematical APW4 results remain unchanged.
+
+
+## Consolidated research continuity checkpoint — 10 November 2026, 22:58 CET
+
+The append-only cross-project status record is now available at [RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md](publication/RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md). It reconciles the APW4/BBMST PR #72 versus Syracuse PR #72 numbering, records the exact PR #69 failure on head `17eb308d106c770ab559d254bcee2bdfd2ead6c4` / run 42739454140, preserves PR #138 v15 as **OFFEN – NICHT VERIFIZIERT**, and keeps the established APW4 mathematical results separate from historical transport and Lean integration obligations. It also records the parallel Syracuse backward-accumulator and finite-prefix theorems as Lean-kernel verified on their isolated branch, while preserving the open global Collatz descent obligation. No Lean source or published PDF is changed.
+
+The mirrored Syracuse/Collatz checkpoint is maintained in the separate [Lubuimi repository](https://github.com/s4ztz4bnf6-maker/Lubuimi/blob/collatz/terminal-exact-backward-step-2026-11-10/COLLATZ_APW4_RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md); it records the finite backward accumulator PASS without promoting it to global Collatz descent.

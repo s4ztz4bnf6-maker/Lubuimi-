@@ -208,3 +208,87 @@ The updated PR #56 branch now contains the full source-level reduction output:
 The successful [CI run 42601107408](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42601107408) compiled the updated family and augmentation modules. Its axiom output for canonicalReduction_result_full and the new helper declarations is exactly [propext, Classical.choice, Quot.sound], with no sorryAx. This is the formalized geometric reduction of Balister et al. Theorem 1.2 under the explicit product-coordinate and nonparallel-cover hypotheses.
 
 This result does not by itself integrate the geometric reduction with every prefix/fibre-moment/tail module, and it does not construct APW4's historical DT/HT or strict energy transfer.
+
+
+## Addendum — exact-head formalization status, 10 November 2026 (13:43 CET)
+
+This memorandum's mathematical verification scope is unchanged. The established APW4 mathematical proof and the repository's declaration-scoped Lean evidence remain separate evidence records.
+
+PR #133's integrated Lean 4.35.0 run (42812910651) failed at the concrete prefix-fibre update because the endpoint coordinate family and the fibre coordinate family were not definitionally aligned. The exact diagnostic is recorded in the current status ledger. PR #137 / v14 now attempts to normalize the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` throughout the proof context before constructing the fibre. This candidate has not yet passed an exact-head integrated run; no new machine-verification claim is made.
+
+No statement in the finalized manuscript PDF is changed by this repository addendum. The PDF remains the separately secured author-held publication artifact.
+
+
+## Exact-head update — v14 diagnosis and v15 repair (10 November 2026, 13:50 CET)
+
+This is an append-only Lean-integration status update. It does not replace, reopen, or downgrade the established APW4 mathematical proof record. The mathematical energy decomposition, DT, HT, the upper energy estimate, the strict lower-bound implication, and the resulting contradiction remain retained at their stated hypotheses and exact definitions. The historical APW4 quantities and the separate CRT/BIB reconstruction remain distinct where the required index-preserving identifications have not yet been formalized. The published manuscript/PDF is not silently rewritten by a CI repair.
+
+### Exact v14 finding
+
+- PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137), source head `175c50c75d537ef32687c63cb1219e8ff1ace257`, uses the equality `stageCoordinate hk = prefixIndex hj (Fin.last k)` and rewrites the dependent context before constructing the fibre. This removes the earlier coordinate-type mismatch.
+- The exact integrated and standalone logs for this candidate now isolate a narrower proof-script defect at `BBMSTPrefixMeasureRecursion.lean:397` and `:410`: `simp only [if_pos hcovF]` / `simp only [if_neg hnotF, if_pos hpointF]` make no progress.
+- The reason is syntactic but type-relevant: the witnesses `hcovF`, `hnotF`, and `hpointF` are stated at the unfolded endpoint `y (Fin.last k)`, while `updatedWeight` is still applied to the local let-bound argument `x := y (Fin.last k)`. The conditional matcher sees `x ∈ F.covered` and `x ∉ F.covered`; it is not supplied those exact propositions. The compiler's error recovery consequently reports `sorryAx` in `prefixFibre_updatedWeight_eq_PAt` and downstream recursion declarations. Those declarations are not integrated-verified at this source head.
+
+### v15 exact repair candidate
+
+- PR [#138](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/138), source head `800d752e626951505d9dbcb312dfe09555ee6f2f`, transports the already-proved endpoint witnesses to the actual local argument before reducing the conditionals:
+  - `hcovFx : x ∈ F.covered` from `hcovF`;
+  - `hnotFx : x ∉ F.covered` from `hnotF`;
+  - `hpointFx : x ∈ F.points` from `hpointF`.
+  It then rewrites the exact conditional branches using those local-argument witnesses. This is a focused elaboration repair: theorem statements, assumptions, fibre definitions, and mathematical content are unchanged.
+- PR #138 is **PENDING exact-head verification**. It must pass the integrated paranoid build and separate audit on the same head, print the named axiom profiles for `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, and `PAt_sum_eq_one`, and show no transitive `sorryAx`. No verification is claimed yet.
+
+### Remaining APW4 formalization after this local repair
+
+Once the recursion bridge passes the exact-head gate, continue with the historical identifications already tracked in the proof-obligation map: `prefixFixedCoords`, `initialProfileFamily`, the historical `c(I)) profile including the empty profile, the exact suffix-factor identification with `ν(J)), the full Lemma 3.3 cylinder inequality, and the Lemma 3.4 moment step. Then connect the resulting source-indexed prefix statements to the historical DT indices and actual BIB-place weighted-Hall transport without replacing those objects by arbitrary abstract maps. Preserve the two-term energy decomposition and ordered off-diagonal convention.
+
+### Preservation and attribution
+
+All established APW4 results and all earlier exact-head Lean passes remain valid for their stated scope; later integration failures do not retroactively invalidate them. Do not claim that the complete historical APW4 theorem is already fully Lean-verified until its own exact release-head build, paranoid check, named axiom output, and transitive no-`sorryAx` audit pass. Original APW4 research and formalization remain attributed to Ta-Yoshua Lubuimi; AI tools are assistants only.
+
+
+### Earlier exact APW4 audit distinction — Lean 4.28 versus integrated Lean 4.35
+
+- Run [42728171781](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42728171781): the separate Lean 4.28.0 audit job passed for the checked source chain and printed the standard profile `[propext, Classical.choice, Quot.sound]` without `sorryAx` for `prefixPointCovered_iff`, `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one`. The integrated-paranoid job in that same run failed. These are two distinct outcomes; the successful 4.28 audit remains a valid result for its checked declarations and source/toolchain, and does not certify the separate 4.35 integrated build.
+- Run [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140): both jobs failed on a later exact source candidate. The proof had progressed through the covered/uncovered branches, but a subsequent `ring` tactic was reached after `simp` had already closed the goal ("No goals to be solved"); the algebraic remainder in the 4.35 path also required a separately normalized proof. The downstream `PAt_nonneg` and `PAt_sum_eq_one` declarations on that failing source are not certified. The subsequent v14 diagnosis narrowed the remaining failure to the exact local-let membership mismatch documented above.
+
+Do not erase the successful Lean 4.28 audit because the later integrated 4.35 path fails. Preserve both exact outcomes and their distinct verification scopes.
+
+
+### Historical event-to-BIB reconstruction — new 10 November source ledger
+
+The detailed source reconstruction is now recorded in [APW4 Historical Event-to-BIB Reconstruction Ledger](publication/APW4_HISTORICAL_EVENT_BIB_RECONSTRUCTION_LEDGER_2026-11-10.md). The recovered q-fibre working definitions are \(B_q=N/q^{a_q}\), \(V_q=\{z:z\bmod B_q\in U_q\}\), \(F_q(x)=\{z:z\equiv x\pmod{B_q}\}\), \(P_{q,x,h}=F_q(x)\cap C_h\), with \(M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|\) and \(\Gamma_{q,r}(g)=|C_g\cap V_q\cap V_r|\). The ledger preserves the exact block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\) and local fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\).
+
+It also records \(I_q=A_q+Z_q\) and the full four-term expansion of \(I_qW_{q,r}I_r^{\mathsf T}\), with three Z-residual terms. This is matrix accounting only, not a third term in the APW4 energy identity, which remains exactly \(D_{\rm APW4}+C_{\rm APW4}\). The event universe, full index map, source domains, actual BIB slots, incidence predicate, and weight-preserving Hall proof remain explicit formalization obligations; no arbitrary replacement map or residual estimate is introduced.
+
+
+### Exact run/commit attribution correction — 10 November 2026
+
+The conditional-reduction diagnostics at lines 397 and 410 belong specifically to workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on source commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330` (the preceding dependent-coordinate candidate). That commit uses `cases hstage`; its source shows `updatedWeight F ... x` but supplies `hcovF), `hnotF), and `hpointF) at `y (Fin.last k)`. The compiler reports `simp made no progress` at both conditional reductions and downstream `sorryAx). The local-witness transport in PR #138 addresses precisely this mismatch.
+
+PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v14 source head `175c50c75d537ef32687c63cb1219e8ff1ace257`; no associated exact-head run was returned in this check. Do not attribute run 42815999557 to PR #137. PR #138's current head is separately tracked and remains unverified until its own CI and axiom gates complete.
+
+
+## Exact-head update — PR #138 v15, 10 November 2026
+
+PR #138 currently points to `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. Its latest change is a comment-only CI-refresh marker in the source file. Exact-commit workflow and status queries returned no associated run/check. Therefore the v15 local-witness repair remains **OFFEN – NICHT VERIFIZIERT**; this update does not certify compilation, axiom profile, or absence of `sorryAx`.
+
+
+## Repository-wide verification boundary — 10 November 2026
+
+The latest exact-head PR/CI snapshot and the remaining historical Lean obligations are consolidated in [APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md](APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md). The manuscript/PDF is not altered by this status update. Declaration-scoped positive CI records retain their original exact-commit scope; no full historical APW4 main-theorem kernel pass is claimed.
+
+
+## CI interpretation correction — 10 November 2026
+
+A job-level inspection refines the preceding run summary:
+
+- For PR #101 exact head `31cc94993fdcb481cea919ca762a29c568948a7a`, workflow [42760198290](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42760198290) had **audit = success** and **integrated-paranoid = failure**. The audit job's success does not remove the reported `sorryAx`: its log prints `sorryAx` in `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`. The integrated job fails while compiling the integrated BBMST/APW4 modules. The overall workflow is therefore not a passing integrated verification.
+- The PR #136 docs-branch workflow [42835240615](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42835240615) is an upstream/degenerate-witness audit of `ErdosSelfridge_v17_fixed.lean` and `AuditCheck.lean`; it is not an APW4 integrated build and does not verify the historical APW4 theorem. Its output still lists `sf_sieve_lt_one` and `sieve_criterion` in `erdos_selfridge`.
+
+This job-level correction supersedes any wording above that called run 42760198290 an audit-job failure. The accurate status is: audit job passes, integrated-paranoid fails, and the dependent prefix recursion still contains `sorryAx`. The mathematical APW4 results remain unchanged.
+
+
+## Research continuity and exact-head status — 10 November 2026, 22:58 CET
+
+The [consolidated research continuity checkpoint](RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md) is the current cross-project index for APW4/BBMST and Syracuse. It preserves the APW4 mathematical result at its stated historical hypotheses while recording the open historical Event-to-BIB/weight/capacity reconstruction and the current Lean 4.35.0 integration blocker. In particular, PR #69 head `17eb308d106c770ab559d254bcee2bdfd2ead6c4` failed workflow 42739454140 in the prefix recursion; PR #138 v15 at `94b89a2c5bda9a494c0c42e79ad054aabacabdd8` has no exact-head workflow result and remains **OFFEN – NICHT VERIFIZIERT**. No publication PDF or mathematical theorem statement is modified by this status note.
