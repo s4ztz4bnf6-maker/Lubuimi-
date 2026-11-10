@@ -402,3 +402,20 @@ A new standalone mathematical note, publication/LUBUIMI_SYRACUSE_FINITE_DEPTH_UN
 The surviving prefix tree is finite at every fixed depth. Taking B*_k=max B_α over that finite level and M_k=2^(B*_k), each local child/tail partition can be refined to a common uniform fibre X_k={0,...,M_k-1}. The child-b block has 2^(B*_k-b) points, and the tail block has 2^(B*_k-B_α) points. Thus each point has mass 1/M_k, the distinguished cap-compatible subset has exact proportion 1-2^-B_α, and the complement has proportion 2^-B_α. The micro-atoms correspond to genuine refined residue cylinders at a common parent-dependent modulus.
 
 This is a mathematical finite-depth uniform-fibre construction and a concrete APW4-style model. It is not yet Lean-formalized. It does not identify the distinguished subset with historical APW4 hyperplane-covered events, does not map to historical BIB places/event indices, and does not prove the APW4 diagonal/off-diagonal or BIB/Hall capacity inequalities. It also does not exclude an infinite surviving Collatz path. The note records a precise formalization plan.
+
+
+## 11. Chronological update — German cylinder manuscript and new exact finite audits (10 November 2026)
+
+The initial valuation-one cylinder project now has a complete German parallel manuscript, stored in the companion repository at projects/LubuimiInitialValuationOneCylinder/Lubuimi_Anfangszyklus_Eins_Zylindersatz_2026-11-10_DE.md and linked from that project's README. It is a translation of the English v1.0 research note; it does not alter the theorem, formal scope, or seven exact-commit Lean audit records.
+
+Two additional finite-project CI results have completed successfully on their exact PR heads:
+
+- Terminal-residue k=2 Lean audit: run 42737167314, PR #38 head 50492a880f5b8a2c4bb96838e16dfed2339dd501. The LubuimiTerminalResidueEnergyK2 module compiled. The audited declarations include the stochastic-row sums, exact two-step numerator, mass vector, and energy identity. Their transitive profile is [propext, Classical.choice, Quot.sound]; the completed log reports no actual sorryAx finding. The exact two-step mass remains (8,16,11,4,2,22)/63, with energy 5/21. This certifies the finite k=2 module, not the general k Markov theorem or APW4/BIB identification.
+- Kolaz threshold-return archive: run 42737593864, PR #39 head 710fb173c3006bbf622f6b7b3a67ac69907fc783. The expanded finite-table/regression job completed successfully, including the B=511 and B=1023 archive outputs and cross-threshold suffix calculation. This is a finite reproducibility result; it does not prove a uniform return bound or global Collatz.
+
+Current exact-head checks at the time of this entry:
+- Syracuse/Collatz offset PR #9 head 19ad4e58847508ff078c424e4ee809b9ade92f85: run 42738027956 queued; no new success claimed for this head.
+- APW4 integration PR #69 head f02f8d28f0d06735bab9ec1a591839704c6bb9ac: run 42738073791 has audit and integrated-paranoid queued; Lean 4.35 integration remains unverified on this head.
+- APW4 documentation PR #79 head 96cd9f3712b15ebcc6b1c6fe1ff28760670b55c2: run 42737972794 is in progress; the earlier successful documentation audit remains valid only for its exact prior head.
+
+No result above identifies the Syracuse valuation cylinders with historical APW4 event indices. The required explicit index map, weight transport, separate diagonal/off-diagonal accounting, and BIB/Hall capacity argument remain independent proof obligations.
