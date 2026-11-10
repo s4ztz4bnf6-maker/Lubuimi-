@@ -470,3 +470,8 @@ PR #87 now explicitly labels its Fin N / Fin B residue-fibre construction as a c
 ### Addendum 1.28 — conditional squarefree BIB parameter test
 
 A new, explicitly auxiliary divisor envelope μ*(B)=max{τ(d): d|B, d<B} gives μ*(B)=τ(B)/2 when B is squarefree. If the actual common selected labels are distinct divisors with proper LCM, then the BIB second-moment hypotheses reduce, for r=q−1, to τ(B)^2<2(q−1)^2. The resulting bound is recorded in the BIB incidence note and historical ledger. This is a conditional arithmetic sharpening, not the historical definition of μ(B), not yet Lean-verified, and not a completed APW4 event-to-BIB transport.
+
+
+### Addendum 1.29 — exact PR91/PR92 verification state
+
+PR #91 now checks the current APW4 dependent-prefix repair at head 837fc31de5f574e6fea912b5d70ea8fac05413cb; its integrated-paranoid and audit jobs are in progress. PR #92 checks the canonical-only residue-fibre helper at head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec; its canonical and audit jobs are in progress. Neither has a PASS yet. PR #85's local M/Gamma theorem retains its canonical PASS, while the paranoid job is still running. The current documentation head has not received its own audit; the earlier documentation audit applies only to its earlier commit.
