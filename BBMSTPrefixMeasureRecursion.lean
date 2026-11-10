@@ -732,3 +732,7 @@ theorem PAt_le_initial_mul_distortionProduct
 
 
 end BBMSTPrefixMeasure
+
+
+/- Exact-head CI refresh for the v15 local-membership witness repair.
+   This comment changes no declaration, proof term, hypothesis, or mathematical content. -/
