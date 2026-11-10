@@ -37,8 +37,6 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
-      - name: Run focused degenerate-witness tests
-        run: lake env lean AuditCheck.lean
       - name: Compile aligned zero-safe sieve parameter core
         run: |
           mkdir -p .lake/build/lib/lean
@@ -47,6 +45,10 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean
       - name: Compile finite weighted fibre update
         run: lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean
+      - name: Compile Syracuse uniform-fibre bridge
+        run: lake env lean -o .lake/build/lib/lean/SyracuseUniformFibreBridge.olean SyracuseUniformFibreBridge.lean
+      - name: Run focused degenerate-witness and Syracuse fibre tests
+        run: lake env lean AuditCheck.lean
       - name: Compile uniform-coordinate fibre instantiation
         run: lake env lean -o .lake/build/lib/lean/BBMSTUniformFibreInstantiation.olean BBMSTUniformFibreInstantiation.lean
       - name: Compile finite-stage first and second moment bounds
