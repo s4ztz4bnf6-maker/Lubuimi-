@@ -342,9 +342,9 @@ end SyracuseDyadicResidueFibre
 /-!
 ## Exact-head CI provenance — 10 November 2026
 
-This source snapshot is the explicit-tail-residue PR #107 candidate. The previous workflow attempt was associated with the preceding source snapshot and its Lean jobs were cancelled. This comment-only commit exists to request a fresh PR workflow on the current exact source head.
+This source snapshot is the explicit-tail-residue PR #107 candidate. It extends the generic residue cylinder with the explicit unique tail coordinate, canonical quotient under the prefix-divisibility hypothesis, and exact child residue cylinders with their common-refinement lift counts. The previous workflow attempt was associated with a preceding source snapshot and was cancelled after the branch advanced.
 
-Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No new PASS is claimed until the exact-head jobs finish.
+Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No PASS is claimed until the exact-head jobs finish.
 -/
 
 namespace SyracuseDyadicResidueFibre
