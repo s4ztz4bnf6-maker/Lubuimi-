@@ -276,3 +276,8 @@ The current exact-head results supersede the earlier queue status above:
 - Collatz PR #48 head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798): all three jobs were queued at the last poll.
 
 The detailed exact-head evidence is in [the CI status snapshot](publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md) and [the scientific proof dossier, Section VI](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). These are formalization updates only. Established APW4 mathematics and the finalized author-controlled manuscript are not changed or downgraded.
+
+
+### 10 November 2026 — PR #101 targeted contradiction branch (04:55 UTC)
+
+A narrow proof candidate was committed to PR #101 at exact head `dbbeaf7a14ebcceb8abf97b6a9113d84a024c54c`. The positive branch now eliminates the residual implication `¬hcov → …` directly from the branch hypothesis `hcov`; the uncovered branch remains `simp [hcov]`. Runs [42758799252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758799252) and [42758803063](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758803063) were queued at the latest poll. This is a proof candidate only: no Lean PASS, no axiom-profile clearance, and no change to established APW4 mathematics are claimed.
