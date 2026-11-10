@@ -17,3 +17,8 @@ This project studies distinct odd covering systems through exact CRT fibres, com
 The quantitative private-mass lower bound g(L)>0 and a universal Ψ/discrepancy estimate remain open. Pairwise intersection estimates alone do not control all higher intersections. The project does not claim the odd distinct covering conjecture is solved.
 
 A standalone Lean project in `lean/` is being audited for these exact finite L945 moments; it is not yet marked verified. See MANUSCRIPT.md for the exact definitions, finite examples, structural leads and open proof obligations; WRITTEN_REVIEW.md separates exact results from conditional or unreconstructed claims.
+
+
+## Exact-head standalone Lean 4.35.0 audit — 10 November 2026
+
+The standalone L945 finite CRT moment module now passes its exact-head workflow 42736060742 on code commit `f81a08296c88e5ee2877dd88adaf932927ecb7a7`, using Lean 4.35.0 and Mathlib v4.35.0. The seven audited declarations — `coprimePairs_eq_expected`, `coprimeTriples_eq_expected`, `divisorDensity_eq_65_over_63`, `coprimePairs_card_eq_16`, `coprimePairDensity_eq_74_over_315`, `coprimeTriples_card_eq_3`, and `coprimeTripleDensity_eq_13_over_945` — print the standard transitive profile [propext, Classical.choice, Quot.sound]. The complete job passes its `lake check --paranoid` step and has no actual `sorryAx` hit. This verifies the finite CRT arithmetic module only; it does not prove a positive private mass, a universal distortion bound, or the odd-covering conjecture.
