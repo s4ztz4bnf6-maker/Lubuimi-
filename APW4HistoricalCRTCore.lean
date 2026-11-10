@@ -373,7 +373,7 @@ theorem sum_M_qr_le_Gamma_qr_of_residue_projections
 #print axioms residueProjection_val
 #print axioms sum_M_qr_le_Gamma_qr_of_residue_projections
 
-end ResidueProjectionModel
+end ResidueCoordinateModel
 
 
 /-!
@@ -460,9 +460,12 @@ theorem qFibreModulus_dvd_N
 
 /-- Positivity of B_q follows from N>0 and q>0. -/
 theorem qFibreModulus_pos
-    {N q a : ℕ} (hN : 0 < N) (hq : 0 < q) :
+    {N q a : ℕ} (hN : 0 < N) (hq : 0 < q)
+    (hdiv : q ^ a ∣ N) :
     0 < qFibreModulus N q a := by
-  exact Nat.div_pos hN (pow_pos hq a)
+  have hpow : 0 < q ^ a := pow_pos hq a
+  have hle : q ^ a ≤ N := Nat.le_of_dvd hN hdiv
+  exact Nat.div_pos hN hle
 
 /-- The actual quotient homomorphism for B_q=N/q^a. -/
 def qFibreProjection
@@ -470,7 +473,7 @@ def qFibreProjection
     (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N) :
     ZMod N →+* ZMod (qFibreModulus N q a) := by
   letI : NeZero (qFibreModulus N q a) :=
-    ⟨qFibreModulus_pos hN hq⟩
+    ⟨Nat.ne_of_gt (qFibreModulus_pos hN hq hdiv)⟩
   exact ZMod.castHom (qFibreModulus_dvd_N hdiv)
     (ZMod (qFibreModulus N q a))
 
