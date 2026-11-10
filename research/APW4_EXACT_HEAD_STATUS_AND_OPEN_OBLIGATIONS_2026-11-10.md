@@ -120,3 +120,8 @@ PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137) is a separate v
 ## PR #138 exact-head refresh — 10 November 2026
 
 Current v15 head: `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The last commit is a comment-only marker. No associated exact-head workflow or status check was returned. The v15 local-membership repair remains **OFFEN – NICHT VERIFIZIERT**. Earlier v14 errors and earlier successful independent module checks retain their own exact commit scopes and are not transferred.
+
+
+## Repository-wide exact-head refresh — 10 November 2026
+
+The current consolidated status is in [APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md](../publication/APW4_REPOSITORY_WIDE_STATUS_2026-11-10.md). Exact current candidates: PR #101 head `31cc94993fdcb481cea919ca762a29c568948a7a` has audit run 42760198290 failed; PR #138 head `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202` has no exact-head workflow returned; PR #107 head `d7b159e9300a0215073d4cbad208e3a9c30a3243` has run 42762741729 cancelled. No result is promoted on the basis of earlier candidate commits. The mathematical APW4 result remains unchanged.
