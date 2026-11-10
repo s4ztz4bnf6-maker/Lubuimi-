@@ -334,3 +334,8 @@ The APW4 publication documentation now links the [Historical Event-to-BIB Recons
 ### Exact run/commit attribution correction — 10 November 2026
 
 The two conditional-reduction failures at lines 397 and 410 are from workflow [42815999557](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42815999557) on commit `dee13d1ada1c440b7e9fe3f9cb7fbd87fcdf3330`, not PR #137. The exact source applies `updatedWeight` to local `x) but provides the conditional witnesses at `y (Fin.last k)`; the local witness transport in PR #138 addresses that mismatch. PR #137 head `175c50c75d537ef32687c63cb1219e8ff1ace257` is a separate candidate with no associated exact-head run returned in this check. PR #138 must be verified at its own current head.
+
+
+## Exact-head verification boundary — 10 November 2026
+
+The current v15 PR #138 head is `d1037b6c8b2cd2f5f9bbe2405dfb55b7e7b51202`. The latest commit only adds a Lean comment; it does not alter mathematical or proof content. No workflow run or commit status check was returned for this exact SHA. The v15 theorem remains **OFFEN – NICHT VERIFIZIERT** until the full integrated paranoid build and transitive axiom audit pass on a code-bearing exact head.
