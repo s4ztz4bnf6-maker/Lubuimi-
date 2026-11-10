@@ -406,9 +406,12 @@ theorem prefixFibre_updatedWeight_eq_PAt
     · exact (hcov hmem).elim
     · change y (Fin.last (a + j)) ∉
         prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) at hmem
-      have hunit : y (Fin.last (a + j)) ∈ Finset.univ :=
+      have hunit :
+          y (Fin.last (a + j)) ∈
+            (Finset.univ : Finset (C.S (stageCoordinate hk))) :=
         Finset.mem_univ _
-      rw [if_neg hmem, if_pos hunit]
+      rw [if_neg hmem]
+      rw [if_pos hunit]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
