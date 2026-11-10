@@ -347,3 +347,8 @@ PR #125 / v9 integrated-paranoid failed at lines 387 and 402: the casted endpoin
 ## Latest APW4 v10 CI poll — 10 November 2026
 
 Exact-head workflow 42810911393 has audit job `129811792964` in progress and integrated-paranoid job `129811793388` queued. No compile or axiom conclusion is available yet.
+
+
+## Completed v9 audit / integrated failure — 10 November 2026
+
+The separate audit job for PR #125 / v9 completed successfully. The integrated-paranoid job failed at lines 387 and 402 and reports `sorryAx` in the target/dependent declarations. Treat the audit as a separate result only; v9 is not accepted.
