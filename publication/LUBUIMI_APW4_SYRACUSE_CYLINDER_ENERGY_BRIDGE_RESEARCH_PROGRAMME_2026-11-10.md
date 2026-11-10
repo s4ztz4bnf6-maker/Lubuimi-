@@ -351,3 +351,22 @@ PR #69 exact source head 4edf44ce8232d0b9be9f9b9f9f69671740c0f921 has workflow 4
 ### Documentation verification boundary
 
 The previous PR #79 head f984c36f2fff7629b8e6f591acd10b36511bb714 is the source snapshot before this addendum. Its previous successful documentation audit 42735453999 was for an earlier head 388b788d0c5623eab8e2cdf1755e426b8f7f2100, not for this newer content. A fresh exact-head audit is required after this update.
+
+
+## 22. Mixed-word Lean pass and newest APW4 repair — 10 November 2026
+
+### Syracuse finite word (1,2): first mixed-word Lean theorem passed
+
+The declaration realizesValuationWord12_iff_mod_sixteen_eleven passed in full compile-drafts workflow 42736159935 on exact source commit 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9. It proves that the exact two-step word (1,2), with odd quotient witnesses, is realized precisely for n ≡ 11 (mod 16). The transitive profile is [propext, Classical.choice, Quot.sound], the complete log contains no actual sorryAx, and the build completed 8,932 jobs. This is a verified mixed-word instance, not the general arbitrary-word theorem or tail partition. It matches the exact finite Kolaz path 731 -> 1097 -> 823.
+
+### APW4 PR #69: new membership-normalization candidate
+
+The previous candidate head fc2b5f501c4efb478d1c61af2dcb1ae529026cbc failed the Lean 4.35.0 integrated-paranoid job at line 355 of BBMSTPrefixMeasureRecursion.lean. The residual goals show that the recursive PAt branch and the finite-fibre updatedWeight branch are splitting on proof-indexed variants of the covered-membership proposition. In the negative branch, Lean was left with an equality between coveredMultiplier and uncoveredMultiplier (or a zero-mass/zero-cardinality disjunct); in the positive branch the multipliers were reversed. This is a concrete predicate-alignment failure, not a mathematical counterexample.
+
+A new candidate now explicitly converts the covered-membership equivalence to proposition equality with propext and rewrites the recursive condition before splitting. Its exact source commit is 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768. Exact-head workflow 42737432337 has both Lean 4.28 audit and Lean 4.35.0 integrated-paranoid jobs in progress. No success is claimed until both complete and the declarations prefixFibre_updatedWeight_eq_PAt, PAt_nonneg and PAt_sum_eq_one have standard transitive profiles with no actual sorryAx.
+
+The APW4 theorem record and prior successful Lean 4.28 audit snapshots remain preserved. The 4.35 integrated build is still the release blocker for this formalization chain. The separate historical APW4–Syracuse index/weight map and BIB/Hall capacity proof also remain open.
+
+### Exact documentation audit
+
+The preceding PR #79 head 601cff92729c52c4a8540513af1e27d13149a451 passed workflow 42736897721. This new addendum advances the documentation branch and requires a fresh exact-head audit.
