@@ -375,3 +375,70 @@ end ResidueProjectionModel
 
 end APW4HistoricalQFibre
 
+
+
+/-!
+## Quotient-homomorphism version of the residue-fibre model
+
+Unlike the canonical-representative Fin B model above, this version uses
+the genuine reduction ring homomorphisms ZMod N -> ZMod B supplied by the
+divisibility hypotheses B | N. It is a source-faithful algebraic
+specialization of the recorded working q-fibre definitions, while the
+selected sets and common block-label map remain explicit parameters.
+-/
+
+namespace APW4HistoricalQFibre
+
+namespace ZModQuotientModel
+
+/-- Canonical quotient homomorphism for a divisor B of N. -/
+def residueProjectionHom
+    {N B : ℕ} [NeZero B] (hdiv : B ∣ N) :
+    ZMod N →+* ZMod B :=
+  ZMod.castHom hdiv (ZMod B)
+
+/-- The inverse image of one residue class under the quotient map. -/
+def residueFibre
+    {N B : ℕ} [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (x : ZMod B) :
+    Finset (ZMod N) :=
+  PreimageModel.fibre (residueProjectionHom hdiv) x
+
+/-- The inverse image of a selected residue set under the quotient map. -/
+def residueVisible
+    {N B : ℕ} [NeZero B]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hdiv : B ∣ N) (U : Finset (ZMod B)) :
+    Finset (ZMod N) :=
+  PreimageModel.visible (residueProjectionHom hdiv) U
+
+/-- The q-fibre aggregate inequality for genuine quotient projections
+ZMod N -> ZMod Bq and ZMod N -> ZMod Br, assuming the actual divisibility
+conditions. The historical selected residue sets and common C_h label
+map remain explicit rather than being guessed. -/
+theorem sum_M_qr_le_Gamma_qr_of_ZMod_quotient_homs
+    {N Bq Br : ℕ} [NeZero N] [NeZero Bq] [NeZero Br]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hq : Bq ∣ N) (hr : Br ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod Bq)) (Ur : Finset (ZMod Br))
+    (c : ZMod N → H)
+    (x : ZMod Bq) (y : ZMod Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (residueFibre hq x) (residueFibre hr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (residueVisible hq Uq) (residueVisible hr Ur)
+      (PreimageModel.block c) g := by
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (residueProjectionHom hq) (residueProjectionHom hr)
+    Uq Ur c x y g hx hy
+
+#print axioms residueProjectionHom
+#print axioms sum_M_qr_le_Gamma_qr_of_ZMod_quotient_homs
+
+end ZModQuotientModel
+
+end APW4HistoricalQFibre
