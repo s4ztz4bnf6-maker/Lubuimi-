@@ -391,7 +391,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
     unfold BBMSTFiniteFibreUpdate.updatedWeight
-    rw [if_pos hcovF]
+    simp only [if_pos hcovF]
     simp [x, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
@@ -404,7 +404,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       change x ∈ Finset.univ
       exact Finset.mem_univ _
     unfold BBMSTFiniteFibreUpdate.updatedWeight
-    rw [if_neg hnotF, if_pos hpointF]
+    simp only [if_neg hnotF, if_pos hpointF]
     simp [x, F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
