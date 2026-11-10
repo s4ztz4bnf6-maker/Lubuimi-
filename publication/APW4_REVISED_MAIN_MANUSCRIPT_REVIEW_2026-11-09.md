@@ -551,3 +551,32 @@ Previously successful declaration-scoped APW4 checks remain valid for their exac
 ## PR #69 run 42722133436 — dependent prefix diagnosis
 
 Run [42722133436](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42722133436) failed on PR head `95669afac00d8913c1fc2a91b6bb3b5740ce6d92` (merge `a73cc25`). The audit passed upstream, zero-safe fibre, finite weighted update, uniform-coordinate, finite-stage moment and geometry modules, then failed in prefix recursion. The integrated build also failed in hyperplane fibre cardinalities. The prefix errors now identify: (i) an unresolved dependent coordinate cast in `restrictPrefix_extendPrefix`; (ii) a `Fin k` proof used where `Fin (k+1)` is required, and a comparison of `Fin n` with `Fin (k+1)` in `extendPrefix_restrictPrefix`; (iii) an unresolved filtered-set membership rewrite in `prefixPointCovered_iff`; (iv) a dependent `PAt_nonneg` induction transport; and (v) a redundant tactic after a closed goal. Hyperplane denominators fail to normalize under one common `Fintype` instance. Error-recovery declarations show `sorryAx`; no successful integrated build or paranoid check is claimed. Full diagnosis and repair order are in Dossier v1.6, Addendum 1.12. The APW4 mathematical proof status remains unchanged.
+
+
+## Addendum 1.8 — exact-head PR #69 and PR #79 audit update
+
+### PR #69 integrated candidate: head 53baa35961428ed27c42fc117e5a69fa28960067
+
+Workflow 42724495575 completed with failure in both the audit and integrated-paranoid jobs. This exact-head run supersedes the earlier pending description for this candidate; it does not erase the preceding run history.
+
+The audit job reached the source-indexed prefix recursion and reported:
+- BBMSTPrefixMeasureRecursion.lean:341:45: an unsolved equality goal in prefixFibre_updatedWeight_eq_PAt;
+- BBMSTPrefixMeasureRecursion.lean:364:36: No goals to be solved, caused by an extra tactic after the preceding proof step had already closed its goal.
+
+The integrated-paranoid job reported additional upstream failures in the same module:
+- line 174: omega could not prove the dependent-index goal in restrictPrefix_extendPrefix;
+- line 206: simp made no progress while reducing the filtered membership in prefixPointCovered_iff, with a membership-type mismatch between the stage coordinate and the last prefix coordinate;
+- line 341: the updated-weight identity remained unsolved;
+- line 364: an unreachable extra tactic.
+
+The log explicitly prints sorryAx in error-recovered declarations, including prefixPointCovered_iff, prefixExtensionEquiv, sum_prefix_eq_sum_extensions, prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and downstream PAt inequalities/sum declarations. These declarations are not accepted as verified in this snapshot. The independent geometric declarations in BBMSTHyperplaneFibreIncidence did compile and their printed profiles were [propext, Classical.choice, Quot.sound]; this does not repair or certify the dependent prefix recursion.
+
+**Repair order:** (1) resolve the dependent index/coordinate equality in restrictPrefix_extendPrefix; (2) prove a named equality identifying the last prefix coordinate with the stage coordinate and use it to normalize membership in prefixPointCovered_iff; (3) rewrite the updated-weight identity with those named transports and eliminate the extra tactic; (4) rebuild every dependent theorem and inspect the transitive axiom profile; (5) rerun the complete integrated package and paranoid check on one immutable exact commit. Do not hide any failed branch behind simp?, weakened hypotheses, or replacement axioms.
+
+### PR #79 documentation audit
+
+Workflow 42724557829 completed successfully on the exact PR #79 head 0593a89badb66b7fcab459344bd48d412327d333. It was the separate degenerate-witness audit job. It is not a Lean 4.35.0 integrated BBMST/APW4 build and does not verify PR #69.
+
+Earlier successful APW4/BBMST checks remain valid for their own exact commits and declaration scopes. The APW4 mathematical proof record, published manuscript status, and established DT/HT/energy results are unchanged. No successful full integrated-paranoid result is claimed.
+
+**Attribution:** APW4 research and authorship: Ta-Yoshua Lubuimi. AI tools are assistants only.
