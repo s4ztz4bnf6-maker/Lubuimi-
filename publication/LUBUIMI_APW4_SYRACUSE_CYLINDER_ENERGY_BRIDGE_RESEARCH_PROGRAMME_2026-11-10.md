@@ -460,3 +460,8 @@ PR #68's source-reconstruction record remains the controlling reference for the 
 The source dossier also records that the available 17-page PDF copy omits the strict comparison on page 11 and does not reproduce the complete intermediate arithmetic derivation. This is a source/document completeness issue, not a reason to downgrade the user's separately published APW4 mathematical theorem record. It does mean that a claim that every historical definition and bridge step is already reconstructed in the current Lean/GitHub chain would be too strong.
 
 The open bridge obligations remain: exact historical index map, preservation of original weights, separate diagonal/off-diagonal transport, and the BIB/Hall capacity inequality. The finite-depth Syracuse uniform fibre is a new abstract candidate structure, not yet identified with those historical objects.
+
+
+## 29. PR #67 incidence-module import-order repair
+
+The first dedicated exact-head runs on e8b61d2961dadbae2915dd6754807fc1b13daf6d failed because a verification comment preceded import Mathlib. The comment was moved below the import in corrected commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4. New canonical Lean 4.28 run 42740305961 and Lean 4.35.0 paranoid run 42740306351 are queued. The three conditional incidence declarations remain unverified pending these exact-head runs.
