@@ -141,3 +141,20 @@ The APW4 side retains its established DT, HT, global upper energy estimate, stri
 - an arithmetic consequence strong enough to exclude an infinite non-descending Syracuse path.
 
 No one of these obligations is inferred merely from the collision lower bound. The APW4 mathematical proof record is unchanged; the bridge remains an open, separately stated theorem programme.
+
+
+## 11. State-dependent finite branching cap — 10 November 2026
+
+For a Syracuse prefix with total exponent \(A\) and signed margin \(D\), a next exponent \(b\) has
+\[
+D'=3D+(2^b-4)2^A.
+\]
+If the next odd iterate does not descend below the initial odd start, it is necessary that \(D'\le0\), hence
+\[
+2^{A+b}+3D\le4\cdot2^A.
+\]
+For each fixed prefix, only finitely many positive exponents satisfy this inequality. Define \(B_\alpha\) as the largest such exponent, or zero if there is none. A least hypothetical nonterminating orbit would therefore induce an infinite path in a state-dependent finitely branching tree; all larger next valuations lie in the exact tail cylinder and force descent.
+
+This gives a concrete interface to finite incidence and moment methods: nodes are finite valuation prefixes, children are bounded by an explicit arithmetic cap, each child has exact cylinder weight \(2^{-b}\), and the complementary tail atom has exact mass \(2^{-B_\alpha}\) and a positive-margin descent certificate.
+
+The cap is prefix-dependent. It does not give a uniform branching bound, rule out an infinite path, or prove global Collatz. The APW4 bridge could potentially study the surviving finite-prefix tree through an index-preserving transport, but the original APW4 event indices, historical weights, diagonal/off-diagonal transport and BIB/Hall capacity must still be proved independently.
