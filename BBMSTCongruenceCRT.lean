@@ -521,15 +521,14 @@ theorem no_complete_cover_of_global_support_budget
 #print axioms no_complete_cover_of_global_support_budget
 
 /-- A nonempty old-uncovered set forces at least q new classes in total.
-This is weaker than the pointwise theorem only when the uncovered set is
-empty; it is useful as the coarsest global consequence. -/
+The fibre-coordinate identity alone makes the chosen new-class indices
+injective; no base-support hypothesis is needed for this cardinality bound. -/
 theorem global_new_class_count_lower_bound
     {M q : ℕ} {O N : Type*} [Fintype N] [NeZero q]
     (oldData : O → OldClass M) (newData : N → NewClass M q)
     (hMq : M.Coprime q)
     (hne : Nonempty (OldUncovered oldData))
     (alloc : OldUncovered oldData → ZMod q → N)
-    (hmem : ∀ x t, newBaseContains hMq (newData (alloc x t)) x.1)
     (hfibre : ∀ x t,
       newFibreResidue hMq (newData (alloc x t)) = t) :
     Fintype.card (ZMod q) ≤ Fintype.card N := by
