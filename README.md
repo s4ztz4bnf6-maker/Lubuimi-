@@ -265,3 +265,14 @@ No queued or in-progress job is a PASS. The previously recorded Collatz Lean 4.3
 - Collatz PR #48 run [42756479069](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42756479069): Lean 4.34 kernel check, draft compilation, and Lean 4.35 paranoid kernel check were all queued at the latest check.
 
 The detailed run-by-run ledger is in `publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md`. Documentation commit `cc7612b0530f4abf857a4b5dc49d9100dc5413cd` records the APW4 exact-head reconciliation. Previously established mathematical results, including the PR #36 valuation-word cylinder theorem, are not downgraded by these integration statuses.
+
+
+### 10 November 2026 — exact-head follow-up (04:50 UTC)
+
+The current exact-head results supersede the earlier queue status above:
+
+- APW4 PR #101 head `f87657c8f02f41266a43bae1fe44f43267f0c985`, run [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402): audit passed; integrated-paranoid failed at the two dependent membership branches in `BBMSTPrefixMeasureRecursion.lean:393–394`. The recursion identity and dependent `PAt) results still carry `sorryAx` in that run. No formal PASS is claimed.
+- APW4/Syracuse PR #107 head `44d00ad20c352471795358dde2aaf24152281649`, run [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002): both bridge-paranoid and integrated-paranoid failed on the dependent `ZMod.val`/Fin representative and one reverse-implication goal; downstream atom/cardinality declarations carry `sorryAx`. The normalized residue uniqueness/factorization results have separate positive axiom output, but this does not clear the failed declarations.
+- Collatz PR #48 head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run [42757504798](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42757504798): all three jobs were queued at the last poll.
+
+The detailed exact-head evidence is in [the CI status snapshot](publication/APW4_CI_STATUS_SNAPSHOT_2026-11-10.md) and [the scientific proof dossier, Section VI](publication/APW4_Wissenschaftliches_Beweisdossier_Lubuimi_2026-11-09_v1.6.md). These are formalization updates only. Established APW4 mathematics and the finalized author-controlled manuscript are not changed or downgraded.
