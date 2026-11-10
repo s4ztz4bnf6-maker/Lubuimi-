@@ -109,3 +109,8 @@ The candidate notation `B_q=N/q^a` and a proposed `I_q(x,h)` congruence formula 
 The expansion `I_q W I_r^T = A_q W A_r^T + A_q W Z_r^T + Z_q W A_r^T + Z_q W Z_r^T` is an exact algebraic identity under compatible dimensions. It supplies no bound on the three residual terms. No BIB/Hall capacity conclusion is inferred from it.
 
 **Next source-fidelity action:** recover or write down the author's original element-level definitions for the five interfaces above, with source/page and index-range citations. Only then instantiate the matrices, event relation, and capacities in Lean. This audit does not weaken or reopen the author's separate mathematical APW4 result; it records the remaining repository reconstruction obligations.
+
+
+### 2.4 Provenance warning for the proposed q-matrix model
+
+The later reconstruction dossier's section 15 proposes the indicator notation `I_q(x,h)` for complete congruence compatibility, `A_q(x,h)` for a selected fibre cover, and `Z_q=I_q-A_q), subject to `A_q≤I_q`. This is a useful candidate model for testing the four-term expansion. It is **not**, on the presently recovered evidence, a primary-source proof that these are the original historical APW4 matrix definitions or that their index sets coincide with those in the historical identity (7.2). The exact source matrices and their domains must still be supplied independently. The candidate model remains segregated from the historical Lean core.
