@@ -1266,3 +1266,11 @@ Once the recursion bridge passes the exact-head gate, continue with the historic
 ### Preservation and attribution
 
 All established APW4 results and all earlier exact-head Lean passes remain valid for their stated scope; later integration failures do not retroactively invalidate them. Do not claim that the complete historical APW4 theorem is already fully Lean-verified until its own exact release-head build, paranoid check, named axiom output, and transitive no-`sorryAx` audit pass. Original APW4 research and formalization remain attributed to Ta-Yoshua Lubuimi; AI tools are assistants only.
+
+
+### Earlier exact APW4 audit distinction — Lean 4.28 versus integrated Lean 4.35
+
+- Run [42728171781](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42728171781): the separate Lean 4.28.0 audit job passed for the checked source chain and printed the standard profile `[propext, Classical.choice, Quot.sound]` without `sorryAx` for `prefixPointCovered_iff`, `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one`. The integrated-paranoid job in that same run failed. These are two distinct outcomes; the successful 4.28 audit remains a valid result for its checked declarations and source/toolchain, and does not certify the separate 4.35 integrated build.
+- Run [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140): both jobs failed on a later exact source candidate. The proof had progressed through the covered/uncovered branches, but a subsequent `ring` tactic was reached after `simp` had already closed the goal ("No goals to be solved"); the algebraic remainder in the 4.35 path also required a separately normalized proof. The downstream `PAt_nonneg` and `PAt_sum_eq_one` declarations on that failing source are not certified. The subsequent v14 diagnosis narrowed the remaining failure to the exact local-let membership mismatch documented above.
+
+Do not erase the successful Lean 4.28 audit because the later integrated 4.35 path fails. Preserve both exact outcomes and their distinct verification scopes.
