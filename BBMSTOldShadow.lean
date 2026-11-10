@@ -240,6 +240,40 @@ theorem mergeOldShadows_containsPrefix_iff
 #print axioms oldShadow_contains_iff_exists_boundary_extension
 #print axioms mergeOldShadows_containsPrefix_iff
 
+
+/-- Expand a weighted t-th power as a sum over ordered tuples.  The tuple
+index is a function Fin t → β, so order and repeated entries are retained.
+The second equality interchanges the two finite sums without quotienting
+tuples by permutations. -/
+theorem weighted_sum_power_expansion
+    {α β R : Type*} [Fintype α] [Fintype β] [CommSemiring R]
+    (weight : α → R) (term : α → β → R) (t : ℕ) :
+    (∑ x : α, weight x * (∑ y : β, term x y) ^ t) =
+      ∑ tuple : Fin t → β,
+        ∑ x : α, weight x * ∏ i : Fin t, term x (tuple i) := by
+  have hpow (x : α) :
+      (∑ y : β, term x y) ^ t =
+        ∑ tuple : Fin t → β, ∏ i : Fin t, term x (tuple i) := by
+    simpa using (Fintype.sum_pow (f := term x) t)
+  calc
+    (∑ x : α, weight x * (∑ y : β, term x y) ^ t)
+        = ∑ x : α, weight x *
+            (∑ tuple : Fin t → β, ∏ i : Fin t, term x (tuple i)) := by
+              apply Finset.sum_congr rfl
+              intro x hx
+              rw [hpow x]
+    _ = ∑ x : α, ∑ tuple : Fin t → β,
+          weight x * ∏ i : Fin t, term x (tuple i) := by
+            apply Finset.sum_congr rfl
+            intro x hx
+            rw [Finset.mul_sum]
+    _ = ∑ tuple : Fin t → β, ∑ x : α,
+          weight x * ∏ i : Fin t, term x (tuple i) := by
+            rw [Finset.sum_comm]
+
+#print axioms weighted_sum_power_expansion
+
+
 end BBMSTOldShadow
 
 
