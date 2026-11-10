@@ -389,6 +389,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hstage :
       stageCoordinate hk = stageCoordinate (show k + 1 ≤ n from by omega) := by
     rw [hhk]
+  have hpoint : y (Fin.last (a + j)) ∈ Finset.univ :=
+    Finset.mem_univ _
   have hcovered :
       (y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)) ↔
@@ -400,7 +402,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
   · have hcov' := hcovered.mp hcov
-    simp [Finset.mem_univ, hcov, hcov', hstage, hPAt]
+    simp [hpoint, hcov, hcov', hstage, hPAt]
   · have hcov' :
         ¬ y (Fin.last (a + j)) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
