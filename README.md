@@ -462,3 +462,8 @@ The selected residue sets and historical block-label map remain explicit paramet
 ### Addendum 1.24 — APW4 residue-label q-fibre PASS
 
 PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae proves the local q-fibre inequality for explicit residue-label fibres z |-> z.val % B into Fin B, selected residue sets Uq,Ur, and a common block-label map c. Canonical run 42749178635 and audit run 42749178673 passed; the canonical log contains no sorryAx and the declarations have standard profiles. The paranoid job is still pending. This is not yet the quotient homomorphism ZMod N -> ZMod B because B | N is not imposed; the historical selected sets and block map remain open.
+
+
+## Erratum 1.24.1 — divisibility is explicit in the current PR #89 head
+
+The earlier Addendum 1.24 sentence stating that B ∣ N was not imposed is superseded. In exact PR #89 head 157cdcc00353c9d89e5d596720cee08d098684ae, the residue-projection theorem explicitly requires Bq ∣ N and Br ∣ N. The projection is represented as ZMod N → Fin B by z ↦ z.val % B. It is still not asserted to be a ring homomorphism ZMod N → ZMod B; no quotient-cast theorem is used. The selected sets and common block-label map remain parameters, so historical source instantiation is still open.
