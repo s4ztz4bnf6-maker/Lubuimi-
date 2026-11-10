@@ -74,6 +74,12 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
   prefixIndex hk (Fin.last k)
 
+/-- The stage coordinate is exactly the last coordinate of the extended prefix.
+This named equality is used to transport dependent membership proofs. -/
+theorem stageCoordinate_eq_prefixIndex_last
+    {k : ℕ} (hk : k + 1 ≤ n) :
+    stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
+
 /-- Restrict a prefix of length k+1 to its first k coordinates. -/
 noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
     (x : PrefixPoint C (k + 1) hk) :
@@ -358,50 +364,63 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hk : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
   have hprev : k ≤ n := by omega
-  let xprev := restrictPrefix C hk y
-  have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
-    simpa [xprev, k] using hbase
-  let F := prefixFibreData C (A := A) (k := k) hk xprev
-    (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
-  change BBMSTFiniteFibreUpdate.updatedWeight F
-      (δ (stageCoordinate hk)) (y (Fin.last k)) =
-    PAt C (A := A) a ha P0 δ (j + 1) hj y
-  -- Name the proof witnesses used by the recursive PAt equation and
-  -- explicitly transport both the recursive value and covered-value finset.
-  let hkRec : k + 1 ≤ n := by
+  have hk' : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
-  let hprevRec : k ≤ n := by omega
-  let xprevRec := restrictPrefix C hkRec y
-  have hhk : hk = hkRec := Subsingleton.elim _ _
-  have hhp : hprev = hprevRec := Subsingleton.elim _ _
-  have hxprev : xprev = xprevRec := by
-    dsimp [xprev, xprevRec]
-  have hrec :
-      PAt C (A := A) a ha P0 δ j hprev xprev =
-        PAt C (A := A) a ha P0 δ j hprevRec xprevRec := by
-    rw [hhp, hxprev]
-  have hvalues :
-      prefixCoveredValues C (A := A) hk xprev =
-        prefixCoveredValues C (A := A) hkRec xprevRec := by
-    rw [hhk, hxprev]
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  rw [hhk, hrec, hvalues]
-  have hstage : stageCoordinate (k := a + j) hk =
-      prefixIndex hj (Fin.last (a + j)) := by
-    apply Fin.ext
-    rfl
-  cases hstage
+  have hprev' : k ≤ n := by omega
+  have hhk : hk = hk' := Subsingleton.elim _ _
+  have hhp : hprev = hprev' := Subsingleton.elim _ _
+  have hhj : hj = hk' := Subsingleton.elim _ _
+  -- Substitute the proof witnesses in a fixed direction.  The primed
+  -- witnesses are retained, so every dependent prefix and coordinate below
+  -- is indexed by the same proof term.
+  subst hk
+  subst hj
+  subst hprev
+  let x : C.S (stageCoordinate hk') := y (Fin.last k)
+  let xprev := restrictPrefix C hk' y
+  have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev' xprev := by
+    simpa [xprev, k] using hbase
+  let F := prefixFibreData C (A := A) (k := k) hk' xprev
+    (PAt C (A := A) a ha P0 δ j hprev' xprev) hbase'
+  change BBMSTFiniteFibreUpdate.updatedWeight F
+      (δ (stageCoordinate hk')) x =
+    PAt C (A := A) a ha P0 δ (j + 1) hk' y
   by_cases hcov :
-      y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y)
-  · simp [hcov]
-  · simp [hcov]
+      x ∈ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y)
+  · have hcov' :
+        y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y) := by
+      simpa [x, k, stageCoordinate_eq_prefixIndex_last] using hcov
+    have hcovF : x ∈ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData] using hcov
+    unfold BBMSTFiniteFibreUpdate.updatedWeight
+    simp only [if_pos hcovF]
+    simp [x, F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData,
+      BBMSTUniformFibreInstantiation.uniformWeight,
+      BBMSTUniformFibreInstantiation.coveredProportion,
+      PAt, hcov', xprev, k]
+    <;> ring
+  · have hnot' :
+        y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk'
+          (restrictPrefix C hk' y) := by
+      simpa [x, k, stageCoordinate_eq_prefixIndex_last] using hcov
+    have hnotF : x ∉ F.covered := by
+      simpa [F, prefixFibreData, prefixUniformFibre,
+        BBMSTUniformFibreInstantiation.toFibreData] using hcov
+    have hpointF : x ∈ F.points := by
+      change x ∈ Finset.univ
+      exact Finset.mem_univ _
+    unfold BBMSTFiniteFibreUpdate.updatedWeight
+    simp only [if_neg hnotF, if_pos hpointF]
+    simp [x, F, prefixFibreData, prefixUniformFibre,
+      BBMSTUniformFibreInstantiation.toFibreData,
+      BBMSTUniformFibreInstantiation.uniformWeight,
+      BBMSTUniformFibreInstantiation.coveredProportion,
+      PAt, hnot', xprev, k]
+    <;> ring
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
