@@ -123,16 +123,3 @@ Each individual condition is one residue class modulo a power of two. Since thes
 2. Check that incompatible congruences give an empty cylinder and compatible ones give exactly one residue class at the maximal modulus.
 3. Formalize the equivalence between exact valuation and the congruence above, with all integer-division and positivity hypotheses explicit.
 4. Only after those checks, study the affine descent inequality (C_j < (2^{A_j}-3^j)n) on realized cylinders. A nonempty cylinder alone gives no descent theorem and no global orbit classification.
-
-
-## 8. Lean verification and cross-project status — 10 November 2026
-
-The deterministic finite-return lemma is now formally checked on this research branch. Exact commit: 798e427a9d71233e81c096d6d2329163a5626273. Workflow 40602488631 completed successfully. The declaration
-DeterministicReturnTest.repeated_state_of_infinite_returns
-printed [propext, Classical.choice, Quot.sound]. The affine recurrence declarations SyracuseAudit.affine_descent_iff_margin and SyracuseAudit.affine_identity printed the same standard profile.
-
-The same workflow also audited the upstream Erdős–Selfridge source. Its main declaration erdos_selfridge depends on the named axioms sf_sieve_lt_one and sieve_criterion. Those are not part of the deterministic return theorem and must not be conflated with its standard axiom profile.
-
-The separate Syracuse programme has since Lean-verified the state-dependent margin-cap core on exact commit ca48ec7fdad5e8d6f8aeb82fed8586a1b57c12bc, workflow 42728049650, Lean 4.34.1. The arbitrary finite valuation-word cylinder theorem and exact tail partition remain mathematical manuscript results awaiting Lean formalization.
-
-The Collatz target remains eventual hitting of 1. Infinite bounded returns imply eventual periodicity, but the finite-return lemma does not classify the possible cycles and does not prove that every orbit reaches 1.
