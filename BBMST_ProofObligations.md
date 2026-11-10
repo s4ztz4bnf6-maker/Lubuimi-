@@ -358,3 +358,54 @@ M_{q,r}((x,h),(y,g))=|P_{q,x,h}\cap P_{r,y,g}|,\qquad
 The ledger also preserves the block identity \(A_qW_{q,r}A_r^{\mathsf T}=\sum_{t\bmod D_{q,r}}a_{q,t}a_{r,t}^{\mathsf T}\), the fibre-count bound \(\sum_hM_{q,r}(h,g)\leq\Gamma_{q,r}(g)\), and the exact four-term residual expansion obtained from \(I_q=A_q+Z_q\). The four-term matrix expansion contains three Z-residual contributions; it is not a third term in the two-term APW4 energy decomposition.
 
 The ledger deliberately marks the exact row/column domains, quotient maps, event universe, full event map, BIB slot universe, incidence predicate, and weight-preserving weighted-Hall verification as remaining source-reconstruction obligations. The historical DT map \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) must be expanded componentwise. APW off-diagonal atoms \((\ell,\ell')\) must not be identified with within-fibre pairs \((u,v)\) without an explicit proved projection/quotient map. These distinctions guide the remaining Lean instantiation; they do not reopen the established APW4 mathematical proof.
+
+
+
+
+## Prefix-cylinder event-mass bridge — 10 November 2026
+
+The source-indexed prefix recursion now contains a stronger intermediate result than the pointwise distortion estimate alone. In `BBMSTPrefixCylinderMass.lean`, the following declarations provide the exact one-coordinate event-mass dichotomy:
+
+1. `containsPrefix_extend_iff` decomposes a next-prefix hyperplane constraint into the old-prefix constraint and the boundary-coordinate constraint.
+2. `prefixCylinderExtensionEquivFree` and `prefixCylinderExtensionEquivFixed` give the actual subtype equivalences for free and fixed boundary coordinates.
+3. `prefixCylinder_free_mass_reindex` and `prefixCylinder_fixed_mass_reindex` reindex the cylinder mass through those equivalences.
+4. `prefixCylinder_free_mass_eq` proves exact mass conservation when the new coordinate is free.
+5. `prefixCylinder_fixed_mass_le` proves the one-coordinate distortion bound when the new coordinate is fixed:
+   [
+   mu_{j+1}(H)le
+   rac{mu_j(H)}{|S_i|(1-delta_i)}.
+   ]
+6. `hyperplaneSuffixFactor` charges precisely the fixed coordinates and assigns factor (1) to free coordinates.
+7. `prefixCylinderMass_le_initial_mul_hyperplaneSuffixFactor` iterates the dichotomy and proves
+   [
+   mu_j(H)le mu_0(H),
+u_H([a,a+j)),
+   ]
+   where the suffix factor is the product of (1/(|S_i|(1-delta_i))) over exactly those suffix coordinates at which (H) has a fixed assignment.
+
+This is the concrete cylinder-level mechanism needed for the suffix part of BBMST Lemma 3.3: free coordinates preserve cylinder mass; fixed coordinates incur exactly one distortion factor. It is not merely the unrestricted total-mass identity.
+
+**Scope boundary:** these are declarations present in the v15 source candidate. They are not yet promoted to integrated Lean-verification results: PR #138's exact head is `6d6bcacedab9c0c98a21156d4e90601b7cb87a5f`, and no exact-head workflow/status was returned. The v15 local-membership repair in `BBMSTPrefixMeasureRecursion.lean` is a dependency of this chain and remains subject to the same exact-head integrated paranoid and transitive axiom audit.
+
+### Exact remaining bridge after the cylinder estimate
+
+The current theorem has the form
+[
+mu_j(H)le mu_0(H),
+u_H(J).
+]
+To obtain the historical Lemma 3.3 form, the remaining source-faithful work is now sharply localized:
+
+- define the actual initial profile (I(H)) from the source's fixed coordinates in the initial block;
+- define the source's finite profile family from the actual initial hyperplane family, not from all formally possible subsets;
+- identify (mu_0(H)) with the historical initial cylinder quantity and prove its bound by the exact (c(I(H)));
+- identify the suffix product above with the paper's (
+u(J(H))), including its exact interval convention and endpoint exclusions;
+- handle the empty initial profile as an explicit case of the historical definition;
+- then instantiate Lemma 3.3 and feed its output into Lemma 3.4's moment recurrence.
+
+No historical definition is inferred merely from the matching shape of the formula. The exact source index sets, coordinate deletion/preprocessing, and profile restrictions remain controlling.
+
+### Manuscript synchronization
+
+The corresponding main-text note is a formalization-status addendum only. It does not change the established APW4 mathematical proof, its hypotheses, or the exact two-term energy identity. It also does not assert that this intermediate BBMST cylinder theorem alone completes the historical APW4 event-to-BIB map or weighted Hall construction.
