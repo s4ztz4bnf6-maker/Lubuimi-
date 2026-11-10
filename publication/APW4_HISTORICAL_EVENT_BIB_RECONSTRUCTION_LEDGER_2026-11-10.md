@@ -162,3 +162,12 @@ m_0\leq
 ]
 
 This is a new arithmetic parameter sharpening, not a Lean-verified theorem and not a historical definition. Its use still requires proving that the actual selected labels are distinct divisors, that every pairwise common-label family has proper LCM, and that the row-size lower bound (q-1) holds. The extraction map from (A_q(x,h)) to (S_x) remains open. It does not close the weighted HT event/BIB-slot transport.
+
+
+## 17. Exact formal status of the canonical projection helper
+
+PR #92's canonical Lean job passed on source head `baf5241fb77b258dfab4e7b3a620c54e1c08c9ec`. Its complete log has no Lean errors and no `sorryAx), and the two helper declarations have the standard axiom profile. The paranoid job remains pending. This is a valid kernel-checked finite-model result, but it remains expressly separate from the historical APW4 objects until a source-derived equivalence is proved.
+
+The prefix-integration candidate PR #91 failed on its exact head because its covered branch attempted to introduce a binder where the goal was an equality, and its uncovered branch retained a conditional equality. The dependent coordinate equality was established. PR #94 is the next explicit-if-rewrite candidate; both exact-head workflows were queued at the latest check. No prefix integration PASS is recorded.
+
+The historical obligations listed in Sections 11–16 remain unchanged: exact old-class/index universes, selected-cover construction and residual bounds, vector coordinates and matrix orientation, actual block family and disjointness, event universe and event map, BIB slots/capacities/incidence, and the weighted Hall transport.
