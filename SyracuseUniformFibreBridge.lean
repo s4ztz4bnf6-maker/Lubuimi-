@@ -105,6 +105,7 @@ def toFibreData (B Bstar : ℕ) :
   covered_subset := candidate_subset_all B Bstar
   weight_nonneg := by
     intro x hx
+    apply inv_nonneg.mpr
     positivity
   total_mass := by
     simp [allAtoms, uniformWeight, Finset.sum_const, Finset.card_range]
@@ -148,7 +149,7 @@ theorem candidateProportion_eq_one_sub_tail
   push_cast
   rw [Nat.cast_sub hT]
   field_simp
-  ring
+  ring_nf
 
 /-- The tail has exactly the complementary dyadic mass. -/
 theorem tailProportion_eq_dyadic
