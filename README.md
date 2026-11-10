@@ -84,3 +84,8 @@ PR #125 / v9 workflow 42810241207 has now completed: separate audit job `1298095
 ## v10 equality-orientation failure and v11 candidate — 10 November 2026
 
 PR #127 / v10 run 42810911393 completed with audit PASS and integrated-paranoid FAIL. The failure is a dependent-type orientation issue: `cases hstage` rewrote the prefix endpoint toward the stage coordinate, while the fibre point remained indexed by `prefixIndex`; the fibre data remained indexed by `stageCoordinate`. PR #129 / v11 uses `cases hstage.symm` before constructing the fibre, so `stageCoordinate hk` is rewritten into the prefix endpoint index. No v11 workflow was visible at the latest poll. Status: **OFFEN – NICHT VERIFIZIERT**.
+
+
+### Latest v11 CI poll — 10 November 2026
+
+PR #129 / v11 exact head `ffce6065f1489850c1c1aa156e90cf56413cebb0`, workflow [42811577591](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42811577591): audit job `129814055326` and integrated-paranoid job `129814055704` are both in progress. No result is inferred yet.
