@@ -702,3 +702,10 @@ using `Fin.ext`, then eliminates that equality before the covered/uncovered spli
 ## Addendum 1.44 — combined APW4 dependent-index repair
 
 PR #86's coordinate-only candidate (head `4e4b378887cc76382d9cd2e17807f96a2c277e23`) proved the Fin-index equality but both integrated-paranoid runs [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023) and [42745062463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745062463) failed at the remaining covered/uncovered goals. PR #84 now has a combined candidate at head `1980351a3002bef610107b810c8e726cc685b7b4): it explicitly rewrites the recursive PAt value and covered-value finset across proof witnesses and also eliminates the stage-coordinate equality by Fin.ext. Exact-head run [42745642769](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745642769) is pending. Neither candidate is merged or verified.
+
+
+## Addendum 1.45 — exact historical BIB obstruction retained
+
+The 6 November BIB note §§5–6 explicitly gives the raw compatibility indicator (I_q(x,h)=1iff b_hequiv xpmod{gcd(m_h,B_q)}), the selected cover (A_qle I_q), redundancy (Z_q=I_q-A_q), the cross-profile indicator (W_{q,r}), and the exact four-term expansion (I_qW_{q,r}I_r^{mathsf T}=AA+AZ+ZA+ZZ). It explicitly states that the three Z-containing terms have no quantitative bound yet, minimality alone does not yield the required weighted estimate, and the depth-one extraction map to divisor labels is unspecified. The claims (|U|geDelta(B)), depth-one label counts and proper-lcm consequences remain unverified and are not used.
+
+The generator/index domains of F_q,F_r,C_h remain unavailable in the recovered source record. The earlier projection-fibre completion F_q(x)=pi_q^{-1}({x}) was explicitly marked canonical but non-historical and is prohibited as a substitute. PR #85's M/Gamma theorem is only a conditional local count; it does not close the mixed-Z or weighted HT/BIB transport problem.
