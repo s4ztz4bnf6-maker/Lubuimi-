@@ -1970,3 +1970,25 @@ Exact source head: `fbab49639954ae749d30a884a04032ee1d4d0f0e`. Workflow [4275463
 PR #100's Lean 4.28 audit completed its ordered module stages successfully. Its Lean 4.35.0 integrated-paranoid job failed in the uncovered conditional branch of `prefixFibre_updatedWeight_eq_PAt`; the error-recovered declaration and dependent (PAt) results printed `sorryAx`. PR #101 now makes the exact endpoint nonmembership hypothesis explicit before simplifying that branch. Its commit `3625d65285e36da383f7fcd1a322ec6612d98451` has queued exact-head workflow [42754856131](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754856131). It remains a candidate until CI and named axiom outputs are inspected.
 
 The exact diagnostic and scope boundary are recorded in [the CI status snapshot](APW4_CI_STATUS_SNAPSHOT_2026-11-10.md). None of these integration attempts changes the historical APW4 definitions or the previously established mathematical proof record.
+
+
+## Historical q-fibre / BIB reconstruction chain — exact CI update, 10 November 2026
+
+The following work advances the historical q-fibre interface, but the source-defined visible sets and block labels remain explicit obligations. These results are not yet the weighted Hall/BIB transport.
+
+- **PR #85**, head `d4c61399918c03715197cbe2de6356fd170463d3`: `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` proves the fixed-index aggregate inequality from fibre containment in the selected visible sets and pairwise disjointness of the historical blocks. Exact audit run [42744980640](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980640) passed; canonical job in [42744980622](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42744980622) passed; the separate paranoid job was still in progress at this snapshot. The theorem's structural premises are not thereby derived from the full historical definitions.
+- **PR #89**, head `bc7479016b2cf21ff44fb7cc83d00f8419b3d44f`: adds the generic preimage-map fibre/visible/block interface and proves the containment and disjointness hypotheses from those maps. Its Lean 4.35.0 paranoid run [42754828642](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754828642) failed at `APW4HistoricalCRTCore.lean:467` in `QPowerQuotientModel.qFibreModulus_pos`: `Nat.div_pos hle` still required the positive-divisor premise (0<q^a). The generic preimage declarations printed standard axiom profiles, but this build failure prevents a paranoid PASS for the complete module. Exact audit run [42754828631](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754828631) was still running at this snapshot.
+- **PR #97**, head `5c2aed576422fa49daadd638eed1c2259f083b33`: instantiates the generic interface with genuine `ZMod N →+* ZMod B` quotient homomorphisms. Audit [42750267648](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42750267648) and canonical check [42750267652](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42750267652) passed; its separate paranoid job was still in progress at this snapshot. The support sets (U_q,U_r) and common block-label map (c) remain explicit inputs, not reconstructed historical objects.
+- **PR #102**, head `343b2d3ad8e276311bdff61e9cdf759f6117b82e`, repairs the exact PR #89 positivity failure by supplying (0<q^a) from (0<q) and simplifying `Nat.div_pos hle hpow` to the project modulus definition. Exact-head audit [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical/paranoid workflow [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) were queued at this snapshot. This is a repair candidate, not yet a verified result.
+
+**Correction to the earlier q-power status sentence:** the earlier wording that the positivity proof had been corrected to `Nat.div_pos hle` was premature. The exact CI diagnostic above shows that call omitted (0<q^a); PR #102 supplies the missing argument. The prior failed workflow remains part of the audit history and is not overwritten.
+
+### Remaining historical transfer obligations
+
+The next source-dependent steps are still:
+1. recover the actual historical definitions/domains of (U_q,U_r,F_q(x),F_r(y),C_h) and their projection maps;
+2. prove the selected supports and common block-label map (c) are the historical ones, not merely arbitrary inputs to the generic theorem;
+3. connect (M_{q,r}) and (Gamma_{q,r}) to the actual weighted APW4 HT event set, BIB slots and capacities;
+4. prove the index-preserving weighted Hall demand/capacity condition and its relation to the already-established HT/DT proof record.
+
+The existing APW4 mathematical results are not downgraded by these remaining Lean/source-reconstruction obligations.
