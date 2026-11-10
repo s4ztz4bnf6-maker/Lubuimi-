@@ -222,3 +222,60 @@ Der mathematische APW4-Beweisstand wird als abgeschlossen geführt. Die vorhande
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**  
 This manuscript is covered by the repository's LICENSE-PROPRIETARY.md. Public access and citation do not grant a general reproduction, redistribution, modification, or commercial-use license.
+
+
+## Exact-head CI addendum — 10 November 2026, 06:25 CET
+
+This entry is append-only. It does not revise the mathematical status of the established APW4 results or the independently published manuscript held by the author.
+
+### PR #101 — prefix-fibre recursion candidate
+
+- Candidate source head recorded in the preceding entry: `31cc94993fdcb481cea919ca762a29c568948a7a`; workflow [42760198290](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42760198290).
+- `integrated-paranoid` failed while compiling `BBMSTPrefixMeasureRecursion.lean`: the two residual goals are at lines 390 and 402 in that checkout. The positive branch retains an implication whose premise is the negation of the covered predicate despite the local positive membership hypothesis; the negative branch retains the covered/uncovered conditional rather than reducing it. The integrated log prints `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent `PAt) declarations. This is a real failure of that exact integrated build.
+- The separate `audit` job passed its staged compilation and reported the standard profile for its audited declarations. That result is a distinct audit path and does not override the integrated failure.
+- The next source repair must align the update's actual `F.covered` predicate with the recursive `prefixCoveredValues) predicate before unfolding either conditional, then simplify the two branches explicitly. This is a repair target, not a verified fix. No previously established APW4 mathematical theorem is reopened by this Lean integration failure.
+
+### Syracuse PR #107 — isolated and integrated scopes
+
+Workflow [42759653537](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42759653537) has the following distinct outcomes:
+
+- The targeted `SyracuseDyadicResidueFibre.lean` compilation succeeded. `explicitTailAtoms_mem_iff`, `explicitTailAtoms_card`, and `explicitCandidate_mass` report `[propext, Classical.choice, Quot.sound]`; the targeted module output contains no `sorryAx` for these declarations.
+- The audit job later failed in the APW4 dependency `BBMSTPrefixMeasureRecursion.lean:386` with `dsimp made no progress` and an application type mismatch involving `y (Fin.last (a + j))`. This does not invalidate the preceding isolated Syracuse module compilation.
+- The integrated-paranoid job failed at the same APW4 dependency. The isolated `syracuse-bridge-paranoid` job was still in progress at the latest job poll; its log endpoint returned `BlobNotFound`, so no completion is asserted.
+
+### Collatz PR #48 — exact run fully green
+
+On workflow [42759509255](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42759509255), all three jobs completed successfully: `kernel-check-lean-434`, `kernel-check-lean-435-paranoid`, and `compile-drafts`. The Lean 4.35.0 job completed `lake check --paranoid` and the named finite-path/terminal-residue module check. This is a full job-level CI success for that exact run and its source head. It proves only the declarations and scope actually built and audited there; the finite cap-tree path certificate remains a finite-depth necessary condition and does not exclude an infinite branch or prove global Collatz termination.
+
+The existing initial-cylinder, valuation-bound, offset, strict-margin, finite valuation-word cylinder, and dyadic fibre results retain their prior independent mathematical and exact-commit verification status. Later integration outcomes do not retroactively downgrade them.
+
+**Status:** APW4 integrated prefix recursion remains open; Syracuse isolated paranoid completion remains open; Collatz PR #48 exact run is green within its stated finite-depth scope. Mathematical proofs, historical reconstruction, isolated compilation, integrated compilation, paranoid kernel checking, and declaration-scoped axiom output remain separate evidence categories.
+
+
+## Follow-up proof candidate — PR #114, 10 November 2026
+
+A new narrow candidate is recorded at [PR #114](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/114), exact source head `d09d28935c9e026f4b8297b058c3cd4169231451`. It is based directly on the canonical PR #101 source head `31cc94993fdcb481cea919ca762a29c568948a7a` and changes only `BBMSTPrefixMeasureRecursion.lean` (12 additions, 21 deletions).
+
+The candidate moves the case split onto the recursive geometric membership predicate `prefixCoveredValues` before unfolding `updatedWeight` and `PAt`; it then transports the positive/negative membership fact to the concrete `F.covered` field and simplifies the corresponding branch. It changes no definitions, theorem statements, hypotheses, or mathematical claims. PR #113 was closed after identifying that its comparison base was unsuitable and its diff was not narrowly scoped; no source change from that branch is retained in PR #114.
+
+No verification result is claimed yet. The acceptance gate remains exact-head integrated-paranoid success, the separate audit, inspection of named `#print axioms`, and absence of `sorryAx` throughout the dependency closure. Established APW4 mathematical results and the published manuscript status remain untouched.
+
+
+## PR #114 exact-head workflow launched — 10 November 2026
+
+The membership-first repair candidate [PR #114](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/114) is at exact head `d09d28935c9e026f4b8297b058c3cd4169231451`. Its triggered workflow [42762133686](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762133686) has both `audit` and `integrated-paranoid` in progress. No compilation or axiom-audit outcome is claimed until those jobs complete and their logs are inspected.
+
+
+## PR #114 residual diagnosis and next candidate — 10 November 2026
+
+The first exact-head integrated run [42762133686](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762133686) failed on source head `d09d28935c9e026f4b8297b058c3cd4169231451`. The two remaining goals are now precisely identified:
+
+- In the positive covered branch, Lean leaves an implication with the negated recursive membership predicate as premise, even though the branch hypothesis establishes membership. The equality beneath that impossible premise is immaterial; the branch should close by explicit contradiction elimination.
+- In the negative branch, the update reduces to an `if endpoint ∈ Finset.univ then ... else 0`; the proof must provide the concrete `Finset.mem_univ` witness and simplify it explicitly.
+
+A second proof-body adjustment is now at exact source head `278c0c6c192e34728bace660199e1c431e96846d`: it removes the unused `hcovF) rewrite, discharges the positive residual by `intro hnot; exact hnot hcov`, and supplies the explicit universal-membership witness in the negative branch. This is a targeted repair candidate, not a verified fix. A fresh exact-head integrated run and audit are still required; the earlier run's audit job was cancelled and cannot certify the newer source head.
+
+
+## Fresh exact-head verification run — PR #115, 10 November 2026
+
+The corrected membership-first candidate is now tracked by [PR #115](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/115), exact source head `278c0c6c192e34728bace660199e1c431e96846d`. Its new workflow [42762540736](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762540736) has `audit` in progress and `integrated-paranoid` queued at the latest poll. PR #114 was closed as the preceding candidate after its first integrated attempt exposed the two residual goals; its source history is retained on the branch, and PR #115 presents the corrected exact head as a one-file diff against the canonical PR #101 base. No verification result is claimed until both jobs finish and the named axiom output is inspected.

@@ -163,3 +163,46 @@ The Lean development should be isolated from the historical APW4 proof until eac
 The initial all-one cylinder theorem, the signed-margin cap core, and the finite (k=2) terminal-residue module have their own successful Lean audits. None of those audits is evidence that this new finite-depth uniformization note has already been compiled.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## Exact-head formalization continuation — 10 November 2026
+
+The finite valuation-word cylinder theorem and its already-derived tail-cylinder consequence remain established mathematical results. The Lean bridge work is an implementation of those results, not a reopening of them.
+
+PR #93 adds a generic dyadic residue cylinder with exact lift cardinality, congruence membership, candidate complement, disjointness, union and rational mass. A separate `FibreData` module packages only cardinality conservation. The remaining formal bridge is to instantiate the arbitrary residue (r) using the normalized prefix-tail residue already derived in this note, then identify the exact next-valuation-(b) predicates with the corresponding sibling residue classes.
+
+PR #93 exact workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105) had isolated audit success, integrated-paranoid failure in the independent prefix recursion, and an isolated Syracuse paranoid job still in progress at last poll. PR #101's updated head `f5aff142fcdf6c3893ef1c890f3be45a67da68aa` addresses the residual `Finset.univ` branch; exact workflow [42755782237](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755782237) was queued. No PASS is claimed until exact-head kernel checks and named axiom outputs are complete.
+
+
+## Additional exact-head repair and explicit tail-residue candidate — 10 November 2026
+
+- PR #101: the prior explicit Finset.univ proof failed because the rewrite witness did not match the dependent stage-fibre type. The new head 6bad5a25400aeae8e851a38c507141ec0e092a3a gives the witness the explicit type Finset (C.S (stageCoordinate hk)) and separates the two conditional rewrites. Exact workflow [42756335441](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756335441) is queued; no PASS is claimed.
+- PR #107: new source head ba96a24de4df64513dd1a3dd801020544cc71dd0 adds an explicit normalized tail coordinate -d * (3^(k+1))⁻¹ in ZMod (2^B). It proves the odd coefficient is a unit, the normalized tail congruence has a unique solution, and the generic residue-cylinder tail is instantiated as a singleton with the exact candidate mass. It also proves the affine factorization from the prefix lift under the explicit divisibility identity defining d.
+- The divisibility identity for d is still an explicit hypothesis in PR #107. Deriving it from the full prefix-residue formula, proving the full exact-child sibling partition, and mapping the result to historical APW4/BIB events remain separate obligations.
+- PR #107 exact workflow [42756257770](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756257770) is queued. The new declarations are candidates, not verified PASS results.
+
+
+## Superseding source-head record — 10 November 2026
+
+PR #107 was advanced after its initial commit. Current exact source head: b5a7b83c1953927eef27b39962b044c746191066. The affine factorization proof was rewritten as an explicit three-step calc using the stated divisibility identity, avoiding a broad rewrite whose matching depended on distributivity. Exact workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) is queued; no PASS is claimed for this updated head. The earlier head ba96a24de4df64513dd1a3dd801020544cc71dd0 was superseded before verification completed.
+
+
+## Latest exact-head reconciliation — 10 November 2026
+
+- PR #101 current head remains 6bad5a25400aeae8e851a38c507141ec0e092a3a. Workflow [42756335441](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756335441): integrated-paranoid is in progress and audit is queued. No PASS yet.
+- PR #107 current head is now 3534d47fcb9857109b71d1397f3976b5de35dcf1. In addition to the explicit unique tail coordinate, it now defines the prefix-tail numerator and its canonical quotient, proves the quotient multiplication identity under the exact divisibility hypothesis, and packages the lift factorization with that canonical quotient. The earlier workflow [42756547571](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756547571) was cancelled when the branch advanced; no completed verification has been returned for the current head.
+- PR #105 documentation branch current head is cf918706cf242d04e70e2b4edd41750c33bf94ed. Its exact-head workflow [42756718300](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756718300) is queued. Earlier docs-only head bbfe91e33a09a3f1325a5d6e0952c615e6c40c52 passed its audit in run 42756393394; that PASS is scoped to that earlier head.
+
+
+## Exact child-cylinder formalization candidate — PR #107
+
+PR #107 has advanced to source head cad354967759a89c02df1b42369898dec3406445. Beyond the unique tail coordinate and canonical quotient, the Lean module now defines the exact child-b coordinate as (2^(b-1)-d) * (3^(k+1))^(-1) modulo 2^b, proves its normalized congruence and uniqueness, and instantiates each child as a residue cylinder in the common refinement. The child cylinder has exactly 2^(B-b) lifts and an explicit membership/congruence characterization.
+
+This is the normalized finite-fibre layer. The remaining steps are to derive the divisibility of the prefix-tail numerator from the explicit prefix residue formula, prove the complete pairwise-disjoint child-plus-tail partition, and connect these normalized congruences to the original exact valuation predicates and then to historical APW4/BIB events. No Lean PASS is claimed for cad354967759a89c02df1b42369898dec3406445; an exact-head workflow has not yet been returned.
+
+
+## PR #107 namespace and child-residue consolidation — latest source head
+
+PR #107 now stands at exact source head 44d00ad20c352471795358dde2aaf24152281649. The canonical quotient and exact child-coordinate declarations are now kept inside the SyracuseDyadicResidueFibre namespace, alongside the generic tail-cylinder construction. The provenance note was also corrected to describe the actual source extension rather than calling the code commit comment-only. This head includes the unique tail coordinate, quotient/factorization under the explicit divisibility condition, unique exact child-b residues modulo 2^b, and 2^(B-b) child lift counts. The exact prefix-divisibility derivation and complete child-plus-tail partition remain open.
+
+No completed exact-head CI result has yet been returned for 44d00ad20c352471795358dde2aaf24152281649. No Lean PASS is claimed.
