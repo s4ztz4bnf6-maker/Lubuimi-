@@ -1361,3 +1361,14 @@ On exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run `42757504798` stil
 The finite cap-tree path theorem is still a necessary finite-depth certificate, not an infinite-branch exclusion. The current minimal-counterexample wrapper explicitly assumes a suffix-return premise. A concrete route to remove that assumption is identified but not yet formalized: use the accelerated-step identity `2^(a_j) n_{j+1}=3n_j+1` and `a_j>0` to prove `n_j` odd; prove the quotient `n_{j+1}` is odd, making `a_j` the exact 2-adic valuation; then prove the sequence tail is the deterministic Syracuse orbit starting at `n_j`. Minimality among odd nonterminating starting values would then yield the suffix-return property. This chain must be established in Lean before the current conditional reduction can be treated as an unconditional minimal-counterexample consequence.
 
 No established APW4 theorem, historical result, or user-published manuscript is changed by these candidate updates.
+
+
+## 16. Syracuse #107: exact compiler diagnosis and repair candidate
+
+Run 42759029006 failed in three jobs. The isolated Syracuse log identifies the remaining blocker at SyracuseDyadicResidueFibre.lean:290: the mpr direction of explicitTailAtoms_mem_iff leaves the explicit representative's modulo identity open. The named declaration therefore printed [propext, sorryAx, Classical.choice, Quot.sound]; it is not a valid verified result. The earlier ZMod.val_lt change did remove the invalid .isLt projection on the ZMod value, but it did not finish the membership theorem.
+
+The same integrated run also exposed a separate APW4 issue in the older prefix-recursion source carried by PR #107: at line 386, the last coordinate has type C.S (prefixIndex hj (Fin.last ...)) but the covered-value fibre expects C.S (stageCoordinate hk). This is a dependent index transport failure, not a scalar simplification failure. The new PR #101 proof candidate has a separate exact-head run and must be assessed before copying its transport strategy into PR #107.
+
+A precise Syracuse follow-up was committed at 5139df8b55279011862084c453105a13926b03cc: after rewriting by the finite representative equality, it uses the actual Fin.isLt bound of explicitTailCoordinateFin B k d to prove the modulo identity. Exact-head run 42759653537 is queued. This is an unverified repair candidate; the no-sorryAx condition remains open.
+
+PR #101 head 0be00b2161ad8f2676779b90582f30b34083c008 has its own workflow 42759210844, still in progress at this snapshot. No result from the PR #107 failure is attributed to that different commit.
