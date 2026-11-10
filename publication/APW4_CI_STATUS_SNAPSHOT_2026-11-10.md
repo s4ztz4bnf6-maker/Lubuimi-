@@ -718,3 +718,34 @@ This is a genuine local q-fibre counting theorem under its stated structural hyp
 The author's 17-page APW4 proof PDF was re-read at pages 6–9 and 13–14. It records the event demand `d(γ)=ω_ℓω_{ℓ'}`, the historical BIB incidence `γ ∼ b`, capacities, weighted Hall inequality, and the matrix/fibre identities (7.2)–(7.3). However, those pages refer to the event set, BIB places, incidence, and capacities as the historical construction without giving their element-by-element domains or predicates. Thus the local PR #85 theorem is a proved finite-set consequence of explicit hypotheses, not a reconstruction of the missing historical event-to-place map.
 
 No mathematical APW4 theorem, prior successful declaration audit, or licensing term is changed by these entries. Earlier exact-commit results remain valid within their recorded scopes.
+
+
+## Addendum 1.42 — 10 November 2026: source audit, preimage interface, and current exact-head jobs
+
+### Complete source-PDF review
+
+The complete 17-page APW4 proof PDF has now been inspected. It states the historical DT assignment `(x,u) ↦ (k,I_{x,u},J_{x,u})), the aggregate DT fibre-weight estimate, the HT event demand `d(gamma)=omega_l omega_{l'}`, the actual BIB-place/capacity/incedence notation, and the weighted Hall condition. It does not expand the element-level definitions of the underlying historical objects. The event-to-BIB source map therefore remains open; the missing definitions are not to be replaced by the generic finite-set model.
+
+### PR #85 — local q-fibre count
+
+Exact head: `d4c61399918c03715197cbe2de6356fd170463d3`.
+- canonical job 129594792043 in run 42744980622: success;
+- audit job 129594792285 in run 42744980640: success;
+- paranoid job 129594792395 in run 42744980622: still in progress at the latest retrieval.
+The declaration `APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr` printed `[propext, Classical.choice, Quot.sound]`; the complete canonical log had no `sorryAx`. This is a local finite-set theorem under explicit fibre-containment and pairwise-disjoint-block premises. No paranoid PASS is claimed yet.
+
+### PR #89 — preimage hypotheses
+
+Corrected exact head: `45700b0151a1bdd52b3b1f0374c4e7273e17db9a`.
+The initial run exposed an omitted generic label type in the preimage model. That type and its decidable-equality instance have been added. The audit/canonical workflows were retriggered after the correction; final status remains pending. The theorem is a generic preimage interface, not a historical APW4 source instantiation.
+
+### PR #90 — prefix update repair candidate
+
+Current exact head: `b2bd581ea79696c1d47b8b02a47a209e8a87fd10`.
+The preceding exact integrated-paranoid run 42746539942 still failed at the covered/uncovered split: in the covered branch the simplifier left an impossible implication with antecedent `x ∉ covered`; in the uncovered branch it left the nested membership test in `Finset.univ`. The current candidate explicitly discharges the impossible covered-branch implication by contradiction and reduces the uncovered branch with `if_neg hcov` and the explicit `Finset.mem_univ` proof. Exact-head run 42747202778 is pending/queued at the latest check. No repair PASS is claimed.
+
+### PR #93 — Syracuse finite uniform fibre in APW4 data type
+
+Current exact head: `dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4`.
+The first audit run 42746931108 failed because `SyracuseUniformFibreBridge` was imported by `AuditCheck.lean` but not declared as a Lake library root. The lakefile has now registered the module. Exact-head run 42747404273 is queued. The module's mathematical scope is the finite uniform-fibre data and its mass/cardinality equations only; historical event/BIB transport and global Collatz exclusion remain unproved by this module.
+
