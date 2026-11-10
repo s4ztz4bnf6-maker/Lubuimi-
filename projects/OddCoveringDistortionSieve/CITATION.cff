@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this research record, cite Ta-Yoshua Lubuimi."
+title: "Lubuimi Odd Covering CRT and Distortion-Sieve Research"
+authors:
+  - family-names: "Lubuimi"
+    given-names: "Ta-Yoshua"
+date-released: 2026-11-10
+version: "0.1.0"
+type: article
+abstract: >-
+  Research record on odd distinct covering systems, exact CRT incidence
+  identities, LCM-chain growth, private residue mass, and distortion-sieve
+  bounds. It records exact finite examples and separates open universal
+  estimates from established identities.
+repository-code: "https://github.com/s4ztz4bnf6-maker/Lubuimi-"
+keywords:
+  - "Erdos-Selfridge conjecture"
+  - "odd covering systems"
+  - "CRT"
+  - "private residue classes"
+  - "incidence energy"
+  - "distortion sieve"
