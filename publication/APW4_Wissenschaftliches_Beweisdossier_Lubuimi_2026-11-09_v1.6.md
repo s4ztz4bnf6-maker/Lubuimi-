@@ -1391,3 +1391,31 @@ A targeted candidate is now on PR #101 at exact commit `31cc94993fdcb481cea919ca
 ## 10 November 2026 — Syracuse isolated compile succeeded; audit failed downstream
 
 The exact-head audit log for PR #107 run `42759653537` shows a successful direct compilation of `SyracuseDyadicResidueFibre.lean`. It prints `explicitTailAtoms_mem_iff`, `explicitTailAtoms_card`, and `explicitCandidate_mass` with `[propext, Classical.choice, Quot.sound]` and no `sorryAx` in the focused module output. The same audit job later fails in the APW4 dependency `BBMSTPrefixMeasureRecursion.lean:386:2` with `dsimp made no progress`; the resulting recovery axiom output includes `sorryAx` in the APW4 recursion declarations. This is a dependency/integration failure, not evidence that the isolated Syracuse modulo proof failed. The separate Syracuse paranoid job remained in progress and the integrated job queued at the time of this entry. No PR-wide verification claim is made.
+
+
+## Exact-head CI addendum — 10 November 2026, 06:25 CET
+
+This entry is append-only. It does not revise the mathematical status of the established APW4 results or the independently published manuscript held by the author.
+
+### PR #101 — prefix-fibre recursion candidate
+
+- Candidate source head recorded in the preceding entry: `31cc94993fdcb481cea919ca762a29c568948a7a`; workflow [42760198290](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42760198290).
+- `integrated-paranoid` failed while compiling `BBMSTPrefixMeasureRecursion.lean`: the two residual goals are at lines 390 and 402 in that checkout. The positive branch retains an implication whose premise is the negation of the covered predicate despite the local positive membership hypothesis; the negative branch retains the covered/uncovered conditional rather than reducing it. The integrated log prints `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent `PAt) declarations. This is a real failure of that exact integrated build.
+- The separate `audit` job passed its staged compilation and reported the standard profile for its audited declarations. That result is a distinct audit path and does not override the integrated failure.
+- The next source repair must align the update's actual `F.covered` predicate with the recursive `prefixCoveredValues) predicate before unfolding either conditional, then simplify the two branches explicitly. This is a repair target, not a verified fix. No previously established APW4 mathematical theorem is reopened by this Lean integration failure.
+
+### Syracuse PR #107 — isolated and integrated scopes
+
+Workflow [42759653537](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42759653537) has the following distinct outcomes:
+
+- The targeted `SyracuseDyadicResidueFibre.lean` compilation succeeded. `explicitTailAtoms_mem_iff`, `explicitTailAtoms_card`, and `explicitCandidate_mass` report `[propext, Classical.choice, Quot.sound]`; the targeted module output contains no `sorryAx` for these declarations.
+- The audit job later failed in the APW4 dependency `BBMSTPrefixMeasureRecursion.lean:386` with `dsimp made no progress` and an application type mismatch involving `y (Fin.last (a + j))`. This does not invalidate the preceding isolated Syracuse module compilation.
+- The integrated-paranoid job failed at the same APW4 dependency. The isolated `syracuse-bridge-paranoid` job was still in progress at the latest job poll; its log endpoint returned `BlobNotFound`, so no completion is asserted.
+
+### Collatz PR #48 — exact run fully green
+
+On workflow [42759509255](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42759509255), all three jobs completed successfully: `kernel-check-lean-434`, `kernel-check-lean-435-paranoid`, and `compile-drafts`. The Lean 4.35.0 job completed `lake check --paranoid` and the named finite-path/terminal-residue module check. This is a full job-level CI success for that exact run and its source head. It proves only the declarations and scope actually built and audited there; the finite cap-tree path certificate remains a finite-depth necessary condition and does not exclude an infinite branch or prove global Collatz termination.
+
+The existing initial-cylinder, valuation-bound, offset, strict-margin, finite valuation-word cylinder, and dyadic fibre results retain their prior independent mathematical and exact-commit verification status. Later integration outcomes do not retroactively downgrade them.
+
+**Status:** APW4 integrated prefix recursion remains open; Syracuse isolated paranoid completion remains open; Collatz PR #48 exact run is green within its stated finite-depth scope. Mathematical proofs, historical reconstruction, isolated compilation, integrated compilation, paranoid kernel checking, and declaration-scoped axiom output remain separate evidence categories.
