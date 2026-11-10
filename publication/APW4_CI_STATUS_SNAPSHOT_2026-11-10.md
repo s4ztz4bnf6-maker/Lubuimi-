@@ -709,3 +709,20 @@ PR #86's coordinate-only candidate (head `4e4b378887cc76382d9cd2e17807f96a2c277e
 The 6 November BIB note §§5–6 explicitly gives the raw compatibility indicator (I_q(x,h)=1iff b_hequiv xpmod{gcd(m_h,B_q)}), the selected cover (A_qle I_q), redundancy (Z_q=I_q-A_q), the cross-profile indicator (W_{q,r}), and the exact four-term expansion (I_qW_{q,r}I_r^{mathsf T}=AA+AZ+ZA+ZZ). It explicitly states that the three Z-containing terms have no quantitative bound yet, minimality alone does not yield the required weighted estimate, and the depth-one extraction map to divisor labels is unspecified. The claims (|U|geDelta(B)), depth-one label counts and proper-lcm consequences remain unverified and are not used.
 
 The generator/index domains of F_q,F_r,C_h remain unavailable in the recovered source record. The earlier projection-fibre completion F_q(x)=pi_q^{-1}({x}) was explicitly marked canonical but non-historical and is prohibited as a substitute. PR #85's M/Gamma theorem is only a conditional local count; it does not close the mixed-Z or weighted HT/BIB transport problem.
+
+
+## Addendum 1.46 — canonical residue-fibre helper explicitly separated from historical reconstruction
+
+PR #87 was deliberately relabelled at source head `4d4fd074b78a475723b3cc46d65bd7b438e35de0` as a **canonical finite residue-fibre model helper, not a historical APW4 instantiation**. Its namespace is `APW4CanonicalQFibreProjection`. It defines a map on canonical representatives `Fin N → Fin B`, with (0<B) and (Bmid N), and proves the elementary fibre-in-lift inclusion for a base subset (U). It then applies the conditional local M/Gamma counting theorem to those model fibres.
+
+This helper is reusable only after a separate source proof identifies the original historical domains and maps with this canonical Fin model. It does not establish that identification, does not define the original (U_q) or (C_h), and cannot be used as a replacement for the historical APW4 definitions. This explicit boundary follows the source-fidelity warning in Addendum 1.45.
+
+Exact-head workflows for PR #87 are pending:
+- canonical kernel workflow [42746080147](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746080147);
+- degenerate-witness audit [42746080378](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42746080378).
+
+No PASS is claimed for PR #87. Even a successful run will verify only the canonical helper and its finite set-theoretic consequences.
+
+### Prefix repair status cross-check
+
+The first PR #86 coordinate-only commit `4e4b378887cc76382d9cd2e17807f96a2c277e23` failed its integrated job in run 42745081023 because the covered/uncovered goals remained after the coordinate equality. The branch now has amended head `80c607af6efd79c9a3221ebbb7aca76bebcaa991`, replacing branch simplification with `simp_all ... <;> ring_nf`; exact-head run [42745711983](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745711983) was queued. PR #84 remains a separate proof-witness/recursive-mass transport candidate. No prefix integration pass is claimed.
