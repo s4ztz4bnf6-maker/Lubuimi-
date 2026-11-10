@@ -450,3 +450,10 @@ The complete 17-page APW4 proof PDF was inspected. It records the DT assignment 
 PR #89 adds a generic preimage-fibre interface deriving fibre containment and block disjointness from explicit maps. Corrected head 45700b0151a1bdd52b3b1f0374c4e7273e17db9a; audit/canonical runs pending. PR #93 formalizes the Syracuse finite-depth common dyadic fibre as BBMSTFiniteFibreUpdate.FibreData; its corrected Lake-root head is dca4ef8ede78f902e39e2ac6c4186e2403d9d5e4, run 42747404273 queued. Neither is a historical event/BIB identification.
 
 PR #90 is the latest prefix update repair candidate, head b2bd581ea79696c1d47b8b02a47a209e8a87fd10; it explicitly handles the impossible covered-branch implication and the uncovered Finset.univ test. Run 42747202778 is pending. No integrated PASS is claimed.
+
+
+### Addendum 1.24 — concrete APW4 residue projection
+
+PR #89 exact head 157cdcc00353c9d89e5d596720cee08d098684ae specializes the q-fibre M/Gamma bound to explicit finite residue-label maps on ZMod N. Canonical run 42749178635 and audit run 42749178673 passed; the new theorem reports the standard axiom profile and the canonical log contains no sorryAx. The paranoid job was still pending.
+
+The selected residue sets and historical block-label map remain explicit parameters. The event-to-BIB historical reconstruction is still open; no substitute map is promoted to historical.
