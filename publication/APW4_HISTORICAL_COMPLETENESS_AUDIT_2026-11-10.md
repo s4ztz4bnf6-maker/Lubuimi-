@@ -220,3 +220,32 @@ The next source-dependent steps are still:
 4. prove the index-preserving weighted Hall demand/capacity condition and its relation to the already-established HT/DT proof record.
 
 The existing APW4 mathematical results are not downgraded by these remaining Lean/source-reconstruction obligations.
+
+
+## Addendum 1.15 — CI reconciliation after PRs #93, #101 and #102, 10 November 2026
+
+### PR #93: split CI outcome
+
+Exact source head remains `fbab49639954ae749d30a884a04032ee1d4d0f0e`, workflow [42754632105](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754632105).
+
+- The Lean audit job completed successfully, including the new dyadic residue module and subsequent ordered modules.
+- The isolated `syracuse-bridge-paranoid` job built the minimal Syracuse fibre dependency closure and advanced to `lake check --paranoid); that paranoid step was still running at this snapshot.
+- The separate integrated-paranoid job failed in the existing `BBMSTPrefixMeasureRecursion.lean` uncovered update branch. It printed `sorryAx` in the failed prefix update and dependent (PAt) declarations. This is independent of the isolated Syracuse bridge package result.
+- Therefore: audit PASS for its ordered compile scope; isolated paranoid still pending; integrated APW4 paranoid FAIL on this exact head. No full integrated PASS is claimed.
+
+### PR #101: first uncovered-branch repair did not close the goal
+
+PR #101 head `3625d65285e36da383f7fcd1a322ec6612d98451`, workflow [42754856131](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42754856131). The Lean 4.35.0 integrated job still reported the same unsolved conditional equality at `BBMSTPrefixMeasureRecursion.lean:407`, with downstream `sorryAx). The explicit endpoint nonmembership change alone was insufficient.
+
+### PR #103: explicit conditional rewrite candidate
+
+PR #103 head `9db2c26ae444f2cb01332ac1129e72ebe8cb147f` is stacked on PR #101 and now uses `rw [if_neg hmem]` followed by `rw [if_pos (Finset.mem_univ _)]` in the uncovered branch. No exact-head workflow result had been returned at this snapshot. This is a candidate only; no verification or mathematical completion is claimed.
+
+### Historical q-fibre chain
+
+- PR #85: audit run 42744980640 passed; canonical run 42744980622 passed; paranoid job was cancelled before a PASS.
+- PR #97: audit run 42750267648 passed; canonical run 42750267652 passed; paranoid job remained in progress.
+- PR #89: paranoid run 42754828642 failed at the q-power modulus positivity witness; the exact error and correction are recorded in Addendum 1.14.
+- PR #102: exact repair head `343b2d3ad8e276311bdff61e9cdf759f6117b82e`; audit [42755236626](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236626) and canonical/paranoid workflow [42755236653](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42755236653) were still running/queued. No PASS is claimed.
+
+The source-defined historical (U_q,U_r,C_h), the actual event/slot identification, the weighted Hall demand/capacity condition and the historical BIB transport remain distinct obligations. None of these CI states changes the established APW4 mathematical proof record.
