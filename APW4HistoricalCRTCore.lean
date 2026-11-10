@@ -426,7 +426,7 @@ noncomputable instance canonicalBIBSlotsFintype
       intro i
       exact Fintype.ofFinset (S.erase i.1) (by intro j; rfl)
     infer_instance
-  exact Fintype.sigma
+  infer_instance
 
 /-- The cardinality of the canonical slot type is exactly the ordered
 collision count. -/
@@ -435,8 +435,9 @@ theorem card_canonicalBIBSlots_eq_orderedBIBPairs
     Fintype.card (canonicalBIBSlots N m a) =
       APW4HistoricalCRT.orderedBIBPairs N m a := by
   classical
-  simp [canonicalBIBSlots, slotsAt,
-    APW4HistoricalCRT.orderedBIBPairs]
+  simp only [canonicalBIBSlots, slotsAt,
+    Fintype.card_sigma, Fintype.card_coe]
+  simp [APW4HistoricalCRT.orderedBIBPairs]
 
 /-- The canonical slot set has exactly the historical CRT BIB reserve
 cardinality. This is a set-level realization of the reserve count, not
