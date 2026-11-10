@@ -380,37 +380,28 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  by_cases hcovF : y (Fin.last k) ∈ F.covered
-  · have hcov :
-        y (Fin.last (a + j)) ∈
-          prefixCoveredValues C (A := A) hk
-            (restrictPrefix C hk y) := by
+  by_cases hcov :
+      y (Fin.last (a + j)) ∈
+        prefixCoveredValues C (A := A) hk
+          (restrictPrefix C hk y)
+  · have hcovF : y (Fin.last k) ∈ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
-        BBMSTUniformFibreInstantiation.toFibreData, xprev] using hcovF
-    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcovF, hcov,
+        BBMSTUniformFibreInstantiation.toFibreData, xprev, k] using hcov
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hcovF,
       F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, xprev, k]
-  · have hcov :
-        y (Fin.last (a + j)) ∉
-          prefixCoveredValues C (A := A) hk
-            (restrictPrefix C hk y) := by
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k]
+  · have hcovF : y (Fin.last k) ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
-        BBMSTUniformFibreInstantiation.toFibreData, xprev] using hcovF
-    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcovF, hcov,
+        BBMSTUniformFibreInstantiation.toFibreData, xprev, k] using hcov
+    simp [BBMSTFiniteFibreUpdate.updatedWeight, hcov, hcovF,
       F, prefixFibreData, prefixUniformFibre,
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, xprev, k]
+      PAt, Finset.mem_univ, Finset.card_univ, ite_true, xprev, k]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
