@@ -404,7 +404,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, hcovY, xprev, k]
+      PAt, hcovY, hx, xprev, k]
   · have hnotY :
         y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y) := by
@@ -425,7 +425,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       BBMSTUniformFibreInstantiation.toFibreData,
       BBMSTUniformFibreInstantiation.uniformWeight,
       BBMSTUniformFibreInstantiation.coveredProportion,
-      PAt, hcovY, xprev, k]
+      PAt, hcovY, hx, xprev, k]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
