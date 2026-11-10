@@ -74,6 +74,12 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
   prefixIndex hk (Fin.last k)
 
+/-- The stage coordinate is exactly the last coordinate of the extended prefix.
+This named equality is used to transport dependent membership proofs. -/
+theorem stageCoordinate_eq_prefixIndex_last
+    {k : ℕ} (hk : k + 1 ≤ n) :
+    stageCoordinate hk = prefixIndex hk (Fin.last k) := rfl
+
 /-- Restrict a prefix of length k+1 to its first k coordinates. -/
 noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
     (x : PrefixPoint C (k + 1) hk) :
@@ -385,7 +391,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   · have hcov' :
         y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk'
           (restrictPrefix C hk' y) := by
-      simpa [x, k] using hcov
+      simpa [x, k, stageCoordinate_eq_prefixIndex_last] using hcov
     have hcovF : x ∈ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
@@ -400,7 +406,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   · have hnot' :
         y (Fin.last k) ∉ prefixCoveredValues C (A := A) hk'
           (restrictPrefix C hk' y) := by
-      simpa [x, k] using hcov
+      simpa [x, k, stageCoordinate_eq_prefixIndex_last] using hcov
     have hnotF : x ∉ F.covered := by
       simpa [F, prefixFibreData, prefixUniformFibre,
         BBMSTUniformFibreInstantiation.toFibreData] using hcov
