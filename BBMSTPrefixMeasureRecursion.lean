@@ -209,7 +209,9 @@ theorem prefixPointCovered_iff
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
-  simp [prefixPointCovered, prefixCoveredValues, stageCoordinate, hext]
+  simp only [prefixPointCovered, prefixCoveredValues, stageCoordinate,
+    Finset.mem_filter, Finset.mem_univ, true_and]
+  rw [hext]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
@@ -383,14 +385,22 @@ theorem prefixFibre_updatedWeight_eq_PAt
   by_cases hcov :
       y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev
   · have hcov' := hcovered.mp hcov
-    simp [hcov, hcov', hstage, hPAt, Finset.mem_univ]
+    have hcov₁ :
+        y (Fin.last (a + j)) ∈
+          prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) := by
+      simpa [xprev, k] using hcov
+    simp [hcov₁, hcov', hstage, hPAt, k, Finset.mem_univ]
   · have hcov' :
         ¬ y (Fin.last k) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
             (restrictPrefix C (k := k) (show k + 1 ≤ n from by omega) y) := by
       intro h'
       exact hcov (hcovered.mpr h')
-    simp [hcov, hcov', hstage, hPAt]
+    have hcov₁ :
+        y (Fin.last (a + j)) ∉
+          prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) := by
+      simpa [xprev, k] using hcov
+    simp [hcov₁, hcov', hstage, hPAt, k, Finset.mem_univ]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
