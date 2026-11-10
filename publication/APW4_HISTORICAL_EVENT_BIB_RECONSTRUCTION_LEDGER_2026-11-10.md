@@ -136,3 +136,29 @@ This correction preserves the value of the generic finite-set lemma while preven
 - PR #87's canonical projection-fibre helper is at head `4d4fd074b78a475723b3cc46d65bd7b438e35de0`; its canonical and audit workflows are pending. No kernel PASS is claimed.
 - The original matrix identity (2.1), local aggregate inequality (2.2), and recovered q-profile formulas in Section 11 remain fixed. The canonical helper does not alter their historical domains or supply the missing (a_{q,t}) vectors.
 - The event universe, full map ((x,u)mapsto(k,I_{x,u},J_{x,u})), actual BIB-place incidence and capacities, and weighted Hall proof remain open source-reconstruction/formalization obligations.
+
+
+## 16. New divisor-envelope sharpening of the conditional BIB second moment
+
+The 6 November incidence note now contains a separate addendum defining a new auxiliary parameter
+[
+\mu^*(B)=\max\{\tau(d):d\mid B,\ d<B\}.
+]
+This is **not** asserted to be the historical meaning of the previously recorded symbol (mu(B)). If the common selected labels are distinct divisors of (B) and their least common multiple is a proper divisor of (B), then their number is at most (mu^*(B)).
+
+For (B=\prod_i p_i^{e_i}), the exact arithmetic formula is
+[
+\mu^*(B)=\tau(B)\max_i\frac{e_i}{e_i+1}.
+]
+For squarefree (B), this is (	au(B)/2). Thus, with (r=q-1), the three numerical assumptions in the conditional BIB second-moment lemma reduce to
+[
+\tau(B)^2<2(q-1)^2,
+]
+and yield
+[
+m_0\leq
+\frac{\tau(B)(2(q-1)-\tau(B))}
+{2(q-1)^2-\tau(B)^2}.
+]
+
+This is a new arithmetic parameter sharpening, not a Lean-verified theorem and not a historical definition. Its use still requires proving that the actual selected labels are distinct divisors, that every pairwise common-label family has proper LCM, and that the row-size lower bound (q-1) holds. The extraction map from (A_q(x,h)) to (S_x) remains open. It does not close the weighted HT event/BIB-slot transport.
