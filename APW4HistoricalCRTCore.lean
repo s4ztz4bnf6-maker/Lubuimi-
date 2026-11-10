@@ -435,4 +435,93 @@ theorem sum_M_qr_le_Gamma_qr_of_quotient_homs
 
 end ZModQuotientProjectionModel
 
+
+/-!
+## Exact q-power quotient specialization of the historical working fibres
+
+The working arithmetic modulus is B_q = N / q^a when q^a divides N.
+This section proves the divisor fact and instantiates the actual reduction
+homomorphism ZMod N → ZMod B_q. It is still conditional on the selected
+support U_q and the historical block-label map c; those source objects are
+not reconstructed by this arithmetic projection alone.
+-/
+
+namespace QPowerQuotientModel
+
+/-- The working q-fibre modulus B_q = N / q^a. -/
+def qFibreModulus (N q a : ℕ) : ℕ := N / q ^ a
+
+/-- If q^a divides N, then the working modulus B_q divides N. -/
+theorem qFibreModulus_dvd_N
+    {N q a : ℕ} (hdiv : q ^ a ∣ N) :
+    qFibreModulus N q a ∣ N := by
+  refine ⟨q ^ a, ?_⟩
+  exact (Nat.div_mul_cancel hdiv).symm
+
+/-- Positivity of B_q follows from N>0 and q>0. -/
+theorem qFibreModulus_pos
+    {N q a : ℕ} (hN : 0 < N) (hq : 0 < q) :
+    0 < qFibreModulus N q a := by
+  exact Nat.div_pos hN (pow_pos hq a)
+
+/-- The actual quotient homomorphism for B_q=N/q^a. -/
+def qFibreProjection
+    {N q a : ℕ} [NeZero N]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N) :
+    ZMod N →+* ZMod (qFibreModulus N q a) := by
+  letI : NeZero (qFibreModulus N q a) :=
+    ⟨qFibreModulus_pos hN hq⟩
+  exact ZMod.castHom (qFibreModulus_dvd_N hdiv)
+    (ZMod (qFibreModulus N q a))
+
+/-- The working q-fibre F_q(x), as the inverse image of x under the
+actual quotient homomorphism modulo N/q^a. -/
+def qFibre
+    {N q a : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N)
+    (x : ZMod (qFibreModulus N q a)) : Finset (ZMod N) :=
+  PreimageModel.fibre (qFibreProjection hN hq hdiv) x
+
+/-- The working visible set V_q, as the inverse image of U_q under
+the same quotient homomorphism. -/
+def qVisible
+    {N q a : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hdiv : q ^ a ∣ N)
+    (U : Finset (ZMod (qFibreModulus N q a))) : Finset (ZMod N) :=
+  PreimageModel.visible (qFibreProjection hN hq hdiv) U
+
+/-- The local M/Gamma inequality for the exact q-power quotient fibres
+B_q=N/q^a and B_r=N/r^b. The supports and block map remain explicit. -/
+theorem sum_M_qr_le_Gamma_qr_of_q_power_quotients
+    {N q r a b : ℕ} [NeZero N]
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)]
+    (hN : 0 < N) (hq : 0 < q) (hr : 0 < r)
+    (hqdvd : q ^ a ∣ N) (hrdvd : r ^ b ∣ N)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (ZMod (qFibreModulus N q a)))
+    (Ur : Finset (ZMod (qFibreModulus N r b)))
+    (c : ZMod N → H)
+    (x : ZMod (qFibreModulus N q a))
+    (y : ZMod (qFibreModulus N r b)) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (qFibre hN hq hqdvd x) (qFibre hN hr hrdvd y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (qVisible hN hq hqdvd Uq)
+      (qVisible hN hr hrdvd Ur) (PreimageModel.block c) g := by
+  classical
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (qFibreProjection hN hq hqdvd)
+    (qFibreProjection hN hr hrdvd)
+    Uq Ur c x y g hx hy
+
+#print axioms qFibreModulus_dvd_N
+#print axioms qFibreProjection
+#print axioms sum_M_qr_le_Gamma_qr_of_q_power_quotients
+
+end QPowerQuotientModel
+
 end APW4HistoricalQFibre
