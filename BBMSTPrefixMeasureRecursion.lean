@@ -392,7 +392,8 @@ theorem prefixFibre_updatedWeight_eq_PAt
         prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
           (restrictPrefix C (show k + 1 ≤ n from by omega) y)) := by
     rfl
-  split_ifs <;> simp_all [hcovered] <;> ring_nf
+  rw [hcovered]
+  split_ifs <;> simp_all <;> ring_nf
 
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
