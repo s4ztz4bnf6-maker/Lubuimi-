@@ -90,7 +90,7 @@ def exactSupportLayer (S : Finset I) : Finset (ZMod N) :=
 
 /-- Cardinality of one exact support layer. -/
 def exactSupportCount (S : Finset I) : ℕ :=
-  (exactSupportLayer N m a S).card
+  ∑ x : ZMod N, if supportAt N m a x = S then 1 else 0
 
 /-- Number of CRT points lying in every congruence indexed by T. -/
 def intersectionCount (T : Finset I) : ℕ :=
@@ -136,11 +136,7 @@ theorem intersectionCount_eq_sum_exactSupportCount (T : Finset I) :
       · simp [hTS]
     _ = ∑ S : Finset I,
           if T ⊆ S then exactSupportCount N m a S else 0 := by
-      apply Finset.sum_congr rfl
-      intro S hS
-      by_cases hTS : T ⊆ S
-      · simp [hTS, exactSupportCount, exactSupportLayer, Finset.card_filter]
-      · simp [hTS]
+      rfl
 
 #print axioms intersectionCount_eq_sum_exactSupportCount
 
