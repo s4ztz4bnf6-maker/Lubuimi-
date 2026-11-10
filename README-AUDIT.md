@@ -108,3 +108,43 @@ Before making a prize claim:
 - use the official claim/dispute channel and follow its attribution and review rules.
 
 No prize eligibility or award is guaranteed by this audit.
+
+## 10. Exact-head APW4 prefix-recursion integration — 10 November 2026
+
+The established APW4 mathematical results remain part of the project record and are not reopened by a later Lean integration failure. The global energy conclusion is stated relative to the explicit premises A*, B*, and the local mass bound `m_S(x) ≤ 1`; those assumptions must remain visible.
+
+PR #115, source head `278c0c6c192e34728bace660199e1c431e96846d`, workflow [42762540736](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42762540736), had a successful separate audit job and a failed integrated Lean 4.35.0 paranoid job. The separate job compiled `BBMSTPrefixMeasureRecursion.lean` and printed `prefixFibre_updatedWeight_eq_PAt` with `[propext, Classical.choice, Quot.sound]`. The integrated job failed at lines 393–394: the positive branch tried to apply a contradiction tactic to a residual multiplier equality; the negative branch did not reduce the `Finset.univ` conditional. Error recovery then printed `sorryAx` for the target and dependent recursion declarations.
+
+PR #116 is a stacked proof repair at exact head `056de39c12ce417b6c7578277bf0fe9023af145f`, workflow [42805862280](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42805862280). It explicitly proves membership/nonmembership in the concrete covered set and membership in the full fibre, then rewrites the two `updatedWeight` conditionals separately. At the latest poll, the separate audit job `129794679789` and integrated-paranoid job `129794680288` were both in progress. This is an unverified candidate; no PASS is claimed.
+
+Acceptance requires both jobs to finish, the integrated package to compile, the named axiom output to be inspected, and the integrated transitive dependency closure to contain no `sorryAx`. The separate audit result alone is not sufficient.
+
+## 11. Mathematical preservation and interface obligations
+
+The following established mathematical components remain preserved: DT and HT; historical atom identification where proved; BIBW domination and weighted Hall conditions; exact diagonal/off-diagonal decomposition; CRT fibre balance; and the algebraic energy conclusion under A*, B*, and `m_S(x) ≤ 1`. The exact scope of each remains governed by its own proof and hypotheses.
+
+APW diagonal mass, APW off-diagonal mass, and BIB pair reserve must not be identified without an explicit index-preserving map and corresponding weight/capacity transport. Historical definitions `A_q`, `A_r`, `W_{q,r}`, and `a_{q,t}` must not be guessed or replaced by canonical block sums.
+
+See `APW4_CURRENT_STATUS_AND_VERIFICATION_LEDGER_2026-11-10.md` for the current integrated failure, candidate repair, separate upstream sieve-axiom boundary, attribution, and licensing inventory.
+## Further APW4 exact-head diagnostics — 10 November 2026
+
+### PR #118 / v4 candidate
+
+Source head `0523bfce7a5daed0802f2ffb7141547301337b17`, workflow [42806636524](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42806636524): the integrated build failed. Unfolding `updatedWeight` fixed the earlier equation-theorem rewrite failure, and the full-fibre membership witness was made explicit, but Lean exposed a dependent-index mismatch between `y (Fin.last k)` at `prefixIndex hj (Fin.last k)` and the expected fibre index `stageCoordinate hk`. This candidate is superseded; no result is accepted from it.
+
+### PR #119 / v5 candidate
+
+Source head `5800a53c8c7fd9a59023cddf84d63ccc8cd920e3`, workflow [42807200407](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807200407): the integrated build still failed on the same dependent-index transport. Changing only the point term in the local `change` target was insufficient because Lean normalized the local let-bound index back to `k` in the dependent type. This candidate is superseded.
+
+### PR #120 / v6 candidate
+
+Current candidate: [PR #120](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/120), exact head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [42807684437](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807684437). It states the transport equality directly as `stageCoordinate hk = prefixIndex hj (Fin.last k)` and uses the same `y (Fin.last k)` term in the target and membership cases. At the latest poll, the separate audit and integrated-paranoid jobs were in progress. **OFFEN – NICHT VERIFIZIERT.**
+
+Do not infer success from the improved diagnostics. Acceptance still requires integrated compilation, exact named axiom output, and no `sorryAx` in the integrated dependency closure.
+## Dependent-coordinate correction: v6 failure and v7 candidate — 10 November 2026
+
+PR #120 / v6 source head `cf52ab6a326c11a115c75bbf3c412f7883b31f11`, workflow [42807684437](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42807684437): the separate `audit` job **PASS**; the integrated-paranoid job **FAIL**. The failure confirms that `cases hstage` did not transport the dependent point. Lean still sees `y (Fin.last k)` at `C.S (prefixIndex hj (Fin.last k))`, while `F.covered` expects `C.S (stageCoordinate hk)`. Error recovery therefore emits `sorryAx` for the target and dependent recursion results. No integrated verification is claimed.
+
+Current PR [#121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/121), v7 exact source head `5631a527c289889db3e70bf0fb1644926e11d893`, uses an explicit dependent cast `hstage.symm ▸ y (Fin.last k)` into `C.S (stageCoordinate hk)` and uses that transported point consistently in the update and membership cases. Workflow status was pending at the latest poll. This is a new candidate, not a verified repair.
+
+Acceptance still requires the v7 exact-head separate audit and integrated-paranoid jobs to complete, successful integrated compilation, named `#print axioms` inspection, and a no-`sorryAx` scan of the integrated dependency closure.
