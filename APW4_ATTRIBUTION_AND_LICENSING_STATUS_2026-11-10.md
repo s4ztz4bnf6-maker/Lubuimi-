@@ -21,3 +21,8 @@ Last inventory: 10 November 2026.
 ## Current documentation and legal-status confirmation — 10 November 2026
 
 The documentation refresh records the current v7 APW4 integration candidate and its pending exact-head CI; it does not amend ownership, grant a licence, or import terms from another repository. The APW4 repository still has no explicit project licence in the inspected source tree. The rights inventory therefore remains factual only. Any proprietary, open-source, or commercial licence must be selected and approved by the rights holder through a separate explicit decision and exact legal text. Third-party code, Lean, Mathlib, papers, and other dependencies retain their own terms.
+
+
+## Documentation update — 10 November 2026
+
+The v7 and v8 Lean proof-repair attempts do not change authorship, mathematical ownership, or licensing. APW4 research and formalization remain attributed to Ta-Yoshua Lubuimi. AI tools are assistants only. No new licence terms are created by this status addendum; existing rights statements remain unchanged. The APW4 repository snapshot has no explicit licence file, so no licence is inferred or added here.
