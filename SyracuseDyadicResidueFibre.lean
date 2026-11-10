@@ -21,7 +21,7 @@ open BBMSTFiniteFibreUpdate
 
 /-- The common finite ambient fibre, represented by residues in
 [0, 2^Bstar). -/
-def allAtoms (Bstar : ℕ) : Finset (Fin (2 ^ Bstar) := Finset.univ
+def allAtoms (Bstar : ℕ) : Finset (Fin (2 ^ Bstar)) := Finset.univ
 
 /-- Lift a residue modulo 2^B to all of its representatives modulo
 2^Bstar. The parameter hB is essential: without B ≤ Bstar, the stated
