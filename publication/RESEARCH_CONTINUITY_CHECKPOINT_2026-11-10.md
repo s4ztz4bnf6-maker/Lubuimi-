@@ -139,3 +139,10 @@ Die projektbezogenen Axiome `sieve_criterion` und `sf_sieve_lt_one`, ihre Hypoth
 ## 8. Änderungsgrenze und Nicht-Regressionsregel
 
 Dieser Statuscheckpoint ist Dokumentation. Er ändert keine Lean-Deklaration, keinen mathematischen Satz, keine Hypothese und keine veröffentlichte PDF. Alle historischen PASS-/FAIL-Ergebnisse bleiben mit ihrem jeweiligen exakten Commit verbunden. Ein neuer PASS wird erst nach tatsächlichem Workflowabschluss und Einsicht in die benannten Axiom- und `sorryAx`-Ausgaben eingetragen.
+
+
+## 9. Final documentation-head and cross-repository synchronization
+
+The APW4 documentation branch for PR #136 now points to `0c8c1c0261056a23bb15b3d7b64b2de838f75ed7`. Workflow [42911116125](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42911116125) was returned as queued with only the `audit` job. This is an upstream/degenerate-witness audit, not the integrated APW4 Lean 4.35.0 package and not a verification of PR #138's dependent prefix declarations or the historical Event-to-BIB map. No integrated PASS is claimed. All changes in this documentation branch are append-only documentation; no Lean source or theorem statement changed.
+
+The Syracuse repository mirrors the cross-project record at [COLLATZ_APW4_RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md](https://github.com/s4ztz4bnf6-maker/Lubuimi/blob/collatz/terminal-exact-backward-step-2026-11-10/COLLATZ_APW4_RESEARCH_CONTINUITY_CHECKPOINT_2026-11-10.md). Its latest documentation-only head is `8663acb4ac7c91faabf14570f73d56632edb3bba`; the Lean source head remains `e44eb4331cc1481e10d6f60780d695412c47a726`, with successful workflows 42844423707 and 42845962042 on the cited source/documentation snapshots. The finite backward theorem is Lean-proved, but the global Collatz descent remains open.
