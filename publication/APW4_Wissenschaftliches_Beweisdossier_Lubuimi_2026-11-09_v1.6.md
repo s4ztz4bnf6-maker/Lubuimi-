@@ -1329,3 +1329,10 @@ Collatz PR #48 exact head `cbe9f19b9ba1bd4bad290b1cbc56da2881c238b8`, run [42757
 ## 13. Preservation rule
 
 The established mathematical statements in Sections I and the separately documented historical proof record retain their prior status. A failed or incomplete Lean integration affects only the formal declarations and exact source head that the log names. The finalized manuscript PDF is not altered by this repository audit addendum; publication-copy changes require a separately versioned author-controlled manuscript update.
+
+
+## 14. PR #101: explicit contradiction elimination candidate
+
+At exact head `dbbeaf7a14ebcceb8abf97b6a9113d84a024c54c`, the positive membership branch of `prefixFibre_updatedWeight_eq_PAt` now handles the exact residual implication from the preceding compiler log by introducing its negated membership premise and eliminating it against `hcov`. The uncovered branch is unchanged. This patch does not alter definitions, theorem statements, hypotheses, or any previously verified declaration.
+
+Runs [42758799252](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758799252) and [42758803063](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42758803063) were queued at the last poll. The patch is therefore a **proof candidate, not a verified result**. Acceptance still requires successful exact-head integrated-paranoid verification, successful audit, and declaration-scoped axiom output without `sorryAx` for the recursion identity and all dependent `PAt) declarations.
