@@ -495,3 +495,10 @@ The Lean 4.28 audit job for run 42738073791 is still in progress at this snapsho
 ## Addendum 1.28 — dyadic uniform-fibre cardinality Lean pass
 
 Syracuse PR #9 exact source commit a1becbc8e837f10abcd952a2e03832cb057fb2b8 passed compile-drafts workflow 42738528207. The declaration dyadicUniformFibre_partition_card proves the exact child-block plus tail-block cardinality identity for B≤B*. Its transitive axiom profile is [propext, Classical.choice, Quot.sound], the completed log contains no actual sorryAx, and the build reports successful completion of 8,932 jobs. This verifies the finite counting identity only. The full cap/tree/interval/residue-bijection construction remains to be formalized.
+
+
+## Addendum 1.29 — full prefix-fibre normalization candidate 2843f40
+
+PR #69 has advanced to source head 2843f40fd5c04fc68014ee8fe59a87d26520b285. The latest repair no longer relies on a single membership Iff. It introduces named proof witnesses hk' and hprev', proves equality of those proof witnesses by Subsingleton.elim, transports the restricted previous prefix, stage coordinate, full prefixCoveredValues finset, and previous PAt base mass, then performs the covered/uncovered case split on the normalized expressions.
+
+Exact-head workflow 42738923964 is in progress with both Lean 4.28 audit and Lean 4.35 integrated-paranoid jobs. This is the first candidate that explicitly normalizes the entire dependent fibre expression, including the cardinality and base-mass terms. No result is claimed until both jobs complete and the named declarations print the standard profile without actual sorryAx.
