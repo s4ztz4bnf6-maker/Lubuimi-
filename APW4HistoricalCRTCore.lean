@@ -236,9 +236,9 @@ namespace APW4HistoricalQFibre
 
 namespace PreimageModel
 
-variable {G Xq Xr H : Type*}
+variable {G X Xq Xr H : Type*}
 variable [Fintype G] [DecidableEq G]
-variable [DecidableEq Xq] [DecidableEq Xr]
+variable [DecidableEq X] [DecidableEq Xq] [DecidableEq Xr]
 variable [Fintype H] [DecidableEq H]
 
 /-- Fibre over one label of a finite projection. -/
