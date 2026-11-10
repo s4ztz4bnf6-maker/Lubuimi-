@@ -51,8 +51,6 @@ theorem prefixCoveredValues_eq_stageCoveredValues
   cases hcoord
   apply Finset.ext
   intro t
-  simp only [prefixCoveredValues, stageCoveredValues,
-    Finset.mem_filter, Finset.mem_univ, true_and]
   let z : ProductPoint C :=
     Function.update
       (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x)
@@ -61,7 +59,13 @@ theorem prefixCoveredValues_eq_stageCoveredValues
       projectPrefix hk z = extendPrefix C hk x t := by
     rfl
   constructor
-  · rintro ⟨H, hH, hprefix⟩
+  · intro ht
+    have hsrc :=
+      (mem_prefixCoveredValues_iff (C := C) (A := A) hk x t).mp ht
+    rcases hsrc with ⟨H, hH, hprefix⟩
+    apply (mem_stageCoveredValues_iff (C := C) A (k + 1)
+      (by omega) (by omega)
+      (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x) t).mpr
     refine ⟨H, hH, ?_⟩
     have hstage := newAtStage_subset_stageFamily (C := C) A (k + 1) hH
     have hinside : H.FixedInsidePrefix (k + 1) := by
@@ -72,7 +76,13 @@ theorem prefixCoveredValues_eq_stageCoveredValues
     have hprefix' : H.ContainsPrefix hk (projectPrefix hk z) := by
       simpa [hz] using hprefix
     exact (containsPrefix_iff_full hk H hinside z).mp hprefix'
-  · rintro ⟨H, hH, hfull⟩
+  · intro ht
+    have hdst :=
+      (mem_stageCoveredValues_iff (C := C) A (k + 1)
+        (by omega) (by omega)
+        (liftPrefix C (Nat.le_trans (Nat.le_succ k) hk) x) t).mp ht
+    rcases hdst with ⟨H, hH, hfull⟩
+    apply (mem_prefixCoveredValues_iff (C := C) (A := A) hk x t).mpr
     refine ⟨H, hH, ?_⟩
     have hstage := newAtStage_subset_stageFamily (C := C) A (k + 1) hH
     have hinside : H.FixedInsidePrefix (k + 1) := by
