@@ -185,3 +185,11 @@ A successful standalone audit is not a substitute for the integrated gate. No ma
 ### Attribution and licence boundary
 
 Original APW4 research, manuscript material, and formalization authored by Ta-Yoshua Lubuimi remain attributed to him. AI tools are assistants only and are not authors or independent mathematical verifiers. The existing `LICENSE-PROPRIETARY.md` and commercial-use policy remain unchanged; no new licence, assignment, waiver, or reuse permission is created by this status entry. Third-party sources, Lean, Mathlib, and dependencies remain subject to their own terms.
+
+
+### Follow-on APW4 repair candidates — exact status at 12:10 UTC, 10 November
+
+- PR [#135](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/135), head `452d19f7edd1629fba115fb67ee0ae219f908e1c`, replaces the conditional `rw` reductions with `simp only`. No workflow run/status was returned for this head at this checkpoint; **PENDING / NOT VERIFIED**.
+- PR [#137](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/137), head `f2df9ab28a64ce6a5528f02c52a325766d7a54c4`, states the covered/uncovered membership witnesses directly at the unfolded endpoint `y (Fin.last k)`. No workflow run/status was returned for this head at this checkpoint; **PENDING / NOT VERIFIED**.
+
+These candidates are alternative proof-script refinements. They do not alter the theorem statement, APW4 mathematical hypotheses, or established result record. The integrated verification gate remains open.
