@@ -366,31 +366,38 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  -- Give the recursive PAt unfolding named proof witnesses and
-  -- transport the whole prefix fibre before unfolding any dependent finset.
-  have hk' : k + 1 ≤ n := by
+  -- Name the proof witnesses used by the recursive PAt equation and
+  -- explicitly transport both the recursive value and covered-value finset.
+  let hkRec : k + 1 ≤ n := by
     simpa only [k, Nat.add_succ] using hj
-  have hprev' : k ≤ n := by omega
-  have hhk : hk = hk' := Subsingleton.elim _ _
-  have hhp : hprev = hprev' := Subsingleton.elim _ _
-  cases hhk
-  cases hhp
-  -- With the dependent proof witnesses aligned, both sides use the same
-  -- covered-value finset and the same final-coordinate membership test.
+  let hprevRec : k ≤ n := by omega
+  let xprevRec := restrictPrefix C hkRec y
+  have hhk : hk = hkRec := Subsingleton.elim _ _
+  have hhp : hprev = hprevRec := Subsingleton.elim _ _
+  have hxprev : xprev = xprevRec := by
+    dsimp [xprev, xprevRec]
+    rw [hhk]
+  have hrec :
+      PAt C (A := A) a ha P0 δ j hprev xprev =
+        PAt C (A := A) a ha P0 δ j hprevRec xprevRec := by
+    rw [hhp, hxprev]
+  have hvalues :
+      prefixCoveredValues C (A := A) hk xprev =
+        prefixCoveredValues C (A := A) hkRec xprevRec := by
+    rw [hhk, hxprev]
   simp only [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
+  rw [← hhk, ← hrec, ← hvalues]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · intro hnot
-    exact (hnot hcov).elim
-  · intro hpos
-    exact (hcov hpos).elim
+  · simp [hcov]
+  · simp [hcov]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
