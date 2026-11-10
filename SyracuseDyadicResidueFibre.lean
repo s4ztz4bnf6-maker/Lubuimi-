@@ -309,8 +309,14 @@ theorem prefixTail_lift_factorization
     3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
         3 * Cₖ + 2 ^ A =
       2 ^ (A + 1) * (3 ^ (k + 1) * q + d) := by
-  rw [Nat.mul_add, hdiv]
-  ring
+  calc
+    3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
+        3 * Cₖ + 2 ^ A
+      = 2 ^ (A + 1) * (3 ^ (k + 1) * q) +
+          (3 ^ (k + 1) * r₀ + 3 * Cₖ + 2 ^ A) := by ring
+    _ = 2 ^ (A + 1) * (3 ^ (k + 1) * q) +
+          2 ^ (A + 1) * d := by rw [← hdiv]
+    _ = 2 ^ (A + 1) * (3 ^ (k + 1) * q + d) := by ring
 
 /-- The explicit tail coordinate has the exact complementary candidate
 mass in the finite normalized prefix fibre. -/
