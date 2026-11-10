@@ -470,3 +470,8 @@ The first dedicated exact-head runs on e8b61d2961dadbae2915dd6754807fc1b13daf6d 
 ## 30. Initial-cylinder manuscript source-format correction
 
 The final manuscript file in Syracuse PR #35 is now at exact commit ddf366d7654a275958157daab9d3d489ad3e6fd0. The LaTeX source was regenerated with raw-string preservation; a read-back check confirms that TeX commands such as frac, tag and boxed remain intact and that no non-whitespace control characters occur. This is an editorial source-format correction only. The Lean theorem source is unchanged, and the seven exact-commit audits retain their original theorem/declaration scope.
+
+
+## 31. PR #67 finite-incidence checkpoint — Lean 4.28 pass
+
+Corrected source commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4 passed canonical workflow 42740305961. The three declarations incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction were explicitly compiled and printed with [propext, Classical.choice, Quot.sound]; no actual sorryAx was found. The Lean 4.35.0 paranoid workflow 42740306351 remains in progress. This verifies the conditional algebraic finite-incidence checkpoint only; it does not prove historical APW4 incidence hypotheses or BIB/Hall transport.
