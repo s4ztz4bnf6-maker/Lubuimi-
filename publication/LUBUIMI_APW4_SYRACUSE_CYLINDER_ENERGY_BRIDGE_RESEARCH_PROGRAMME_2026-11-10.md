@@ -90,3 +90,12 @@ then every start in that tail cylinder has positive next signed margin and there
 This gives the bridge programme a concrete arithmetic object: a finite prefix node, its exact cylinder mass, a finite list of unresolved children, and one terminal tail atom carrying a certified descent bound. It may support a finite incidence/moment formulation. It does not yet supply the historical APW4 index map, the BIB/Hall capacity, or a uniform bound across all prefix nodes. The bridge remains unproved until those separate obligations are discharged.
 
 The lemma is recorded as a mathematical manuscript result in the standalone Syracuse finite-word project; it is not yet Lean-compiled. The APW4 theorem record and its hypotheses are unchanged.
+
+
+## 9. Finite-branching Syracuse obstruction interface — 10 November 2026
+
+The general finite-word cylinder manuscript now contains a stronger arithmetic interface than the tail-mass identity alone. For a realized prefix with cumulative exponent A and signed margin D, any next valuation b on a non-descending extension must satisfy
+\[
+2^{A+b}+3D\le4\cdot2^A.
+\]
+Thus each fixed prefix state has only finitely many possible non-descending children. A least hypothetical positive odd counterexample would determine an infinite path in this state-dependent finitely branching tree. This gives the APW4 bridge a finite indexed tree candidate with exact cylinder weights, terminal tail atoms and signed-margin labels. It does not yet establish a uniform bound, a global Collatz result, the historical APW4 index map, or BIB/Hall capacity. The diagonal mass, off-diagonal mass and BIB pair reserve remain separate.
