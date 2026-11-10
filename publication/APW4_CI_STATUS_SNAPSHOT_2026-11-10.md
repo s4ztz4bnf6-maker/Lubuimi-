@@ -617,3 +617,14 @@ Corrected exact source commit e71b7a5eaa433b689aaa2963d89bdd4ae55c37f4 passed ca
 At the current exact-head check, PR #67 head `6b69e2c91010db9e7faf5d7f3a91b3a50b88b2a1` has canonical workflow [42742383010](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42742383010) completed successfully. Its log prints `APW4HistoricalCRT.intersectionCount_eq_sum_exactSupportCount` with exactly `[propext, Classical.choice, Quot.sound]`; the full declaration-log scan contains no `sorryAx`. The separate Lean 4.35 paranoid workflow [42742382720](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42742382720) remains in progress. This verifies the forward exact-support counting identity only, not inverse Möbius inversion or weighted BIB/Hall transport.
 
 PR #84 exact-head workflow [42743406155](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42743406155) is currently pending in the Actions queue. Earlier status showed its integrated-paranoid job still in progress and audit job cancelled; GitHub would not rerun the cancelled job while the workflow remained active. No pass is claimed. The source head remains `f681650c102d011e0bc715c93b5d4a94ffb866ca` and the PR remains draft/unmerged.
+
+
+## Addendum 1.38 — recovered historical q-fibre interface
+
+A later source artifact was located: Dossier v1.6 §48, together with the 6 November BIB incidence note §5. It explicitly records
+`B_q=N/q^{a_q}`, the lifted uncovered set `V_q`, the fibre pieces `P_{q,x,h}=F_q(x)∩C_h), and the exact counts
+`M_{q,r}((x,h),(y,g))=|P_{q,x,h}∩P_{r,y,g}|`,
+`Gamma_{q,r}(g)=|C_g∩V_q∩V_r|`.
+The recovered 31 October record also gives the raw compatibility indicator `I_q), selected minimal cover `A_q), redundancy `Z_q), and cross-profile indicator `W_{q,r}).
+
+This supersedes the earlier statement that `B_q` and `I_q` were not corroborated. They are now treated as recovered q-fibre working definitions. Remaining source-to-Lean work: recover the full domains/projection definitions of `U_q,F_q(x),C_h`; prove the fibre-containment and block-disjointness properties from those definitions; then formalize the local `sum_h M ≤ Gamma` inequality. That local count is not yet the full weighted Hall condition or APW4 HT.
