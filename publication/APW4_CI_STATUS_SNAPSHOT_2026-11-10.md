@@ -535,3 +535,14 @@ Exact-head workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/
 At this recheck, PR #69 remained open at source head `17eb308d106c770ab559d254bcee2bdfd2ead6c4`. Workflows [42739447621](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739447621) and [42739454140](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739454140) were still in progress. The integrated-paranoid job had passed Lean 4.35.0 setup, sandbox installation, and Mathlib cache restoration and was compiling the integrated BBMST/APW4 modules including the full Theorem 1.2 reduction. This is `IN PROGRESS`, not PASS.
 
 PR #79 documentation head `be6dfbcdc55b2603cc6901caaa32f8e4ed24a505` had exact-head workflows [42739759284](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739759284) and [42739763639](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42739763639) still in progress. No success/failure inference is made from the lack of completed logs. The next audit must inspect completed exact-head logs for `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg`, and `PAt_sum_eq_one`, their transitive `#print axioms` profiles, and the complete `sorryAx` scan; then verify the integrated `lake check --paranoid` declaration count.
+
+
+## Addendum 1.32 — conditional incidence module audit actually started
+
+A scope correction is required for PR #67. The earlier general audit run 42603327843 did not compile APW4IncidenceSecondMoment.lean; its log printed only pre-existing canonical and degenerate-witness declarations. The APW4-specific workflows on that exact head were cancelled. Therefore the new incidence module was not formally verified by that earlier success.
+
+A comment-only update on source commit e8b61d2961dadbae2915dd6754807fc1b13daf6d has now triggered the dedicated workflows:
+- Lean 4.28 canonical audit 42739947391;
+- Lean 4.35.0 integrated paranoid audit 42739947626.
+
+Both are in progress. The declarations incidence_bound_from_second_moment, offDiagonal_exceeds_reserve and apw4_energy_contradiction require explicit output in these logs, standard transitive axiom profiles and no actual sorryAx before a formal-verification claim is made. Even if successful, they prove only the conditional algebraic checkpoint, not the historical APW4 incidence hypotheses or BIB/Hall map.
