@@ -223,3 +223,12 @@ After multiplying by (P_{k-1}(x)), sum over genuine prefix points, interchange t
 The compatible tuple case invokes the source-facing Lemma 3.3 for the merged hyperplane, with the initial profile equal to the union of the tuple's initial fixed profiles and the suffix profile equal to the union in the exact interval ([a+1,k-1]). The conflict case uses (c(I)\ge0) and (\nu(J)\ge0). Thus arbitrary-t geometry is necessary but not sufficient: the already documented all-hyperplanes definition of (c(I)), initial probability normalization, suffix-product identity, and (Q_{k-1})-measurability condition remain prerequisites.
 
 **No Lean declaration was added by this documentation checkpoint.** The exact-head CI and axiom audit have not been refreshed by source inspection. The established APW4 mathematical results (DT, HT/weighted Hall transport, exact two-term energy decomposition, upper and strict lower bounds, and contradiction under their stated hypotheses) are unchanged and are not reopened by this separate BBMST formalization task.
+
+
+## Ordered arbitrary-tuple old-shadow interface — 10 November 2026
+
+A new source-level candidate has been added to `BBMSTOldShadow.lean` at commit `b4de083bc0f8e4c061b8490a97afff1261952bd3` (blob `10a1defdfc701b50399284d8c6f0d1a7d7e9a2ed`). It introduces a list merge and a `Fin t` tuple wrapper via `List.ofFn`, which preserves the original order and repeated entries.
+
+New declarations include `mergeOldShadowsList_contains_iff`, `mergeOldShadowsTuple_contains_iff`, `fixedCoords_mergeOldShadowsTuple`, and `tupleOldShadows_disjoint_of_conflict`, together with the assignment-witness and fixed-coordinate fold helpers. The compatible case identifies the tuple intersection predicate with membership in one merged old shadow; the conflict case makes the full intersection empty; the fixed-coordinate profile is represented by the ordered fold-union.
+
+**Status: OFFEN – NICHT VERIFIZIERT.** This is a source candidate, not a Lean result. No exact-head workflow, isolated compile, integrated Lean 4.35.0 build, named axiom output, or transitive no-`sorryAx` result has been returned for commit `b4de083bc0f8e4c061b8490a97afff1261952bd3`. The full historical Lemma 3.4 is still open: the source-facing Lemma 3.3 mass bound for the merged event, the ordered-tuple indicator expansion, and the finite weighted-sum interchange have not yet been added. This interface does not establish the historical Event-to-BIB map or weight/capacity preservation.
