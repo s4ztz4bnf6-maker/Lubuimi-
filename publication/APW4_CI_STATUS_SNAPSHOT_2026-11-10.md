@@ -437,3 +437,13 @@ All statuses above are scoped to the exact listed commits and jobs. Earlier succ
 - PR #79 previous docs head 388b788d0c5623eab8e2cdf1755e426b8f7f2100 passed workflow 42735453999. This addendum changes the docs head and requires a new audit.
 
 All statuses are scoped to the stated source snapshots. The standalone finite modules do not prove global Collatz or the full odd-covering conjecture, and do not establish APW4/BIB identification.
+
+## Addendum 1.24 — B=8191 finite archive and current exact formal heads, 10 November 2026
+
+- Kolaz PR #39 head 710fb173c3006bbf622f6b7b3a67ac69907fc783, workflow 42737593864 PASS; nine Python tests cover nine thresholds through B=8191 and all five extended CSV tables. The B=4095/B=8191 suffix length 29 is verified.
+- Syracuse mixed word (1,2) theorem realizesValuationWord12_iff_mod_sixteen_eleven passed in root workflow 42736159935 on code commit 56c6d6d86fb5122d75f89f5e614f7f333e2d31a9, standard profile and no actual sorryAx.
+- APW4 PR #69 head 8a6f2f353d5877ccf7f10a1e91d2bf214c5f7768, workflow 42737432337 in progress. Latest candidate uses propext of the covered-membership equivalence and rewrites before splitting.
+- Terminal-residue k=2 standalone Lean 4.35.0 pass 42735716873 retained; L945 standalone Lean 4.35.0 pass 42736499021 retained.
+- PR #79 docs head 7be2b35eaa38a1591808b94e0bd35911565ea2d2, workflow 42737658978 in progress; this addendum advances the docs head.
+
+All claims are commit- and scope-bound. General finite-word cylinders, tail partition, APW4 integration and global Collatz remain open as stated.
