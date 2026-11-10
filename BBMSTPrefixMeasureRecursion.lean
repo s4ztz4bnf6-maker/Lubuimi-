@@ -170,17 +170,12 @@ theorem restrictPrefix_extendPrefix
     (s : C.S (stageCoordinate hk)) :
     restrictPrefix C hk (extendPrefix C hk x s) = x := by
   funext i
-  have hi_ne : i.val ≠ k := by omega
-  have hindex : (⟨i.val, by omega⟩ : Fin k) = i := by
-    apply Fin.ext
-    rfl
-  have hcoord :
-      prefixIndex (Nat.le_trans (Nat.le_succ k) hk) i =
-        prefixIndex hk (⟨i.val, by omega⟩ : Fin (k + 1)) := by
-    apply Fin.ext
-    rfl
+  have hi : i.val < k := i.isLt
+  have hne : i.val ≠ k := by omega
+  have hle : i.val ≤ k := Nat.le_of_lt hi
+  have hhi : i.val < k + 1 := by omega
   simp [restrictPrefix, extendPrefix, projectPrefix, liftPrefix,
-    prefixIndex, stageCoordinate, Function.update, i.isLt, hi_ne, hindex, hcoord]
+    prefixIndex, stageCoordinate, Function.update, hi, hne, hle, hhi] <;> rfl
 
 
 /-- Restricting a prefix and appending its last coordinate recovers it. -/
@@ -211,16 +206,10 @@ theorem prefixPointCovered_iff
     prefixPointCovered C (A := A) hk y ↔
       ∃ H ∈ newAtStage A (k + 1), H.ContainsPrefix hk y := by
   classical
-  unfold prefixPointCovered prefixCoveredValues
-  simp only [stageCoordinate, Finset.mem_filter, Finset.mem_univ, true_and]
   have hext :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y :=
     extendPrefix_restrictPrefix C hk y
-  constructor
-  · rintro ⟨H, hH, hmem⟩
-    exact ⟨H, hH, by simpa [hext] using hmem⟩
-  · rintro ⟨H, hH, hmem⟩
-    exact ⟨H, hH, by simpa [hext] using hmem⟩
+  simp [prefixPointCovered, prefixCoveredValues, stageCoordinate, hext]
 
 #print axioms extendPrefix_restrictPrefix
 #print axioms prefixPointCovered_iff
@@ -394,7 +383,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   by_cases hcov :
       y (Fin.last k) ∈ prefixCoveredValues C (A := A) hk xprev
   · have hcov' := hcovered.mp hcov
-    simp [hcov, hcov', hstage, hPAt]
+    simp [hcov, hcov', hstage, hPAt, Finset.mem_univ]
   · have hcov' :
         ¬ y (Fin.last k) ∈
           prefixCoveredValues C (A := A) (show k + 1 ≤ n from by omega)
