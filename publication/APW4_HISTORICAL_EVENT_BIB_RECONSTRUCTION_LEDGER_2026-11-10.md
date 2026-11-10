@@ -171,3 +171,35 @@ At the previous exact head 7fc256607a5b94f5c2b36d147585caeee8d1ef74, the isolate
 ### Cross-project transfer rule
 
 No finite dyadic count, residue-cylinder cardinality, or quotient-map result becomes a historical BIB place merely because the cardinalities agree. A transfer requires the explicit prefix-to-residue map, exact child-cylinder correspondence, preservation of indices and weights, and then a concrete event-to-slot incidence proof.
+
+
+### New exact Syracuse prefix-to-tail residue specification (PR #93 source update)
+
+The latest PR #93 source note records the explicit finite-word cylinder input. For a valuation word of length k, total exponent A, and affine offset C_k, the parent cylinder residue is
+\[
+r_\alpha\equiv(2^A-C_k)(3^k)^{-1}\pmod{2^{A+1}}.
+\]
+For a common refinement by B further binary levels, the exact tail condition is
+\[
+3^{k+1}n_0+3C_k+2^A\equiv0\pmod{2^{A+B+1}},
+\]
+and the child with next valuation b (1≤b≤B) is
+\[
+3^{k+1}n_0+3C_k+2^A\equiv2^{A+b}\pmod{2^{A+b+1}}.
+\]
+Thus the common parent cylinder has 2^B lifts, child b has 2^{B-b} lifts, and the tail has one lift at this refinement depth.
+
+Writing n₀=r_α+2^{A+1}t and
+\[
+d=\frac{3^{k+1}r_\alpha+3C_k+2^A}{2^{A+1}},
+\]
+the normalized tail residue is the unique solution
+\[
+3^{k+1}t\equiv-d\pmod{2^B}.
+\]
+Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue is similarly specified by
+\[
+3^{k+1}t\equiv2^{b-1}-d\pmod{2^b}.
+\]
+
+This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
