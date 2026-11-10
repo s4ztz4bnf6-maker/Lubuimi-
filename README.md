@@ -435,3 +435,8 @@ This technical failure does not alter the separately recorded APW4 mathematical 
 ### Addendum 1.21 — local q-fibre M/Gamma Lean draft
 
 APW4 PR #85 now formalizes the recovered finite-set definitions (P_q,P_r,M_{q,r},Gamma_{q,r}) from Dossier v1.6 §48 and proves the local aggregate count under explicit fibre-containment and pairwise-disjoint-block hypotheses. Exact-head canonical/paranoid and audit CI runs are in progress; no verification claim is made yet. The remaining task is to derive those hypotheses from the original (U_q,F_q(x),C_h) definitions and connect the local count to the actual weighted HT/BIB transport.
+
+
+### Addendum 1.22 — current q-fibre and prefix-integration repairs
+
+The q-fibre M/Gamma helper (PR #85) is at head `d4c61399918c03715197cbe2de6356fd170463d3`, with exact-head canonical/paranoid and audit runs in progress. The dependent prefix recursion repair (PR #84) is at head `3f7c4a02c6420d6405e8a805d738b56769fec6bd`, with its new exact-head run pending. Neither repair is considered verified until all named declarations pass with the required axiom profile and no-sorryAx scan.
