@@ -360,3 +360,8 @@ Syracuse PR #9 run 42728049650 completed successfully on exact head `ca48ec7fdad
 The complete log has no actual `sorryAx) occurrence; the token appears only in workflow grep/diagnostic command strings. This formally verifies the exact one-step equivalence between nonpositive next margin and the exponent-cap inequality, and the necessary cap for a nondecreasing endpoint under the exact affine-orbit hypotheses. It remains a local, state-dependent necessary condition: no uniform branching bound, exclusion of an infinite path, or global Collatz proof is claimed.
 
 The APW4 side remains split by toolchain on PR #69 head `8e7cd3ca5b3440ee25eb6241f2aa799103b56830`: Lean 4.28.0 upstream audit passed the named source chain with standard profiles and no `sorryAx); Lean 4.35.0 integrated-paranoid failed in the dependent prefix-recursion elaboration. PR #79 documentation commits have advanced since the last exact-head audit; no current-head docs pass is claimed until a run is attached to the latest commit.
+
+
+## Addendum 1.19 — scope of the Lean 4.28.0 audit axiom output
+
+A further scope distinction is recorded for run 42728171781. The APW4/BBMST declarations named in Addendum 1.16 have the standard transitive profile and no `sorryAx). The same audit log also prints separate legacy Erdős–Selfridge declarations `degenerate_axiom_acceptance`, `erdos_selfridge`, `sieve_criterion`, and `sf_sieve_lt_one` with the explicitly named sieve axioms. Those are not part of the named APW4 prefix/moment/incidence dependency chain, but their presence means the entire mixed audit log or repository must not be described as globally free of those legacy axioms. The acceptance claim is strictly declaration-scoped to the APW4/BBMST names listed above.
