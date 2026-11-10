@@ -77,7 +77,15 @@ theorem candidate_tail_disjoint (B Bstar : ℕ) :
 theorem candidate_union_tail (B Bstar : ℕ) :
     candidateAtoms B Bstar ∪ tailAtoms B Bstar = allAtoms Bstar := by
   ext x
-  simp [tailAtoms, candidate_subset_all]
+  simp only [Finset.mem_union, tailAtoms, Finset.mem_sdiff]
+  constructor
+  · rintro (hx | ⟨hx, _⟩)
+    · exact candidate_subset_all B Bstar hx
+    · exact hx
+  · intro hx
+    by_cases h : x ∈ candidateAtoms B Bstar
+    · exact Or.inl h
+    · exact Or.inr ⟨hx, h⟩
 
 theorem card_tailAtoms (B Bstar : ℕ) :
     (tailAtoms B Bstar).card = 2 ^ (Bstar - B) := by
@@ -97,7 +105,6 @@ def toFibreData (B Bstar : ℕ) :
   covered_subset := candidate_subset_all B Bstar
   weight_nonneg := by
     intro x hx
-    simp [uniformWeight]
     positivity
   total_mass := by
     simp [allAtoms, uniformWeight, Finset.sum_const, Finset.card_range]
@@ -116,9 +123,9 @@ def toFibreData (B Bstar : ℕ) :
       exact_mod_cast hcard
     exact (div_le_iff₀ hden).2 (by simpa using hcardQ)
   covered_mass := by
-    unfold candidateProportion
-    simp [candidateAtoms, allAtoms, uniformWeight,
+    simp [candidateProportion, candidateAtoms, allAtoms, uniformWeight,
       Finset.sum_const, Finset.card_range]
+    ring
 
 /-- Candidate and tail cardinalities exactly conserve the common fibre. -/
 theorem candidate_tail_card_conservation (B Bstar : ℕ) :
@@ -141,6 +148,7 @@ theorem candidateProportion_eq_one_sub_tail
   push_cast
   rw [Nat.cast_sub hT]
   field_simp
+  ring
 
 /-- The tail has exactly the complementary dyadic mass. -/
 theorem tailProportion_eq_dyadic
