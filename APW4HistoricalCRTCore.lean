@@ -388,7 +388,7 @@ that these triples are the historically named APW4 BIB places or that
 historical off-diagonal events are already mapped to them.
 -/
 
-namespace APW4HistoricalBIBSlotModel
+namespace APW4CanonicalBIBSlotModel
 
 variable {I : Type*} [Fintype I] [DecidableEq I]
 variable (N : ℕ) [NeZero N]
@@ -457,4 +457,4 @@ theorem card_canonicalBIBSlots_eq_bibReserve
 #print axioms card_canonicalBIBSlots_eq_orderedBIBPairs
 #print axioms card_canonicalBIBSlots_eq_bibReserve
 
-end APW4HistoricalBIBSlotModel
+end APW4CanonicalBIBSlotModel
