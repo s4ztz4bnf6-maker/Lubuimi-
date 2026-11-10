@@ -482,3 +482,8 @@ PR #91 now checks the current APW4 dependent-prefix repair at head 837fc31de5f57
 PR #92's canonical job passed on exact head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec. Both canonical helper declarations have the standard axiom profile and the complete log has no sorryAx. The paranoid job is pending. This verifies only the Fin-based helper model, not a historical APW4 fibre identification.
 
 PR #91's prefix branch proof failed because the positive case introduced a nonexistent binder and the negative case retained a conditional equality. PR #94 is the current explicit-if rewrite candidate; its exact-head workflows are queued, not yet passed.
+
+
+### Addendum 1.31 — finite incidence second moment is kernel-checked conditionally
+
+The PR #92 canonical build also verifies the finite incidence second-moment declarations and their stated consequences with the standard axiom profile and no sorryAx in the complete log. This is conditional on the explicit row-size and pair-intersection hypotheses. The historical extraction from A_q(x,h) to S_x, the proper-LCM bound, and the identification with the weighted HT/BIB capacity remain open. The auxiliary squarefree μ*(B) specialization is not yet Lean-formalized.
