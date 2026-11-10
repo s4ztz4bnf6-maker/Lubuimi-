@@ -475,3 +475,10 @@ A new, explicitly auxiliary divisor envelope μ*(B)=max{τ(d): d|B, d<B} gives �
 ### Addendum 1.29 — exact PR91/PR92 verification state
 
 PR #91 now checks the current APW4 dependent-prefix repair at head 837fc31de5f574e6fea912b5d70ea8fac05413cb; its integrated-paranoid and audit jobs are in progress. PR #92 checks the canonical-only residue-fibre helper at head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec; its canonical and audit jobs are in progress. Neither has a PASS yet. PR #85's local M/Gamma theorem retains its canonical PASS, while the paranoid job is still running. The current documentation head has not received its own audit; the earlier documentation audit applies only to its earlier commit.
+
+
+### Addendum 1.30 — canonical helper verified; historical bridge still separate
+
+PR #92's canonical job passed on exact head baf5241fb77b258dfab4e7b3a620c54e1c08c9ec. Both canonical helper declarations have the standard axiom profile and the complete log has no sorryAx. The paranoid job is pending. This verifies only the Fin-based helper model, not a historical APW4 fibre identification.
+
+PR #91's prefix branch proof failed because the positive case introduced a nonexistent binder and the negative case retained a conditional equality. PR #94 is the current explicit-if rewrite candidate; its exact-head workflows are queued, not yet passed.
