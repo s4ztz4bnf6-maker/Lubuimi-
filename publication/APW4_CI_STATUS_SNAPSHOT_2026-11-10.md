@@ -697,3 +697,8 @@ At exact head `d4c61399918c03715197cbe2de6356fd170463d3), canonical run [4274498
 A second, more direct repair candidate is open as PR #86, head `4e4b378887cc76382d9cd2e17807f96a2c277e23`. It explicitly proves the dependent coordinate equality
 `stageCoordinate hk = prefixIndex hj (Fin.last (a+j))`
 using `Fin.ext`, then eliminates that equality before the covered/uncovered split. Exact-head runs [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023) and [42745062463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745062463) are in progress. PR #84 remains a parallel alternative using explicit recursive PAt/covered-finset rewrites; its latest run [42745244942](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745244942) is pending. Do not merge either until one exact-head repair passes the full integrated and paranoid checks.
+
+
+## Addendum 1.44 — combined APW4 dependent-index repair
+
+PR #86's coordinate-only candidate (head `4e4b378887cc76382d9cd2e17807f96a2c277e23`) proved the Fin-index equality but both integrated-paranoid runs [42745081023](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745081023) and [42745062463](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745062463) failed at the remaining covered/uncovered goals. PR #84 now has a combined candidate at head `1980351a3002bef610107b810c8e726cc685b7b4): it explicitly rewrites the recursive PAt value and covered-value finset across proof witnesses and also eliminates the stage-coordinate equality by Fin.ext. Exact-head run [42745642769](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42745642769) is pending. Neither candidate is merged or verified.
