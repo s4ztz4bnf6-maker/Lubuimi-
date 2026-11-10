@@ -159,7 +159,7 @@ The established APW4 mathematical record above is retained. The exact energy dec
 
 ### Historical reconstruction checkpoint
 
-Commit `9a3aec51cd7d4696d6220a548c8f711c45ca9d20` records the definition-completeness matrix and dependency order for the historical objects `A_q, A_r, W_{q,r}, a_{q,t}, D_{q,r}, U_q, F_q, C_h), elementary events, event map, BIB slots/incidence, and weighted Hall criterion. It records the block identity
+Commit `9a3aec51cd7d4696d6220a548c8f711c45ca9d20` records the definition-completeness matrix and dependency order for the historical objects `A_q, A_r, W_{q,r}, a_{q,t}, D_{q,r}, U_q, F_q, C_h`), elementary events, event map, BIB slots/incidence, and weighted Hall criterion. It records the block identity
 `A_q W_{q,r} A_r^T = sum_{t mod D_{q,r}} a_{q,t} a_{r,t}^T`
 and the marginal bound
 `sum_h M_{q,r}(h,g) <= Gamma_{q,r}(g)`.
