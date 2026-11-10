@@ -120,3 +120,19 @@ Conversely, APW4 finite weighted-fibre and incidence methods may be applied to S
 This file is a research ledger and contains no new Lean theorem. The established mathematical APW4 results remain recorded as established under their historical hypotheses. The current integrated Lean 4.35 prefix-recursion repair is a separate technical gate; failed runs and their exact commits remain in the chronology and do not retroactively alter earlier successful checks.
 
 **Authorship:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## 14. Source-fidelity correction: canonical projection model is not the historical fibre map
+
+A separate canonical helper has been formalized on PR #87 under namespace `APW4CanonicalQFibreProjection`. It uses canonical representatives (mathrm{Fin} N) and (mathrm{Fin} B), with (0<B) and (Bmid N), and defines a residue-reduction function, its fibres, and the lift of a base subset. The resulting fibre-containment lemma is an elementary fact about that model.
+
+**This is not accepted as the historical APW4 definition of (F_q(x)), (V_q), or (U_q).** The helper is deliberately marked canonical and non-historical. A separate source-derived theorem must still identify the author's actual ambient space, base-residue type, reduction map, old-uncovered subset, and block indices with the Fin-based model, preserving all indices and multiplicities. Until that equivalence is proved, no historical theorem may use the canonical helper as a silent replacement.
+
+This correction preserves the value of the generic finite-set lemma while preventing it from closing a source-reconstruction obligation it has not actually closed.
+
+## 15. Current exact formal checkpoints
+
+- PR #85's `sum_M_qr_le_Gamma_qr` is a canonical Lean PASS on its exact head, conditional on the explicit fibre-containment and pairwise-disjoint-block premises. Its Lean 4.35 paranoid check remains a separate gate.
+- PR #87's canonical projection-fibre helper is at head `4d4fd074b78a475723b3cc46d65bd7b438e35de0`; its canonical and audit workflows are pending. No kernel PASS is claimed.
+- The original matrix identity (2.1), local aggregate inequality (2.2), and recovered q-profile formulas in Section 11 remain fixed. The canonical helper does not alter their historical domains or supply the missing (a_{q,t}) vectors.
+- The event universe, full map ((x,u)mapsto(k,I_{x,u},J_{x,u})), actual BIB-place incidence and capacities, and weighted Hall proof remain open source-reconstruction/formalization obligations.
