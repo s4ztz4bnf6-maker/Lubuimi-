@@ -96,3 +96,13 @@ This is the normalized finite-fibre layer. The remaining steps are to derive the
 PR #107 now stands at exact source head 44d00ad20c352471795358dde2aaf24152281649. The canonical quotient and exact child-coordinate declarations are now kept inside the SyracuseDyadicResidueFibre namespace, alongside the generic tail-cylinder construction. The provenance note was also corrected to describe the actual source extension rather than calling the code commit comment-only. This head includes the unique tail coordinate, quotient/factorization under the explicit divisibility condition, unique exact child-b residues modulo 2^b, and 2^(B-b) child lift counts. The exact prefix-divisibility derivation and complete child-plus-tail partition remain open.
 
 No completed exact-head CI result has yet been returned for 44d00ad20c352471795358dde2aaf24152281649. No Lean PASS is claimed.
+
+
+## Latest workflow queue snapshot — 10 November 2026
+
+- PR #101 current source head f87657c8f02f41266a43bae1fe44f43267f0c985: exact workflow [42757161402](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757161402), integrated-paranoid and audit both queued.
+- PR #107 current source head 44d00ad20c352471795358dde2aaf24152281649: exact workflow [42757388002](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757388002), isolated Syracuse paranoid, integrated-paranoid and audit all queued.
+- PR #105 current documentation head 850bff36256ca81a125c43038ce605550d5f3eea: exact workflow [42757417421](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42757417421), audit queued.
+- Collatz PR #48 current head 7920b26f8a230c6f9fdc144be40fb2070eba5f00: exact workflow [42756479069](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/42756479069), Lean 4.34.1 build, compile-drafts and Lean 4.35.0 paranoid jobs queued.
+
+These are queued states, not PASS results. The previously verified Collatz Lean 4.35.0 finite-cap source result remains scoped to exact commit e1fb06eaa07190d8abfb3fc7368f3dc0663a5a66 and workflow 42754461228.
