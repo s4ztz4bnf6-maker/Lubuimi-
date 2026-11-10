@@ -301,3 +301,72 @@ theorem sum_M_qr_le_Gamma_qr_of_preimage_maps
 end PreimageModel
 
 end APW4HistoricalQFibre
+
+
+/-!
+## Residue-projection specialization of the preimage model
+
+This specialization uses the recorded working q-fibre definitions on the
+actual finite ambient type ZMod N. It makes the residue projections and
+selected residue sets explicit. The block-label map remains a parameter
+because the complete historical definition of C_h is not present in the
+17-page source manuscript.
+-/
+
+namespace APW4HistoricalQFibre
+
+namespace ResidueProjectionModel
+
+/-- Canonical residue label of a point of ZMod N modulo a positive
+working fibre modulus B. -/
+def residueProjection
+    {N B : ℕ} (hB : 0 < B) :
+    ZMod N → Fin B :=
+  fun z => ⟨z.val % B, Nat.mod_lt _ hB⟩
+
+@[simp] theorem residueProjection_val
+    {N B : ℕ} (hB : 0 < B) (z : ZMod N) :
+    (residueProjection hB z).val = z.val % B :=
+  rfl
+
+/-- Working q-fibre: the inverse image of one residue label modulo B. -/
+def residueFibre
+    {N B : ℕ} (hB : 0 < B) (x : Fin B) :
+    Finset (ZMod N) :=
+  PreimageModel.fibre (residueProjection hB) x
+
+/-- Working visible set V_q: the inverse image of the selected residue
+set U_q under the same canonical residue projection. -/
+def residueVisible
+    {N B : ℕ} (hB : 0 < B) (U : Finset (Fin B)) :
+    Finset (ZMod N) :=
+  PreimageModel.visible (residueProjection hB) U
+
+/-- The local aggregate q-fibre inequality for the concrete residue
+projections on ZMod N. The selected residue sets U_q,U_r and the block
+label map c are explicit parameters; no source-specific identification
+of C_h is assumed. -/
+theorem sum_M_qr_le_Gamma_qr_of_residue_projections
+    {N Bq Br : ℕ} [NeZero N]
+    (hBq : 0 < Bq) (hBr : 0 < Br)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
+    (c : ZMod N → H)
+    (x : Fin Bq) (y : Fin Br) (g : H)
+    (hx : x ∈ Uq) (hy : y ∈ Ur) :
+    (∑ h : H,
+      M_qr (residueFibre hBq x) (residueFibre hBr y)
+        (PreimageModel.block c) g h)
+      ≤
+    Gamma_qr (residueVisible hBq Uq) (residueVisible hBr Ur)
+      (PreimageModel.block c) g := by
+  exact PreimageModel.sum_M_qr_le_Gamma_qr_of_preimage_maps
+    (residueProjection hBq) (residueProjection hBr)
+    Uq Ur c x y g hx hy
+
+#print axioms residueProjection_val
+#print axioms sum_M_qr_le_Gamma_qr_of_residue_projections
+
+end ResidueProjectionModel
+
+end APW4HistoricalQFibre
