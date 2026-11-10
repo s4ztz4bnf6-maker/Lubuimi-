@@ -409,6 +409,14 @@ ordered pair of distinct original congruence indices both containing it. -/
 def canonicalBIBSlots :=
   Σ x : ZMod N, slotsAt N m a x
 
+/-- The canonical collision-slot sigma type is finite whenever the
+ambient residue group and original index set are finite. -/
+noncomputable instance canonicalBIBSlotsFintype
+    [Fintype (ZMod N)] [DecidableEq (ZMod N)] :
+    Fintype (canonicalBIBSlots N m a) := by
+  classical
+  exact Fintype.ofFinite _
+
 /-- The cardinality of the canonical slot type is exactly the ordered
 collision count. -/
 theorem card_canonicalBIBSlots_eq_orderedBIBPairs
@@ -417,8 +425,7 @@ theorem card_canonicalBIBSlots_eq_orderedBIBPairs
       APW4HistoricalCRT.orderedBIBPairs N m a := by
   classical
   simp [canonicalBIBSlots, slotsAt,
-    APW4HistoricalCRT.orderedBIBPairs,
-    Finset.card_erase_of_mem]
+    APW4HistoricalCRT.orderedBIBPairs]
 
 /-- The canonical slot set has exactly the historical CRT BIB reserve
 cardinality. This is a set-level realization of the reserve count, not
