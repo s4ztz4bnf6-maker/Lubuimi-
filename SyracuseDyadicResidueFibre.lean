@@ -346,3 +346,44 @@ This source snapshot is the explicit-tail-residue PR #107 candidate. The previou
 
 Compile/build, paranoid kernel check, and named axiom audit remain distinct gates. No new PASS is claimed until the exact-head jobs finish.
 -/
+
+
+/-- The integer numerator defining the normalized tail offset d. -/
+def explicitPrefixTailNumerator
+    (A k r₀ Cₖ : ℕ) : ℕ :=
+  3 ^ (k + 1) * r₀ + 3 * Cₖ + 2 ^ A
+
+/-- Canonical quotient used for the normalized tail offset. -/
+def explicitPrefixTailQuotient
+    (A k r₀ Cₖ : ℕ) : ℕ :=
+  explicitPrefixTailNumerator A k r₀ Cₖ / 2 ^ (A + 1)
+
+/-- Under the exact prefix divisibility condition, the canonical quotient
+satisfies the defining multiplication identity for d. -/
+theorem explicitPrefixTailQuotient_spec
+    (A k r₀ Cₖ : ℕ)
+    (hdiv :
+      2 ^ (A + 1) ∣ explicitPrefixTailNumerator A k r₀ Cₖ) :
+    2 ^ (A + 1) * explicitPrefixTailQuotient A k r₀ Cₖ =
+      explicitPrefixTailNumerator A k r₀ Cₖ := by
+  unfold explicitPrefixTailQuotient
+  exact Nat.mul_div_cancel' hdiv
+
+/-- The prefix-lift factorization with d fixed canonically as the quotient
+of the exact prefix-tail numerator. Only divisibility of that numerator
+by the prefix modulus remains as an input. -/
+theorem explicitPrefixTail_lift_factorization
+    (A k r₀ Cₖ q : ℕ)
+    (hdiv :
+      2 ^ (A + 1) ∣ explicitPrefixTailNumerator A k r₀ Cₖ) :
+    3 ^ (k + 1) * (r₀ + 2 ^ (A + 1) * q) +
+        3 * Cₖ + 2 ^ A =
+      2 ^ (A + 1) *
+        (3 ^ (k + 1) * q + explicitPrefixTailQuotient A k r₀ Cₖ) := by
+  apply prefixTail_lift_factorization A k r₀ Cₖ
+    (explicitPrefixTailQuotient A k r₀ Cₖ) q
+  simpa [explicitPrefixTailNumerator] using
+    explicitPrefixTailQuotient_spec A k r₀ Cₖ hdiv
+
+#print axioms explicitPrefixTailQuotient_spec
+#print axioms explicitPrefixTail_lift_factorization
