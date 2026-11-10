@@ -782,3 +782,13 @@ PR #91 head `837fc31de5f574e6fea912b5d70ea8fac05413cb` failed its integrated job
 The next candidate is PR #94, exact head `2b34742e996527d04cd47cba0a95e68a1575fd14`. It rewrites the covered branch with `if_pos hcov`, the uncovered branch with `if_neg hcov` and the universal-membership fact, then applies `ring_nf`. Exact-head workflows [42747180121](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747180121) and [42747175085](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42747175085) were queued at this check. No PASS is claimed.
 
 PR #85's separate local M/Gamma theorem still has its canonical PASS and zero-`sorryAx` canonical log; its paranoid job remains in progress. The latest documentation head is `26370bb7860d09561d07c8008a910e8507f7c5de`; the earlier documentation audit applies only to the earlier commit 88946cbaa591ce423fcfff16ec022964dda4c07e.
+
+
+## Addendum 1.50 — finite incidence second-moment declarations in the PR #92 canonical build
+
+The successful canonical job 42746644499 on PR #92 also printed standard axiom profiles for:
+- `APW4IncidenceSecondMoment.incidence_bound_from_second_moment`;
+- `APW4IncidenceSecondMoment.offDiagonal_exceeds_reserve`;
+- `APW4IncidenceSecondMoment.apw4_energy_contradiction`.
+
+The complete canonical log has zero `sorryAx) occurrences. This verifies the finite incidence second-moment argument and its stated conditional consequences at that exact source head. It does not verify that the historical APW4 selected q-fibre entries generate the finite sets (S_x), that their row-size and pair-intersection hypotheses hold, or that their capacities are the historical weighted HT/BIB capacities. The new (mu^*(B)) squarefree parameter specialization remains a mathematical conditional addendum and has not yet been Lean-formalized.
