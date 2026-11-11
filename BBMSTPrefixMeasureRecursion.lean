@@ -333,6 +333,7 @@ theorem sum_prefix_eq_sum_extensions
 #print axioms sum_prefix_eq_sum_extensions
 
 
+set_option pp.all true
 /-- The pointwise update of the concrete geometric FibreData is exactly
 the recursively defined PAt value at the extended prefix. -/
 theorem prefixFibre_updatedWeight_eq_PAt
@@ -387,10 +388,16 @@ theorem prefixFibre_updatedWeight_eq_PAt
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · intro hnot
-    exact (hnot hcov).elim
-  · simp only [if_neg hcov, Finset.mem_univ, if_true]
+  · trace_state
+    simp only [if_pos hcov]
+    trace_state
+  · trace_state
+    have hmem : y (Fin.last (a + j)) ∈
+        (Finset.univ : Finset (C.S (stageCoordinate hk))) := Finset.mem_univ _
+    simp only [if_neg hcov, if_pos hmem]
+    trace_state
 #print axioms prefixFibre_updatedWeight_eq_PAt
+set_option pp.all false
 
 
 /-- Nonnegativity propagates through the actual prefix recursion when the
