@@ -65,3 +65,14 @@ This is a documentation clarification only. It does not change the two-axiom sta
 **Historical reconstruction remains open:** locate the source definitions of `ρ_x` and `W_x`, and the exact map `(x,u) ↦ (k,I,J)`. Record source/page/definition references and prove the required index-preserving and weight/capacity transport. Do not infer these objects from the current Lean model.
 
 See [the dated APW4 prefix-recursion and historical-map note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md). Mathematical proof status, historical reconstruction, and Lean/CI verification remain separate.
+
+
+## 2026-11-12 — isolated coordinate lemma: module PASS, integrated recursion FAIL
+
+PR [#156](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/156), head `1add382fec3375cb2a67822ae872c2bc5d3bb8a3`, workflow [43118336799](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43118336799):
+
+- Audit job 130852038555: **SUCCESS**, all 22 ordered audit steps completed, including compilation of `BBMSTPrefixMeasureRecursion.lean`.
+- The new `prefixIndex_last_eq_stageCoordinate` declaration is in that successfully compiled module. It is therefore compiler-checked as part of the file. The log does not emit a separate theorem-named `#print axioms` line for this lemma; do not claim a standalone axiom report that is absent.
+- Integrated-paranoid job 130852038915: **FAILURE** at `pos` and `neg`, lines 417–418. The error-recovery report still contains `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent declarations.
+
+The integrated failure is not evidence against the isolated coordinate lemma: the patch deliberately leaves the two branch goals unchanged. The module audit pass is not proof of the full dependent recursion. Membership transport, proof irrelevance, and the two branch closures remain separate obligations. PR #156 remains open/draft/unmerged. No theorem or historical APW4 obligation is promoted by this CI result.
