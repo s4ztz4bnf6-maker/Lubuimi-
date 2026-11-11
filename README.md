@@ -184,3 +184,8 @@ The separate review of “Erdős Lean 4 Beweis.pdf” finds that §5 states the 
 The append-only [odd-covering literature and APW4 method comparison](publication/ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md) records the published Tao, Hough–Nielsen, BBMST and Berger–Felzenbaum–Fraenkel anchors; the author-claimed Schroeder rank-seven/eight/nine preprints; the Borgatta and Kawahara provenance limits; and the bounded Lean lcm > 10,000 exclusion.
 
 The Schroeder rank claims are sequential preprints by one author, not independent corroboration. Their fibre-distortion/supermodular terminology is a methodological parallel only. APW4's historical index-preserving map, original-weight/mass transport, and BIB capacity/Hall bridge remain **OPEN – NOT VERIFIED**. No manuscript, theorem, Lean source, or license is changed.
+
+
+## Current prefix-recursion and historical-map status — 11 November 2026
+
+See the [dedicated APW4/BBMST status note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md) and [updated proof-obligation ledger](BBMST_ProofObligations.md). PR #154 has an independent audit PASS but an integrated Lean 4.35.0 FAIL at lines 405–406, with `sorryAx` in the target and dependent recursion declarations. The next step is canonical `values`/`Covered` normalization and separate branch proofs. The historical definitions `ρ_x`, `W_x`, and the map `(x,u) ↦ (k,I,J)` remain open. No theorem is promoted by this documentation update.
