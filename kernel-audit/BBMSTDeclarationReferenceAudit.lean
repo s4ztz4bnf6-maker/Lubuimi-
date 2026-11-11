@@ -30,8 +30,9 @@ run_cmd do
           logInfo m!"DECL|{d}|ZIELDEKLARATION_FEHLT"
       | some info =>
           let typeRefs := info.type.getUsedConstantsAsSet
+          let value? := info.value? (allowOpaque := true)
           let valueRefs :=
-            match info.value? (allowOpaque := true) with
+            match value? with
             | some value => value.getUsedConstantsAsSet
             | none => ({} : NameSet)
           let kind := match info with
@@ -43,13 +44,13 @@ run_cmd do
             | .inductInfo _ => "INDUCTIVE"
             | .ctorInfo _ => "CONSTRUCTOR"
             | .recInfo _ => "RECURSOR"
-          let valueStatus :=
-            if info.value? (allowOpaque := true) |>.isSome then
-              "WERT_VERFÜGBAR"
-            else if kind == "AXIOM" then
-              "WERT_ERWARTET_NICHT_VORHANDEN"
-            else
-              "WERT_NICHT_VERFÜGBAR"
+          let valueStatus := match value? with
+            | some _ => "WERT_VERFÜGBAR"
+            | none =>
+                if kind == "AXIOM" then
+                  "WERT_ERWARTET_NICHT_VORHANDEN"
+                else
+                  "WERT_NICHT_VERFÜGBAR"
           logInfo m!"DECL|{d}|VERFÜGBAR|{kind}|{valueStatus}|type_sorryAx={typeRefs.contains `sorryAx}|value_sorryAx={valueRefs.contains `sorryAx}|declaration_position=NICHT_GEMESSEN"
           for r in typeRefs.toList do
             logInfo m!"REF|{d}|T|{r}|reference_positions=NICHT_GEMESSEN"
