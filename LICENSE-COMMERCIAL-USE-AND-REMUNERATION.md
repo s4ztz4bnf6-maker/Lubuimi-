@@ -70,3 +70,7 @@ Accordingly, this policy reserves rights in the author's copyrightable original 
 If the author believes a patentable technical implementation or other registrable right may exist, obtain specialist advice before further disclosure or licensing. Because the research has already been published, any patent novelty or filing question is time- and jurisdiction-sensitive and cannot be assumed to remain available.
 
 This distinction is essential: a written paid license can create enforceable contractual compensation for the rights actually licensed, but a proprietary copyright notice alone cannot guarantee payment whenever someone benefits from the mathematical result.
+
+## Documentation-status clarification — 11 November 2026
+
+The dated research-status and manuscript addenda in this repository are documentation and evidence-record updates only. They do not amend, expand, narrow, or replace this notice or the separate commercial licensing policy. No new license is granted by the status corrections, manuscript addenda, README updates, or pull requests. Existing exclusions for third-party materials and the distinction between protected original expression and mathematical facts, abstract ideas, methods, and theorem statements remain unchanged. Any permission for protected original materials must still be obtained under the terms stated above and, where applicable, in a separate written agreement.
