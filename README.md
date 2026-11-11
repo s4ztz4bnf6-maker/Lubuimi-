@@ -151,3 +151,15 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## Research status addendum — 11 November 2026
+
+The append-only [APW4 status and external-review comparison](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) records the documented improvements against the 9 November external review and the exact PR #145 workflow result.
+
+- The mathematical APW4 energy core, DT/HT, upper energy estimate, and strict lower-bound status remain recorded as established mathematical results under the historical APW4 hypotheses.
+- The review-corrected manuscript now gives explicit finite transport lemmas, a weighted Hall/max-flow argument, the BIB double-counting identity, a finite second-moment proof under named assumptions, and a counterexample to relying on the sign of B(M) alone.
+- The historical instantiation of DT/HT and the complete source-level APW4 event/BIB mapping remain separate reconstruction obligations.
+- PR #145 workflow 43028431770: the 22-step isolated audit job passed; the integrated-paranoid package job failed at BBMSTPrefixMeasureRecursion.lean lines 390–391 and reports sorryAx in dependent declarations. The differing build-path result is recorded as an open diagnostic, not as integrated verification.
+
+The review-corrected main text is not overwritten by a CI-status note. The new addendum supplements it and preserves the 10 November checkpoint.
