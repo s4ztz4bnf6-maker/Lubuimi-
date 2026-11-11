@@ -43,9 +43,7 @@ Die Normalisierung darf weder Definitionen, Voraussetzungen noch Schlussfolgerun
 
 Die historischen Objekte `ρ_x` und `W_x` sowie eine quellentreue, indexerhaltende Abbildung
 
-[
-(x,u)\longmapsto(k,I,J)
-]
+The source-faithful map under investigation is (x,u) ↦ (k,I,J). Its definition and required index-preservation properties remain open.
 
 sind in diesem Statusnachtrag **nicht** als historische Definitionen rekonstruiert. Ohne konkrete Fundstelle in der Balister-/BBMST-Quelle oder in einer belegten APW4-Originaldefinition darf keine dieser Größen aus dem aktuellen Lean-Modell rückprojiziert oder frei ergänzt werden.
 
