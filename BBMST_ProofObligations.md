@@ -58,9 +58,9 @@ This is a documentation clarification only. It does not change the two-axiom sta
 - PR #154 exact head: `9397d0b0cbd139e3c431a02fff21b8c9c77a4061`.
 - Workflow [43086198224](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43086198224): independent audit PASS; integrated Lean 4.35.0 FAIL.
 - Remaining branch goals: `prefixFibre_updatedWeight_eq_PAt`, positive case at line 405 and negative case at line 406.
-- Error-recovery output contains `sorryAx` in the target and dependent `PAt) declarations. No integrated proof is verified.
+- Error-recovery output contains `sorryAx` in the target and dependent PAt declarations. No integrated proof is verified.
 
-**Next source-level obligation:** normalize the local `values) expression and a single canonical `Covered) predicate before unfolding `PAt); prove the positive and negative conditional equalities separately; only then reintegrate the dependent recursion. No generic simp patch is authorized by this diagnosis.
+**Next source-level obligation:** normalize the local values expression and a single canonical Covered predicate before unfolding PAt; prove the positive and negative conditional equalities separately; only then reintegrate the dependent recursion. No generic simp patch is authorized by this diagnosis.
 
 **Historical reconstruction remains open:** locate the source definitions of `ρ_x` and `W_x`, and the exact map `(x,u) ↦ (k,I,J)`. Record source/page/definition references and prove the required index-preserving and weight/capacity transport. Do not infer these objects from the current Lean model.
 
