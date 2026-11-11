@@ -189,3 +189,8 @@ The Schroeder rank claims are sequential preprints by one author, not independen
 ## Current prefix-recursion and historical-map status — 11 November 2026
 
 See the [dedicated APW4/BBMST status note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md) and [updated proof-obligation ledger](BBMST_ProofObligations.md). PR #154 has an independent audit PASS but an integrated Lean 4.35.0 FAIL at lines 405–406, with `sorryAx` in the target and dependent recursion declarations. The next step is canonical `values`/`Covered` normalization and separate branch proofs. The historical definitions `ρ_x`, `W_x`, and the map `(x,u) ↦ (k,I,J)` remain open. No theorem is promoted by this documentation update.
+
+
+## Exact CI checkpoint — 12 November 2026
+
+The append-only [PR #156 coordinate-lemma and CI checkpoint](publication/APW4_CI_CHECKPOINT_2026-11-12.md) records the completed workflow 43118336799: isolated audit SUCCESS (22/22 steps; the prefix-recursion module containing the new coordinate lemma compiled) and integrated-paranoid FAILURE at the unchanged `pos`/`neg` goals on lines 417–418 with `sorryAx` in error-recovery output. The audit log does not print a separate theorem-named axiom entry for the lemma. This is not a full APW4 proof or historical-map verification. PR #156 remains open and unmerged.
