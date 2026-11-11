@@ -256,3 +256,12 @@ Status: **FAILED REPAIR CANDIDATE — NOT VERIFIED**. This does not refute the m
 The next permitted proof action is to inspect the complete pp.all traces from PR #152. No further tactic replacement is justified until the dependent conditional expressions, proof terms, and implicit arguments are visible in the exact Lean 4.35.0 goal states.
 
 **Current integrated status:** no passing integrated Lean 4.35.0 prefix-recursion repair has yet been established. The 22-step isolated Lean 4.28.0 audit PASS remains a distinct result and must not be conflated with integrated verification.
+
+
+## 13. External literature synchronization — 11 November 2026
+
+The separate literature ledger is now recorded at [ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md](ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md) and linked from README. It consolidates the published Tao (2022), Hough–Nielsen (2019), BBMST (2022), and Berger–Felzenbaum–Fraenkel (1987) references; the author-claimed sequential Schroeder rank-seven/eight/nine preprints; and the Borgatta/Kawahara provenance limits.
+
+The Schroeder abstracts' fibre-distortion and supermodular terminology is a methodological comparison only. It does not provide the historical APW4 index map, original-weight/mass identity, or BIB capacity/Hall transport. All three obligations remain **OPEN – NOT VERIFIED**. The unrestricted Erdős–Selfridge odd-covering problem remains open; the rank-nine statement is not promoted from a preprint claim to an established theorem.
+
+No mathematical result, manuscript statement, theorem, Lean source, CI setting, or license is modified by this literature synchronization.
