@@ -163,3 +163,12 @@ The append-only [APW4 status and external-review comparison](publication/APW4_ST
 - PR #145 workflow 43028431770: the 22-step isolated audit job passed; the integrated-paranoid package job failed at BBMSTPrefixMeasureRecursion.lean lines 390–391 and reports sorryAx in dependent declarations. The differing build-path result is recorded as an open diagnostic, not as integrated verification.
 
 The review-corrected main text is not overwritten by a CI-status note. The new addendum supplements it and preserves the 10 November checkpoint.
+
+
+## Append-only status clarification — 11 November 2026
+
+**Mathematical status qualification:** The APW4 DT/HT energy argument and strict lower-bound implication are recorded as mathematically established **under the historical reconstruction assumptions A1–A3 stated in the manuscript/dossier**. This status is conditional on the source-faithful identification of the historical APW4 events, weights, and index sets. The original-definition Event-to-BIB transport, the actual weighted Hall/capacity bridge, and complete historical instantiation of those assumptions remain **OPEN**. The phrase “mathematically established” must not be read as claiming that these historical identifications have already been reconstructed from the source or that the integrated Lean package proves the full historical theorem.
+
+**Current exact CI follow-up:** PR #145 (workflow 43028431770) has isolated audit PASS under Lean/Mathlib 4.28.0 but integrated-paranoid FAIL under Lean/Mathlib 4.35.0. PR #147 (workflow 43030160125, head 5ef81d14256fb85eddc76e052ff837f023a114e8) failed both jobs at the branch goals in `BBMSTPrefixMeasureRecursion.lean:390,392`; `introN` was applied where the goal was an equality. PR #148 (head 3312aec030719bdb993b502fe3fd62d3b88b9900) is the next proof-script candidate and remains unverified pending its exact-head integrated run and transitive `sorryAx` gate.
+
+This status clarification is append-only and does not rewrite the 10 November checkpoint or change any mathematical theorem statement.
