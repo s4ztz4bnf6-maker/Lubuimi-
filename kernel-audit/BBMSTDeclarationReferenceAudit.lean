@@ -51,7 +51,7 @@ run_cmd do
                   "WERT_ERWARTET_NICHT_VORHANDEN"
                 else
                   "WERT_NICHT_VERFÜGBAR"
-          logInfo m!"DECL|{d}|VERFÜGBAR|{kind}|{valueStatus}|type_sorryAx={typeRefs.contains `sorryAx}|value_sorryAx={valueRefs.contains `sorryAx}|declaration_position=NICHT_GEMESSEN"
+          logInfo m!"DECL|{d}|VERFÜGBAR|{kind}|{valueStatus}|type_refs={reprStr typeRefs.toList}|value_refs={reprStr valueRefs.toList}|type_sorryAx={typeRefs.contains `sorryAx}|value_sorryAx={valueRefs.contains `sorryAx}|source_positions_status=NOT_IMPLEMENTED"
           for r in typeRefs.toList do
             logInfo m!"REF|{d}|T|{r}|reference_positions=NICHT_GEMESSEN"
             if isProjectDecl r && !visited.contains r then
