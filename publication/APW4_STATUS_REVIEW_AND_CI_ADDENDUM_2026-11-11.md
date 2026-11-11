@@ -184,3 +184,39 @@ For this PDF, use the following distinctions:
 - Section 8: selected Lean/CI provenance only; not an integrated verification of the preceding mathematical theorem.
 
 This addendum supersedes only the earlier wording that could be read as saying this PDF itself contains a complete proof of the strict lower bound. It is append-only and does not alter the 10 November checkpoint, theorem statements, author-held PDF, or any licensing notice.
+
+
+## 11. Evidence-boundary correction — 11 November 2026, 14:49 CET
+
+This entry is an append-only clarification of §§2–3 and §10 above. It does not delete or rewrite the historical status statements in the earlier sections.
+
+### 11.1 What the accessible manuscript actually proves
+
+The 17-page author-held PDF “Erdős Lean 4 Beweis.pdf” states the strict lower-bound implication in §5 (pp. 10–11), but does not exhibit its arithmetic derivation. Section 6 uses that implication without supplying the missing derivation. Therefore:
+
+- **Energy identity** \(E=D+C\): proved by the finite algebraic expansion in the accessible review-corrected manuscript.
+- **Abstract finite DT transport lemma**: proved as a general finite capacity-transport statement.
+- **Historical DT instantiation**: open in the accessible source record; the actual historical source masses, target capacities, and index-preserving transport assignment are not fully constructed there.
+- **Abstract weighted Hall / max-flow-min-cut theorem**: proved as a finite theorem.
+- **Historical HT instantiation**: open in the accessible source record; the actual historical event set, BIB slots, incidence relation, demands, capacities, and Hall inequality for every event subset are not fully reconstructed there.
+- **Conditional upper energy inequality**: follows if the historical DT and HT instantiations are supplied. The abstract lemmas alone do not establish those historical hypotheses.
+- **Strict lower-bound implication** \(B(M)\leq0\Rightarrow E>D_k+R_{\rm BIB}\): stated in the PDF, but its proof is not exhibited there. The accessible repository material refers to an earlier author proof dossier; that reference is not itself a reproducible derivation in this PDF.
+- **Contradiction**: formally follows from the upper and strict lower inequalities if both are independently established under the same historical hypotheses. The accessible PDF does not establish the lower inequality, so its §6 contradiction is not fully proved by that PDF.
+
+The earlier §3 wording “mathematically proved” records the project's prior asserted proof status. This addendum now distinguishes that author-reported status from what an independent reader can verify from the accessible manuscript and repository evidence. It does not claim the strict lower-bound theorem is false.
+
+### 11.2 Exact remaining mathematical obligations
+
+1. Publish or supply the complete strict lower-bound derivation, including every historical definition, parameter restriction, intermediate inequality, and the exact use of \(B(M)\).
+2. Reconstruct the historical DT source set and target set, with the exact index-preserving map and a proof of every source-mass and target-capacity bound.
+3. Reconstruct the historical HT event set and BIB slot set, including the exact incidence relation, event demands, slot capacities, and the weighted Hall inequality for every subset.
+4. Prove that the DT and HT instantiations use the same APW4 objects and hypotheses as the strict lower-bound argument.
+5. Only then combine the upper and strict lower inequalities into the claimed contradiction.
+
+### 11.3 Lean boundary — current exact-head state
+
+The canonical APW4 declarations recorded at commit `64f38063ef179b3ea9aa0891b5fc04a4b0d7eb97` and workflows `41895530029` / `41895530064` remain valid for their named declarations and their own canonical model. They do not formalize the complete historical DT/HT instantiation or the strict lower-bound theorem.
+
+The newer BBMST integrated path is a separate issue. PR #145's isolated Lean 4.28.0 audit passed, but its integrated Lean 4.35.0 job failed. PR #147 also failed in both jobs. PR #148 exact head `3312aec030719bdb993b502fe3fd62d3b88b9900`, workflow `43030954016`, has `audit` PASS and `integrated-paranoid` FAIL. The latter leaves goals in `BBMSTPrefixMeasureRecursion.lean:390–391` and reports `sorryAx` in recovery output for the prefix recursion and dependent declarations. No integrated or transitive sorryAx-free status is claimed.
+
+**Current evidence-based status:** the algebraic identity and abstract finite transport theorems are proved; historical DT/HT instantiation and the strict lower-bound derivation are not independently reproducible from the accessible manuscript/repository artifacts; the integrated Lean 4.35.0 BBMST prefix recursion remains unverified. The earlier mathematical proof-status record is preserved as historical provenance, not silently overwritten.
