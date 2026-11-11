@@ -148,3 +148,39 @@ Status: **FAILED REPAIR CANDIDATE — NOT VERIFIED**. The diagnostic identifies 
 PR [#148](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/148) is stacked on #147 at exact head `3312aec030719bdb993b502fe3fd62d3b88b9900`. It restores the branch-local `simp [hcov, xprev, Finset.mem_univ]` calls that directly simplify the conditional equalities, while keeping the redundant `ring_nf` lines removed. The exact-head workflow `43030954016` was observed **IN PROGRESS** with both `audit` and `integrated-paranoid` jobs started. This is not a pass. Integrated Lean 4.35.0 and transitive no-`sorryAx` evidence remain required.
 
 Status: **OPEN — CI IN PROGRESS; NOT VERIFIED**.
+
+
+## 10. Artifact-level proof-exposition audit — 11 November 2026
+
+A direct review of the author-held PDF titled “Erdős Lean 4 Beweis.pdf” (17 pages) identifies an evidentiary limitation that must be kept separate from the project-level mathematical status ledger.
+
+### 10.1 Section 5: strict lower-bound statement is not proved in this PDF
+
+Pages 10–11 state Satz 5.1:
+\(B(M)=2M-\sigma(M)\leq0 \Longrightarrow
+\mathcal E_{\mathrm{APW4}}>D_k^{\mathrm{BBMST}}+\mathcal R_{\mathrm{BIB}}\).
+However, after stating the implication, the text says that the “complete arithmetic proof” is used in its historical APW4 form and refers generally to historical definitions, profile weights, incidences, and arithmetic assumptions. It does not supply the derivation, the intermediate inequalities, or a traceable reference to a separate proof in this PDF. Section 6 then invokes Satz 5.1 to obtain the contradiction; it does not fill that proof gap.
+
+Accordingly, this PDF **does not itself establish or reproduce the strict lower-bound proof**. The previous project-level label “mathematically proved under A1–A3” must not be attributed to this PDF as its supporting proof. Unless a separate, complete derivation under explicitly stated A1–A3 is attached or precisely referenced, the artifact-level status of Satz 5.1 is:
+
+**OPEN — PROOF NOT EXHIBITED IN THIS PDF.**
+
+This is an evidentiary correction to the manuscript/PDF claim, not a mathematical disproof of Satz 5.1 and not a retroactive alteration of independently proved upper-bound or finite transport lemmas. The global contradiction in §6 is conditional on Satz 5.1 and cannot be presented as established by this PDF alone.
+
+### 10.2 Section 8: presentation and verification-scope qualification
+
+Pages 14–15 list the exact repository commit, CI runs, and selected Lean declarations. Those are useful provenance data, but the mathematical notation around the axiom profile is poorly typeset (including visibly nested square-bracket markup), and the section does not provide a complete readable proof transcript or an integrated historical APW4 verification. The named declarations and their reported profile apply only to the listed declarations and commit; they do not verify Satz 5.1 or the full historical DT/HT instantiation.
+
+The section should therefore be treated as a provenance summary requiring editorial correction, not as a self-sufficient formal proof certificate. Any revised publication copy should typeset the axiom profile as a single clear list, separate declaration names from output, and state the exact scope of the successful CI runs.
+
+### 10.3 Corrected status wording
+
+For this PDF, use the following distinctions:
+
+- Energy decomposition and the displayed upper-bound argument: stated in the text; the validity of each transport input remains subject to the exact hypotheses and historical instantiation recorded elsewhere.
+- Abstract finite DT/HT transport principles: may be reported as proved only with their complete standalone hypotheses and proof sources cited; the PDF's historical labels alone do not replace those proofs.
+- Strict arithmetic lower bound Satz 5.1: **OPEN — proof not exhibited in this PDF**.
+- Contradiction in §6: conditional on Satz 5.1; not established by the PDF alone.
+- Section 8: selected Lean/CI provenance only; not an integrated verification of the preceding mathematical theorem.
+
+This addendum supersedes only the earlier wording that could be read as saying this PDF itself contains a complete proof of the strict lower bound. It is append-only and does not alter the 10 November checkpoint, theorem statements, author-held PDF, or any licensing notice.
