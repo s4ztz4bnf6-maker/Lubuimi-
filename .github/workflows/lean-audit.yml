@@ -101,3 +101,39 @@ jobs:
         run: |
           lake build ResearchKernelAudit
           lake check --paranoid
+
+  declaration-reference-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean 4.35.0 and assemble the independent audit package
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          cp BBMST*.lean APW4*.lean kernel-audit/
+          cd kernel-audit
+          lake update
+      - name: Restore Mathlib cache for the independent audit package
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: kernel-audit
+          build: false
+          use-mathlib-cache: true
+      - name: Compile the exact prefix-recursion target
+        working-directory: kernel-audit
+        run: lake build BBMSTPrefixMeasureRecursion
+      - name: Measure declaration inventory and direct type/value references
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          lake env lean BBMSTDeclarationReferenceAudit.lean 2>&1 | tee declaration-reference-audit.log
+      - name: Retain declaration-reference measurement output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: declaration-reference-audit-${{ github.sha }}
+          path: kernel-audit/declaration-reference-audit.log
+          if-no-files-found: warn
