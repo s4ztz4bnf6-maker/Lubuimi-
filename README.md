@@ -177,3 +177,10 @@ This status clarification is append-only and does not rewrite the 10 November ch
 ## PDF proof-exposition clarification — 11 November 2026
 
 The separate review of “Erdős Lean 4 Beweis.pdf” finds that §5 states the strict arithmetic lower bound but does not exhibit its proof; §6 relies on that statement. The PDF therefore does not itself establish the strict lower bound or the resulting contradiction. See the append-only artifact-level audit in [the APW4 status addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md). This qualifies the PDF's evidentiary scope without changing theorem statements or unrelated independently verified results.
+
+
+## Odd-covering literature and APW4 method comparison — 11 November 2026
+
+The append-only [odd-covering literature and APW4 method comparison](publication/ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md) records the published Tao, Hough–Nielsen, BBMST and Berger–Felzenbaum–Fraenkel anchors; the author-claimed Schroeder rank-seven/eight/nine preprints; the Borgatta and Kawahara provenance limits; and the bounded Lean lcm > 10,000 exclusion.
+
+The Schroeder rank claims are sequential preprints by one author, not independent corroboration. Their fibre-distortion/supermodular terminology is a methodological parallel only. APW4's historical index-preserving map, original-weight/mass transport, and BIB capacity/Hall bridge remain **OPEN – NOT VERIFIED**. No manuscript, theorem, Lean source, or license is changed.
