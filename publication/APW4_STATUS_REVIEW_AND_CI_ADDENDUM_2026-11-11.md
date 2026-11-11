@@ -220,3 +220,39 @@ The canonical APW4 declarations recorded at commit `64f38063ef179b3ea9aa0891b5fc
 The newer BBMST integrated path is a separate issue. PR #145's isolated Lean 4.28.0 audit passed, but its integrated Lean 4.35.0 job failed. PR #147 also failed in both jobs. PR #148 exact head `3312aec030719bdb993b502fe3fd62d3b88b9900`, workflow `43030954016`, has `audit` PASS and `integrated-paranoid` FAIL. The latter leaves goals in `BBMSTPrefixMeasureRecursion.lean:390–391` and reports `sorryAx` in recovery output for the prefix recursion and dependent declarations. No integrated or transitive sorryAx-free status is claimed.
 
 **Current evidence-based status:** the algebraic identity and abstract finite transport theorems are proved; historical DT/HT instantiation and the strict lower-bound derivation are not independently reproducible from the accessible manuscript/repository artifacts; the integrated Lean 4.35.0 BBMST prefix recursion remains unverified. The earlier mathematical proof-status record is preserved as historical provenance, not silently overwritten.
+
+
+## 12. Append-only integrated prefix-recursion repair ledger — 11 November 2026
+
+This section updates only the Lean/CI status of the prefix-recursion repair sequence. It does not alter the mathematical status of the APW4 energy identity, abstract transport lemmas, historical DT/HT obligations, or strict lower-bound evidence described above.
+
+### 12.1 PR #149 — failed source diagnosis, retained
+
+- Source head: `c1316c71c1187930ae767c875b9bc146f4fb29c7`.
+- Workflow run: [#43033160378](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43033160378).
+- The integrated Lean 4.35.0 job reports open goals in `BBMSTPrefixMeasureRecursion.lean` and `sorryAx` in compiler error-recovery output for the affected declarations.
+- The log's `introN` label is Lean's internal tactic diagnostic for the source command `intro hnot`; it is not a literal source token. The actual target at that location is a conditional equality, not an implication with a binder.
+
+Status: **FAILED — proof-script error; no mathematical disproof**. The earlier source/log mismatch interpretation is corrected; the original observation and its correction remain in the append-only record.
+
+### 12.2 PR #151 — conditional simplification candidate failed integrated verification
+
+- Exact source head: `0628a302bd43ffc579208aee3b7afa4db3d1336d`.
+- Workflow run: [#43041980404](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43041980404).
+- Isolated `audit`: **PASS**.
+- Integrated Lean 4.35.0 `integrated-paranoid`: **FAIL**.
+- Positive branch at line 390 and negative branch at line 391 remain unsolved. The negative-branch log marks `if_pos hmem` as an unused simp argument; the ordinary pretty-printed target is still a nested conditional equality.
+- The compiler's recovery report includes `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent declarations `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`.
+
+Status: **FAILED REPAIR CANDIDATE — NOT VERIFIED**. This does not refute the mathematical statement. No merge or promotion follows from the isolated audit pass.
+
+### 12.3 PR #152 — diagnostic-only full goal export
+
+- Exact source head: `81af7be54dfe60b452fd35d1cea79a59622a3d44`.
+- PR: [#152](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/152).
+- This diagnostic-only branch scopes `set_option pp.all true` to `prefixFibre_updatedWeight_eq_PAt` and emits `trace_state` before and after both existing branch tactics. It changes no theorem statement, definition, hypothesis, or mathematical content.
+- Exact-head PR and push workflow runs were queued at the time of this entry; no CI conclusion or proof status is claimed yet.
+
+The next permitted proof action is to inspect the complete pp.all traces from PR #152. No further tactic replacement is justified until the dependent conditional expressions, proof terms, and implicit arguments are visible in the exact Lean 4.35.0 goal states.
+
+**Current integrated status:** no passing integrated Lean 4.35.0 prefix-recursion repair has yet been established. The 22-step isolated Lean 4.28.0 audit PASS remains a distinct result and must not be conflated with integrated verification.
