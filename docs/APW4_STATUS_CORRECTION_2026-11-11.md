@@ -43,11 +43,11 @@ PR #154 hat die strukturelle Änderung `rw [hstage]` → `cases hstage` vorgenom
 Die ältere PR-#152-`pp.all`-Diagnose stützte die Hypothese eines abweichenden rekursiven Beweiszeugen (damals wurde rechts `PAt._proof_1` sichtbar). Sie bestätigt diese Herkunft **nicht** für den neuen PR-#154-Head. Der aktuelle integrierte Log enthält keinen vollständigen `pp.all`-Ausdruck für beide aktuellen Ziele.
 
 **Nächster Schritt, ohne Patch:** vollständige aktuelle Zielausdrücke der Fälle `pos` und `neg` sichern und die drei Indizes nebeneinander offenlegen:
-1. lokales `stageCoordinate hk),
-2. Index im entfalteten rekursiven `PAt)-Zweig,
-3. Index im `updatedWeight)-Ausdruck.
+1. lokales `stageCoordinate hk`,
+2. Index im entfalteten rekursiven `PAt`-Zweig,
+3. Index im `updatedWeight`-Ausdruck.
 
-Erst danach prüfen, ob Gleichheit auf den gesamten abhängigen Fasertyp transportiert werden muss. Kein neuer `simp)- oder Transportpatch vor dieser Diagnose.
+Erst danach prüfen, ob Gleichheit auf den gesamten abhängigen Fasertyp transportiert werden muss. Kein neuer `simp`- oder Transportpatch vor dieser Diagnose.
 
 ## 3. Ebenentrennung
 
