@@ -34,3 +34,20 @@ A structure that stores length bounds and scalar inequalities can reject malform
 3. Decide whether to formalize the LP/distribution existence argument or import a verified certificate with a proof of its validity.
 4. Prove the geometric side condition wherever the stronger second-moment estimate is used, or replace that estimate with a weaker justified one and re-evaluate whether the numerical inequality still closes.
 5. Re-run the transitive axiom trace on `erdos_selfridge`; any remaining project-specific axiom must be explicitly justified or eliminated before describing the result as a complete formal proof.
+
+
+## Literature update and APW4 correspondence boundary — 11 November 2026
+
+The separate literature ledger is [publication/ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md](publication/ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md).
+
+The Schroeder rank-seven and rank-eight preprint abstracts describe normalized fibre distortion and increasing supermodular functionals on congruence labels. The BBMST paper independently contains a published stage/fibre measure recursion and mass-conservation lemma. These similarities motivate comparison, but they do not supply a source-faithful APW4 instantiation.
+
+The APW4 obligations remain separate and open:
+
+1. recover the exact historical APW4 event/index family and construct an index-preserving map to the BBMST stage/fibre objects;
+2. prove original APW4 weight preservation or a correctly oriented mass inequality, including exceptional fibres and normalization;
+3. identify the historical BIB slots and prove the weighted Hall/capacity inequality for all required event subfamilies.
+
+Do not identify canonical model fibres with historical APW4 events, and do not merge APW diagonal mass, APW off-diagonal mass, or BIB pair reserve without the explicit map. The rank-seven/eight/nine results are same-author sequential preprints; their claims are not independent peer-reviewed corroboration. The rank-nine claimed bound is not entered as an established theorem.
+
+This is a documentation clarification only. It does not change the two-axiom status of the pinned upstream Lean source, any APW4 theorem, the manuscript, or the existing mathematical proof record.
