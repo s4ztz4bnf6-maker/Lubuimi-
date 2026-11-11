@@ -74,6 +74,28 @@ theorem projectPrefix_liftPrefix {k : ℕ} (hk : k ≤ n)
 def stageCoordinate {k : ℕ} (hk : k + 1 ≤ n) : Fin n :=
   prefixIndex hk (Fin.last k)
 
+/-- The new coordinate is independent of the proof witness for the
+prefix bound. This named transport lemma aligns dependent fibre indices. -/
+theorem stageCoordinate_eq_of_bound
+    {k : ℕ} (h₁ h₂ : k + 1 ≤ n) :
+    stageCoordinate h₁ = stageCoordinate h₂ := by
+  apply Fin.ext
+  rfl
+
+/-- Canonical proof of the next-prefix bound, shared by the recursive
+measure definition and its pointwise fibre update theorem. -/
+theorem nextPrefixBound
+    (a j : ℕ) (hj : a + (j + 1) ≤ n) :
+    a + j + 1 ≤ n := by
+  omega
+
+/-- Canonical proof of the predecessor-prefix bound, shared by the recursive
+measure definition and its pointwise fibre update theorem. -/
+theorem previousPrefixBound
+    (a j : ℕ) (hj : a + (j + 1) ≤ n) :
+    a + j ≤ n := by
+  omega
+
 /-- Restrict a prefix of length k+1 to its first k coordinates. -/
 noncomputable def restrictPrefix {k : ℕ} (hk : k + 1 ≤ n)
     (x : PrefixPoint C (k + 1) hk) :
@@ -150,9 +172,8 @@ noncomputable def PAt
   | j + 1, hj, x => by
       classical
       let k := a + j
-      have hk : k + 1 ≤ n := by
-        simpa only [k, Nat.add_succ] using hj
-      have hprev : k ≤ n := by omega
+      have hk : k + 1 ≤ n := nextPrefixBound a j hj
+      have hprev : k ≤ n := previousPrefixBound a j hj
       letI := C.fintypeS (stageCoordinate hk)
       let xprev := restrictPrefix C hk x
       let values := prefixCoveredValues C (A := A) hk xprev
@@ -226,6 +247,7 @@ theorem prefixPointCovered_iff
   simpa [prefixPointCovered, stageCoordinate,
     extendPrefix_restrictPrefix] using hmem
 
+#print axioms restrictPrefix_extendPrefix
 #print axioms extendPrefix_restrictPrefix
 #print axioms mem_prefixCoveredValues_iff
 #print axioms prefixPointCovered_iff
@@ -355,14 +377,18 @@ theorem prefixFibre_updatedWeight_eq_PAt
     PAt C (A := A) a ha P0 δ (j + 1) hj y := by
   classical
   let k := a + j
-  have hk : k + 1 ≤ n := by
-    simpa only [k, Nat.add_succ] using hj
-  have hprev : k ≤ n := by omega
+  have hk : k + 1 ≤ n := nextPrefixBound a j hj
+  have hprev : k ≤ n := previousPrefixBound a j hj
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
     simpa [xprev, k] using hbase
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
+  have hstage :
+      stageCoordinate (k := a + j) (by omega) =
+        stageCoordinate (k := k) hk :=
+    stageCoordinate_eq_of_bound _ _
+  cases hstage
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
@@ -371,26 +397,13 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
-  -- Give the recursive PAt unfolding named proof witnesses and
-  -- transport the whole prefix fibre, not only one membership proposition.
-  have hk' : k + 1 ≤ n := by
-    simpa only [k, Nat.add_succ] using hj
-  have hprev' : k ≤ n := by omega
-  have hhk : hk = hk' := Subsingleton.elim _ _
-  have hhp : hprev = hprev' := Subsingleton.elim _ _
-  -- Eliminate proof-witness differences before rewriting any dependent
-  -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
-  cases hhk
-  cases hhp
+    Finset.card_univ, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp only [if_pos hcov]
-  · have hmem : y (Fin.last (a + j)) ∈
-        (Finset.univ : Finset (C.S (stageCoordinate hk))) := Finset.mem_univ _
-    simp only [if_neg hcov, if_pos hmem]
+  · simp only [if_pos hcov, Finset.mem_univ, ite_true]
+  · simp only [if_neg hcov, Finset.mem_univ, ite_true]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
