@@ -51,3 +51,17 @@ The APW4 obligations remain separate and open:
 Do not identify canonical model fibres with historical APW4 events, and do not merge APW diagonal mass, APW off-diagonal mass, or BIB pair reserve without the explicit map. The rank-seven/eight/nine results are same-author sequential preprints; their claims are not independent peer-reviewed corroboration. The rank-nine claimed bound is not entered as an established theorem.
 
 This is a documentation clarification only. It does not change the two-axiom status of the pinned upstream Lean source, any APW4 theorem, the manuscript, or the existing mathematical proof record.
+
+
+## 2026-11-11 status correction: PR #154 and historical map
+
+- PR #154 exact head: `9397d0b0cbd139e3c431a02fff21b8c9c77a4061`.
+- Workflow [43086198224](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43086198224): independent audit PASS; integrated Lean 4.35.0 FAIL.
+- Remaining branch goals: `prefixFibre_updatedWeight_eq_PAt`, positive case at line 405 and negative case at line 406.
+- Error-recovery output contains `sorryAx` in the target and dependent `PAt) declarations. No integrated proof is verified.
+
+**Next source-level obligation:** normalize the local `values) expression and a single canonical `Covered) predicate before unfolding `PAt); prove the positive and negative conditional equalities separately; only then reintegrate the dependent recursion. No generic simp patch is authorized by this diagnosis.
+
+**Historical reconstruction remains open:** locate the source definitions of `ρ_x` and `W_x`, and the exact map `(x,u) ↦ (k,I,J)`. Record source/page/definition references and prove the required index-preserving and weight/capacity transport. Do not infer these objects from the current Lean model.
+
+See [the dated APW4 prefix-recursion and historical-map note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md). Mathematical proof status, historical reconstruction, and Lean/CI verification remain separate.
