@@ -56,4 +56,4 @@ Erst danach prüfen, ob Gleichheit auf den gesamten abhängigen Fasertyp transpo
 - Lean-Integration und Axiom-Audit bleiben ein separates formales Problem.
 - Keine Aussage, APW4 widerlege eine aktuelle Odd-Covering-Rangschranke, solange die Abbildung auf die passende Moduli-/Restklassenklasse nicht nachgewiesen ist.
 
-**Keine** mathematische Definition ergänzt, kein Lean-Quelltext geändert, kein Build oder CI-Lauf ausgelöst, kein PR gemergt.
+**Keine** mathematische Definition ergänzt, kein Lean-Quelltext geändert und kein PR gemergt. Nach den Dokumentations-Commits startete GitHub automatisch den PR-getriggerten Workflow „Lean degenerate-witness audit“ auf diesem Dokumentations-Head: Lauf 43112448259, Job 130831735116. Dieser isolierte Audit war bei der letzten Abfrage noch in Bearbeitung und ist kein integrierter Lean-4.35.0-Build. Sein Ergebnis wird nicht vorweggenommen.
