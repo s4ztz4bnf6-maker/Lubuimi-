@@ -265,3 +265,16 @@ The separate literature ledger is now recorded at [ODD_COVERING_LITERATURE_AND_A
 The Schroeder abstracts' fibre-distortion and supermodular terminology is a methodological comparison only. It does not provide the historical APW4 index map, original-weight/mass identity, or BIB capacity/Hall transport. All three obligations remain **OPEN – NOT VERIFIED**. The unrestricted Erdős–Selfridge odd-covering problem remains open; the rank-nine statement is not promoted from a preprint claim to an established theorem.
 
 No mathematical result, manuscript statement, theorem, Lean source, CI setting, or license is modified by this literature synchronization.
+
+
+## 14. Superseding exact-head update — PR #154, 11 November 2026
+
+PR [#154](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/154), head `9397d0b0cbd139e3c431a02fff21b8c9c77a4061`, workflow [43086198224](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43086198224): the independent `audit` job `130751120783` passed, while the integrated Lean 4.35.0 `integrated-paranoid` job `130751120273` failed.
+
+The integrated log leaves the positive and negative conditional-equality goals open at `BBMSTPrefixMeasureRecursion.lean:405` and `:406`. Its error-recovery axiom output contains `sorryAx` in `prefixFibre_updatedWeight_eq_PAt` and the dependent declarations `PAt_nonneg`, `PAt_le_initial_mul_distortionProduct`, `PAt_succ_le_prev_div_card_mul_one_sub_delta`, and `PAt_sum_eq_one`. The separate audit PASS is not integrated proof evidence.
+
+The next candidate is a structural normalization, not another broad simplification patch: isolate the local `values` expression; identify the canonical Covered predicate before unfolding `PAt`; express both conditions through the same canonical definition; then prove the positive and negative cases separately. Only after those branches close should the dependent recursion be reintegrated.
+
+The exact failure and the next repair sequence are documented in [the dedicated prefix-recursion and historical-map note](APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md). The historical definitions `ρ_x`, `W_x`, and the source-faithful map `(x,u) ↦ (k,I,J)` remain **OPEN – NOT VERIFIED** pending actual source locations and proof of the required index/weight transport.
+
+This update changes no Lean source or theorem statement, does not modify the separately finalized author-held PDF, and does not alter either licensing file. It does not downgrade previously established APW4 mathematical results.
