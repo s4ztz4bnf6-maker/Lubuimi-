@@ -38,3 +38,8 @@ The author reports that the complete manuscript PDF has been independently final
 The repository is public for reading and scholarly citation. Original materials owned by Ta-Yoshua Lubuimi are covered by LICENSE-PROPRIETARY.md, unless a file expressly states another applicable license. No general open-source, redistribution, modification, or commercial-use license is granted. Third-party materials remain under their own licenses.
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
+
+
+## Status update — 11 November 2026
+
+See [the dated review and CI addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) for the comparison against the external review and the exact PR #145 result. The mathematical APW4 status is preserved; historical instantiation and integrated Lean verification remain separately tracked.
