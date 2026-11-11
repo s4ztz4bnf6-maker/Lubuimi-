@@ -278,3 +278,14 @@ The next candidate is a structural normalization, not another broad simplificati
 The exact failure and the next repair sequence are documented in [the dedicated prefix-recursion and historical-map note](APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md). The historical definitions `ρ_x`, `W_x`, and the source-faithful map `(x,u) ↦ (k,I,J)` remain **OPEN – NOT VERIFIED** pending actual source locations and proof of the required index/weight transport.
 
 This update changes no Lean source or theorem statement, does not modify the separately finalized author-held PDF, and does not alter either licensing file. It does not downgrade previously established APW4 mathematical results.
+
+
+## 12 November 2026 — PR #156 Koordinatenlemma und exakter CI-Abschluss
+
+Der neue append-only [APW4-CI-Checkpoint vom 12. November 2026](publication/APW4_CI_CHECKPOINT_2026-11-12.md) sichert PR #156 / Head `1add382fec3375cb2a67822ae872c2bc5d3bb8a3` und Workflow [43118336799](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43118336799).
+
+- Isolierter Job `audit` 130852038555: **SUCCESS**, alle 22 geordneten Schritte einschließlich „Compile source-indexed BBMST prefix measure recursion“ abgeschlossen.
+- `prefixIndex_last_eq_stageCoordinate` steht in der erfolgreich kompilierten Datei `BBMSTPrefixMeasureRecursion.lean`. Damit ist die konkrete Deklaration als Teil des Moduls compilergeprüft. Ein eigenständiger `#print axioms`-Eintrag nur für dieses Lemma wurde im Audit-Log nicht ausgegeben; das wird ausdrücklich als Granularitätsgrenze dokumentiert.
+- Integrierter Job `integrated-paranoid` 130852038915: **FAILURE**, offene Ziele `pos`/ `neg` in Zeilen 417–418; `sorryAx` verbleibt in der Fehler-Recovery-Ausgabe zu `prefixFibre_updatedWeight_eq_PAt` und abhängigen Deklarationen.
+
+Der integrierte FAIL widerlegt das isolierte Koordinatenlemma nicht, weil der Patch die Branch-Ziele nicht verändert. Der isolierte Modulcompile beweist umgekehrt nicht die vollständige Prefix-Rekursion oder den APW4-Hauptsatz. Membership-Transport und Proof-Irrelevanz bleiben getrennte Folgefragen. PR #156 bleibt offen, Draft und ungemergt. Keine mathematische Statuspromotion; historische A1–A3 und der Lower-Bound-Quellennachweis bleiben offen bzw. Beleglücke.
