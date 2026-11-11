@@ -76,7 +76,7 @@ Der Job `audit` endete mit **PASS**. Alle 22 geordneten Schritte wurden abgeschl
 - finite weighted union/noncoverage bound;
 - BBMST (c_k(z)) moment recurrence.
 
-In diesem isolierten Audit-Pfad gibt das Log für `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg` und `PAt_sum_eq_one` das Standardprofil `[propext, Classical.choice, Quot.sound]` aus.
+Der isolierte `audit`-Job verwendet Lean **4.28.0** und das Root-`lakefile.lean` pinnt Mathlib **v4.28.0**. In diesem 4.28.0-Pfad gibt das Log für `prefixFibre_updatedWeight_eq_PAt`, `PAt_nonneg` und `PAt_sum_eq_one` das Standardprofil `[propext, Classical.choice, Quot.sound]` aus.
 
 ### 4.2 Integrierter Paketjob
 
@@ -90,9 +90,11 @@ Der Job `integrated-paranoid` endete mit **FAIL**. Beim Kompilieren des integrie
 
 ### 4.3 Aufgelöste Statusfrage
 
-Beide Jobs verwendeten denselben PR-Merge-Ref, liefern aber für die Präfixrekursion in ihren jeweiligen Build-Pfaden unterschiedliche Resultate. Der Unterschied zwischen isoliertem Audit-Pfad und integriertem Paketpfad ist deshalb selbst ein offener technischer Diagnosepunkt.
+Der integrierte Job verwendet dagegen das Unterprojekt `kernel-audit`, dessen `lean-toolchain` und `lakefile.lean` Lean **4.35.0** und Mathlib **v4.35.0** pinnen. Beide Jobs verwenden denselben PR-Merge-Ref, aber unterschiedliche Lean-/Mathlib-Versionen und Lake-Paketkontexte. Der isolierte 4.28.0-PASS zertifiziert deshalb nicht den integrierten 4.35.0-Zielpfad.
 
-**Einstufung:** Der 22-Schritte-Auditpfad ist erfolgreich; der integrierte BBMST/APW4-Paketcheck ist fehlgeschlagen. Die Präfixrekursionsdeklarationen werden deshalb nicht als integriert verifiziert oder global sorryAx-frei freigegeben. Der genaue Build-/Abhängigkeitsunterschied muss reproduziert und behoben werden.
+Die beiden verbleibenden Ziele sind in 4.35.0 widersprüchliche Implikationen, die nach den versionsensitiven `simp`-Aufrufen offenbleiben. PR #147 ersetzt diese Aufrufe durch direkte Einführung der Gegenannahme und Widerspruch mit der jeweiligen `by_cases`-Hypothese.
+
+**Einstufung:** Der 22-Schritte-Auditpfad ist unter Lean 4.28.0 erfolgreich; der integrierte BBMST/APW4-Paketcheck unter Lean 4.35.0 ist fehlgeschlagen. Die Präfixrekursionsdeklarationen werden deshalb nicht als integriert verifiziert oder global sorryAx-frei freigegeben.
 
 ## 5. Weitere offene APW4-/BBMST-Pflichten
 
