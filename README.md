@@ -172,3 +172,8 @@ The review-corrected main text is not overwritten by a CI-status note. The new a
 **Current exact CI follow-up:** PR #145 (workflow 43028431770) has isolated audit PASS under Lean/Mathlib 4.28.0 but integrated-paranoid FAIL under Lean/Mathlib 4.35.0. PR #147 (workflow 43030160125, head 5ef81d14256fb85eddc76e052ff837f023a114e8) failed both jobs at the branch goals in `BBMSTPrefixMeasureRecursion.lean:390,392`; `introN` was applied where the goal was an equality. PR #148 (head 3312aec030719bdb993b502fe3fd62d3b88b9900) is the next proof-script candidate and remains unverified pending its exact-head integrated run and transitive `sorryAx` gate.
 
 This status clarification is append-only and does not rewrite the 10 November checkpoint or change any mathematical theorem statement.
+
+
+## PDF proof-exposition clarification — 11 November 2026
+
+The separate review of “Erdős Lean 4 Beweis.pdf” finds that §5 states the strict arithmetic lower bound but does not exhibit its proof; §6 relies on that statement. The PDF therefore does not itself establish the strict lower bound or the resulting contradiction. See the append-only artifact-level audit in [the APW4 status addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md). This qualifies the PDF's evidentiary scope without changing theorem statements or unrelated independently verified results.
