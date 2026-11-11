@@ -14,7 +14,7 @@ Source: https://doi.org/10.1017/fmp.2022.8
 ### Hough–Nielsen (2019)
 The published result states that every distinct covering system has a modulus divisible by 2 or 3. This is a necessary restriction, not a resolution of the odd distinct covering problem.
 
-Reference: Hough and Nielsen, *Duke Mathematical Journal* 168 (2019), 3261–3295. https://doi.org/10.1215/00127094-2018-0054
+Reference: Hough and Nielsen, *Duke Mathematical Journal* 168 (2019), 3261–3295. https://doi.org/10.1215/00127094-2019-0058
 
 ### BBMST (2022)
 Paul Balister, Béla Bollobás, Robert Morris, Julian Sahasrabudhe, and Marius Tiba, “On the Erdős covering problem: the density of the uncovered set,” *Inventiones Mathematicae* 228 (2022), 377–414, DOI 10.1007/s00222-021-01087-5.
