@@ -387,8 +387,9 @@ theorem prefixFibre_updatedWeight_eq_PAt
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ]
-  · simp [hcov, xprev, Finset.mem_univ]
+  · intro hnot
+    exact (hnot hcov).elim
+  · simp only [if_neg hcov, Finset.mem_univ, if_true]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
