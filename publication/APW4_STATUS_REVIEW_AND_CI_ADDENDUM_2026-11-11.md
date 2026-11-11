@@ -26,17 +26,17 @@ Die hier verfügbare Review-Akte ist `APW4_EXTERNAL_REVIEW_RESPONSE_AND_CORRECTI
 | Kritikpunkt der externen Durchsicht | Seitdem dokumentierte Verbesserung | Was weiterhin offen bleibt |
 |---|---|---|
 | Historische APW4-Faserobjekte, Gewichte, Indizes und Kapazitäten waren nicht vollständig definiert. | Die überarbeitete Fassung benennt die benötigten Quell-/Zielmengen, Gewichte, Indizes und Inzidenzdaten ausdrücklich als erforderliche Daten. | Die vollständige quellengetreue Definition und Konstruktion aller historischen Objekte ist in der zugänglichen Hauptfassung weiterhin nicht ausgeschrieben. |
-| Die bloße Abbildung ((x,u)mapsto(k,I_{x,u},J_{x,u})) beweist keine DT-Majorization. | Ein endliches kapazitätsbeschränktes Transportlemma mit expliziten Quellmassen, Zielkapazitäten und Transportkoeffizienten wird bewiesen. | Die konkrete historische APW4-Transportmatrix und ihre Spaltenschranken müssen vollständig aus den Originaldefinitionen instanziiert werden. |
+| Die bloße Abbildung \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) beweist keine DT-Majorization. | Ein endliches kapazitätsbeschränktes Transportlemma mit expliziten Quellmassen, Zielkapazitäten und Transportkoeffizienten wird bewiesen. | Die konkrete historische APW4-Transportmatrix und ihre Spaltenschranken müssen vollständig aus den Originaldefinitionen instanziiert werden. |
 | Die gewichtete Hall-Bedingung für HT war nicht ausreichend belegt. | Der endliche gewichtete Hall-/Max-Flow-Min-Cut-Schluss ist mit expliziter Ereignis-/Platzstruktur formuliert und bewiesen. | Die historische Ereignismenge, BIB-Platzmenge, Inzidenz und die Hall-Ungleichung für jede Ereignisteilmenge müssen quellengetreu rekonstruiert werden. |
-| Die BIB-Paarreserve und ihre Zählkonvention waren zu knapp erklärt. | Die Identität (sum_\ell c_\ell(c_\ell-1)=sum_{u\ne v}|S_u\cap S_v|) wird als exakte Doppeltzählung erklärt. | Die Identifikation der abstrakten Labels mit den historischen APW4-Off-Diagonalereignissen bleibt eine eigene Zuordnungsaufgabe. |
+| Die BIB-Paarreserve und ihre Zählkonvention waren zu knapp erklärt. | Die Identität \(\sum_\ell c_\ell(c_\ell-1)=\sum_{u\ne v}|S_u\cap S_v|\) wird als exakte Doppeltzählung erklärt. | Die Identifikation der abstrakten Labels mit den historischen APW4-Off-Diagonalereignissen bleibt eine eigene Zuordnungsaufgabe. |
 | Die endliche Zweitmomentabschätzung war nicht selbstständig nachvollziehbar. | Der Zweitmomentensatz unter den ausdrücklich benannten Voraussetzungen (H1)/(H2) ist mit Doppeltzählung und Cauchy–Schwarz vollständig ausgeschrieben. | Die Ableitung von (H1)/(H2) aus den tatsächlichen historischen APW4-Fasern ist nicht automatisch durch den abstrakten Satz erbracht. |
-| (B(M)=2M-\sigma(M)\le0) wurde zu stark als alleinige Ursache eines Widerspruchs dargestellt. | Die review-korrigierte Fassung nennt das quadratfreie Beispiel (M=15015), mit (sigma(M)=32256), (B(M)=-2226) und (sum_{d\mid M,d>1}1/d=821/715>1). Sie stellt klar, dass das Vorzeichen allein keinen APW4-Widerspruch liefert. | Die zusätzlichen historischen APW4-Hypothesen und die vollständige ausgeschriebene Transferrechnung müssen im Beweistext erhalten und prüfbar sein. |
+| \(B(M)=2M-\sigma(M)\le0\) wurde zu stark als alleinige Ursache eines Widerspruchs dargestellt. | Die review-korrigierte Fassung nennt das quadratfreie Beispiel \(M=15015\), mit \(\sigma(M)=32256\), \(B(M)=-2226\) und \(\sum_{d\mid M,d>1}1/d=821/715>1\). Sie stellt klar, dass das Vorzeichen allein keinen APW4-Widerspruch liefert. | Die zusätzlichen historischen APW4-Hypothesen und die vollständige ausgeschriebene Transferrechnung müssen im Beweistext erhalten und prüfbar sein. |
 | Der Geltungsbereich war nicht scharf genug abgegrenzt. | Die Hauptfassung behauptet ausdrücklich nicht, das uneingeschränkte ursprüngliche Erdős–Selfridge-Problem gelöst zu haben. | Jede weitergehende arithmetische Aussage benötigt einen eigenen Äquivalenz- beziehungsweise Instanziierungssatz. |
 | Der Lean-Endschluss wurde leicht mit dem vollständigen historischen Beweis verwechselt. | Die Deklarationen werden mit ihren tatsächlichen Eingabehypothesen und exakten Commits/CI-Läufen dokumentiert. | Die historischen DT-/HT- und Untergrenzenprämissen sind nicht durch einen bloßen bedingten Endschluss in Lean bewiesen. |
 
 ### Bewertung der Verbesserungen
 
-Die externe Durchsicht hat die Manuskriptqualität konkret verbessert: Die abstrakten Transportprinzipien sind präziser formuliert, ihre endlichen mathematischen Schlussfolgerungen werden bewiesen, die BIB-Paarzählung ist transparent, die Zweitmomentrechnung ist mit Voraussetzungen versehen, und der unzulässige Schluss allein aus (B(M)\le0) wird ausdrücklich ausgeschlossen.
+Die externe Durchsicht hat die Manuskriptqualität konkret verbessert: Die abstrakten Transportprinzipien sind präziser formuliert, ihre endlichen mathematischen Schlussfolgerungen werden bewiesen, die BIB-Paarzählung ist transparent, die Zweitmomentrechnung ist mit Voraussetzungen versehen, und der unzulässige Schluss allein aus \(B(M)\le0\) wird ausdrücklich ausgeschlossen.
 
 Das sind echte Expositions- und Beweispräzisierungen. Sie schließen aber nicht automatisch die historische Instanziierungslücke. Die Review-korrigierte Hauptfassung ist daher eine deutlich verbesserte, mathematisch ehrliche Beweisexposition der zugänglichen Schritte; sie ist nicht mit einer vollständig reproduzierten historischen DT-/HT-Konstruktion gleichzusetzen.
 
@@ -44,7 +44,7 @@ Das sind echte Expositions- und Beweispräzisierungen. Sie schließen aber nicht
 
 Gemäß dem maßgeblichen APW4-Arbeitscheckpoint bleiben folgende Ergebnisse als mathematisch bewiesene Projektresultate geführt:
 
-- exakte Energiezerlegung (\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4}), mit geordneten Off-Diagonalpaaren und ohne zusätzlichen Faktor 2;
+- exakte Energiezerlegung \(\mathcal E_{\rm APW4}=D_{\rm APW4}+C_{\rm APW4}\), mit geordneten Off-Diagonalpaaren und ohne zusätzlichen Faktor 2;
 - Diagonaltransport DT;
 - gewichteter Off-Diagonaltransport HT;
 - globale obere Energieschranke;
