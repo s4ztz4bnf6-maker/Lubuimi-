@@ -129,3 +129,15 @@ Die vom Autor separat gehaltene finale PDF-Fassung wird durch diesen Repository-
 ---
 
 **Append-only-Vermerk:** Der Forschungscheckpoint vom 10.11.2026 bleibt unverändert. Dieser Nachtrag erweitert ihn um die Review-Gegenüberstellung und die exakten Ergebnisse vom 11.11.2026.
+
+
+## 8. Follow-up repair candidate — PR #147
+
+PR [#147](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/147) is stacked on PR #145 and changes only the two remaining branch proof scripts in `prefixFibre_updatedWeight_eq_PAt`. It replaces version-sensitive simplification with explicit contradiction elimination.
+
+- Exact source head: `5ef81d14256fb85eddc76e052ff837f023a114e8`.
+- Exact-head workflow: `43030160125`.
+- At the latest observation, both `audit` and `integrated-paranoid` were **IN PROGRESS**.
+- No declaration is promoted on the basis of this candidate until both jobs complete and the integrated Lean 4.35.0 transitive axiom audit explicitly passes.
+
+Status: **REPAIR CANDIDATE — CI IN PROGRESS; NOT VERIFIED**.
