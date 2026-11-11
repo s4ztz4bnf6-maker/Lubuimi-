@@ -43,3 +43,8 @@ The repository is public for reading and scholarly citation. Original materials 
 ## Status update — 11 November 2026
 
 See [the dated review and CI addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) for the comparison against the external review and the exact PR #145 result. The mathematical APW4 status is preserved; historical instantiation and integrated Lean verification remain separately tracked.
+
+
+## Prefix-recursion and historical reconstruction status — 11 November 2026
+
+The new [APW4 prefix-recursion and historical-map status note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md) records the exact PR #154 integrated failure, the two remaining conditional goals, the required structural normalization, and the still-open source reconstruction of `ρ_x`, `W_x`, and `(x,u) ↦ (k,I,J)). This is a separate technical addendum; the author's separately finalized PDF and the main manuscript text are not overwritten.
