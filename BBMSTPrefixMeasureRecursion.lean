@@ -388,7 +388,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
       stageCoordinate (k := a + j) (by omega) =
         stageCoordinate (k := k) hk :=
     stageCoordinate_eq_of_bound _ _
-  rw [hstage]
+  cases hstage
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
