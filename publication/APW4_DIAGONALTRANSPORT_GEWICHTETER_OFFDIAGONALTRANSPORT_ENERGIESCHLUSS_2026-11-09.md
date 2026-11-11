@@ -222,3 +222,33 @@ Der mathematische APW4-Beweisstand wird als abgeschlossen geführt. Die vorhande
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**  
 This manuscript is covered by the repository's LICENSE-PROPRIETARY.md. Public access and citation do not grant a general reproduction, redistribution, modification, or commercial-use license.
+
+---
+
+## Dated evidence and formalization addendum — 11 November 2026
+
+This addendum preserves the mathematical statements and the author's earlier reported proof status while making the current evidence boundary explicit. It does not silently rewrite the historical proof or invent missing APW4 definitions.
+
+### Mathematical status versus reproducible source record
+
+The exact decomposition
+\[
+\mathcal E_{\mathrm{APW4}}=D_{\mathrm{APW4}}+C_{\mathrm{APW4}}
+\]
+and the abstract finite transport implications remain recorded at their stated scope. In particular, the upper estimate follows only under the explicit diagonal- and weighted off-diagonal-transport hypotheses and their correct instantiation.
+
+The strict lower-bound implication is stated in the earlier dossier, but the accessible manuscript and repository artifacts currently available for this audit do not reproduce its full derivation. The historical definitions of \(A^*,B^*,m_S(x),\rho_x,W_x\) and the index map \((x,u)\mapsto(k,I_{x,u},J_{x,u})\) are not supplied in a form that permits independent reconstruction here. Accordingly, the strict lower implication is marked **BELEGLÜCKE** in the dated status record. This is not a mathematical disproof and does not erase the author's earlier assertion; it distinguishes reported proof status from what the accessible artifacts presently demonstrate.
+
+The contradiction is therefore not described in this repository addendum as independently established from the accessible premises until both the upper and strict lower implications, with all historical hypotheses and maps, are exhibited.
+
+### Lean integration status
+
+PR [#154](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/154), exact head 9397d0b0cbd139e3c431a02fff21b8c9c77a4061, has a failed integrated build in workflow [43086198224](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43086198224), job 130751120273. The isolated audit result is separate and does not convert the integrated build into a pass. The dependent PAt declarations still report sorryAx.
+
+The structural change from rw [hstage] to cases hstage is retained as a genuine attempted repair. However, the new by omega witness has not been shown definitionally equal to nextPrefixBound. The older PR #152 pp.all trace supports a witness-mismatch hypothesis but does not confirm it for the current PR #154 head. The next step is diagnostic only: expose both current goals (pos and neg) and compare the local stage-coordinate index, the recursively unfolded PAt index, and the updatedWeight index. No new simp or transport patch is asserted by this addendum.
+
+### Formal release criterion
+
+A declaration is not promoted to verified status merely because an isolated check passes or a source module compiles. Promotion requires the exact integrated Lean 4.35.0 build to pass, named theorem/axiom output, and a transitive audit excluding sorryAx and any prohibited project axioms.
+
+**Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
