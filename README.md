@@ -151,3 +151,16 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+## Dated status correction — 11 November 2026
+
+The latest evidence review is recorded in [the dated APW4 status correction](docs/APW4_STATUS_CORRECTION_2026-11-11.md) and proposed for review in [PR #155](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/155). This entry supersedes earlier summaries only where they overstate what the accessible proof artifacts independently establish; it does not erase earlier author-reported provenance.
+
+- The exact energy identity and abstract finite DT/HT transport results remain established within their stated hypotheses.
+- The historical APW4 instantiation of DT/HT remains a separate source-reconstruction obligation.
+- The strict lower-bound implication is **BELEGLÜCKE** in the accessible record: Dossier v1.6 §25 states it, but the accessible manuscript/repository artifacts do not reproduce the derivation and its historical definitions/map.
+- Therefore the overall contradiction is **not currently independently established as a conditional theorem** from the accessible artifacts. This is an evidence-status correction, not a claim that the author's asserted proof is false.
+- PR #154 remains open and its integrated Lean 4.35.0 build failed (workflow [43086198224](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43086198224), integrated job 130751120273). The isolated audit PASS does not override the integrated failure. Dependent PAt declarations still carry sorryAx.
+- The separate PR #152 witness-difference diagnosis motivates investigation but is not confirmed for PR #154's current head. The next diagnostic is to expose the full pos and neg goals and compare the three dependent indices; no speculative simp/transport patch is endorsed.
+
+**Release gate:** no promotion to a verified integrated theorem without a passing integrated Lean 4.35.0 run, named declaration output, and transitive axiom audit excluding sorryAx and disallowed project axioms.
