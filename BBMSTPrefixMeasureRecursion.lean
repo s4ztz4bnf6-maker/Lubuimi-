@@ -333,9 +333,9 @@ theorem sum_prefix_eq_sum_extensions
 #print axioms sum_prefix_eq_sum_extensions
 
 
+set_option pp.all true
 /-- The pointwise update of the concrete geometric FibreData is exactly
 the recursively defined PAt value at the extended prefix. -/
-set_option pp.all true
 theorem prefixFibre_updatedWeight_eq_PAt
     {A : Finset (Hyperplane C)}
     (a : ℕ) (ha : a ≤ n)
