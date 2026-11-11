@@ -89,6 +89,17 @@ theorem nextPrefixBound
     a + j + 1 ≤ n := by
   omega
 
+/-- The last coordinate of the length-(a+j) prefix is the stage
+coordinate selected using any proof of the same next-prefix bound. -/
+theorem prefixIndex_last_eq_stageCoordinate
+    {a j : ℕ}
+    (hj : a + (j + 1) ≤ n)
+    (hk : (a + j) + 1 ≤ n) :
+    prefixIndex (nextPrefixBound a j hj) (Fin.last (a + j)) =
+      stageCoordinate hk := by
+  apply Fin.ext
+  rfl
+
 /-- Canonical proof of the predecessor-prefix bound, shared by the recursive
 measure definition and its pointwise fibre update theorem. -/
 theorem previousPrefixBound
@@ -355,6 +366,7 @@ theorem sum_prefix_eq_sum_extensions
 #print axioms sum_prefix_eq_sum_extensions
 
 
+set_option pp.all true in
 /-- The pointwise update of the concrete geometric FibreData is exactly
 the recursively defined PAt value at the extended prefix. -/
 theorem prefixFibre_updatedWeight_eq_PAt

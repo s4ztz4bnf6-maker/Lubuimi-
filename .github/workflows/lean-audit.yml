@@ -57,6 +57,8 @@ jobs:
         run: lake env lean -o .lake/build/lib/lean/BBMSTUniformStageMoment.olean BBMSTUniformStageMoment.lean
       - name: Compile source-indexed BBMST prefix measure recursion
         run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureRecursion.olean BBMSTPrefixMeasureRecursion.lean
+      - name: Compile coordinate lemma axiom audit and print theorem axioms
+        run: lake env lean BBMSTCoordinateLemmaAudit.lean
       - name: Compile prefix cylinder event-mass identities
         run: lake env lean -o .lake/build/lib/lean/BBMSTPrefixCylinderMass.olean BBMSTPrefixCylinderMass.lean
       - name: Compile concrete prefix-to-stage moment bridge

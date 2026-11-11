@@ -1,0 +1,3 @@
+import BBMSTPrefixMeasureRecursion
+
+#print axioms BBMSTPrefixMeasure.prefixIndex_last_eq_stageCoordinate
