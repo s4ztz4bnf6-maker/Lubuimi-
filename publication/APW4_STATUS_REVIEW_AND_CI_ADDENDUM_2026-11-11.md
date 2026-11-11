@@ -137,7 +137,14 @@ PR [#147](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/147) is stacked on P
 
 - Exact source head: `5ef81d14256fb85eddc76e052ff837f023a114e8`.
 - Exact-head workflow: `43030160125`.
-- At the latest observation, both `audit` and `integrated-paranoid` were **IN PROGRESS**.
-- No declaration is promoted on the basis of this candidate until both jobs complete and the integrated Lean 4.35.0 transitive axiom audit explicitly passes.
+- Workflow `43030160125` completed with **FAIL** in both jobs.
+- Integrated Lean 4.35.0: `BBMSTPrefixMeasureRecursion.lean:390` and `:392` report `introN failed: There are no additional binders or let bindings in the goal to introduce`. The printed branch goals are equalities of covered/uncovered multiplier conditionals, not implications.
+- The failed declaration and dependent declarations show `sorryAx` in compiler error-recovery output. This is not accepted proof evidence.
 
-Status: **REPAIR CANDIDATE — CI IN PROGRESS; NOT VERIFIED**.
+Status: **FAILED REPAIR CANDIDATE — NOT VERIFIED**. The diagnostic identifies the actual goal shape; it does not refute the mathematical statement.
+
+## 9. Next isolated candidate — PR #148
+
+PR [#148](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/148) is stacked on #147 at exact head `3312aec030719bdb993b502fe3fd62d3b88b9900`. It restores the branch-local `simp [hcov, xprev, Finset.mem_univ]` calls that directly simplify the conditional equalities, while keeping the redundant `ring_nf` lines removed. The exact-head workflow `43030954016` was observed **IN PROGRESS** with both `audit` and `integrated-paranoid` jobs started. This is not a pass. Integrated Lean 4.35.0 and transitive no-`sorryAx` evidence remain required.
+
+Status: **OPEN — CI IN PROGRESS; NOT VERIFIED**.
