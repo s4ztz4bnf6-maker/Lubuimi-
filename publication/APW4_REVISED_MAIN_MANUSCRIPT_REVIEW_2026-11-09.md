@@ -395,3 +395,10 @@ Damit ist der mathematisch korrekte nächste Publikationsschritt klar: Die histo
 - APW4 Lean PR #67, commit 33a66a8491f65616f9572a6efc8fbc91a65d6ed5, CI runs 42599116967 and 42599116987.
 - BBMST geometry PR #56, CI run 42601107408.
 - Integrated BBMST/APW4 PR #69, failed CI runs 42601494591 and 42602474355.
+
+
+---
+
+## Editorial status companion — 11 November 2026
+
+This manuscript's mathematical statements and hypotheses are unchanged by this editorial note. The append-only [APW4 status, external-review comparison, and exact CI addendum](APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) records the follow-up to the external review and the exact PR #145 result. It distinguishes the successful 22-step isolated audit path from the failed integrated-paranoid package build. This companion note does not promote the historical DT/HT instantiation to a completed Lean proof and does not alter the separately held final PDF.

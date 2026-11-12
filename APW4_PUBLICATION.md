@@ -38,3 +38,13 @@ The author reports that the complete manuscript PDF has been independently final
 The repository is public for reading and scholarly citation. Original materials owned by Ta-Yoshua Lubuimi are covered by LICENSE-PROPRIETARY.md, unless a file expressly states another applicable license. No general open-source, redistribution, modification, or commercial-use license is granted. Third-party materials remain under their own licenses.
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
+
+
+## Status update — 11 November 2026
+
+See [the dated review and CI addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) for the comparison against the external review and the exact PR #145 result. The mathematical APW4 status is preserved; historical instantiation and integrated Lean verification remain separately tracked.
+
+
+## Prefix-recursion and historical reconstruction status — 11 November 2026
+
+The new [APW4 prefix-recursion and historical-map status note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md) records the exact PR #154 integrated failure, the two remaining conditional goals, the required structural normalization, and the still-open source reconstruction of `ρ_x`, `W_x`, and `(x,u) ↦ (k,I,J)`. This is a separate technical addendum; the author's separately finalized PDF and the main manuscript text are not overwritten.

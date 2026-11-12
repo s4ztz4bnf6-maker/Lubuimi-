@@ -280,3 +280,8 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## 13. Status and external-review update — 11 November 2026
+
+The append-only [APW4 status/review/CI addendum](APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) records the improvements made in response to the 9 November external review, the remaining historical-instantiation obligations, and the exact PR #145 workflow 43028431770 result. The 22-step isolated audit job passed, while the integrated-paranoid package job failed at the prefix recursion and reported sorryAx in dependent declarations. These results are not conflated. The established mathematical APW4 status remains unchanged.

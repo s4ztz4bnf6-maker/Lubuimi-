@@ -222,3 +222,16 @@ Der mathematische APW4-Beweisstand wird als abgeschlossen geführt. Die vorhande
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**  
 This manuscript is covered by the repository's LICENSE-PROPRIETARY.md. Public access and citation do not grant a general reproduction, redistribution, modification, or commercial-use license.
+
+
+---
+
+## Dated verification-status addendum — 12 November 2026
+
+This append-only addendum supplements the manuscript's mathematical exposition with the exact current verification boundary. The preceding manuscript text is retained verbatim; this note does not change its theorem statements, definitions, hypotheses, or mathematical derivations. The separately finalized author-held publication PDF is not modified by this repository update.
+
+PR [#156](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/156), source head `1add382fec3375cb2a67822ae872c2bc5d3bb8a3`, workflow [43118336799](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43118336799): the isolated audit job passed all 22 steps, including compilation of `BBMSTPrefixMeasureRecursion.lean` containing the new `prefixIndex_last_eq_stageCoordinate` lemma. The audit log does not provide a separate theorem-named axiom line for that lemma. The integrated Lean 4.35.0 job failed at the unchanged `pos` and `neg` goals (lines 417–418); its error-recovery report still includes `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent declarations.
+
+Accordingly, the coordinate lemma is compiler-checked as part of the successfully compiled module, but the dependent prefix-measure recursion is not thereby verified. The integrated failure is not a counterexample to the isolated coordinate equality, since the patch did not alter either branch. The isolated audit pass is not a proof of the full APW4 theorem. Historical source reconstruction, including A1–A3, the original event/index map, weight transport, and BIB capacity/Hall bridge, remains subject to the separate open/“BELEGLÜCKE” qualifications in the dated status ledger. No theorem is promoted by this CI result.
+
+**Evidence separation:** mathematical derivation, historical reconstruction, and Lean/CI verification remain distinct. **Attribution:** Ta-Yoshua Lubuimi; AI systems are assistants only, not authors or independent mathematical verifiers.

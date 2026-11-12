@@ -151,3 +151,51 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+## Research status addendum — 11 November 2026
+
+The append-only [APW4 status and external-review comparison](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md) records the documented improvements against the 9 November external review and the exact PR #145 workflow result.
+
+- The mathematical APW4 energy core, DT/HT, upper energy estimate, and strict lower-bound status remain recorded as established mathematical results under the historical APW4 hypotheses.
+- The review-corrected manuscript now gives explicit finite transport lemmas, a weighted Hall/max-flow argument, the BIB double-counting identity, a finite second-moment proof under named assumptions, and a counterexample to relying on the sign of B(M) alone.
+- The historical instantiation of DT/HT and the complete source-level APW4 event/BIB mapping remain separate reconstruction obligations.
+- PR #145 workflow 43028431770: the 22-step isolated audit job passed; the integrated-paranoid package job failed at BBMSTPrefixMeasureRecursion.lean lines 390–391 and reports sorryAx in dependent declarations. The differing build-path result is recorded as an open diagnostic, not as integrated verification.
+
+The review-corrected main text is not overwritten by a CI-status note. The new addendum supplements it and preserves the 10 November checkpoint.
+
+
+## Append-only status clarification — 11 November 2026
+
+**Mathematical status qualification:** The APW4 DT/HT energy argument and strict lower-bound implication are recorded as mathematically established **under the historical reconstruction assumptions A1–A3 stated in the manuscript/dossier**. This status is conditional on the source-faithful identification of the historical APW4 events, weights, and index sets. The original-definition Event-to-BIB transport, the actual weighted Hall/capacity bridge, and complete historical instantiation of those assumptions remain **OPEN**. The phrase “mathematically established” must not be read as claiming that these historical identifications have already been reconstructed from the source or that the integrated Lean package proves the full historical theorem.
+
+**Current exact CI follow-up:** PR #145 (workflow 43028431770) has isolated audit PASS under Lean/Mathlib 4.28.0 but integrated-paranoid FAIL under Lean/Mathlib 4.35.0. PR #147 (workflow 43030160125, head 5ef81d14256fb85eddc76e052ff837f023a114e8) failed both jobs at the branch goals in `BBMSTPrefixMeasureRecursion.lean:390,392`; `introN` was applied where the goal was an equality. PR #148 (head 3312aec030719bdb993b502fe3fd62d3b88b9900) is the next proof-script candidate and remains unverified pending its exact-head integrated run and transitive `sorryAx` gate.
+
+This status clarification is append-only and does not rewrite the 10 November checkpoint or change any mathematical theorem statement.
+
+
+## PDF proof-exposition clarification — 11 November 2026
+
+The separate review of “Erdős Lean 4 Beweis.pdf” finds that §5 states the strict arithmetic lower bound but does not exhibit its proof; §6 relies on that statement. The PDF therefore does not itself establish the strict lower bound or the resulting contradiction. See the append-only artifact-level audit in [the APW4 status addendum](publication/APW4_STATUS_REVIEW_AND_CI_ADDENDUM_2026-11-11.md). This qualifies the PDF's evidentiary scope without changing theorem statements or unrelated independently verified results.
+
+
+## Odd-covering literature and APW4 method comparison — 11 November 2026
+
+The append-only [odd-covering literature and APW4 method comparison](publication/ODD_COVERING_LITERATURE_AND_APW4_METHOD_COMPARISON_2026-11-11.md) records the published Tao, Hough–Nielsen, BBMST and Berger–Felzenbaum–Fraenkel anchors; the author-claimed Schroeder rank-seven/eight/nine preprints; the Borgatta and Kawahara provenance limits; and the bounded Lean lcm > 10,000 exclusion.
+
+The Schroeder rank claims are sequential preprints by one author, not independent corroboration. Their fibre-distortion/supermodular terminology is a methodological parallel only. APW4's historical index-preserving map, original-weight/mass transport, and BIB capacity/Hall bridge remain **OPEN – NOT VERIFIED**. No manuscript, theorem, Lean source, or license is changed.
+
+
+## Current prefix-recursion and historical-map status — 11 November 2026
+
+See the [dedicated APW4/BBMST status note](publication/APW4_PREFIX_RECURSION_AND_HISTORICAL_MAP_STATUS_2026-11-11.md) and [updated proof-obligation ledger](BBMST_ProofObligations.md). PR #154 has an independent audit PASS but an integrated Lean 4.35.0 FAIL at lines 405–406, with `sorryAx` in the target and dependent recursion declarations. The next step is canonical `values`/`Covered` normalization and separate branch proofs. The historical definitions `ρ_x`, `W_x`, and the map `(x,u) ↦ (k,I,J)` remain open. No theorem is promoted by this documentation update.
+
+
+## Exact CI checkpoint — 12 November 2026
+
+The append-only [PR #156 coordinate-lemma and CI checkpoint](publication/APW4_CI_CHECKPOINT_2026-11-12.md) records the completed workflow 43118336799: isolated audit SUCCESS (22/22 steps; the prefix-recursion module containing the new coordinate lemma compiled) and integrated-paranoid FAILURE at the unchanged `pos`/`neg` goals on lines 417–418 with `sorryAx` in error-recovery output. The audit log does not print a separate theorem-named axiom entry for the lemma. This is not a full APW4 proof or historical-map verification. PR #156 remains open and unmerged.
+
+
+## Latest APW4 / BBMST status — 12 November 2026
+
+The append-only [PR #157 / Lean 4.35 update-branch checkpoint](publication/APW4_CI_CHECKPOINT_2026-11-12.md) records the exact current source head and CI split: isolated audit PASS; integrated-paranoid FAIL at the positive and negative update branches, with `sorryAx` in error-recovery output. The local hhk-elaboration/extension-identity step and the pointwise Lean 4.28.0 no-`sorryAx` result are preserved as separate successful results; neither substitutes for integrated Lean 4.35 verification. The exact source and proposed, not-yet-executed minimal repro are documented in [the minimal-repro specification](publication/APW4_MINIMAL_REPRO_SPEC_2026-11-12.md). No code patch, CI restart, or merge is included in this documentation update.
