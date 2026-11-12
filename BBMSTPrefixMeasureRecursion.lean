@@ -404,6 +404,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
+  have hhk : hk = hj := Subsingleton.elim _ _
+  cases hhk
+  have hroundtrip :
+      extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
+    exact extendPrefix_restrictPrefix C hk y
   simp only [F, prefixFibreData, prefixUniformFibre,
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
