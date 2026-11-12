@@ -76,3 +76,16 @@ PR [#156](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/156), head `1add382f
 - Integrated-paranoid job 130852038915: **FAILURE** at `pos` and `neg`, lines 417–418. The error-recovery report still contains `sorryAx` for `prefixFibre_updatedWeight_eq_PAt` and dependent declarations.
 
 The integrated failure is not evidence against the isolated coordinate lemma: the patch deliberately leaves the two branch goals unchanged. The module audit pass is not proof of the full dependent recursion. Membership transport, proof irrelevance, and the two branch closures remain separate obligations. PR #156 remains open/draft/unmerged. No theorem or historical APW4 obligation is promoted by this CI result.
+
+
+
+## 12 November 2026 — konkrete Lean-4.35-Update-Transportpflicht
+
+| Deklaration / Stelle | Exakter Befund | Status / nächste Pflicht |
+|---|---|---|
+| `prefixFibre_updatedWeight_eq_PAt`, PR #157 head `3e0503ea51c492f7a5f738584136bf198a6a945c` | Workflow 43139603300: isolierter Audit PASS; integrierter Lean 4.35.0 FAIL bei Zeilen 423/424 (`pos`/`neg`), Fehler-Recovery enthält `sorryAx` | **OFFEN – NICHT VERIFIZIERT**; integrierte Update-Gleichheit schließen und transitive Axiome ohne `sorryAx` prüfen |
+| Koordinatentransport | `prefixIndex_last_eq_stageCoordinate` und `stageCoordinate_eq_of_bound` sind vorhanden; die isolierte Audit-Ausgabe für das erste Lemma ist `[propext, Quot.sound]` | Koordinatengleichheit allein reicht nicht als Beweis der abhängigen Finset-/Prefix-Gleichheit |
+| Proof-Witness-Transport | `hk` und `nextPrefixBound a j hj` sind Beweise derselben Schranke; Anwendungen in `prefixCoveredValues` und `restrictPrefix` sind abhängig | Getrennte Transportprobe erforderlich; nicht als bereits durch `Subsingleton.elim` vollständig gelöst markieren |
+| Lean-4.28-Punktnachweis | Zieltheorem-Profil `[propext, Classical.choice, Quot.sound]`, kein `sorryAx` im berichteten Audit | Bestanden für den konkreten 4.28-Source-/Build-Kontext; kein Ersatz für integrierte 4.35-Verifikation |
+
+Minimalrepro-Spezifikation und exakter Quelltext: [APW4_MINIMAL_REPRO_SPEC_2026-11-12.md](publication/APW4_MINIMAL_REPRO_SPEC_2026-11-12.md). Die Reproduktion ist noch nicht erstellt oder ausgeführt.
