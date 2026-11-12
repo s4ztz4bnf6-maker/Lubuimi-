@@ -63,3 +63,16 @@ Dieser Nachtrag ergänzt die Forschungs- und Verifikationsdokumentation. Er änd
 Die vorhandenen Dateien `LICENSE-PROPRIETARY.md` und `LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md` bleiben unverändert. Dieser Nachtrag gewährt keine zusätzliche Lizenz. Lean, Mathlib, BBMST-Quellen und sonstige Drittmaterialien bleiben ihren jeweiligen Lizenzbedingungen unterworfen.
 
 **Integritätsregel:** mathematische Herleitung, historische Rekonstruktion und Lean-/CI-Verifikation bleiben drei getrennte Evidenzebenen.
+
+
+## 12 November 2026 — PR #157 hhk-Elaboration und Update-Diagnose
+
+PR [#157](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/157), exakter Head `3e0503ea51c492f7a5f738584136bf198a6a945c`, Workflow [43139603300](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43139603300): isolierter Audit-Job 130923109320 **SUCCESS**, integrierter Job 130923109573 **FAILURE**. Die offenen Ziele liegen nun bei Zeile 423 (`pos`) und 424 (`neg`). Die integrierte Fehler-Recovery-Ausgabe enthält weiterhin `sorryAx` in der Zieldeklaration und abhängigen PAt-Deklarationen.
+
+Der lokale Schrankenzeugen-Schritt `hhk : hk = hj := Subsingleton.elim _ _; cases hhk; have hk : k + 1 ≤ n := hj` und die anschließende Elaborierung von `extendPrefix_restrictPrefix` sind geschlossen. Der punktuelle Lean-4.28.0-Nachweis hat das Profil `[propext, Classical.choice, Quot.sound]` ohne `sorryAx`; die integrierte 4.35-Verifikation bleibt davon getrennt.
+
+Der vollständige Theoremquelltext wurde am exakten PR-Head aus `BBMSTPrefixMeasureRecursion.lean` abgerufen. Die Quelltextfälle sind zwei Zweige eines `by_cases hcov`, keine ausdrücklich benannten `case pos`-/`case neg`-Blöcke. Die konkrete Stelle und der Minimalrepro-Plan sind in [APW4_MINIMAL_REPRO_SPEC_2026-11-12.md](APW4_MINIMAL_REPRO_SPEC_2026-11-12.md) gesichert.
+
+Die Log-Diagnose trennt (i) lokale `prefixIndex hj (Fin.last (a+j))`-Koordinate gegen rekursive `stageCoordinate (nextPrefixBound a j hj)` und (ii) abhängige Beweiszeugen `hk` gegen `nextPrefixBound a j hj` in `prefixCoveredValues`/`restrictPrefix`. Die Gleichheitslemmata für Koordinaten beweisen noch nicht die Gleichheit der vollständigen abhängigen Ausdrücke.
+
+Nächster gewählter Schritt: quelltextgetreuer Lean-4.35-Minimalrepro. **Noch nicht erstellt oder ausgeführt.** Keine Quellcodeänderung, kein CI-Neustart, kein Merge. Historische APW4-Rekonstruktion und BIB-/Gewichtstransport bleiben unabhängig offen.
