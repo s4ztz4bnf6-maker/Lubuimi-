@@ -406,6 +406,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     PAt C (A := A) a ha P0 δ (j + 1) hj y
   have hhk : hk = hj := Subsingleton.elim _ _
   cases hhk
+  have hk : k + 1 ≤ n := hj
   have hroundtrip :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
     exact extendPrefix_restrictPrefix C hk y
