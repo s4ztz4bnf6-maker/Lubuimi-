@@ -194,3 +194,8 @@ See the [dedicated APW4/BBMST status note](publication/APW4_PREFIX_RECURSION_AND
 ## Exact CI checkpoint — 12 November 2026
 
 The append-only [PR #156 coordinate-lemma and CI checkpoint](publication/APW4_CI_CHECKPOINT_2026-11-12.md) records the completed workflow 43118336799: isolated audit SUCCESS (22/22 steps; the prefix-recursion module containing the new coordinate lemma compiled) and integrated-paranoid FAILURE at the unchanged `pos`/`neg` goals on lines 417–418 with `sorryAx` in error-recovery output. The audit log does not print a separate theorem-named axiom entry for the lemma. This is not a full APW4 proof or historical-map verification. PR #156 remains open and unmerged.
+
+
+## Latest APW4 / BBMST status — 12 November 2026
+
+The append-only [PR #157 / Lean 4.35 update-branch checkpoint](publication/APW4_CI_CHECKPOINT_2026-11-12.md) records the exact current source head and CI split: isolated audit PASS; integrated-paranoid FAIL at the positive and negative update branches, with `sorryAx` in error-recovery output. The local hhk-elaboration/extension-identity step and the pointwise Lean 4.28.0 no-`sorryAx` result are preserved as separate successful results; neither substitutes for integrated Lean 4.35 verification. The exact source and proposed, not-yet-executed minimal repro are documented in [the minimal-repro specification](publication/APW4_MINIMAL_REPRO_SPEC_2026-11-12.md). No code patch, CI restart, or merge is included in this documentation update.
