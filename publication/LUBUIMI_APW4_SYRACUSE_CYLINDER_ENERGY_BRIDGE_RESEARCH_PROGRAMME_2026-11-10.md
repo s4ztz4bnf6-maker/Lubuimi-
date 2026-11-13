@@ -625,3 +625,10 @@ PR #82's initial source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c failed at 
 ## Syracuse terminal-residue Lean retry — current exact head, 13 November 2026
 
 PR #82 now has exact source head 4c782523c9e86d22b1267e8ebfc3d99cccdf9e1d. The previous run 43411256426 compiled the library up to the new theorem but failed at a cast-normalization mismatch between the cast of the natural power and the power of the cast. The source now uses the cast of the natural power. Exact workflow [43411629727](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43411629727) is queued. No pass is claimed. The candidate is only the unique terminal residue-class theorem; oddness, lift counting, density, complete word realization, and global infinite-path exclusion remain separate.
+
+
+
+
+## Syracuse terminal residue Lean candidate — current head, 13 November 2026
+
+PR #82 source head 926f0fd2f627d504e1f32c61a00d38e763afea38 now matches the local unit goal with the cast of the natural power. Exact workflow [43412074002](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412074002), job 131840693951, is in progress. The prior 4c782 head still failed at the hunit cast type. No formal pass is claimed. The candidate remains uniqueness only.
