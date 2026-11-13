@@ -261,3 +261,16 @@ The [BIB label identity audit](../docs/APW4_BIB_LABEL_IDENTITY_AUDIT_2026-11-13.
 The same audit records exact PR #158 head f494dd15d83cab582a9364d3eebca1705c8dcadc and workflow [43143591356](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43143591356): isolated audit SUCCESS, integrated Lean 4.35.0 FAILURE at the pointwise update branches pos/neg (lines 423–424), with downstream sorryAx in error-recovery output. This is a formal integration failure, not a mathematical counterexample.
 
 **Status clarification:** the strict lower bound remains mathematically **ABGESCHLOSSEN laut Dossier v1.5 §25**. Its full historical derivation remains **BELEGLÜCKE** in the accessible source record. The historical definitions and end-to-end Lean verification are separate obligations. No theorem hypothesis is changed by this clarification.
+
+
+
+
+## 13 November 2026 — PR #159 proof-script candidate
+
+PR [#159](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/159), exact head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c, changes only the pointwise update branch split in BBMSTPrefixMeasureRecursion.lean and its isolated reproduction. The by_cases proposition is now stated with the original successor bound hj and explicit prefix a+j, matching the indices displayed in the PR #158 integrated failure trace; the previous candidate used the locally reconstructed hk and k expressions.
+
+Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43410655372) is still **IN PROGRESS** at this record:
+- audit job 131835937905: IN PROGRESS;
+- integrated-paranoid job 131835938270: IN PROGRESS.
+
+No branch closure, theorem success, axiom profile, or sorryAx rejection is claimed until both jobs complete and their logs are inspected. PR #159 remains a draft proof-script candidate. This candidate does not affect the separate historical BIB/APW4 energy obligations.
