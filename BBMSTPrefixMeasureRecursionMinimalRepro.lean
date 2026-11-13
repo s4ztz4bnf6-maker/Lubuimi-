@@ -1,4 +1,4 @@
-import BBMSTPrefixMeasureRecursion
+import BBMSTPrefixMeasureCore
 
 /-!
 # Minimal reproduction: APW4 pointwise fibre update
