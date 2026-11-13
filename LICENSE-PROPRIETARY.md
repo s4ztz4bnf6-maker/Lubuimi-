@@ -49,3 +49,8 @@ This policy does not create an automatic contractual royalty for every unauthori
 ## Documentation-status clarification — 11 November 2026
 
 The dated research-status and manuscript addenda in this repository are documentation and evidence-record updates only. They do not amend, expand, narrow, or replace this notice or the separate commercial licensing policy. No new license is granted by the status corrections, manuscript addenda, README updates, or pull requests. Existing exclusions for third-party materials and the distinction between protected original expression and mathematical facts, abstract ideas, methods, and theorem statements remain unchanged. Any permission for protected original materials must still be obtained under the terms stated above and, where applicable, in a separate written agreement.
+
+
+## Documentation-status clarification — 13 November 2026
+
+The 13 November 2026 BIB-label identity audit, the corresponding manuscript/README updates, and the PR #158 CI diagnosis are research-status and evidence-record additions only. They do not amend this notice, the separate commercial licensing policy, ownership, third-party exclusions, or any license terms.
