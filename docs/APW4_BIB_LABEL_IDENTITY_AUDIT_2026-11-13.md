@@ -235,3 +235,36 @@ For prime q this excludes \(s=1,2\) (which give no integral prime q; \(s=2\) giv
 The first explicit prefixIndex_last_eq_stageCoordinate candidate (head a49ce83ca5db434f8a479a545d09c580e6b24d6e) still failed integrated Lean 4.35.0 at the update branches. The goal trace shows two occurrences of prefixCoveredValues: the finite-fibre update uses the local proof witness hj, while the unfolded recursive PAt branch uses nextPrefixBound a j hj.
 
 The next candidate, PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30, explicitly identifies stageCoordinate hj with stageCoordinate (nextPrefixBound a j hj) using stageCoordinate_eq_of_bound before simplifying. Exact workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208) has audit job 131842924357 and integrated-paranoid job 131842924762 **IN PROGRESS**. No proof or axiom result is claimed for this head yet.
+
+
+
+
+## 13 November 2026 — correction: BIB H1 uses a lower row-size bound
+
+The PR #57 primary note states H1 as
+\[
+|S_x|\geq r,\qquad |S_x\cap S_y|\leq\mu\quad(x\ne y),
+\]
+not as the equality \(|S_x|=r\). The intended specialization sets \(r=q-1\). The preceding exact-saturation derivation remains valid, but its row-size premise must be stated in this inequality form.
+
+Indeed, with \(|D|=\tau(B)\), inclusion-exclusion gives
+\[
+|S_x\cap S_y|\geq |S_x|+|S_y|-\tau(B)
+\geq2q-2-\tau(B).
+\]
+The one-prime hypothesis gives \(\mu(B)\leq2q-2-\tau(B)\). If the BIB upper parameter \(\mu\) is the same displayed numerical envelope as \(\mu^*(B)\) and the one-prime \(\mu(B)\), H1 forces
+\[
+\mu=\mu^*(B)=\mu(B)=2q-2-\tau(B).
+\]
+Moreover, equality must hold throughout the inclusion-exclusion bound. Since each row has size at least q−1, for every pair x≠y we must have
+\[
+|S_x|=|S_y|=q-1,\qquad |S_x\cap S_y|=\mu(B).
+\]
+Thus, when \(|U|\geq2\), every row in a valid BIB specialization must in fact have **exactly** q−1 labels, even though H1 states only a lower bound.
+
+Consequences for the depth-one candidate:
+- If \(S_x=S_{x,1}\), then the one-prime spine gives \(|S_{x,1}|=q-1\) for \(k_x>1\), and q for \(k_x=1\). H1 plus the numerical hypotheses therefore forces \(k_x>1\) for every x.
+- If one exceptional \(k_x=1\) exists, a q−1 puncture or another explicit projection is necessary. The punctured candidate must still prove exact pairwise intersection saturation and proper LCM.
+- The one-prime full-LCM comparison is at \(j=\min(k_x,k_y)\); the earlier correction about fixed-depth scope remains in force.
+
+This is **BELEGT as a necessary consequence** of the actual H1 inequality and the displayed parameter hypotheses. It does not verify that the historical BIB rows are the depth-one sets, nor that their proper-LCM property holds.
