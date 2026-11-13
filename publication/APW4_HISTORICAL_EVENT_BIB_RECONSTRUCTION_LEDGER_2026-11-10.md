@@ -359,3 +359,22 @@ Inspection of the integrated goal identifies the mismatch between the final coor
 ## Addendum 1.22 — explicit final-coordinate transport candidate, 13 November 2026
 
 PR #159 head a49ce83ca5db434f8a479a545d09c580e6b24d6e applies prefixIndex_last_eq_stageCoordinate before the pointwise update split. This targets the exact Lean 4.35.0 mismatch between the prefixIndex of the last coordinate and the stageCoordinate of the covered-value Finset. Exact workflow [43411925347](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411925347) has audit job 131840194635 and integrated-paranoid job 131840194925 in progress. The preceding 0ee3144 head passed the isolated audit with standard profiles for the pointwise update theorem and dependent PAt declarations, but failed integrated Lean 4.35.0. No result is claimed for the new candidate.
+
+
+
+
+## Addendum 1.23 — correction to comparison-depth scope; exact BIB saturation
+
+The 31 October one-prime proof compares two fibres at the pair-dependent depth \(j=\min(k_x,k_y)\). It does not assert full LCM for every fixed depth. Thus \(S_x=S_{x,1}\) is not generally ruled out when all terminal depths \(k_x>1\): each depth-one row then has size q−1, and the full-LCM comparison takes place at a later depth. If some \(k_x=1\), that row has q labels rather than q−1 and every pair involving it is compared at depth one with full LCM; a separate source-defined deletion/projection is required. At most one x can have \(k_x=1\), since two such rows would force full LCM B and contradict distinctness modulo B.
+
+A separate exact necessary condition follows directly from BIB H1. If every BIB row has size q−1 in a label universe of size \(\tau(B)\), then
+\[
+|S_x\cap S_y|\geq2q-2-\tau(B).
+\]
+The one-prime hypothesis \(\tau(B)+\mu(B)<2q-1\) implies \(\mu(B)\leq2q-2-\tau(B)\). When the BIB parameter is the explicit PR #57 \(\mu^*(B)\) envelope (which has the same displayed arithmetic formula as the one-prime proper-LCM \(\mu(B)\)), H1's upper bound therefore forces
+\[
+\mu^*(B)=\mu(B)=2q-2-\tau(B),\qquad |S_x\cap S_y|=\mu(B)
+\]
+for every pair. This is a **BELEGT necessary arithmetic compatibility condition**, not a historical identification or a proof of proper LCM.
+
+The detailed correction and the two possible depth-one extraction cases are recorded in the 13 November BIB-label audit. It supersedes the earlier broad wording that treated the one-prime full-LCM conclusion as an obstruction at arbitrary fixed depth. The remaining historical extraction and energy-transfer obligations stay open.
