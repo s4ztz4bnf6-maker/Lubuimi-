@@ -166,13 +166,20 @@ jobs:
           set -o pipefail
           echo 'STEP 5/6 START: BBMSTPrefixMeasureCore' | tee -a core-repro-axioms.log
           mkdir -p .lake/build/lib/lean
-          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureCore.olean BBMSTPrefixMeasureCore.lean 2>&1 | tee -a core-repro-axioms.log
-          profile_count=$(grep -c 'depends on axioms:' core-repro-axioms.log || true)
+          core_log=$(mktemp)
+          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureCore.olean BBMSTPrefixMeasureCore.lean 2>&1 | tee "$core_log" | tee -a core-repro-axioms.log
+          profile_count=$(grep -Ec "'BBMSTPrefixMeasure\\.(coordinateDefault|prefixCoveredValues|PAt|prefixUniformFibre|prefixFibreData)' depends on axioms:" "$core_log" || true)
           if [ "$profile_count" -ne 5 ]; then
-            echo "CORE_AXIOM_PROFILES=INCOMPLETE (expected 5, observed $profile_count)" | tee -a core-repro-axioms.log
+            echo "CORE_AXIOM_PROFILES=INCOMPLETE (expected 5 named profiles, observed $profile_count)" | tee -a core-repro-axioms.log
             exit 1
           fi
-          if grep -q 'sorryAx' core-repro-axioms.log; then
+          for theorem in coordinateDefault prefixCoveredValues PAt prefixUniformFibre prefixFibreData; do
+            if ! grep -Fq "'BBMSTPrefixMeasure.$theorem' depends on axioms:" "$core_log"; then
+              echo "CORE_AXIOM_PROFILE_MISSING=$theorem" | tee -a core-repro-axioms.log
+              exit 1
+            fi
+          done
+          if grep -q 'sorryAx' "$core_log"; then
             echo 'CORE_AXIOM_AUDIT=FAIL (sorryAx found)' | tee -a core-repro-axioms.log
             exit 1
           fi
