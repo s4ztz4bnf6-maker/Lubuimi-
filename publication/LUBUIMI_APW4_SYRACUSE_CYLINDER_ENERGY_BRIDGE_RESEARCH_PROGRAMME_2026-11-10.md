@@ -611,3 +611,10 @@ For a fixed positive valuation word with total exponent A and length r, the term
 Collatz PR #82 adds a Lean candidate for uniqueness of the terminal congruence class: source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c, workflow [43410857139](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43410857139), job 131836620024. The job was in progress at this snapshot; no formal pass is claimed. The lift count and product-density Lean declarations remain open. SYR-01 word realization, SYR-05 infinite-path exclusion, and SYR-06 global termination remain open.
 
 The APW4 and Syracuse projects remain logically separate: the finite Syracuse uniform-fibre model is not identified with historical APW4 events or BIB slots, and no APW4 weight-preserving transport follows from the Syracuse finite density.
+
+
+
+
+## Syracuse Lean retry update — 13 November 2026
+
+PR #82's initial source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c failed at API elaboration: the coprime power lemmas require explicit exponents, and ZMod.isUnit_iff_coprime requires explicit natural representative and modulus. Corrected source head e0c275fd94d8ee24c3348888952335b06657ce41 is under exact workflow [43411256426](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43411256426), Lean job 131837949086, currently **IN PROGRESS**. No pass is claimed. The candidate still covers uniqueness only; oddness, lift counting, product density, full word realization, and infinite-path exclusion remain separate obligations.
