@@ -103,3 +103,103 @@ jobs:
         run: |
           lake build ResearchKernelAudit
           lake check --paranoid
+  core-repro-check:
+    name: Core / MinimalRepro check (Lean 4.35.0)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize diagnostic log
+        run: |
+          mkdir -p kernel-audit
+          printf '%s\n' 'CORE-REPRO CHECK: Lean 4.35.0 / Mathlib 4.35.0' 'AXIOM_PROFILES: NOT_REACHED' > kernel-audit/core-repro-axioms.log
+      - name: Install Lean 4.35.0, stage isolated sources, and generate Mathlib 4.35.0 manifest
+        run: |
+          curl --fail --location --retry 3 --max-time 60 https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain leanprover/lean4:v4.35.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          cp BBMSTGeometryStageCore.lean BBMSTFiberMeasureCore.lean BBMSTFiniteFibreUpdate.lean BBMSTUniformFibreInstantiation.lean BBMSTPrefixMeasureCore.lean BBMSTPrefixMeasureRecursionMinimalRepro.lean kernel-audit/
+          cd kernel-audit
+          lake update
+      - name: Restore Mathlib 4.35.0 cache
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: kernel-audit
+          build: false
+          use-mathlib-cache: true
+      - name: Compile prerequisite 1/4 - BBMSTGeometryStageCore
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 1/6 START: BBMSTGeometryStageCore' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTGeometryStageCore.olean BBMSTGeometryStageCore.lean 2>&1 | tee -a core-repro-axioms.log
+          echo 'STEP 1/6 PASS: BBMSTGeometryStageCore' | tee -a core-repro-axioms.log
+      - name: Compile prerequisite 2/4 - BBMSTFiberMeasureCore
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 2/6 START: BBMSTFiberMeasureCore' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiberMeasureCore.olean BBMSTFiberMeasureCore.lean 2>&1 | tee -a core-repro-axioms.log
+          echo 'STEP 2/6 PASS: BBMSTFiberMeasureCore' | tee -a core-repro-axioms.log
+      - name: Compile prerequisite 3/4 - BBMSTFiniteFibreUpdate
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 3/6 START: BBMSTFiniteFibreUpdate' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTFiniteFibreUpdate.olean BBMSTFiniteFibreUpdate.lean 2>&1 | tee -a core-repro-axioms.log
+          echo 'STEP 3/6 PASS: BBMSTFiniteFibreUpdate' | tee -a core-repro-axioms.log
+      - name: Compile prerequisite 4/4 - BBMSTUniformFibreInstantiation
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 4/6 START: BBMSTUniformFibreInstantiation' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTUniformFibreInstantiation.olean BBMSTUniformFibreInstantiation.lean 2>&1 | tee -a core-repro-axioms.log
+          echo 'STEP 4/6 PASS: BBMSTUniformFibreInstantiation' | tee -a core-repro-axioms.log
+      - name: Compile Core and verify its five axiom profiles
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 5/6 START: BBMSTPrefixMeasureCore' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTPrefixMeasureCore.olean BBMSTPrefixMeasureCore.lean 2>&1 | tee -a core-repro-axioms.log
+          profile_count=$(grep -c 'depends on axioms:' core-repro-axioms.log || true)
+          if [ "$profile_count" -ne 5 ]; then
+            echo "CORE_AXIOM_PROFILES=INCOMPLETE (expected 5, observed $profile_count)" | tee -a core-repro-axioms.log
+            exit 1
+          fi
+          if grep -q 'sorryAx' core-repro-axioms.log; then
+            echo 'CORE_AXIOM_AUDIT=FAIL (sorryAx found)' | tee -a core-repro-axioms.log
+            exit 1
+          fi
+          echo 'STEP 5/6 PASS: BBMSTPrefixMeasureCore' | tee -a core-repro-axioms.log
+          echo 'CORE_AXIOM_PROFILES=5; sorryAx=ABSENT' | tee -a core-repro-axioms.log
+      - name: Compile MinimalRepro and verify its axiom profile
+        working-directory: kernel-audit
+        run: |
+          set -o pipefail
+          echo 'STEP 6/6 START: BBMSTPrefixMeasureRecursionMinimalRepro' | tee -a core-repro-axioms.log
+          mkdir -p .lake/build/lib/lean
+          lake env lean BBMSTPrefixMeasureRecursionMinimalRepro.lean 2>&1 | tee -a core-repro-axioms.log
+          profile_count=$(grep -c 'depends on axioms:' core-repro-axioms.log || true)
+          if [ "$profile_count" -ne 6 ]; then
+            echo "MINIMALREPRO_AXIOM_PROFILE=INCOMPLETE (expected cumulative 6, observed $profile_count)" | tee -a core-repro-axioms.log
+            exit 1
+          fi
+          if grep -q 'sorryAx' core-repro-axioms.log; then
+            echo 'MINIMALREPRO_AXIOM_AUDIT=FAIL (sorryAx found)' | tee -a core-repro-axioms.log
+            exit 1
+          fi
+          echo 'STEP 6/6 PASS: BBMSTPrefixMeasureRecursionMinimalRepro' | tee -a core-repro-axioms.log
+          echo 'MINIMALREPRO_AXIOM_PROFILE=EMITTED; cumulative profiles=6; sorryAx=ABSENT' | tee -a core-repro-axioms.log
+      - name: Upload Core / MinimalRepro diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-repro-axioms
+          path: kernel-audit/core-repro-axioms.log
+          if-no-files-found: warn
