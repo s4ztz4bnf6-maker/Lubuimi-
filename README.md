@@ -323,3 +323,12 @@ therefore becomes
 \boxed{q=1+3\cdot2^{s-2}}.
 \]
 For prime q this excludes \(s=1,2\) (which give no integral prime q; \(s=2\) gives q=4), so \(s\geq3\), and q must be congruent to 1 modulo 3. This is a **BELEGT necessary arithmetic restriction** for the square-free BIB specialization, conditional on the BIB parameter being the displayed \(\mu^*(B)\) and on the one-prime numerical hypothesis. It is not evidence that the historical B is square-free.
+
+
+
+
+## 13 November 2026 — second proof-witness alignment candidate
+
+The first explicit prefixIndex_last_eq_stageCoordinate candidate (head a49ce83ca5db434f8a479a545d09c580e6b24d6e) still failed integrated Lean 4.35.0 at the update branches. The goal trace shows two occurrences of prefixCoveredValues: the finite-fibre update uses the local proof witness hj, while the unfolded recursive PAt branch uses nextPrefixBound a j hj.
+
+The next candidate, PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30, explicitly identifies stageCoordinate hj with stageCoordinate (nextPrefixBound a j hj) using stageCoordinate_eq_of_bound before simplifying. Exact workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208) has audit job 131842924357 and integrated-paranoid job 131842924762 **IN PROGRESS**. No proof or axiom result is claimed for this head yet.
