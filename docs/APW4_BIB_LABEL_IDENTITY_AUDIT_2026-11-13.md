@@ -161,3 +161,51 @@ Exact workflow [43411925347](https://github.com/s4ztz4bnf6-maker/Lubuimi-/action
 - integrated-paranoid job 131840194925: IN PROGRESS.
 
 The preceding exact head 0ee3144 has audit PASS with standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one, but integrated Lean 4.35.0 FAIL. No result is claimed for the new coordinate-transport candidate until both jobs complete.
+
+
+
+
+## 13 November 2026 — correction: comparison depth and exact BIB intersection saturation
+
+This addendum corrects the scope of the preceding same-depth discussion. In the 31 October one-prime proof, the full-LCM comparison is made at the pair-dependent depth
+\[
+j=\min(k_x,k_y),
+\]
+not at every fixed depth j. Therefore the theorem does **not** imply that \(S_{x,1}\cap S_{y,1}\) has full LCM for arbitrary pairs whose two terminal depths exceed 1. The earlier wording that treated the full-LCM conclusion as a general fixed-depth obstruction was too broad.
+
+The precise cases are:
+- If \(k_x,k_y>1\), then \(|S_{x,1}|=|S_{y,1}|=q-1\). The BIB row-size condition is compatible with the candidate \(S_x=S_{x,1}\). The one-prime full-LCM argument compares at a later depth \(j=\min(k_x,k_y)\), so it does not by itself contradict proper LCM at depth one.
+- If at least one of \(k_x,k_y\) equals 1, the comparison depth is 1 and the one-prime theorem forces full LCM for the full sets \(S_{x,1},S_{y,1}\). Also, a row with \(k_x=1\) has size q rather than q−1. Such a row cannot be used unchanged as a BIB row of size q−1; a source-defined deletion or different projection would be needed.
+- There can be **at most one** base residue x with \(k_x=1\): two such residues would have depth-one sets of size q, whose intersection is larger than \(\mu(B)\), forcing full LCM B and then x=y modulo B, a contradiction.
+
+### Exact arithmetic compatibility condition from BIB H1
+
+There is a stronger necessary condition independent of the terminal-depth issue. Let \(D=\mathcal D(B)\), so \(|D|=\tau(B)\), and suppose BIB H1 uses \(|S_x|=q-1\) and \(|S_x\cap S_y|\leq\mu^*(B)\). For any two subsets of a \(\tau(B)\)-element set,
+\[
+|S_x\cap S_y|\geq |S_x|+|S_y|-\tau(B)
+=2q-2-\tau(B).
+\]
+The one-prime theorem's numerical hypothesis
+\[
+\tau(B)+\mu(B)<2q-1
+\]
+and integrality imply
+\[
+\mu(B)\leq2q-2-\tau(B).
+\]
+The PR #57 auxiliary parameter \(\mu^*(B)\) and the one-prime \(\mu(B)\) have the same displayed arithmetic formula when both are defined by the proper-divisor/proper-LCM envelope. Therefore, **if the BIB parameter is this same numerical quantity**, H1 and the one-prime numerical hypothesis force
+\[
+\boxed{\mu^*(B)=\mu(B)=2q-2-\tau(B)}
+\]
+and every BIB pair must saturate
+\[
+\boxed{|S_x\cap S_y|=\mu(B).}
+\]
+This is a necessary arithmetic compatibility condition, not a proof that the historical BIB rows exist or that their proper-LCM property holds.
+
+### Refined row-extraction alternatives
+
+1. **No depth-one terminal fibres:** if every \(k_x>1\), the natural candidate \(S_x=S_{x,1}\) has the required size q−1. It remains to prove the pairwise proper-LCM property and exact intersection saturation \(|S_x\cap S_y|=\mu(B)\).
+2. **One exceptional depth-one terminal fibre:** at most one x₀ can have \(k_{x_0}=1\). Its full set \(S_{x_0,1}\) has size q, so a BIB row of size q−1 would require a canonical deleted label or another explicit projection. For every y≠x₀, the full depth-one intersection has LCM B. A puncture can reconcile this only if it preserves exact BIB saturation and removes all maximal p-adic witnesses for at least one prime coordinate. The deleted label must be source-defined; no such rule has yet been recovered.
+
+**Corrected status:** the general identification \(S_x=S_{x,1}\) is **not ruled out** when all terminal depths exceed 1. The exceptional \(k_x=1\) case requires a separate row extraction. The exact numerical saturation condition above is **BELEGT as a necessary consequence** of the displayed finite-set and parameter inequalities. Historical identification, canonical deletion, proper-LCM verification, and APW4 energy transport remain **OFFEN / NICHT REPRODUZIERT**.
