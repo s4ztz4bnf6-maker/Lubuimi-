@@ -605,3 +605,10 @@ The remaining target is still the same one local conditional identity in `prefix
 ## BIB label identity correction — 13 November 2026
 
 The historical event/BIB ledger now records the conditional incompatibility between PR #57's proper-LCM intersection premise and the 31 October one-prime theorem's full-LCM conclusion for a literal same-depth identification of S_x and S_{x,j}. The extraction map, weighted Hall transfer, and historical APW4 energy coupling remain open. The strict lower bound remains mathematically completed according to Dossier v1.5 §25; its accessible-source reproduction gap remains BELEGLÜCKE. PR #159's exact-head Lean workflow 43410655372 is in progress; no result is claimed.
+
+
+
+
+## BIB H1 saturation correction — 13 November 2026
+
+The PR #57 hypothesis is \(|S_x|\geq q-1\), not exact equality. Combining inclusion-exclusion with the one-prime parameter inequality forces \(\mu=\mu^*=\ 2q-2-\tau(B)\), and then every BIB row must in fact have exactly q−1 labels and every pair intersection exactly μ, if the two displayed μ parameters coincide. A direct depth-one identification \(S_x=S_{x,1}\) consequently requires all terminal depths \(k_x>1\); any \(k_x=1\) row needs a separate q−1 extraction. The full derivation and caveats are in the historical BIB reconstruction ledger.
