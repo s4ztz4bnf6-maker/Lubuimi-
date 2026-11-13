@@ -197,3 +197,20 @@ This is a necessary arithmetic compatibility condition, not a proof that the his
 2. **One exceptional depth-one terminal fibre:** at most one x₀ can have \(k_{x_0}=1\). Its full set \(S_{x_0,1}\) has size q, so a BIB row of size q−1 would require a canonical deleted label or another explicit projection. For every y≠x₀, the full depth-one intersection has LCM B. A puncture can reconcile this only if it preserves exact BIB saturation and removes all maximal p-adic witnesses for at least one prime coordinate. The deleted label must be source-defined; no such rule has yet been recovered.
 
 **Corrected status:** the general identification \(S_x=S_{x,1}\) is **not ruled out** when all terminal depths exceed 1. The exceptional \(k_x=1\) case requires a separate row extraction. The exact numerical saturation condition above is **BELEGT as a necessary consequence** of the displayed finite-set and parameter inequalities. Historical identification, canonical deletion, proper-LCM verification, and APW4 energy transport remain **OFFEN / NICHT REPRODUZIERT**.
+
+
+
+
+### Square-free specialization of the exact saturation condition
+
+If B is square-free with \(s=\omega(B)\), then \(\tau(B)=2^s\) and \(\mu^*(B)=2^{s-1}\). The necessary equality
+\[
+\mu^*(B)=2q-2-\tau(B)
+\]
+therefore becomes
+\[
+2^{s-1}=2q-2-2^s,
+\qquad
+\boxed{q=1+3\cdot2^{s-2}}.
+\]
+For prime q this excludes \(s=1,2\) (which give no integral prime q; \(s=2\) gives q=4), so \(s\geq3\), and q must be congruent to 1 modulo 3. This is a **BELEGT necessary arithmetic restriction** for the square-free BIB specialization, conditional on the BIB parameter being the displayed \(\mu^*(B)\) and on the one-prime numerical hypothesis. It is not evidence that the historical B is square-free.
