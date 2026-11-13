@@ -72,3 +72,16 @@ The mathematical status recorded in Dossier v1.5, Addendum 1.3, §25 remains **A
 This distinction supersedes any wording in the 11 November status correction that could be read as assigning the mathematical theorem itself the status BELEGLÜCKE. It does not invent the missing derivation or change the theorem's hypotheses.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI tools are assistants only, not authors or independent mathematical verifiers.
+
+
+
+
+## 13 November 2026 — PR #159 proof-script candidate
+
+PR [#159](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/159), exact head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c, changes only the pointwise update branch split in BBMSTPrefixMeasureRecursion.lean and its isolated reproduction. The by_cases proposition is now stated with the original successor bound hj and explicit prefix a+j, matching the indices displayed in the PR #158 integrated failure trace; the previous candidate used the locally reconstructed hk and k expressions.
+
+Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43410655372) is still **IN PROGRESS** at this record:
+- audit job 131835937905: IN PROGRESS;
+- integrated-paranoid job 131835938270: IN PROGRESS.
+
+No branch closure, theorem success, axiom profile, or sorryAx rejection is claimed until both jobs complete and their logs are inspected. PR #159 remains a draft proof-script candidate. This candidate does not affect the separate historical BIB/APW4 energy obligations.
