@@ -164,3 +164,14 @@ The latest evidence review is recorded in [the dated APW4 status correction](doc
 - The separate PR #152 witness-difference diagnosis motivates investigation but is not confirmed for PR #154's current head. The next diagnostic is to expose the full pos and neg goals and compare the three dependent indices; no speculative simp/transport patch is endorsed.
 
 **Release gate:** no promotion to a verified integrated theorem without a passing integrated Lean 4.35.0 run, named declaration output, and transitive axiom audit excluding sorryAx and disallowed project axioms.
+
+
+
+
+## BIB-label identity audit and current Lean integration — 13 November 2026
+
+The new [BIB label identity audit](docs/APW4_BIB_LABEL_IDENTITY_AUDIT_2026-11-13.md) compares PR #57's BIB rows \(S_x\) with the one-prime-fibre labels \(S_{x,j}\) from the 31 October theorem. Under a shared fixed-depth interpretation, the two intersection claims are incompatible: the BIB route needs proper LCM, while the one-prime theorem forces full LCM at a common depth. A literal identification is therefore ruled out under those shared hypotheses; any different projection or depth aggregation requires an explicit index-preserving map.
+
+The audit records exact PR #158 head f494dd15d83cab582a9364d3eebca1705c8dcadc and workflow [43143591356](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43143591356): isolated audit PASS, integrated Lean 4.35.0 FAIL at the pos/neg update goals (lines 423–424), with downstream sorryAx in error recovery.
+
+The strict lower bound remains mathematically completed according to Dossier v1.5 §25; the reproducible historical derivation remains BELEGLÜCKE in the accessible source record. These statuses are distinct.
