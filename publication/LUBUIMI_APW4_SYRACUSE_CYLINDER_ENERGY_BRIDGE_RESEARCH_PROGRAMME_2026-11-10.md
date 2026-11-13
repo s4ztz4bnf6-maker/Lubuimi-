@@ -660,3 +660,11 @@ PR #82 current source head c5698519a86caf860eb6c2ede0f4d65d82de8541 explicitly t
 ## Syracuse SYR-02 Lean result — 13 November 2026
 
 PR #82 source head c5698519a86caf860eb6c2ede0f4d65d82de8541 passed exact workflow [43412794362](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412794362), Lean job 131843106387. Build completed successfully (8933 jobs). The named terminalCongruence_unique_residue_class theorem has profile [propext, Classical.choice, Quot.sound], and the explicit sorryAx rejection step passed. This closes the Lean formalization of uniqueness of the terminal congruence class only. Oddness of the representative, lift count, normalized density, complete word realization, and global infinite-path exclusion remain separate.
+
+
+
+## APW4 definitions checkpoint — exact proper-LCM envelope identity, 13 November 2026
+
+The PR #57 auxiliary parameter mu-star(B) = max tau(d) over proper divisors d of B and the 31 October one-prime parameter mu(B) = max |S| over divisor subsets S with lcm(S) < B are definitionally identical for every B > 1. An admissible S is contained in the divisor set of its proper LCM d, giving |S| <= tau(d); conversely, the full divisor set of a maximizing proper divisor attains the first maximum in the second definition. Thus mu-star(B) = mu(B) = tau(B) max_{p^a || B} a/(a+1) is BELEGT, not a conditional parameter-identification assumption.
+
+Consequently, under BIB H1, the actual-row proper-LCM property, and the one-prime numerical hypothesis, the exact saturation mu-star(B) = mu(B) = 2q-2-tau(B) is BELEGT. This is a necessary compatibility result. It does not prove the historical depth-one extraction map or proper-LCM property; those remain OFFEN. The event-to-BIB weighted transfer and APW4 energy bridge remain downstream open obligations. No Syracuse result is identified with an APW4 historical object by this addendum.
