@@ -19,6 +19,14 @@ open BBMSTFiberMeasureCore
 
 variable {n : ℕ} (C : CoordinateSystem n)
 
+/-- The coordinate system supplies finite coordinate types. -/
+noncomputable instance instFintypeCoordinate (i : Fin n) : Fintype (C.S i) :=
+  C.fintypeS i
+
+/-- Classical equality on each finite coordinate type, needed for its Finset fibre. -/
+noncomputable instance instDecidableEqCoordinate (i : Fin n) :
+    DecidableEq (C.S i) := Classical.decEq _
+
 /-- A fixed default value in each coordinate, used only to lift a prefix
 to the full product. The cardinality hypothesis guarantees it exists. -/
 noncomputable def coordinateDefault (i : Fin n) : C.S i := by
