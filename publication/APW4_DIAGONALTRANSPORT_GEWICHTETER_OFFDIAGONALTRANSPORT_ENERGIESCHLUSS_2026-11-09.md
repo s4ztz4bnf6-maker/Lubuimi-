@@ -287,3 +287,40 @@ The correction now passes the index explicitly as (k := a + j). Current PR #159 
 - integrated-paranoid job 131837876454: **IN PROGRESS**.
 
 The failed first candidate remains a preserved diagnostic. No theorem success, axiom profile, or sorryAx rejection is claimed for the corrected head until both jobs finish and the complete logs are checked.
+
+
+
+
+### F. Refined reconciliation candidate: punctured depth-one rows
+
+The literal identity \(S_x=S_{x,1}\) is incompatible with the proper-LCM premise, but the one-prime spine gives a more precise possible extraction that has not yet been tested historically.
+
+Let \(T_x:=S_{x,1}\). The spine formula gives
+\[
+|T_x|=\begin{cases}
+q,&k_x=1,\\
+q-1,&k_x>1.
+\end{cases}
+\]
+Define a candidate BIB row \(S_x\subseteq T_x\) of size \(q-1\) by keeping \(T_x\) unchanged when \(k_x>1\), and deleting one selected label \(d_x\in T_x\) when \(k_x=1\). This is only a candidate extraction rule; the deleted label \(d_x\) is not specified by the historical source.
+
+For distinct \(x,y\), the elementary intersection bound for the full depth-one sets is
+\[
+|T_x\cap T_y|\geq |T_x|+|T_y|-\tau(B).
+\]
+The construction deletes at most one label from each row, and deletes one precisely when the corresponding terminal depth is 1. Since \(|T_x|=q-1+\mathbf 1_{k_x=1}\), it follows that
+\[
+|S_x\cap S_y|\geq 2q-2-\tau(B).
+\]
+The one-prime hypothesis \(\tau(B)+\mu(B)<2q-1\), with integer parameters, implies
+\[
+2q-2-\tau(B)\geq\mu(B).
+\]
+Therefore, if these punctured rows also satisfy the BIB proper-LCM premise \(|S_x\cap S_y|\leq\mu(B)\), then every pair must **saturate exactly**
+\[
+|S_x\cap S_y|=\mu(B).
+\]
+
+This is compatible with the full-LCM theorem for \(T_x,T_y\): the deleted terminal label(s) may be exactly the prime-power witness(es) that make the full intersection have LCM B. It gives a concrete new target: find a canonical source-defined deleted label \(d_x\), then prove that after the deletion every pairwise intersection has cardinality exactly \(\mu(B)\) and proper LCM. No such canonical deletion rule or saturation proof has yet been found.
+
+**Status:** the lower bound \( |S_x\cap S_y|\geq2q-2-\tau(B)\) for this puncturing rule is **BELEGT conditionally** by the spine counts and finite-set cardinality. The identification of these punctured rows with the historical BIB \(S_x\), the choice of \(d_x\), and the proper-LCM saturation are **OFFEN / NICHT REPRODUZIERT**. This refines, but does not close, the historical label-extraction obligation.
