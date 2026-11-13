@@ -632,3 +632,10 @@ PR #82 now has exact source head 4c782523c9e86d22b1267e8ebfc3d99cccdf9e1d. The p
 ## Syracuse terminal residue Lean candidate — current head, 13 November 2026
 
 PR #82 source head 926f0fd2f627d504e1f32c61a00d38e763afea38 now matches the local unit goal with the cast of the natural power. Exact workflow [43412074002](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412074002), job 131840693951, is in progress. The prior 4c782 head still failed at the hunit cast type. No formal pass is claimed. The candidate remains uniqueness only.
+
+
+
+
+## APW4 label-depth correction — 13 November 2026
+
+The 31 October full-LCM comparison occurs at the pair-dependent depth \(j=\min(k_x,k_y)\), not at every fixed depth. Thus the candidate identity \(S_x=S_{x,1}\) remains possible if all terminal depths exceed 1; any \(k_x=1\) row has q labels and needs a separate q−1 extraction. At most one such x exists. BIB H1 plus the one-prime numerical hypothesis also force the exact necessary condition \(\mu^*(B)=\mu(B)=2q-2-\tau(B)\) and pairwise intersection saturation when the displayed parameter definitions coincide. The detailed correction is in the APW4 BIB audit.
