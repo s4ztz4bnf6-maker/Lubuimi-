@@ -421,3 +421,12 @@ If B is square-free and the necessary saturation equation holds, then \(\tau(B)=
 \frac{\tau(B)(r-\mu^*(B))}{r^2-\tau(B)\mu^*(B)}=4.
 \]
 This is a **BEDINGT BELEGT** algebraic consequence of H1/H2 and the square-free parameter equality. If a separate historical proof established \(|U|\geq\Delta(B)>4\), a contradiction would follow; the recovered \(|U|\geq\Delta(B)\) statement is still **NICHT REPRODUZIERT** and is not used here.
+
+
+
+
+## Addendum 1.28 — PR #159 coordinate-witness result and simp-normalization retry
+
+PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208): integrated-paranoid job 131842924762 **FAILURE** at lines 428–429; audit job 131842924357 **CANCELLED** after compiling the source-indexed prefix recursion and printing standard profiles [propext, Classical.choice, Quot.sound] for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one. The audit did not complete end-to-end.
+
+Current PR #159 candidate head bcc51456cb7e91f622957ff0c1297880edc3cff5 adds stageCoordinate to the controlled simp set after aligning the proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is queued. No integrated Lean 4.35.0 pass is claimed.
