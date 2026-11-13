@@ -326,3 +326,18 @@ PR #159 head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c changes the by_cases propo
 The first proof-script candidate head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c failed at line 421 because prefixCoveredValues expects its prefix index as an implicit argument; the initial patch passed a+j positionally. The corrected source now supplies (k := a + j) explicitly.
 
 Current PR #159 head: 0ee3144ddbc1927563e03a752dd472c391d5cc61. Exact workflow [43411234880](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411234880): audit job 131837877076 and integrated-paranoid job 131837876454 are **IN PROGRESS**. The previous failure remains preserved for its own head. No pass or axiom profile is claimed for the corrected candidate.
+
+
+
+
+## Addendum 1.20 — punctured depth-one BIB extraction candidate
+
+The literal identity of the BIB row \(S_x\) with the complete one-prime depth-one set \(S_{x,1}\) remains incompatible with the proper-LCM premise. A more specific conditional extraction is now recorded in the 13 November label audit.
+
+Put \(T_x=S_{x,1}\). The spine theorem gives \(|T_x|=q\) when the terminal depth \(k_x=1\), and \(|T_x|=q-1\) when \(k_x>1\). A candidate row of size \(q-1\) is obtained by retaining \(T_x\) for \(k_x>1\) and deleting one label \(d_x\) when \(k_x=1\). For any distinct x,y, deleting at most one label from each full row gives the conditional lower bound
+\[
+|S_x\cap S_y|\geq2q-2-\tau(B).
+\]
+Since the one-prime hypothesis is \(\tau(B)+\mu(B)<2q-1\) and the parameters are integers, \(2q-2-\tau(B)\geq\mu(B)\). Thus, if the punctured rows satisfy the BIB proper-LCM bound \(|S_x\cap S_y|\leq\mu(B)\), every pair must attain exact equality \(|S_x\cap S_y|=\mu(B)\).
+
+This is a new conditional combinatorial constraint and a concrete search target for the missing extraction: identify a source-defined canonical deleted label \(d_x\), then prove pairwise proper LCM and exact saturation. No historical deletion rule or saturation proof is currently reproduced. The candidate remains **OFFEN** as a historical identification; only the cardinality lower bound is **BEDINGT BELEGT**.
