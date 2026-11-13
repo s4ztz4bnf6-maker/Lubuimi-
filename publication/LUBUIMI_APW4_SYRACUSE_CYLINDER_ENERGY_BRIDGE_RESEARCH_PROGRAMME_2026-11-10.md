@@ -653,3 +653,10 @@ The necessary BIB saturation equation μ*(B)=2q−2−τ(B), when B is square-fr
 ## Syracuse Lean cast-typing retry — 13 November 2026
 
 PR #82 current source head c5698519a86caf860eb6c2ede0f4d65d82de8541 explicitly types the natural exponentiation before casting to ZMod. Exact workflow [43412794362](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412794362) is in progress. The preceding head 926f0fd2 still failed because the cast notation did not force the intended source type. No formal pass is claimed.
+
+
+
+
+## Syracuse SYR-02 Lean result — 13 November 2026
+
+PR #82 source head c5698519a86caf860eb6c2ede0f4d65d82de8541 passed exact workflow [43412794362](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412794362), Lean job 131843106387. Build completed successfully (8933 jobs). The named terminalCongruence_unique_residue_class theorem has profile [propext, Classical.choice, Quot.sound], and the explicit sorryAx rejection step passed. This closes the Lean formalization of uniqueness of the terminal congruence class only. Oddness of the representative, lift count, normalized density, complete word realization, and global infinite-path exclusion remain separate.
