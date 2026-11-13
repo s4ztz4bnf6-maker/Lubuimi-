@@ -483,3 +483,13 @@ PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [4341273
 - audit job 131842924357: **CANCELLED** after it compiled the source-indexed prefix recursion and printed standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one: [propext, Classical.choice, Quot.sound]. The audit was not completed end-to-end.
 
 The next candidate, PR #159 head bcc51456cb7e91f622957ff0c1297880edc3cff5, adds stageCoordinate to the controlled simp set after aligning the two proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is **QUEUED**. No integrated Lean 4.35.0 pass is claimed.
+
+
+
+## Definitionsprüfung der Proper-LCM-Hüllfunktion — 13 November 2026
+
+Die in PR #57 eingeführte Funktion mu-star(B) = max{tau(d): d | B, d < B}, B > 1, ist identisch mit dem Parameter der Ein-Primfaser-Datei vom 31. Oktober, mu(B) = max{|S|: S Teilmenge der Teiler von B, lcm(S) < B}. Für jede zulässige Menge S ist d = lcm(S) ein echter Teiler von B; daher S liegt in der Teilermenge von d und |S| <= tau(d) <= mu-star(B). Umgekehrt liefert für einen maximierenden echten Teiler d die Menge S aller Teiler von d eine zulässige Menge mit |S| = tau(d) = mu-star(B). Also gilt ohne zusätzliche Identifikationsannahme mu-star(B) = mu(B) = tau(B) max_{p^a || B} a/(a+1).
+
+Damit ist die Gleichheit der beiden Hüllfunktionen BELEGT. Unter den gesonderten Inzidenzvoraussetzungen |D| = tau(B), |S_x| >= q-1, paarweiser Proper-LCM-Eigenschaft der konkreten Zeilen und tau(B)+mu(B) < 2q-1 folgt durch Inklusion-Exklusion mu-star(B) = mu(B) = 2q-2-tau(B). Bei mindestens zwei Zeilen müssen dann alle Zeilen genau q-1 Labels und jede Paar-Schnittmenge genau mu(B) Labels haben.
+
+Diese Definitionsidentität beweist jedoch NICHT, dass die historischen Tiefe-eins-Labelmengen die BIB-Zeilen sind oder deren paarweises kgV ein echter Teiler von B bleibt. Die historische Extraktionsabbildung und Proper-LCM-Eigenschaft bleiben OFFEN. Dieser Abschnitt ändert weder die historischen APW4-Hypothesen noch die Aussage über DT, HT oder den Energieabschluss.
