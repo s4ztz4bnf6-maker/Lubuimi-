@@ -430,3 +430,13 @@ This is a **BEDINGT BELEGT** algebraic consequence of H1/H2 and the square-free 
 PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208): integrated-paranoid job 131842924762 **FAILURE** at lines 428–429; audit job 131842924357 **CANCELLED** after compiling the source-indexed prefix recursion and printing standard profiles [propext, Classical.choice, Quot.sound] for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one. The audit did not complete end-to-end.
 
 Current PR #159 candidate head bcc51456cb7e91f622957ff0c1297880edc3cff5 adds stageCoordinate to the controlled simp set after aligning the proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is queued. No integrated Lean 4.35.0 pass is claimed.
+
+
+
+## Addendum 1.29 — exact identity of the two proper-LCM envelope definitions, 13 November 2026
+
+PR #57 defines mu-star(B) = max{tau(d): d | B, d < B}. The 31 October one-prime-fibre theorem defines mu(B) = max{|S|: S is a subset of the divisors of B and lcm(S) < B}. These are exactly the same function for all B > 1. If S is admissible for the second maximum, d = lcm(S) is a proper divisor and S is contained in the divisor set of d, so |S| <= tau(d) <= mu-star(B). Conversely, if d maximizes the first expression, the full divisor set S of d is admissible for the second and attains |S| = tau(d) = mu-star(B). Hence mu-star(B) = mu(B), with common closed form tau(B) max_{p^a || B} a/(a+1). Status: BELEGT; no identification hypothesis is required.
+
+Under BIB H1 and the one-prime numerical hypothesis, together with the actual-row proper-LCM premise, this identity makes the saturation conclusion mu-star(B) = mu(B) = 2q-2-tau(B) BELEGT. The exact row-size and pair-intersection saturation consequences recorded in Addenda 1.23 and 1.26 remain valid.
+
+This does not close the historical extraction obligation: the map from selected depth-one fibre classes to the BIB row label sets, and the proof that every pair's common labels have proper LCM in B, remain OFFEN. The pair-dependent depth j = min(k_x,k_y) correction remains in force. No event-to-BIB weight-preserving map or APW4 energy transfer is inferred from this function identity.
