@@ -407,6 +407,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hhk : hk = hj := Subsingleton.elim _ _
   cases hhk
   have hk : k + 1 ≤ n := hj
+  have hstageNext :
+      stageCoordinate (k := a + j) hj =
+        stageCoordinate (k := a + j) (nextPrefixBound a j hj) :=
+    stageCoordinate_eq_of_bound _ _
+  cases hstageNext
   have hroundtrip :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
     exact extendPrefix_restrictPrefix C hk y
@@ -414,12 +419,12 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt, stageCoordinate,
     Finset.card_univ, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y)
+        prefixCoveredValues C (A := A) (k := a + j) hj
+          (restrictPrefix C (k := a + j) hj y)
   · simp only [if_pos hcov, Finset.mem_univ, ite_true]
   · simp only [if_neg hcov, Finset.mem_univ, ite_true]
 #print axioms prefixFibre_updatedWeight_eq_PAt
