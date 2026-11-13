@@ -419,7 +419,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     BBMSTUniformFibreInstantiation.toFibreData,
     BBMSTUniformFibreInstantiation.uniformWeight,
     BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt, stageCoordinate,
     Finset.card_univ, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
