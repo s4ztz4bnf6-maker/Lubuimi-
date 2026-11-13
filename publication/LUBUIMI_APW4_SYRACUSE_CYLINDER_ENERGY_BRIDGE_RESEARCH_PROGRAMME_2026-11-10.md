@@ -594,3 +594,20 @@ Because 3^{k+1} is odd, it is invertible modulo 2^B. The exact child-b residue i
 \]
 
 This is the precise mathematical input needed to instantiate the arbitrary residue parameter r in SyracuseDyadicResidueFibre.lean. The current Lean module proves the generic residue-class lift and mass identities, but does not yet prove that its r equals this normalized prefix-tail residue or that its child classes coincide with the exact valuation predicates. That instantiation and the child/tail partition theorem remain open. This source update narrows the target; it is not yet a Lean proof.
+
+
+
+
+## Cross-project status update — 13 November 2026
+
+### APW4/BIB source boundary
+
+The 13 November BIB-label audit establishes a conditional incompatibility between the BIB proper-LCM intersection premise and the 31 October one-prime theorem's full-LCM conclusion under literal same-depth identification of S_x and S_{x,j}. The historical extraction map, weighted event-to-slot map, and APW4 energy transfer remain open. The strict lower bound remains mathematically completed according to Dossier v1.5 §25; the accessible-source reproduction gap remains BELEGLÜCKE. See the [BIB identity audit](https://github.com/s4ztz4bnf6-maker/Lubuimi-/blob/docs/apw4-dated-status-correction-2026-11-11/docs/APW4_BIB_LABEL_IDENTITY_AUDIT_2026-11-13.md).
+
+### Syracuse finite residue class and Lean candidate
+
+For a fixed positive valuation word with total exponent A and length r, the terminal congruence \(3^r x+C_r\equiv2^A\pmod{2^{A+1}}\) has one residue class because \(3^r\) is invertible modulo \(2^{A+1}\). That class is odd; its lifts modulo \(2^K\) number \(2^{K-A-1}\), giving normalized finite density \(2^{-A}=\prod_i2^{-a_i}\) among odd residues. These are algebraic finite-congruence facts; they are not the exact valuation-word cylinder density until the complete word-realization equivalence is proved.
+
+Collatz PR #82 adds a Lean candidate for uniqueness of the terminal congruence class: source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c, workflow [43410857139](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43410857139), job 131836620024. The job was in progress at this snapshot; no formal pass is claimed. The lift count and product-density Lean declarations remain open. SYR-01 word realization, SYR-05 infinite-path exclusion, and SYR-06 global termination remain open.
+
+The APW4 and Syracuse projects remain logically separate: the finite Syracuse uniform-fibre model is not identified with historical APW4 events or BIB slots, and no APW4 weight-preserving transport follows from the Syracuse finite density.
