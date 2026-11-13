@@ -639,3 +639,10 @@ PR #82 source head 926f0fd2f627d504e1f32c61a00d38e763afea38 now matches the loca
 ## APW4 label-depth correction — 13 November 2026
 
 The 31 October full-LCM comparison occurs at the pair-dependent depth \(j=\min(k_x,k_y)\), not at every fixed depth. Thus the candidate identity \(S_x=S_{x,1}\) remains possible if all terminal depths exceed 1; any \(k_x=1\) row has q labels and needs a separate q−1 extraction. At most one such x exists. BIB H1 plus the one-prime numerical hypothesis also force the exact necessary condition \(\mu^*(B)=\mu(B)=2q-2-\tau(B)\) and pairwise intersection saturation when the displayed parameter definitions coincide. The detailed correction is in the APW4 BIB audit.
+
+
+
+
+## Square-free APW4/BIB parameter test — 13 November 2026
+
+The necessary BIB saturation equation μ*(B)=2q−2−τ(B), when B is square-free with s=ω(B), forces q=1+3·2^(s−2). For prime q this requires s≥3 and q≡1 mod 3. This is only a conditional parameter restriction; no square-freeness assumption is imported into the historical APW4 argument.
