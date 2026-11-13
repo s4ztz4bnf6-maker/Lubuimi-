@@ -282,3 +282,13 @@ PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [4341273
 - audit job 131842924357: **CANCELLED** after it compiled the source-indexed prefix recursion and printed standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one: [propext, Classical.choice, Quot.sound]. The audit was not completed end-to-end.
 
 The next candidate, PR #159 head bcc51456cb7e91f622957ff0c1297880edc3cff5, adds stageCoordinate to the controlled simp set after aligning the two proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is **QUEUED**. No integrated Lean 4.35.0 pass is claimed.
+
+
+
+## 13 November 2026 — correction: the two proper-LCM envelopes are identical
+
+A direct comparison of the primary definitions proves that PR #57's mu-star(B) = max tau(d) over proper divisors d of B and the 31 October note's mu(B) = max |S| over divisor subsets S with lcm(S) < B are the same function for every B > 1. For an admissible S, take d = lcm(S) < B; then S is contained in the divisor set of d. Conversely, the full divisor set of a maximizing proper divisor d is admissible and attains tau(d). Therefore mu-star(B) = mu(B) is BELEGT as a definition-level identity.
+
+Under BIB H1, |D| = tau(B), |S_x| >= q-1, the proper-LCM property for the actual common row labels, and tau(B)+mu(B) < 2q-1, inclusion-exclusion gives the exact saturation mu-star(B) = mu(B) = 2q-2-tau(B). This saturation is BELEGT under those hypotheses. It does not prove that the historical depth-one label sets are the BIB rows or that their common labels have proper LCM. Those construction statements remain OFFEN.
+
+This corrects only the status of the parameter identity. It does not change the APW4 historical event-to-BIB map, weighted Hall transfer, or energy-transfer status.
