@@ -69,12 +69,12 @@ theorem prefixFibre_updatedWeight_eq_PAt_minimalRepro
     BBMSTUniformFibreInstantiation.coveredProportion,
     BBMSTFiniteFibreUpdate.updatedWeight, PAt,
     Finset.card_univ, k, xprev]
-  by_cases hcov :
+  by_cases hcov' :
       y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) hk
-          (restrictPrefix C hk y)
-  · simp only [if_pos hcov, Finset.mem_univ, ite_true]
-  · simp only [if_neg hcov, Finset.mem_univ, ite_true]
+        prefixCoveredValues C (A := A) hj
+          (restrictPrefix C hj y)
+  · simp only [if_pos hcov', Finset.mem_univ, ite_true]
+  · simp only [if_neg hcov', Finset.mem_univ, ite_true]
 
 #print axioms prefixFibre_updatedWeight_eq_PAt_minimalRepro
 
