@@ -274,3 +274,16 @@ Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/action
 - integrated-paranoid job 131835938270: IN PROGRESS.
 
 No branch closure, theorem success, axiom profile, or sorryAx rejection is claimed until both jobs complete and their logs are inspected. PR #159 remains a draft proof-script candidate. This candidate does not affect the separate historical BIB/APW4 energy obligations.
+
+
+
+
+## 13 November 2026 — PR #159 exact-head correction and retry
+
+The first PR #159 candidate head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c failed both audit and integrated-paranoid workflow 43410655372. The error at BBMSTPrefixMeasureRecursion.lean:421 was an elaboration mismatch: prefixCoveredValues takes its prefix index implicitly, so passing a+j positionally supplied a Nat where the proof bound was expected.
+
+The correction now passes the index explicitly as (k := a + j). Current PR #159 head: 0ee3144ddbc1927563e03a752dd472c391d5cc61. Exact workflow [43411234880](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411234880):
+- audit job 131837877076: **IN PROGRESS**;
+- integrated-paranoid job 131837876454: **IN PROGRESS**.
+
+The failed first candidate remains a preserved diagnostic. No theorem success, axiom profile, or sorryAx rejection is claimed for the corrected head until both jobs finish and the complete logs are checked.
