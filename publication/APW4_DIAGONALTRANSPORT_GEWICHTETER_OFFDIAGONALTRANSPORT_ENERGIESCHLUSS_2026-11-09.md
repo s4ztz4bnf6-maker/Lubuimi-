@@ -252,3 +252,12 @@ The structural change from rw [hstage] to cases hstage is retained as a genuine 
 A declaration is not promoted to verified status merely because an isolated check passes or a source module compiles. Promotion requires the exact integrated Lean 4.35.0 build to pass, named theorem/axiom output, and a transitive audit excluding sorryAx and any prohibited project axioms.
 
 **Attribution:** Ta-Yoshua Lubuimi. AI systems are assistants only, not authors or independent mathematical verifiers.
+
+
+## Dated research and verification addendum — 13 November 2026
+
+The [BIB label identity audit](../docs/APW4_BIB_LABEL_IDENTITY_AUDIT_2026-11-13.md) establishes a conditional incompatibility between the BIB proper-LCM intersection premise and the one-prime theorem's full-LCM conclusion under a literal shared fixed-depth identification. It does not rule out a different projection or depth aggregation, but such an alternative requires an explicit index-preserving map and a separate intersection proof.
+
+The same audit records exact PR #158 head f494dd15d83cab582a9364d3eebca1705c8dcadc and workflow [43143591356](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43143591356): isolated audit SUCCESS, integrated Lean 4.35.0 FAILURE at the pointwise update branches pos/neg (lines 423–424), with downstream sorryAx in error-recovery output. This is a formal integration failure, not a mathematical counterexample.
+
+**Status clarification:** the strict lower bound remains mathematically **ABGESCHLOSSEN laut Dossier v1.5 §25**. Its full historical derivation remains **BELEGLÜCKE** in the accessible source record. The historical definitions and end-to-end Lean verification are separate obligations. No theorem hypothesis is changed by this clarification.
