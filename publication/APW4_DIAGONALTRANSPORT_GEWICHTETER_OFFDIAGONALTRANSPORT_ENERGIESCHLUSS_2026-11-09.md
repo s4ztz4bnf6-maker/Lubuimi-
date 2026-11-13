@@ -457,3 +457,18 @@ Consequences for the depth-one candidate:
 - The one-prime full-LCM comparison is at \(j=\min(k_x,k_y)\); the earlier correction about fixed-depth scope remains in force.
 
 This is **BELEGT as a necessary consequence** of the actual H1 inequality and the displayed parameter hypotheses. It does not verify that the historical BIB rows are the depth-one sets, nor that their proper-LCM property holds.
+
+
+
+
+### Conditional square-free second-moment consequence
+
+Under the square-free saturation relation, \(r=q-1=3\tau(B)/4\) and \(\mu^*(B)=\tau(B)/2\). Substitution into the PR #57 second-moment bound gives
+\[
+m_0=|U|\leq
+\frac{\tau(B)(r-\mu^*(B))}{r^2-\tau(B)\mu^*(B)}
+=
+\frac{\tau(B)\cdot\tau(B)/4}{\tau(B)^2/16}
+=4.
+\]
+The denominator is positive. Thus the square-free parameter-compatible BIB specialization conditionally forces \(|U|\leq4\). If a separate historical argument established \(|U|\geq\Delta(B)>4\), that would give a contradiction; however, the PR #57 note itself says the recovered \(|U|\geq\Delta(B)\) claim lacks a complete derivation, so that lower bound remains **NICHT REPRODUZIERT** and is not used here. The conclusion \(|U|\leq4\) is only the algebraic consequence of H1/H2 and the square-free parameter equality.
