@@ -294,3 +294,13 @@ PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [4341273
 - audit job 131842924357: **CANCELLED** after it compiled the source-indexed prefix recursion and printed standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one: [propext, Classical.choice, Quot.sound]. The audit was not completed end-to-end.
 
 The next candidate, PR #159 head bcc51456cb7e91f622957ff0c1297880edc3cff5, adds stageCoordinate to the controlled simp set after aligning the two proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is **QUEUED**. No integrated Lean 4.35.0 pass is claimed.
+
+
+
+## 13 November 2026 — direct definition comparison: mu-star equals mu
+
+PR #57 defines mu-star(B) as the maximum of tau(d) over proper divisors d of B. The 31 October one-prime-fibre note defines mu(B) as the maximum cardinality of a subset S of the divisors of B whose least common multiple is proper in B. These are the same function for every B > 1. If S is admissible for the second maximum, d = lcm(S) is a proper divisor and S is contained in the divisor set of d, so |S| <= tau(d) <= mu-star(B). Conversely, if d maximizes the first expression, the full divisor set S of d is admissible for the second and has |S| = tau(d) = mu-star(B). Hence mu-star(B) = mu(B), with common formula tau(B) times max over p^a exactly dividing B of a/(a+1). This identity is BELEGT and needs no identification hypothesis.
+
+Under BIB H1, the actual-row proper-LCM premise, |D| = tau(B), |S_x| >= q-1, and the one-prime numerical hypothesis tau(B)+mu(B) < 2q-1, inclusion-exclusion gives the exact saturation mu-star(B) = mu(B) = 2q-2-tau(B). For at least two rows, equality also forces every row to have exactly q-1 labels and every pair intersection to attain the bound. This saturation is BELEGT under those incidence and numerical hypotheses.
+
+Still OFFEN: whether the historical depth-one selected labels are exactly the BIB rows, and whether their pairwise LCM is proper in B. The pair-dependent comparison depth j = min(k_x,k_y) in the one-prime theorem remains unchanged. This definition-level result does not close the historical extraction map or event-to-BIB/energy transfer.
