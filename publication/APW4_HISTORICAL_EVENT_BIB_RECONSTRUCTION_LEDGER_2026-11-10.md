@@ -409,3 +409,15 @@ The PR #57 source states H1 as \(|S_x|\geq r\), not \(|S_x|=r\). For the intende
 The one-prime hypothesis gives \(\mu(B)\leq2q-2-\tau(B)\). If the BIB upper parameter is the same displayed arithmetic envelope as \(\mu^*(B)\) and the one-prime \(\mu(B)\), H1 forces \(\mu=\mu^*(B)=\mu(B)=2q-2-\tau(B)\). Equality throughout then forces every pair of BIB rows to have exactly q−1 labels and intersection exactly \(\mu(B)\). Since \(|U|\geq2\), all rows have exact size q−1 even though H1 only assumes a lower bound.
 
 Therefore a literal \(S_x=S_{x,1}\) specialization requires every terminal depth \(k_x>1\); a \(k_x=1\) row has q labels and needs a q−1 puncture or another source-defined projection. This is a necessary consequence of the displayed hypotheses, not a verification of the historical row construction.
+
+
+
+
+## Addendum 1.27 — square-free BIB bound |U|≤4 under saturation
+
+If B is square-free and the necessary saturation equation holds, then \(\tau(B)=2^s\), \(\mu^*(B)=\tau(B)/2\), and \(r=q-1=3\tau(B)/4\). Substituting into the PR #57 second-moment bound gives
+\[
+|U|=m_0\leq
+\frac{\tau(B)(r-\mu^*(B))}{r^2-\tau(B)\mu^*(B)}=4.
+\]
+This is a **BEDINGT BELEGT** algebraic consequence of H1/H2 and the square-free parameter equality. If a separate historical proof established \(|U|\geq\Delta(B)>4\), a contradiction would follow; the recovered \(|U|\geq\Delta(B)\) statement is still **NICHT REPRODUZIERT** and is not used here.
