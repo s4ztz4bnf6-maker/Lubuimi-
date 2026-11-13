@@ -396,3 +396,16 @@ For prime q this requires s≥3 and q≡1 mod 3. This is a necessary arithmetic 
 ## Addendum 1.25 — second proof-witness alignment candidate
 
 PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 identifies stageCoordinate hj with stageCoordinate (nextPrefixBound a j hj) using stageCoordinate_eq_of_bound before simplifying. This targets the two distinct proof-witness occurrences of prefixCoveredValues exposed by the Lean 4.35.0 goal. Exact workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208) has audit job 131842924357 and integrated-paranoid job 131842924762 in progress. No result is claimed for this candidate.
+
+
+
+
+## Addendum 1.26 — BIB H1 row-size correction
+
+The PR #57 source states H1 as \(|S_x|\geq r\), not \(|S_x|=r\). For the intended \(r=q-1\), inclusion-exclusion gives
+\[
+|S_x\cap S_y|\geq |S_x|+|S_y|-\tau(B)\geq2q-2-\tau(B).
+\]
+The one-prime hypothesis gives \(\mu(B)\leq2q-2-\tau(B)\). If the BIB upper parameter is the same displayed arithmetic envelope as \(\mu^*(B)\) and the one-prime \(\mu(B)\), H1 forces \(\mu=\mu^*(B)=\mu(B)=2q-2-\tau(B)\). Equality throughout then forces every pair of BIB rows to have exactly q−1 labels and intersection exactly \(\mu(B)\). Since \(|U|\geq2\), all rows have exact size q−1 even though H1 only assumes a lower bound.
+
+Therefore a literal \(S_x=S_{x,1}\) specialization requires every terminal depth \(k_x>1\); a \(k_x=1\) row has q labels and needs a q−1 puncture or another source-defined projection. This is a necessary consequence of the displayed hypotheses, not a verification of the historical row construction.
