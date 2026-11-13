@@ -60,3 +60,16 @@ Erst danach prüfen, ob Gleichheit auf den gesamten abhängigen Fasertyp transpo
 
 
 The dated correction below supersedes any wording in this file that could be read as downgrading the mathematical status recorded in Dossier v1.5 §25. The theorem remains mathematically completed according to §25; BELEGLÜCKE refers to independent reproduction from accessible source artifacts.
+
+
+
+
+## 13 November 2026 — PR #159 proof-script candidate
+
+PR [#159](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/159), exact head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c, changes only the pointwise update branch split in BBMSTPrefixMeasureRecursion.lean and its isolated reproduction. The by_cases proposition is now stated with the original successor bound hj and explicit prefix a+j, matching the indices displayed in the PR #158 integrated failure trace; the previous candidate used the locally reconstructed hk and k expressions.
+
+Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43410655372) is still **IN PROGRESS** at this record:
+- audit job 131835937905: IN PROGRESS;
+- integrated-paranoid job 131835938270: IN PROGRESS.
+
+No branch closure, theorem success, axiom profile, or sorryAx rejection is claimed until both jobs complete and their logs are inspected. PR #159 remains a draft proof-script candidate. This candidate does not affect the separate historical BIB/APW4 energy obligations.
