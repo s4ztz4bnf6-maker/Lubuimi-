@@ -283,3 +283,14 @@ m_0=|U|\leq
 =4.
 \]
 The denominator is positive. Thus the square-free parameter-compatible BIB specialization conditionally forces \(|U|\leq4\). If a separate historical argument established \(|U|\geq\Delta(B)>4\), that would give a contradiction; however, the PR #57 note itself says the recovered \(|U|\geq\Delta(B)\) claim lacks a complete derivation, so that lower bound remains **NICHT REPRODUZIERT** and is not used here. The conclusion \(|U|\leq4\) is only the algebraic consequence of H1/H2 and the square-free parameter equality.
+
+
+
+
+## 13 November 2026 — proof-witness alignment result and next normalization candidate
+
+PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208):
+- integrated-paranoid job 131842924762: **FAILURE**, still leaving the two update-branch goals open at lines 428–429 and downstream sorryAx in error recovery;
+- audit job 131842924357: **CANCELLED** after it compiled the source-indexed prefix recursion and printed standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one: [propext, Classical.choice, Quot.sound]. The audit was not completed end-to-end.
+
+The next candidate, PR #159 head bcc51456cb7e91f622957ff0c1297880edc3cff5, adds stageCoordinate to the controlled simp set after aligning the two proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is **QUEUED**. No integrated Lean 4.35.0 pass is claimed.
