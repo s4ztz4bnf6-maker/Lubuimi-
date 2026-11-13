@@ -317,3 +317,12 @@ The mathematical status recorded in Dossier v1.5, Addendum 1.3, §25 remains **A
 PR #158 head f494dd15d83cab582a9364d3eebca1705c8dcadc, workflow [43143591356](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43143591356): isolated audit SUCCESS, integrated Lean 4.35.0 FAILURE at the pos/neg pointwise update goals (source lines 423–424); downstream PAt declarations show sorryAx in error-recovery output.
 
 PR #159 head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c changes the by_cases proposition to use the original successor bound hj and explicit prefix a+j, matching the indices displayed in the PR #158 trace. Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43410655372) had both audit job 131835937905 and integrated-paranoid job 131835938270 **IN PROGRESS** at this update. This is a proof-script candidate only; no theorem success or axiom profile is claimed until both exact-head logs finish and are inspected.
+
+
+
+
+## Addendum 1.19 — PR #159 corrected exact head, 13 November 2026
+
+The first proof-script candidate head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c failed at line 421 because prefixCoveredValues expects its prefix index as an implicit argument; the initial patch passed a+j positionally. The corrected source now supplies (k := a + j) explicitly.
+
+Current PR #159 head: 0ee3144ddbc1927563e03a752dd472c391d5cc61. Exact workflow [43411234880](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411234880): audit job 131837877076 and integrated-paranoid job 131837876454 are **IN PROGRESS**. The previous failure remains preserved for its own head. No pass or axiom profile is claimed for the corrected candidate.
