@@ -222,3 +222,16 @@ PR #93 in the APW4/BBMST repository adds a first formal finite-residue layer:
 The residue module proves the lift/cylinder membership equivalence modulo (2^B), exact cardinalities, candidate/tail disjointness and union, and the rational candidate-mass identity for arbitrary (r). The separate `FibreData) module proves the corresponding cardinality-only weighted-fibre conservation model. The latter is not the actual residue-cylinder construction.
 
 The next Lean step is exactly the instantiation already specified mathematically in this note: define the normalized prefix-tail residue (r) from (r_alpha), (C_k), and the odd inverse of (3^{k+1}); then prove the child-(b) congruence class is equivalent to the exact next valuation (b). The mathematical finite-word cylinder theorem and its already-derived tail-cylinder consequence are retained as established results. This is a Lean integration task, not a reopening of the mathematics.
+
+
+
+
+## 13 November 2026 — terminal residue uniqueness and finite lifts
+
+For a fixed positive word \(a_0,\ldots,a_{r-1}\), put \(A=\sum_{i<r}a_i\) and \(C_0=0,\ C_{i+1}=3C_i+2^{A_i}\). The terminal congruence
+\[
+3^r x+C_r\equiv2^A\pmod{2^{A+1}}
+\]
+has a unique residue class because \(3^r\) is invertible modulo \(2^{A+1}\). The class is odd: \(C_1=1\), and the recurrence preserves oddness for later indices. Its number of lifts modulo \(2^K\) is \(2^{K-A-1}\), and its normalized density among odd residues is \(2^{-A}=\prod_{i<r}2^{-a_i}\).
+
+These are finite congruence facts about the terminal class. The density is the density of the exact valuation-word cylinder only after the full two-way word-realization theorem is established. The Lean uniqueness candidate is PR #82, source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c, workflow 43410857139 (in progress at the dated update). Lift-count and product-density Lean proofs remain open.
