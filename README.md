@@ -391,3 +391,11 @@ PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 produced workflow [4341273
 - audit job 131842924357: **CANCELLED** after it compiled the source-indexed prefix recursion and printed standard profiles for prefixFibre_updatedWeight_eq_PAt, PAt_nonneg, and PAt_sum_eq_one: [propext, Classical.choice, Quot.sound]. The audit was not completed end-to-end.
 
 The next candidate, PR #159 head bcc51456cb7e91f622957ff0c1297880edc3cff5, adds stageCoordinate to the controlled simp set after aligning the two proof witnesses. Exact workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772) is **QUEUED**. No integrated Lean 4.35.0 pass is claimed.
+
+
+
+## Exact identity of the BIB and one-prime proper-LCM envelopes — 13 November 2026
+
+The definitions have now been compared directly. PR #57 defines mu-star(B) as max tau(d) over proper divisors d of B; the 31 October one-prime-fibre note defines mu(B) as max |S| over subsets S of the divisors of B with lcm(S) < B. These are the same function for every integer B > 1: an admissible S is contained in the divisor set of its proper lcm d, so |S| <= tau(d) <= mu-star(B); conversely, the full divisor set of a maximizing proper divisor d is admissible and attains tau(d). Hence mu-star(B) = mu(B), also agreeing with tau(B) max_{p^a || B} a/(a+1). The function identity is BELEGT and needs no identification hypothesis.
+
+Under BIB H1 with |S_x| >= q-1, |D| = tau(B), the pairwise proper-LCM property for the actual rows, and the one-prime hypothesis tau(B)+mu(B) < 2q-1, inclusion-exclusion forces mu-star(B) = mu(B) = 2q-2-tau(B) and exact pairwise row/intersection saturation. The function identity is BELEGT; the historical identification of the depth-one rows and their proper-LCM property remain OFFEN. This supersedes earlier wording that treated equality of the two parameter definitions as an identification hypothesis. See the updated BIB-label audit and historical reconstruction ledger.
