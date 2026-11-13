@@ -407,11 +407,11 @@ theorem prefixFibre_updatedWeight_eq_PAt
   have hhk : hk = hj := Subsingleton.elim _ _
   cases hhk
   have hk : k + 1 ≤ n := hj
-  have hlast :
-      prefixIndex (nextPrefixBound a j hj) (Fin.last (a + j)) =
-        stageCoordinate hk :=
-    prefixIndex_last_eq_stageCoordinate hj hk
-  cases hlast
+  have hstageNext :
+      stageCoordinate (k := a + j) hj =
+        stageCoordinate (k := a + j) (nextPrefixBound a j hj) :=
+    stageCoordinate_eq_of_bound _ _
+  cases hstageNext
   have hroundtrip :
       extendPrefix C hk (restrictPrefix C hk y) (y (Fin.last k)) = y := by
     exact extendPrefix_restrictPrefix C hk y
