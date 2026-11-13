@@ -341,3 +341,14 @@ Put \(T_x=S_{x,1}\). The spine theorem gives \(|T_x|=q\) when the terminal depth
 Since the one-prime hypothesis is \(\tau(B)+\mu(B)<2q-1\) and the parameters are integers, \(2q-2-\tau(B)\geq\mu(B)\). Thus, if the punctured rows satisfy the BIB proper-LCM bound \(|S_x\cap S_y|\leq\mu(B)\), every pair must attain exact equality \(|S_x\cap S_y|=\mu(B)\).
 
 This is a new conditional combinatorial constraint and a concrete search target for the missing extraction: identify a source-defined canonical deleted label \(d_x\), then prove pairwise proper LCM and exact saturation. No historical deletion rule or saturation proof is currently reproduced. The candidate remains **OFFEN** as a historical identification; only the cardinality lower bound is **BEDINGT BELEGT**.
+
+
+
+
+## Addendum 1.21 — PR #159 split Lean result and dependent coordinate diagnosis
+
+On corrected PR #159 head 0ee3144ddbc1927563e03a752dd472c391d5cc61, exact workflow [43411234880](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411234880) split:
+- audit job 131837877076 **SUCCESS**: the pointwise update theorem, PAt_nonneg, and PAt_sum_eq_one compile with [propext, Classical.choice, Quot.sound], with no actual sorryAx in the completed audit log;
+- integrated-paranoid Lean 4.35.0 job 131837876454 **FAILURE**: unsolved pos/neg update goals remain at lines 423–424, with downstream sorryAx in error recovery.
+
+Inspection of the integrated goal identifies the mismatch between the final coordinate index produced by prefixIndex and the stageCoordinate index used by the covered-value Finset. The next candidate, PR #159 head a49ce83ca5db434f8a479a545d09c580e6b24d6e, applies the named equality prefixIndex_last_eq_stageCoordinate before the branch split. Its exact-head CI result remains pending/unverified in this record. The Lean 4.28 audit result is not a Lean 4.35 integrated-paranoid pass.
