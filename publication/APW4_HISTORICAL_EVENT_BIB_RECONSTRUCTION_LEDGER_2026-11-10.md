@@ -378,3 +378,14 @@ The one-prime hypothesis \(\tau(B)+\mu(B)<2q-1\) implies \(\mu(B)\leq2q-2-\tau(B
 for every pair. This is a **BELEGT necessary arithmetic compatibility condition**, not a historical identification or a proof of proper LCM.
 
 The detailed correction and the two possible depth-one extraction cases are recorded in the 13 November BIB-label audit. It supersedes the earlier broad wording that treated the one-prime full-LCM conclusion as an obstruction at arbitrary fixed depth. The remaining historical extraction and energy-transfer obligations stay open.
+
+
+
+
+## Addendum 1.24 — square-free parameter restriction
+
+For square-free B with s=ω(B), τ(B)=2^s and the explicit proper-divisor envelope is μ*(B)=2^(s−1). The exact BIB/one-prime saturation condition μ*(B)=2q−2−τ(B) therefore forces
+\[
+q=1+3\cdot2^{s-2}.
+\]
+For prime q this requires s≥3 and q≡1 mod 3. This is a necessary arithmetic restriction only when B is square-free and the BIB parameter is the displayed μ*; it does not assert that the historical B is square-free.
