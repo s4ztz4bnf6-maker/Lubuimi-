@@ -418,7 +418,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     Finset.card_univ, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
-        prefixCoveredValues C (A := A) (a + j) hj
+        prefixCoveredValues C (A := A) (k := a + j) hj
           (restrictPrefix C (k := a + j) hj y)
   · simp only [if_pos hcov, Finset.mem_univ, ite_true]
   · simp only [if_neg hcov, Finset.mem_univ, ite_true]
