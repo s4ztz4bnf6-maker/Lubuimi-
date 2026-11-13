@@ -279,3 +279,41 @@ PR #106 is the next narrow repair, head `ce44c2e8757318f3ac4108b9c8a291c69374195
 before applying `if_pos`. Exact-head workflow [42756169971](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756169971) has audit and integrated-paranoid jobs running. No result is claimed yet.
 
 The remaining target is still the same one local conditional identity in `prefixFibre_updatedWeight_eq_PAt`; all earlier prefix extension, restriction, fibre-cardinality, and source-indexed prefix-sum declarations remain separately recorded. The two failed repair attempts are retained as diagnostics; they do not alter the mathematical APW4 results.
+
+
+
+
+## Addendum 1.18 — BIB label identity audit and current pointwise update candidate, 13 November 2026
+
+### BIB rows versus prime-fibre depth labels
+
+PR #57's finite BIB incidence note uses rows \(S_x\subseteq D(B)\) and the proper-LCM intersection premise: common labels for distinct rows are said to have LCM a proper divisor of B, yielding \(|S_x\cap S_y|\leq\mu^*(B)\) once the labels are distinct divisors. The note keeps the historical extraction from the selected fibre entries \(A_q(x,h)\) to divisor labels as unverified.
+
+The 31 October one-prime-fibre theorem defines \(S_{x,j}\) from selected minimal-cover cylinders at a fixed q-adic depth. Under its hypotheses, for distinct \(x,y\in U\), it obtains a common depth j with
+\[
+|S_{x,j}\cap S_{y,j}|\geq2q-1-\tau(B)>\mu(B),
+\qquad
+\operatorname{lcm}(S_{x,j}\cap S_{y,j})=B.
+\]
+Its parameter is explicitly
+\[
+\mu(B)=\max\{|S|:S\subseteq\mathcal D(B),\ \operatorname{lcm}(S)<B\}
+=\tau(B)\max_{p^a\parallel B}\frac a{a+1}.
+\]
+The BIB note's Section 7 defines \(\mu^*(B)=\max_{d\mid B,d<B}\tau(d)\) and proves the same displayed formula; for square-free B, \(\mu^*(B)=\tau(B)/2\). This equality is a numerical identity for the displayed definitions, not a license to identify either symbol with an undocumented historical parameter.
+
+**Conditional incompatibility:** a literal identification \(S_x=S_{x,j}\) with the same B, q, U, and minimal-cover selection cannot satisfy both the BIB proper-LCM premise and the one-prime full-LCM conclusion. The direct same-depth identification is therefore ruled out under that shared-hypotheses interpretation. A different projection, strict subfamily, depth aggregation, or selection rule remains possible only after an explicit index-preserving map and a new proof of its intersection bound. The detailed comparison is in [the 13 November BIB-label audit](https://github.com/s4ztz4bnf6-maker/Lubuimi-/blob/docs/apw4-dated-status-correction-2026-11-11/docs/APW4_BIB_LABEL_IDENTITY_AUDIT_2026-11-13.md).
+
+### Historical and energy-transfer obligations still open
+
+The following remain **OFFEN / NICHT REPRODUZIERT**: the extraction map from \(A_q(x,h)\) to distinct divisor labels; the depth convention linking \((x,j)\) to BIB rows indexed by x; a verified proper-LCM bound for the actual BIB rows; the weighted event-to-slot map; conservation of historical weights; the weighted Hall transfer; and the historical DT/HT instantiation into APW4 energy. The finite BIB second-moment inequality remains proved only under its explicit incidence hypotheses and is not itself the APW4 energy theorem.
+
+### Strict lower-bound status
+
+The mathematical status recorded in Dossier v1.5, Addendum 1.3, §25 remains **ABGESCHLOSSEN**. **BELEGLÜCKE** refers to independent reproduction of the complete historical derivation from accessible primary artifacts, not to the mathematical status of the result in §25. Historical definitions and end-to-end Lean verification remain separate obligations.
+
+### Exact PR #158 / #159 Lean chronology
+
+PR #158 head f494dd15d83cab582a9364d3eebca1705c8dcadc, workflow [43143591356](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43143591356): isolated audit SUCCESS, integrated Lean 4.35.0 FAILURE at the pos/neg pointwise update goals (source lines 423–424); downstream PAt declarations show sorryAx in error-recovery output.
+
+PR #159 head 336fd7a3f2b274f705c184a9bbfddbf6854c3f8c changes the by_cases proposition to use the original successor bound hj and explicit prefix a+j, matching the indices displayed in the PR #158 trace. Exact workflow [43410655372](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43410655372) had both audit job 131835937905 and integrated-paranoid job 131835938270 **IN PROGRESS** at this update. This is a proof-script candidate only; no theorem success or axiom profile is claimed until both exact-head logs finish and are inspected.
