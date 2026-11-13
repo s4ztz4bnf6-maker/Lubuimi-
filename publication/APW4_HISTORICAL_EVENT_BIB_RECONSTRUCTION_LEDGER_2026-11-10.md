@@ -389,3 +389,10 @@ For square-free B with s=ω(B), τ(B)=2^s and the explicit proper-divisor envelo
 q=1+3\cdot2^{s-2}.
 \]
 For prime q this requires s≥3 and q≡1 mod 3. This is a necessary arithmetic restriction only when B is square-free and the BIB parameter is the displayed μ*; it does not assert that the historical B is square-free.
+
+
+
+
+## Addendum 1.25 — second proof-witness alignment candidate
+
+PR #159 head 533e4f7c317bbb7ec606d6f6878b3aec2c054a30 identifies stageCoordinate hj with stageCoordinate (nextPrefixBound a j hj) using stageCoordinate_eq_of_bound before simplifying. This targets the two distinct proof-witness occurrences of prefixCoveredValues exposed by the Lean 4.35.0 goal. Exact workflow [43412739208](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43412739208) has audit job 131842924357 and integrated-paranoid job 131842924762 in progress. No result is claimed for this candidate.
