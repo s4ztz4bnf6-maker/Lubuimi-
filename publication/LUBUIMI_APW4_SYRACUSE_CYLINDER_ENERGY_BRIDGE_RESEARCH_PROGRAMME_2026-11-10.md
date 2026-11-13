@@ -646,3 +646,10 @@ The 31 October full-LCM comparison occurs at the pair-dependent depth \(j=\min(k
 ## Square-free APW4/BIB parameter test — 13 November 2026
 
 The necessary BIB saturation equation μ*(B)=2q−2−τ(B), when B is square-free with s=ω(B), forces q=1+3·2^(s−2). For prime q this requires s≥3 and q≡1 mod 3. This is only a conditional parameter restriction; no square-freeness assumption is imported into the historical APW4 argument.
+
+
+
+
+## Syracuse Lean cast-typing retry — 13 November 2026
+
+PR #82 current source head c5698519a86caf860eb6c2ede0f4d65d82de8541 explicitly types the natural exponentiation before casting to ZMod. Exact workflow [43412794362](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43412794362) is in progress. The preceding head 926f0fd2 still failed because the cast notation did not force the intended source type. No formal pass is claimed.
