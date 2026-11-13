@@ -618,3 +618,10 @@ The APW4 and Syracuse projects remain logically separate: the finite Syracuse un
 ## Syracuse Lean retry update — 13 November 2026
 
 PR #82's initial source head bf814a9e7ee30b23e3c90d10ee3553cb4fb71f8c failed at API elaboration: the coprime power lemmas require explicit exponents, and ZMod.isUnit_iff_coprime requires explicit natural representative and modulus. Corrected source head e0c275fd94d8ee24c3348888952335b06657ce41 is under exact workflow [43411256426](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43411256426), Lean job 131837949086, currently **IN PROGRESS**. No pass is claimed. The candidate still covers uniqueness only; oddness, lift counting, product density, full word realization, and infinite-path exclusion remain separate obligations.
+
+
+
+
+## Syracuse terminal-residue Lean retry — current exact head, 13 November 2026
+
+PR #82 now has exact source head 4c782523c9e86d22b1267e8ebfc3d99cccdf9e1d. The previous run 43411256426 compiled the library up to the new theorem but failed at a cast-normalization mismatch between the cast of the natural power and the power of the cast. The source now uses the cast of the natural power. Exact workflow [43411629727](https://github.com/s4ztz4bnf6-maker/Lubuimi/actions/runs/43411629727) is queued. No pass is claimed. The candidate is only the unique terminal residue-class theorem; oddness, lift counting, density, complete word realization, and global infinite-path exclusion remain separate.
