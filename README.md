@@ -600,3 +600,8 @@ PR #106 is the next narrow repair, head `ce44c2e8757318f3ac4108b9c8a291c69374195
 before applying `if_pos`. Exact-head workflow [42756169971](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/42756169971) has audit and integrated-paranoid jobs running. No result is claimed yet.
 
 The remaining target is still the same one local conditional identity in `prefixFibre_updatedWeight_eq_PAt`; all earlier prefix extension, restriction, fibre-cardinality, and source-indexed prefix-sum declarations remain separately recorded. The two failed repair attempts are retained as diagnostics; they do not alter the mathematical APW4 results.
+
+
+## BIB label identity correction — 13 November 2026
+
+The historical event/BIB ledger now records the conditional incompatibility between PR #57's proper-LCM intersection premise and the 31 October one-prime theorem's full-LCM conclusion for a literal same-depth identification of S_x and S_{x,j}. The extraction map, weighted Hall transfer, and historical APW4 energy coupling remain open. The strict lower bound remains mathematically completed according to Dossier v1.5 §25; its accessible-source reproduction gap remains BELEGLÜCKE. PR #159's exact-head Lean workflow 43410655372 is in progress; no result is claimed.
