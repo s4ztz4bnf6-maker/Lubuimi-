@@ -352,3 +352,10 @@ On corrected PR #159 head 0ee3144ddbc1927563e03a752dd472c391d5cc61, exact workfl
 - integrated-paranoid Lean 4.35.0 job 131837876454 **FAILURE**: unsolved pos/neg update goals remain at lines 423–424, with downstream sorryAx in error recovery.
 
 Inspection of the integrated goal identifies the mismatch between the final coordinate index produced by prefixIndex and the stageCoordinate index used by the covered-value Finset. The next candidate, PR #159 head a49ce83ca5db434f8a479a545d09c580e6b24d6e, applies the named equality prefixIndex_last_eq_stageCoordinate before the branch split. Its exact-head CI result remains pending/unverified in this record. The Lean 4.28 audit result is not a Lean 4.35 integrated-paranoid pass.
+
+
+
+
+## Addendum 1.22 — explicit final-coordinate transport candidate, 13 November 2026
+
+PR #159 head a49ce83ca5db434f8a479a545d09c580e6b24d6e applies prefixIndex_last_eq_stageCoordinate before the pointwise update split. This targets the exact Lean 4.35.0 mismatch between the prefixIndex of the last coordinate and the stageCoordinate of the covered-value Finset. Exact workflow [43411925347](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43411925347) has audit job 131840194635 and integrated-paranoid job 131840194925 in progress. The preceding 0ee3144 head passed the isolated audit with standard profiles for the pointwise update theorem and dependent PAt declarations, but failed integrated Lean 4.35.0. No result is claimed for the new candidate.
