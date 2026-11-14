@@ -151,3 +151,15 @@ Repository rights, visibility, branch state, and archival limitations are summar
 - [Erdős–Selfridge Lean audit setup and scope](research/ERDOS_SELFRIDGE_LEAN_AUDIT_SETUP_AND_SCOPE_2026-11-09.md) — a separate audit track, not an APW4 proof component.
 - [Commercial licensing and remuneration policy](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md) — commercial use of the author's original materials requires prior written permission and a separately negotiated agreement.
 - [APW4 repository security and archival checklist](publication/APW4_REPOSITORY_SECURITY_AND_ARCHIVAL_CHECKLIST_2026-11-09.md) — records branch-protection, release, PDF, and independent-archive steps that still require owner-side action.
+
+
+---
+
+## Consolidated status — 14 November 2026
+
+- [APW4 / BBMST consolidated project status](docs/FINAL_PROJECT_STATUS_2026-11-14.md)
+- [APW4 manuscript addendum](publication/APW4_MANUSCRIPT_ADDENDUM_2026-11-14.md)
+
+**Latest integrated Lean 4.35.0 checkpoint:** PR [#159](https://github.com/s4ztz4bnf6-maker/Lubuimi-/pull/159), workflow [43413218772](https://github.com/s4ztz4bnf6-maker/Lubuimi-/actions/runs/43413218772): isolated audit PASS; integrated-paranoid FAIL. The integrated log reports `simp made no progress` at the two dependent prefix-update branches and `sorryAx` in the recovery output for the affected declarations. No integrated verification claim is made.
+
+**Mathematical boundary:** the author's APW4 proof record remains established under its full historical hypotheses. The accessible repository artifacts still do not independently reconstruct every historical DT/HT and strict lower-bound step end-to-end. This is a reproducibility boundary, not a retraction of the mathematical result. The unrestricted Erdős–Selfridge theorem is not claimed as proved; the separate project placeholders remain explicit.
