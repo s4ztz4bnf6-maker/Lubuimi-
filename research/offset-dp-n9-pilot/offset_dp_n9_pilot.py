@@ -16,6 +16,8 @@ import sys
 import time
 from pathlib import Path
 
+# Reuse the audited exact-DP primitives from the parent PR #162 directory.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "offset-dp"))
 from offset_dp_audit import direct_validate, modulo9_pair_filter
 
 N = 9
