@@ -1,0 +1,26 @@
+name: Offset DP audit
+on:
+  push:
+    paths:
+      - "research/offset-dp/**"
+      - ".github/workflows/offset-dp-audit.yml"
+  pull_request:
+    paths:
+      - "research/offset-dp/**"
+      - ".github/workflows/offset-dp-audit.yml"
+  workflow_dispatch:
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: research/offset-dp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run R15-R17 and n=5/n=7 regression tests
+        run: |
+          python -m unittest -v
