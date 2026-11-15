@@ -22,5 +22,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run R15-R17 and n=5/n=7 regression tests
-        run: |
-          python -m unittest -v
+        run: python -m unittest -v
+      - name: Run complete n=5/n=7 endpoint searches and write audit report
+        run: python offset_dp_audit.py --mode search --output offset_dp_audit_report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: offset-dp-audit-report
+          path: research/offset-dp/offset_dp_audit_report.json
+          if-no-files-found: error
