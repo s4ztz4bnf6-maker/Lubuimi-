@@ -1,5 +1,8 @@
+import sys
 import unittest
+from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "offset-dp"))
 from offset_dp_audit import FIXTURES, direct_validate
 from offset_dp_n9_pilot import (
     ENDPOINT_PAIRS, MAX_RSS_MIB, MAX_SECONDS_PER_RUN,
