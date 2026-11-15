@@ -31,7 +31,7 @@ MAX_TOTAL_SECONDS = 300.0
 def rss_mib() -> float:
     """ru_maxrss is KiB on Linux and bytes on macOS."""
     value = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    return value / (1024.0 if sys.platform == "darwin" else 1024.0)
+    return value / (1024.0 * 1024.0 if sys.platform == "darwin" else 1024.0)
 
 
 def dp_fixed_guarded(n: int, C: int, D: int, sign: int, *,
