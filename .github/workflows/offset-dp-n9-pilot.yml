@@ -1,0 +1,32 @@
+name: Offset DP n=9 guarded pilot
+on:
+  push:
+    paths:
+      - "research/offset-dp-n9-pilot/**"
+      - ".github/workflows/offset-dp-n9-pilot.yml"
+  pull_request:
+    paths:
+      - "research/offset-dp-n9-pilot/**"
+      - ".github/workflows/offset-dp-n9-pilot.yml"
+  workflow_dispatch:
+jobs:
+  n9-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: research/offset-dp-n9-pilot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run pilot guardrail and positive-control tests
+        run: python -m unittest -v
+      - name: Execute four-pair n=9 pilot
+        run: python offset_dp_n9_pilot.py --output offset_dp_n9_pilot_report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: offset-dp-n9-pilot-report
+          path: research/offset-dp-n9-pilot/offset_dp_n9_pilot_report.json
+          if-no-files-found: error
