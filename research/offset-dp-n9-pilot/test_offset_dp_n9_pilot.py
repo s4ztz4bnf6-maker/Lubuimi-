@@ -25,6 +25,10 @@ class OffsetDPN9PilotTests(unittest.TestCase):
 
     def test_positive_control_endpoint_pair_finds_known_fixture(self):
         n, c, d = next(x for x in FIXTURES if x[0] == 9)
+        # Independently validate the pre-existing fixture before using its
+        # endpoint pair as a positive control for the guarded search.
+        fixture = direct_validate(n, c, d, 1)
+        self.assertEqual(fixture["signed_difference"], 1)
         result = dp_fixed_guarded(n, c[-1], d[-1], 1)
         self.assertEqual(result["status"], "WITNESS_FOUND", result)
         self.assertEqual(result["witness"]["signed_difference"], 1)
