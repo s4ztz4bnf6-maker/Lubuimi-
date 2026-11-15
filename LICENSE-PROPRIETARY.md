@@ -27,6 +27,12 @@ This notice does not restrict rights that cannot lawfully be restricted, includi
 
 This notice does not relicense third-party software, Mathlib, Lean, packages, libraries, data, or other materials that are identified as third-party materials or are otherwise subject to separate license terms. Those materials remain governed by their respective licenses. No rights are claimed over third-party materials beyond rights actually held by the copyright holder.
 
+## Mathematical ideas, facts, and independent implementations
+
+This notice reserves rights only in original expression and other materials in which the rights holder actually owns copyright or another applicable right. It does not claim exclusive ownership over mathematical facts, theorem statements, abstract ideas, methods, procedures, or results merely because they were discovered, developed, or published by the author. An independently created implementation of an unprotected mathematical idea may be legally distinct from copying protected source code or substantial protected expression. The treatment of any particular use depends on applicable law and statutory exceptions.
+
+Third-party source code, publications, Lean, Mathlib, packages, and dependencies remain subject to their own licences and rights holders. Nothing in this notice transfers or expands rights in those materials.
+
 ## No warranty
 
 To the maximum extent permitted by applicable law, the Materials are provided “as is”, without warranty of any kind. Nothing in this notice excludes liability where such exclusion is prohibited by law.
