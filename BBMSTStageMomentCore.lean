@@ -1,6 +1,6 @@
 /-
 Copyright (c) 2026 Ta-Yoshua Lubuimi.
-SPDX-License-Identifier: AGPL-3.0-only
+SPDX-License-Identifier: LicenseRef-Lubuimi-Commercial-Revenue-Share
 
 Original project contribution. AI-assisted development is disclosed in
 AI-ASSISTANCE-AND-AUTHORSHIP.md. Third-party imports and dependencies are
