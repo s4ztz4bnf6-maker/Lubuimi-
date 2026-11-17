@@ -176,11 +176,11 @@ This is an exploratory note only. It is not part of the established proof chain 
 
 The repository adopts a file-specific dual-licensing model for rights actually controlled by Ta-Yoshua Lubuimi:
 
-- Original code files explicitly marked AGPL-3.0 may also be offered under a separately negotiated paid commercial license for customers needing rights beyond AGPL (for example, closed-source integration, OEM, or embedded distribution).
+- All original project-authored source code across repository branches is offered under AGPL-3.0-only, subject to the exclusions and rights-holder scope in the commercial licensing policy; a separately negotiated paid commercial license may be offered for customers needing rights beyond AGPL (for example, closed-source integration, OEM, or embedded distribution).
 - Original human-authored manuscripts, research exposition, and non-code documentation remain all rights reserved unless a separate written license is granted.
 - AI assistance is transparently disclosed. Licensing claims cover only rights actually held in human-authored contributions and protectable human creative choices; no exclusive copyright is asserted over purely autonomous AI output.
 - Third-party materials, upstream BBMST/Erdős–Selfridge content, Lean, Mathlib, dependencies, and external contributions retain their own licenses and rights.
 
 See [LICENSE-AGPL-3.0.txt](LICENSE-AGPL-3.0.txt), [LICENSE-PROPRIETARY.md](LICENSE-PROPRIETARY.md), [LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md), and [AI-ASSISTANCE-AND-AUTHORSHIP.md](AI-ASSISTANCE-AND-AUTHORSHIP.md).
 
-**Important:** AGPL permits commercial use without royalty when its terms are followed. The paid alternative is for customers needing permissions beyond AGPL. No income is guaranteed, and no existing source file is automatically relicensed without an explicit file-level notice and rights check.
+**Important:** AGPL permits commercial use without royalty when its terms are followed. The paid alternative is for customers needing permissions beyond AGPL. No income is guaranteed. The repository-wide grant does not cover third-party or externally contributed material whose rights the author does not control.
