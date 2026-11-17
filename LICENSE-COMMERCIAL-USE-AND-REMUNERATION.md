@@ -32,7 +32,7 @@ AI-provider terms, third-party source material, and rights held by others remain
 
 ## 4. File-by-file identification and third-party rights
 
-A code file is covered by AGPL only when it contains an explicit AGPL notice or is otherwise clearly identified as AGPL-covered. Adding this policy or the AGPL license text does not silently relicense every existing file.
+**Repository-wide scope:** all original software/source-code files authored by Ta-Yoshua Lubuimi and present in any branch of this repository are offered under GNU AGPL-3.0-only, unless a file contains a different explicit license or third-party notice. This repository-wide grant is the clear identification of those original project code files; individual SPDX headers are added to current source files where practicable. The grant does not cover third-party code, dependencies, copied upstream files, or contributions whose rights are not controlled by the author. Adding this policy does not relicense material owned by others.
 
 Before dual licensing a code file, the rights holder must control the relevant rights or have express relicensing permission from every relevant rights holder. Third-party code, Lean, Mathlib, dependencies, copied upstream files, and external contributions remain excluded unless their licenses and permissions allow the proposed treatment.
 
