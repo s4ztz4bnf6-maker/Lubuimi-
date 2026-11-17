@@ -1,47 +1,29 @@
-# Proprietary License and All-Rights-Reserved Notice
+# Proprietary Rights Notice for Research Text and Documentation
 
 **Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
 
-This notice applies to the original source code, Lean formalizations, scripts, project documentation, and other original materials in this repository that are owned by Ta-Yoshua Lubuimi (the “Materials”), except where a file contains a different, explicit license or third-party notice.
+This notice applies to original human-authored research expression owned or controlled by Ta-Yoshua Lubuimi in this repository, including APW4 manuscript text, research notes, explanatory prose, diagrams, figures, and non-code documentation, except where a file contains a different explicit license or third-party notice.
 
-## No general license granted
+Original source-code files expressly marked with the GNU Affero General Public License version 3 (AGPL-3.0) are governed by that license. The rights holder may separately offer those same original code files under a paid commercial license for customers requiring rights beyond the AGPL, provided all relevant rights are controlled.
 
-No open-source, commercial, or other general license is granted by making the Materials publicly accessible. Except for the limited rights that necessarily arise under GitHub’s Terms of Service and applicable mandatory law, all rights are reserved.
+## Rights reserved; no implied commercial permission
 
-Without prior, express written permission from the copyright holder, you may not:
+For protected materials within this notice, all rights are reserved unless a separate written license says otherwise. Public repository access, viewing, downloading, citation, or cloning does not grant a general right to republish, adapt, redistribute, sublicense, sell, or commercially exploit protected expression.
 
-- use the Materials for commercial purposes or incorporate them into a commercial product or service;
-- reproduce, redistribute, publish, sublicense, sell, or otherwise commercially exploit copies of the Materials;
-- modify the Materials or distribute modified or derivative versions;
-- remove or alter copyright, attribution, or proprietary notices.
+Scholarly citation, linking, discussion, quotation, and other uses permitted by applicable copyright law remain available. Commercial reuse of protected manuscript expression and documentation requires express written permission.
 
-A request for permission should identify the relevant files, intended use, distribution model, and whether the use is commercial. Permission is effective only if granted expressly in writing by the copyright holder.
+## AI assistance and authorship transparency
 
-## Public access, citation, and scholarly discussion
+AI systems were used as disclosed research and development tools. The author is responsible for the research direction, mathematical formulation, proof design, selection and arrangement of material, critical evaluation, corrections, verification decisions, and final acceptance.
 
-Public visibility is not a grant of a general reuse license. You may refer to the repository, cite the work, discuss the results, and link to the Materials. Such scholarly reference does not authorize copying or redistributing substantial portions of the Materials. Any quotation or other use permitted by applicable law remains unaffected.
+This notice claims rights only in copyrightable human-authored expression and other rights the author is legally entitled to license. It does not claim copyright ownership over material generated autonomously by an AI system to the extent such material is not protected under applicable law. AI-assisted contributions are transparently identified in project records where applicable.
 
-This notice does not restrict rights that cannot lawfully be restricted, including applicable statutory exceptions and limitations.
+## Third-party materials and mathematical ideas
 
-## Third-party materials and dependencies
+This notice does not claim ownership of or relicense upstream BBMST/Erdős–Selfridge materials, Lean, Mathlib, package code, dependencies, third-party publications, datasets, or other materials identified by separate notices. Each remains governed by its own license and rights holder.
 
-This notice does not relicense third-party software, Mathlib, Lean, packages, libraries, data, or other materials that are identified as third-party materials or are otherwise subject to separate license terms. Those materials remain governed by their respective licenses. No rights are claimed over third-party materials beyond rights actually held by the copyright holder.
+Copyright protects original expression, not mathematical facts, abstract ideas, methods, procedures, or theorem statements as such. This notice does not claim an exclusive copyright monopoly over mathematical facts or independently developed implementations.
 
-## No warranty
+## No warranty and legal boundary
 
-To the maximum extent permitted by applicable law, the Materials are provided “as is”, without warranty of any kind. Nothing in this notice excludes liability where such exclusion is prohibited by law.
-
-## Contact
-
-For written permission or licensing questions, contact the copyright holder through the contact channel listed in the repository profile or project documentation.
-
----
-
-This is a proprietary rights notice, not a standard open-source license and not a substitute for jurisdiction-specific legal advice. If the repository contains contributions or materials whose rights are held by others, obtain the necessary permissions before applying this notice to those materials.
-
-
-## Commercial licensing and remuneration
-
-The repository also publishes [LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md](LICENSE-COMMERCIAL-USE-AND-REMUNERATION.md). It clarifies that public access is not commercial permission and that any commercial exploitation of the author's original materials requires prior express written permission under a separate agreement. A paid license may include an upfront fee, royalties, minimum guarantees, reporting, and audit provisions, with the actual terms negotiated for the proposed use.
-
-This policy does not create an automatic contractual royalty for every unauthorized use. Any contractual payment obligation depends on a signed agreement; infringement remedies are determined by applicable law and facts.
+Materials are provided “as is”, without warranty to the maximum extent permitted by law. This notice is not a negotiated commercial agreement or jurisdiction-specific legal opinion. Licensing and enforcement decisions should be reviewed by qualified counsel.
