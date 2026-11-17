@@ -1,72 +1,49 @@
-# Commercial licensing and remuneration policy
+# Commercial Licensing and Remuneration Policy
 
 **Rights holder:** Ta-Yoshua Lubuimi  
-**Copyright:** © 2026 Ta-Yoshua Lubuimi. All rights reserved.  
-**Applies to:** Original APW4 manuscripts, research notes, original Lean code, proofs, documentation, and other original repository materials owned by the rights holder, subject to third-party rights and any file-specific license.
+**Copyright:** © 2026 Ta-Yoshua Lubuimi, to the extent copyright subsists in the relevant human-authored material.  
+**Applies to:** Original APW4/BBMST research materials in this repository only to the extent the rights holder owns or controls the relevant rights.
 
-## 1. No free commercial-use permission
+This policy establishes a revenue-oriented, file-specific licensing model. It does not promise or automatically generate revenue.
 
-Public availability of a repository, manuscript, proof, source file, or research note does not grant a commercial-use license. No commercial permission is granted by silence, public access, citation, download, cloning, or the absence of a payment request.
+## 1. Original software code: AGPL-3.0 plus paid commercial alternative
 
-Commercial exploitation of the rights holder's original materials requires prior express written permission under a separate written license agreement. Unless and until such an agreement is signed, no commercial license is granted.
+Original software/source-code files may be marked with an explicit **GNU AGPL version 3** notice where the rights holder controls the relevant copyright and all third-party license obligations have been checked. The full license text is in [LICENSE-AGPL-3.0.txt](LICENSE-AGPL-3.0.txt).
 
-## 2. Paid license terms
+The AGPL permits commercial use. A person or company may use, modify, and distribute covered code commercially if it complies with the AGPL. **The AGPL does not require an AGPL-compliant user to pay a royalty.**
 
-Any commercial license is subject to a separately negotiated written agreement and may require one or more of the following, as appropriate to the proposed use:
+The rights holder may separately offer the same original code under a **paid proprietary commercial license** for customers who need rights beyond AGPL, such as closed-source integration, OEM, embedded distribution, or negotiated enterprise permissions.
 
-- an upfront license fee;
-- recurring license fees or royalties calculated on an agreed and auditable basis;
-- minimum annual guarantees or minimum payments;
-- usage, distribution, deployment, seat, revenue, or product-based reporting;
-- attribution and preservation of copyright notices;
-- limits on field of use, territory, duration, users, sublicensing, redistribution, and derivative works;
-- audit and record-retention rights proportionate to the licensed exploitation;
-- agreed payment dates, currency, taxes, late-payment terms, and dispute resolution.
+A commercial agreement may include an upfront fee, annual minimum, per-product or per-deployment fee, usage-based fee, royalty/revenue share, enterprise/OEM rights, support, maintenance, reporting, proportionate audit rights, territory, duration, and termination terms. No price or royalty is fixed here; payment obligations arise only under a signed agreement.
 
-No royalty rate, fee amount, minimum guarantee, or payment formula is fixed by this policy. Those commercial terms must be expressly agreed in the signed license. A user must not infer a right to commercially exploit the materials while negotiations are pending.
+## 2. Manuscripts, mathematical exposition, and documentation
 
-## 3. Unauthorized commercial exploitation
+Original human-authored manuscript text, research notes, explanatory prose, diagrams, and other non-code materials remain **all rights reserved** unless a file-specific notice states otherwise. Commercial republication, adaptation, inclusion in a paid product, or substantial reuse of protected expression requires a separately negotiated written license.
 
-Use outside the scope of a valid license may infringe rights held by the rights holder, depending on the material used, the conduct, applicable law, and any statutory exception or limitation. The rights holder reserves all remedies available under applicable law.
+This does not create ownership over mathematical facts, abstract ideas, methods, procedures, or theorem statements. Independent research and independently written or implemented work are not prohibited.
 
-This policy does not promise that every unauthorized use automatically creates a contractual royalty debt. Contractual payment obligations arise from an applicable agreement; infringement remedies, damages, injunctions, and recoverable fees are determined by the applicable law and facts.
+## 3. AI assistance and scope of licensed rights
 
-## 4. Scholarly citation and legally permitted use
+AI systems were used as tools during research and development, and that use is disclosed in the project records. The author is responsible for the research direction, mathematical formulation, proof design, selection and arrangement of material, critical evaluation, corrections, testing decisions, and final acceptance.
 
-Scholarly citation, linking, discussion, and quotations or other uses permitted by applicable copyright law remain subject to the relevant legal rules. This policy does not prohibit lawful quotation, fair use/fair dealing, or other mandatory statutory exceptions. Citation is not a substitute for permission to reproduce substantial protected material or to exploit it commercially.
+This policy licenses only rights actually held or controlled by Ta-Yoshua Lubuimi. Purely autonomous AI-generated output may not itself qualify for copyright protection. The policy does not claim exclusive copyright in such output merely because an AI system produced it. Where human creative choices, original edits, selection, arrangement, or other protectable expression are present, the license applies to those contributions to the extent protected by law.
 
-## 5. Third-party material
+AI-provider terms, third-party source material, and rights held by others remain unaffected.
 
-This policy applies only to original materials in which Ta-Yoshua Lubuimi owns the relevant rights. It does not claim ownership of Lean, Mathlib, upstream Erdős–Selfridge source files, third-party publications, package code, or other third-party material. Each such component remains subject to its own license and rights holder.
+## 4. File-by-file identification and third-party rights
 
-## 6. Requesting a commercial license
+A code file is covered by AGPL only when it contains an explicit AGPL notice or is otherwise clearly identified as AGPL-covered. Adding this policy or the AGPL license text does not silently relicense every existing file.
 
-A commercial licensing request should identify:
+Before dual licensing a code file, the rights holder must control the relevant rights or have express relicensing permission from every relevant rights holder. Third-party code, Lean, Mathlib, dependencies, copied upstream files, and external contributions remain excluded unless their licenses and permissions allow the proposed treatment.
 
-1. the exact repository files, manuscript, theorem, code, or other materials proposed for use;
-2. the product, service, research, or business activity in which they would be used;
-3. the intended users, distribution, deployment scale, territory, and duration;
-4. whether the use is internal, hosted, embedded, redistributed, sublicensed, or revenue-generating;
-5. the proposed compensation model and reporting basis.
+The author declares that the projects and associated research/code were created during the author's period of unemployment and independently of any employer's duties or instructions. This is the author's provenance statement; source history, third-party notices, and applicable license obligations must still be checked file by file.
 
-A license is effective only when its scope and compensation terms have been expressly agreed in writing by the rights holder.
+## 5. Requesting a commercial license
 
-## 7. Legal status
+A request should identify the exact files, product or service, intended integration, deployment and distribution scale, territory, duration, and proposed commercial model. No commercial license or payment obligation arises until the parties expressly agree in a signed written agreement.
 
-This is a public statement of licensing policy and reservation of rights. It is not itself a negotiated commercial license, a legal opinion, or a guarantee of enforceability in every jurisdiction. Before signing a commercial license or pursuing an infringement claim, obtain advice from a qualified intellectual-property lawyer in the relevant jurisdiction.
+## 6. Limitations
 
----
+This policy is not legal advice, a signed commercial contract, a promise of income, or a guarantee that every commercial user must pay. AGPL-compliant commercial use is permitted without a royalty. The paid alternative creates a revenue opportunity where a customer needs rights beyond AGPL, but demand, enforceability, collection, and revenue are not guaranteed.
 
-**Ta-Yoshua Lubuimi**  
-**Copyright © 2026 Ta-Yoshua Lubuimi. All rights reserved.**
-
-
-## 8. Important boundary: mathematical ideas and results
-
-Copyright generally protects original expression, such as the manuscript's wording, diagrams, source code, and documentation. It does not, by itself, give the author an exclusive right over mathematical facts, abstract ideas, methods, procedures, systems, or a theorem merely because the author discovered or published it. The precise treatment depends on applicable law.
-
-Accordingly, this policy reserves rights in the author's copyrightable original materials; it must not be read as a claim that every independent implementation, use of a mathematical result, or reference to the theorem automatically requires a royalty. A person who wants to reproduce or commercially exploit protected code or substantial protected expression needs an appropriate license unless an exception applies. A person who independently uses an unprotected mathematical idea may stand differently.
-
-If the author believes a patentable technical implementation or other registrable right may exist, obtain specialist advice before further disclosure or licensing. Because the research has already been published, any patent novelty or filing question is time- and jurisdiction-sensitive and cannot be assumed to remain available.
-
-This distinction is essential: a written paid license can create enforceable contractual compensation for the rights actually licensed, but a proprietary copyright notice alone cannot guarantee payment whenever someone benefits from the mathematical result.
+Obtain qualified intellectual-property advice before commercial launch, especially to review authorship, AI-provider terms, contributor history, third-party dependencies, and the exact rights being licensed.
