@@ -1,3 +1,12 @@
+/-
+Copyright (c) 2026 Ta-Yoshua Lubuimi.
+SPDX-License-Identifier: AGPL-3.0-only
+
+Original project contribution. AI-assisted development is disclosed in
+AI-ASSISTANCE-AND-AUTHORSHIP.md. Third-party imports and dependencies are
+not relicensed by this notice.
+-/
+
 import Mathlib
 
 /-!
