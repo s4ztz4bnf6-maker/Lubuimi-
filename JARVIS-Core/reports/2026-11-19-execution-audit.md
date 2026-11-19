@@ -42,7 +42,7 @@ The platform returned “The automation could not be started.” Neither run pro
 - Source edits were checked for exact replacement matches and resulting content in the GitHub write calls.
 - No TypeScript build, unit suite, browser test, or runtime regression test was executed in this run.
 - Changes exist only on branch `feature/jarvis-ui-capacity-profile-20261119` and are proposed for review. They are not merged or deployed.
-- No production environment variables, credentials, sessions, database contents, wallet settings or access controls were changed.
+- A Railway staged configuration patch (ID `22d3b614-f9eb-4303-b04d-6b2e5aa6f809`) sets `JARVIS_MAX_PARALLEL_TASKS=4`; it is pending and has not been applied or deployed. No live production environment variables, credentials, sessions, database contents, wallet settings or access controls were changed.
 
 ## Security scope
 
