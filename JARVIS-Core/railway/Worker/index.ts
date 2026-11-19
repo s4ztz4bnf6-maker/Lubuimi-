@@ -1,3 +1,4 @@
+import { ProviderGuard } from "../../tools/provider-guard.mjs";
 import postgres from "postgres";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -770,14 +771,19 @@ async function searchMemory(query) {
   const rows=await sql.unsafe("SELECT title,content,confidence,source_type,updated_at FROM agent_memory WHERE title ILIKE $1 OR content ILIKE $1 ORDER BY updated_at DESC LIMIT 12",["%"+q+"%"]);
   return rows.map(r=>({title:r.title,content:String(r.content).slice(0,2400),confidence:r.confidence,sourceType:r.source_type,updatedAt:r.updated_at}));
 }
+const providerGuard = new ProviderGuard();
 let geminiQuotaBlocked = false;
 async function ask(messages, tools) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
   for(const provider of providerCandidates){if(geminiQuotaBlocked&&provider.name.startsWith("google-gemini"))continue;try{
-    const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages,tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(90000)});
-    const responseText=await response.text();if(!response.ok)throw new Error("HTTP "+response.status+": "+responseText.slice(0,700));
-    const data=JSON.parse(responseText);if(!data.choices?.[0]?.message)throw new Error("Provider returned no chat completion");
+    const data=await providerGuard.run(provider.name,async()=>{
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages,tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(90000)});
+      const responseText=await response.text();
+      if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
+      const result=JSON.parse(responseText);if(!result.choices?.[0]?.message)throw new Error("Provider returned no chat completion");
+      return result;
+    });
     data._jarvisProvider=provider.name;console.log("JARVIS inference provider selected: "+provider.name+" / "+provider.model);return data;
   }catch(error){const reason=error instanceof Error?error.message:"unknown provider error";if(provider.name.startsWith("google-gemini")&&/HTTP 429:.*(quota|RESOURCE_EXHAUSTED|rate.?limit|per day)/is.test(reason))geminiQuotaBlocked=true;failures.push(provider.name+": "+reason);console.error("JARVIS inference provider unavailable: "+provider.name+" — "+reason);}}
   throw new Error("All configured inference providers failed: "+failures.join(" | ").slice(0,2400));
