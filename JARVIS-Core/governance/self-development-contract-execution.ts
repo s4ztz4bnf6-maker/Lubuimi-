@@ -116,6 +116,8 @@ export interface DelegatedContractAuthority {
   credentialVerification: Verification;
   /** A qualified seal is evidence of origin/integrity; it is not itself consent or authority. */
   qualifiedEntitySeal: Verification;
+  /** Required when a seal is used: independent evidence of the authorized acceptance mechanism. */
+  separateAcceptanceEvidenceRef?: string;
   /** Independent counterparty and sanctions/fraud checks are complete where required. */
   counterpartyChecks: Verification;
   /** Approval is required only where the mandate or law says so, not as a substitute for authority. */
@@ -185,9 +187,13 @@ export function evaluateContractAction(
   if (authority.executionCredential === "none" || authority.credentialVerification !== "verified") {
     reasons.push("No verified execution credential bound to the authorized signer is available.");
   }
-  if (authority.executionCredential === "entity_seal_with_separate_valid_acceptance" &&
-      authority.qualifiedEntitySeal !== "verified") {
-    reasons.push("The entity seal is not verified; a seal alone never supplies contract acceptance or representative authority.");
+  if (authority.executionCredential === "entity_seal_with_separate_valid_acceptance") {
+    if (authority.qualifiedEntitySeal !== "verified") {
+      reasons.push("The entity seal is not verified; a seal alone never supplies contract acceptance or representative authority.");
+    }
+    if (!authority.separateAcceptanceEvidenceRef?.trim()) {
+      reasons.push("Separate evidence of valid contract acceptance is required; the entity seal alone cannot accept a contract.");
+    }
   }
   if (authority.perTransactionApprovalRequired && !proposal.transactionApproval) {
     reasons.push("The mandate or applicable law requires approval for this individual transaction.");
