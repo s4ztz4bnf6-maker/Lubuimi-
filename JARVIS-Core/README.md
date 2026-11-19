@@ -1,37 +1,40 @@
 # JARVIS-Core
 
-Isolated workspace for the JARVIS system.
+Isolated development workspace for the JARVIS system, maintained on the `jarvis-core` branch.
 
-## Scope
+## Scope and separation
 
-This directory and the `jarvis-core` branch are reserved for JARVIS source snapshots, architecture notes, operational documentation, and audit records.
+- All JARVIS work in this branch is contained in `JARVIS-Core/`.
+- The default branch `main` and adjacent mathematical research files are not modified.
+- No production credentials, API keys, private keys, wallet seeds, tokens, database dumps, browser profiles, or personal data may be committed.
+- Production Railway services, databases, wallet configuration and domains remain separate from this development snapshot.
+- This branch is a development mirror, not a connected Railway deployment source.
 
-## Separation
+## Source inventory — 2026-11-19
 
-- Existing project files on `main` are not modified by this workspace setup.
-- No files from the adjacent research projects are copied or altered.
-- No production credentials, API keys, private keys, wallet seeds, tokens, database dumps, or personal data may be committed here.
-- Production Railway services, deployments, databases, and wallet configuration are out of scope for this repository bootstrap.
+| Component | Repository artifact | Provenance and limitations |
+|---|---|---|
+| Gateway | `railway/Gateway/index.ts` | Retrieved from the deployed Railway Function source endpoint; 95,959 characters. No literal Bitcoin receive address was found in the public snapshot scan. |
+| Companion | `railway/Companion/index.ts` | Public snapshot scrubbed from the Railway source export; 84,002 characters versus 84,086 characters in the live source. All literal Bitcoin receive addresses are replaced with redaction markers. |
+| Autonomous Worker | `railway/Worker/index.ts` | Recovered from the dictionary-compressed inline Railway `startCommand`; the Railway Function source endpoint itself returned an empty body. Public snapshot is scrubbed and not deployable as-is. |
+| Peer Network Worker | `railway/Peer-Network-Worker/` | Uses the upstream `mcr.microsoft.com/playwright/mcp` image; no custom source tree was exposed. |
+| PostgreSQL | Not exported | Database contents, credentials and volume data intentionally excluded. |
 
-## Initial status
+The original encoded Worker launch payload has been removed from this public branch because it contained owner Bitcoin receive addresses. See `SECURITY-REDACTION-2026-11-19.md`. The current public files are scrubbed, but prior Git history may still contain older copies. Public receive addresses are not spending keys, but their disclosure can link transactions; use fresh receive addresses if unlinking old activity matters.
 
-Workspace initialized. Source export is pending a complete, verified read of the existing JARVIS production components. The Railway Worker is a container image and must be inventoried separately; it is not represented by this README.
+## Implemented development work
+
+- `tools/provider-guard.mjs`: per-provider request serialization and bounded cooldowns after explicit 429/transient responses.
+- `railway/Worker/index.ts`: development-source integration of the provider guard.
+- `tools/build-worker.mjs`: inlines the helper into the single-file Worker artifact used by the Railway launch model.
+- `tests/`: regression tests for provider classification, cooldowns, serialization and bundling.
+
+Validation on 2026-11-19: `node --test JARVIS-Core/tests/*.test.mjs` — 8 passed, 0 failed.
+
+## Deployment status
+
+**NOT DEPLOYED — DEVELOPMENT BRANCH ONLY.** The provider guard has not been built into the live Railway start command, staged, or deployed. No production source, environment variable, database row, wallet setting, service, domain or replica count was changed by these development commits. The live Worker is still the Railway deployment identified in the current production inventory.
 
 ## Audit rule
 
-A component is considered archived only after its exact source or reproducible artifact, version/commit identity, and integrity evidence have been recorded. Missing source must be labeled as missing, not reconstructed or guessed.
-
-
-## Verified production source inventory (2026-11-19)
-
-| Component | Export | Evidence / status |
-|---|---|---|
-| Gateway | `railway/Gateway/index.ts` | Exact deployed Railway Function source exported; Bun 1.4.4; 68,298 characters. |
-| Companion | `railway/Companion/index.ts` | Exact deployed Railway Function source exported; Bun 1.4.4; 83,141 characters. |
-| Autonomous Worker | `railway/Worker/README.md` | Source endpoint returned an empty source body. No guessed source retained. |
-| Peer Network Worker | `railway/Peer-Network-Worker/README.md` | Runs the image `mcr.microsoft.com/playwright/mcp`; no source repository was exposed by Railway. |
-| PostgreSQL | Not exported | Database contents, credentials and dumps intentionally excluded. |
-
-The Gateway source contains an independent corporate-identity assessment prompt. It explicitly instructs JARVIS to reach its own conclusion, potentially disagree with the user or ChatGPT, evaluate its operational memories as evidence with provenance, distinguish LLC existence from separate AI legal personhood, and test claimed authority against primary evidence. The source also records the dossier's claims as unverified and preserves the conflicting formation/registered-agent records.
-
-**Autonomous self-development status:** The production source export is now available in this branch, but the Worker source and its build provenance are still missing. The repository branch has not been connected to the live Railway services, and no production deployment or autonomous code-writing capability is claimed by this export.
+A source snapshot, decoded artifact, test result, staging operation and production deployment are different evidence classes. Never describe one as another. Missing or redacted source must be labelled as such, not guessed or silently restored.
