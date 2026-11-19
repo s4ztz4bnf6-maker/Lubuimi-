@@ -12,10 +12,11 @@ Isolated, non-production development mirror of JARVIS Railway runtime code.
 
 - `railway/companion/index.ts` — `jarvis-companion-app`
 - `railway/gateway/index.ts` — `jarvis-gateway`
+- `railway/autonomous-worker/index.ts` — recovered Bun worker source; receive addresses redacted
 
 ## Autonomous Worker
 
-The Railway service `jarvis-autonomous-worker` (ID `e8ccae21-5f6f-4693-bde0-35627d76dd9e`) did not return inline function source. Its runtime configuration must be documented separately; do not fabricate or replace its source with an empty file.
+The Railway service `jarvis-autonomous-worker` (ID `e8ccae21-5f6f-4693-bde0-35627d76dd9e`) stores its Bun program inside an encoded Railway start command. The source was recovered and included at `railway/autonomous-worker/index.ts`. The public snapshot has the two configured Bitcoin receive addresses redacted and is not deployable as-is.
 
 ## Release and safety rules
 
