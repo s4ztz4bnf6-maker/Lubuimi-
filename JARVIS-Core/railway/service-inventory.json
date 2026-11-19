@@ -1,0 +1,77 @@
+{
+  "exportedAt": "2026-11-19",
+  "project": {
+    "name": "JARVIS-Cybersecurity",
+    "id": "1e7f6bb2-d301-4b64-8bed-aaf623e0960d"
+  },
+  "environment": {
+    "name": "production",
+    "id": "5629332a-ed44-4267-a1ee-87d43c6b79e1"
+  },
+  "services": [
+    {
+      "name": "jarvis-gateway",
+      "id": "01e4d129-a7fd-48e2-a2ef-b1d43238a87d",
+      "deployment": "e7269d6a-5d4b-4b67-a5d0-1f5c3579246b",
+      "status": "SUCCESS",
+      "image": "ghcr.io/railwayapp/function-bun:1.4.4",
+      "runtime": "bun",
+      "sourceFile": "Gateway/index.ts",
+      "sourceChars": 95959
+    },
+    {
+      "name": "jarvis-companion-app",
+      "id": "8f6ad4db-8569-4a01-bc67-66a2a160ec18",
+      "deployment": "447e6844-1061-46b1-8885-a25fedac6a69",
+      "status": "SUCCESS",
+      "image": "ghcr.io/railwayapp/function-bun:1.4.4",
+      "runtime": "bun",
+      "sourceFile": "Companion/index.ts",
+      "sourceChars": 82893
+    },
+    {
+      "name": "jarvis-autonomous-worker",
+      "id": "e8ccae21-5f6f-4693-bde0-35627d76dd9e",
+      "deployment": "f3e67a73-a4ca-4523-8b9a-3a3c0ff7e6ff",
+      "status": "SUCCESS",
+      "image": "ghcr.io/railwayapp/function-bun:1.4.4",
+      "runtime": "bun",
+      "sourceFile": "Worker/index.ts",
+      "sourceChars": 115523,
+      "launchCommandFile": "Worker/railway-launch-command.txt",
+      "recovery": "Decoded dictionary-compressed inline launch payload."
+    },
+    {
+      "name": "jarvis-peer-network-worker",
+      "id": "f815865b-fe6b-4d94-8525-af5f41374f5d",
+      "deployment": "d5370e8c-6a62-4ac5-8411-813a16def1d3",
+      "status": "SUCCESS",
+      "image": "mcr.microsoft.com/playwright/mcp",
+      "sourceFile": null,
+      "launchCommandFile": "Peer-Network-Worker/railway-start-command.sh",
+      "note": "Upstream container image; no custom application source was present in Railway. Command and config snapshot are exported."
+    },
+    {
+      "name": "Postgres",
+      "id": "8fecf8de-d0c3-4047-bcb1-1c02e7301a19",
+      "deployment": "6f975c92-ce61-458c-840e-91574b77f403",
+      "status": "SUCCESS",
+      "image": "ghcr.io/railwayapp-templates/postgres-ssl:18",
+      "sourceFile": null,
+      "volume": {
+        "id": "4216d375-b754-4e68-9c67-e4b2b13b4694",
+        "name": "postgres-volume",
+        "mountPath": "/var/lib/postgresql/data",
+        "sizeMB": 500
+      },
+      "note": "Managed database service; database contents, credentials, and volume data are intentionally not exported."
+    }
+  ],
+  "security": {
+    "environmentVariableNamesAndValues": "not exported",
+    "secrets": "not exported",
+    "databaseContents": "not exported",
+    "browserProfileData": "not exported",
+    "sessions": "not exported"
+  }
+}
