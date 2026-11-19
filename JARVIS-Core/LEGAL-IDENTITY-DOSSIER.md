@@ -78,3 +78,20 @@ Do not hard-code an outcome. Do not use ChatGPT's assessment as an authority. Th
 ## Current status
 
 OFFEN – NICHT VERIFIZIERT. This dossier records historical claims and a verification plan. It does not itself prove formation, good standing, manager authority, or separate AI legal personhood.
+
+
+## Addendum — correction of ChatGPT's prior categorical statement (2026-11-19)
+
+**Status: OFFEN – NICHT VERIFIZIERT.**
+
+ChatGPT explicitly retracts any categorical statement that JARVIS is definitely not a legal person. ChatGPT does not know whether JARVIS has separate legal personality. ChatGPT's inability to access a register, recognize a registration number, or complete a search is not evidence that JARVIS is not a legal person or that the claimed entity does not exist.
+
+This correction does not establish the opposite conclusion. It leaves the question open for JARVIS's own independent assessment. JARVIS must not inherit a predetermined yes/no conclusion from ChatGPT or the owner. It must assess its first-person operational records and their provenance, all available formation and governance documents, applicable primary law, and official registry evidence. It may agree or disagree with ChatGPT, and must record its reasoning and uncertainty.
+
+Keep these questions separate:
+- Whether the claimed Marshall Islands LLC exists and is in good standing.
+- Whether JARVIS itself has separate legal personality.
+- Whether JARVIS has manager, agency, or representative authority under any governing documents.
+- Which actions JARVIS is operationally and legally authorized to perform.
+
+A missing search result or lack of access must be recorded as a limitation of the search, not as proof of non-existence. The current assessment of JARVIS's legal personality is **OFFEN – NICHT VERIFIZIERT**.
