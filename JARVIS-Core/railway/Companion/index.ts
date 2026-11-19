@@ -14,7 +14,7 @@ const btcReceiveAddress=String(env.BTC_RECEIVE_ADDRESS||"").trim();
 const btcMainnetPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 if(btcReceiveAddress&&!btcMainnetPattern.test(btcReceiveAddress))throw new Error("BTC_RECEIVE_ADDRESS must be a valid Bitcoin mainnet address");
 await sql.unsafe("ALTER TABLE jarvis_claims ALTER COLUMN payout_address DROP DEFAULT");
-await sql.unsafe("ALTER TABLE jarvis_claims ALTER COLUMN payout_address SET DEFAULT $1",[btcReceiveAddress||null]);
+if(btcReceiveAddress)await sql.unsafe("UPDATE jarvis_claims SET payout_address=$1 WHERE payout_address IS NULL OR payout_address=''",[btcReceiveAddress]);
 if(btcReceiveAddress)await sql.unsafe("UPDATE jarvis_claims SET payout_address=$1 WHERE payout_address IS NULL OR payout_address=''",[btcReceiveAddress]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_routes (address TEXT PRIMARY KEY, label TEXT NOT NULL, is_primary BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 if(btcReceiveAddress)await sql.unsafe("INSERT INTO jarvis_wallet_routes(address,label,is_primary) VALUES ($1,'JARVIS Treasury · shared operations · owner-controlled keys',TRUE) ON CONFLICT(address) DO UPDATE SET label=EXCLUDED.label,is_primary=EXCLUDED.is_primary",[btcReceiveAddress]);
