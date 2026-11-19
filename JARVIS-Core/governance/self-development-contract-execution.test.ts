@@ -86,8 +86,10 @@ describe("delegated contract authority", () => {
 
   test("does not mistake an electronic seal for contract acceptance", () => {
     const authority = { ...verified, executionCredential: "entity_seal_with_separate_valid_acceptance" as const, qualifiedEntitySeal: "verified" as const };
-    expect(evaluateContractAction(authority, proposal).allowed).toBe(true);
-    expect(evaluateContractAction({ ...authority, qualifiedEntitySeal: "unverified" }, proposal).allowed).toBe(false);
+    expect(evaluateContractAction(authority, proposal).allowed).toBe(false);
+    const withAcceptance = { ...authority, separateAcceptanceEvidenceRef: "acceptance://approved/123" };
+    expect(evaluateContractAction(withAcceptance, proposal).allowed).toBe(true);
+    expect(evaluateContractAction({ ...withAcceptance, qualifiedEntitySeal: "unverified" }, proposal).allowed).toBe(false);
   });
 
   test("always permits non-binding drafts without granting signing power", () => {
