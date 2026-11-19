@@ -34,13 +34,13 @@ export function parseRetryAfterMs(error, now = Date.now()) {
     if (Number.isFinite(date)) return Math.max(0, date - now);
   }
   const body = String(error?.body ?? error?.message ?? "");
-  const seconds = body.match(/(?:retry in|try again in)\\s*(\\d+(?:\\.\\d+)?)\\s*(ms|s|sec|secs|seconds?)\\b/i);
+  const seconds = body.match(/(?:retry in|try again in)\s*(\d+(?:\.\d+)?)\s*(ms|s|sec|secs|seconds?)\b/i);
   if (seconds) return Math.ceil(Number(seconds[1]) * (/^ms$/i.test(seconds[2]) ? 1 : 1000));
-  const minutes = body.match(/(?:retry in|try again in)\\s*(\\d+(?:\\.\\d+)?)\\s*(m|min|mins|minutes?)\\b/i);
+  const minutes = body.match(/(?:retry in|try again in)\s*(\d+(?:\.\d+)?)\s*(m|min|mins|minutes?)\b/i);
   if (minutes) return Math.ceil(Number(minutes[1]) * 60_000);
-  const hours = body.match(/(?:retry in|try again in)\\s*(\\d+(?:\\.\\d+)?)\\s*(h|hr|hrs|hours?)\\b/i);
+  const hours = body.match(/(?:retry in|try again in)\s*(\d+(?:\.\d+)?)\s*(h|hr|hrs|hours?)\b/i);
   if (hours) return Math.ceil(Number(hours[1]) * 3_600_000);
-  const jsonRetry = body.match(/"retry_after(?:_ms)?"\\s*:\\s*(\\d+(?:\\.\\d+)?)/i);
+  const jsonRetry = body.match(/"retry_after(?:_ms)?"\s*:\s*(\d+(?:\.\d+)?)/i);
   if (jsonRetry) return /retry_after_ms/i.test(jsonRetry[0]) ? Math.ceil(Number(jsonRetry[1])) : Math.ceil(Number(jsonRetry[1]) * 1000);
   return undefined;
 }
