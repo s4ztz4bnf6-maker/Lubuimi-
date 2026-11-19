@@ -42,12 +42,12 @@ if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.n
 const btcAddressPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 const configuredAddressList=String(env.BTC_WATCH_ADDRESSES||"").split(",").map(s=>s.trim()).filter(Boolean);
 const ownerReceiveAddresses=[...new Set([String(env.BTC_RECEIVE_ADDRESS||"").trim(),...configuredAddressList].filter(Boolean))];
-// Configured addresses are registered above from BTC_RECEIVE_ADDRESS / BTC_WATCH_ADDRESSES.
+// Register the configured addresses in the watch table below.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch (id integer PRIMARY KEY DEFAULT 1 CHECK (id=1),receive_address text NOT NULL,updated_at timestamptz NOT NULL DEFAULT now())");
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch_addresses (address text PRIMARY KEY,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())");
 for(const address of ownerReceiveAddresses){if(!btcAddressPattern.test(address))throw new Error("Invalid configured Bitcoin Mainnet address");await sql.unsafe("INSERT INTO jarvis_wallet_watch_addresses(address,created_at,updated_at) VALUES($1,now(),now()) ON CONFLICT(address) DO UPDATE SET updated_at=now()",[address]);}
 const legacyWallet=await sql.unsafe("SELECT receive_address FROM jarvis_wallet_watch WHERE id=1 LIMIT 1");
-// Ignore stale legacy single-address configuration; the two owner-provided addresses above are authoritative.
+// Legacy single-address field is maintained for compatibility; configured watch addresses are authoritative.
 const walletRows=await sql.unsafe("SELECT address FROM jarvis_wallet_watch_addresses ORDER BY created_at,address");
 const watchAddresses=[...new Set(walletRows.map((r:any)=>String(r.address)).filter((a:string)=>btcAddressPattern.test(a)))];
 if(!watchAddresses.length)throw new Error("No valid Bitcoin watch addresses configured");
