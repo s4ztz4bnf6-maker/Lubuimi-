@@ -17,29 +17,36 @@
       "image": "ghcr.io/railwayapp/function-bun:1.4.4",
       "runtime": "bun",
       "sourceFile": "Gateway/index.ts",
-      "sourceChars": 95959
+      "sourceChars": 95959,
+      "publicSnapshotChars": 95959
     },
     {
       "name": "jarvis-companion-app",
       "id": "8f6ad4db-8569-4a01-bc67-66a2a160ec18",
-      "deployment": "447e6844-1061-46b1-8885-a25fedac6a69",
+      "deployment": "56ebcdbe-6f53-423c-bbb4-0c20e2625301",
       "status": "SUCCESS",
       "image": "ghcr.io/railwayapp/function-bun:1.4.4",
       "runtime": "bun",
       "sourceFile": "Companion/index.ts",
-      "sourceChars": 82893
+      "sourceChars": 84002,
+      "deployedSourceChars": 84086,
+      "publicSnapshotChars": 84002,
+      "privacy": "Bitcoin receive addresses redacted in public snapshot"
     },
     {
       "name": "jarvis-autonomous-worker",
       "id": "e8ccae21-5f6f-4693-bde0-35627d76dd9e",
-      "deployment": "f3e67a73-a4ca-4523-8b9a-3a3c0ff7e6ff",
+      "deployment": "0d8970a9-1d93-4350-8096-b33edcdcfc9a",
       "status": "SUCCESS",
       "image": "ghcr.io/railwayapp/function-bun:1.4.4",
       "runtime": "bun",
       "sourceFile": "Worker/index.ts",
-      "sourceChars": 115523,
-      "launchCommandFile": "Worker/railway-launch-command.txt",
-      "recovery": "Decoded dictionary-compressed inline launch payload."
+      "sourceChars": 115499,
+      "launchCommandFile": "Worker/railway-launch-command.txt (redaction notice; original payload removed)",
+      "recovery": "Decoded dictionary-compressed inline launch payload; public copy scrubbed of wallet addresses; development branch adds ProviderGuard, not deployed.",
+      "deployedSourceChars": 115523,
+      "publicSnapshotChars": 115499,
+      "developmentSourceChars": 115834
     },
     {
       "name": "jarvis-peer-network-worker",
@@ -73,5 +80,10 @@
     "databaseContents": "not exported",
     "browserProfileData": "not exported",
     "sessions": "not exported"
-  }
+  },
+  "notes": [
+    "Deployment IDs reflect the latest SUCCESS deployments checked on 2026-11-19.",
+    "Public source snapshots are privacy-scrubbed and may not be deployable as-is.",
+    "Worker production remains on the successful deployment above; ProviderGuard changes exist only on the jarvis-core development branch."
+  ]
 }
