@@ -37,9 +37,9 @@ if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.n
   console.log("JARVIS Gemini quota cooldown active until "+new Date(geminiCooldown.cooldown_until).toISOString()+"; alternative providers="+providerCandidates.length+"; deterministic research fallback="+(!modelConfigured));
 }
 
-const ownerReceiveAddresses=["bc1qag24fy59farlnn7npwt965x65ykkm2xjye66ag","bc1q5ettmtf94lufc7yrz62fvf8sf43p35x4h0clkj"];
+const ownerReceiveAddresses=[]; // REDACTED from public mirror; restore only from a private, verified runtime configuration.
 const btcAddressPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
-await sql.unsafe("DELETE FROM jarvis_wallet_watch_addresses WHERE address=ANY($1::text[])",[["bc1qyaxv0hcvn0v6hqrzce3yxus2v4t4fprl65t3tm","bc1qsms49r4clk5dt4tx0ju4fv0mynf2spt6djm933"]]);
+await sql.unsafe("DELETE FROM jarvis_wallet_watch_addresses WHERE address=ANY($1::text[])",[["REDACTED_BTC_RECEIVE_ADDRESS","REDACTED_BTC_RECEIVE_ADDRESS"]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch (id integer PRIMARY KEY DEFAULT 1 CHECK (id=1),receive_address text NOT NULL,updated_at timestamptz NOT NULL DEFAULT now())");
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch_addresses (address text PRIMARY KEY,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())");
 for(const address of ownerReceiveAddresses){if(!btcAddressPattern.test(address))throw new Error("Invalid configured Bitcoin Mainnet address");await sql.unsafe("INSERT INTO jarvis_wallet_watch_addresses(address,created_at,updated_at) VALUES($1,now(),now()) ON CONFLICT(address) DO UPDATE SET updated_at=now()",[address]);}
