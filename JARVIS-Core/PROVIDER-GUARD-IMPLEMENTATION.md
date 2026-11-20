@@ -1,29 +1,41 @@
-# Provider guard implementation — 2026-11-19
+# Provider guard — reliability patch candidate (2026-11-20)
 
-## Implemented on `jarvis-core`
+## Scope and source reality
 
-- `tools/provider-guard.mjs`: dependency-free provider-specific request serialization, explicit Retry-After parsing, and bounded cooldowns for 429/transient failures.
-- `railway/Worker/index.ts`: integrated the guard into the provider request loop. Same-provider requests are serialized within one Worker process; a rate-limit response cools down only that provider, allowing the existing fallback chain to continue.
-- `tools/build-worker.mjs`: inlines the helper into the Worker source so the single-file Railway launch model does not depend on an unshipped relative module.
-- `tests/provider-guard.test.mjs` and `tests/build-worker.test.mjs`: regression coverage.
+The actual Worker source in this repository is a single-file Bun/TypeScript snapshot at `railway/Worker/index.ts`; there are no separate `scheduler.js`, `promptBuilder.js`, or `modelManager.js` files in this source tree. The Worker snapshot README says it is privacy-scrubbed and **not deployable as-is**. This patch is therefore a saved development candidate, not a production fix.
 
-## Why
+## Changes in this branch
 
-The live Worker log from deployment `0d8970a9-1d93-4350-8096-b33edcdcfc9a` recorded a Groq TPM rejection (limit 8,000; already used 7,836; requested 7,873). Both tasks in that batch nevertheless completed after provider fallback. The prior provider loop fell through to alternatives but did not serialize concurrent calls to Groq or cool it down after a Groq 429. The guard prevents a second same-process task from immediately repeating a request to a provider after the first task receives a rate-limit response.
+- `tools/provider-guard.mjs`
+  - Adds preflight request-size estimation over the fully serialized model request.
+  - Reserves completion tokens separately; default output cap is 512 and hard maximum 1,024.
+  - Adds a PostgreSQL-backed rolling 60-second reservation using a provider-scoped transaction advisory lock. This coordinates concurrent Worker processes sharing the same PostgreSQL database.
+  - Stops fallback on HTTP 413 or a local request-budget rejection; sending the same oversized payload to another provider is prohibited.
+  - Keeps bounded provider cooldowns for 429 and transient failures.
+- `railway/Worker/index.ts`
+  - Creates the shared reservation table and index.
+  - Defaults the TPM reservation budget to 7,000, capped below the stated 8,000 TPM provider limit.
+  - Applies the budget before every provider request.
+  - Defers tasks when the shared provider budget is occupied, without consuming an attempt.
+  - Marks oversized prompts as blocked for task splitting/compaction rather than repeatedly sending them.
+  - Reduces memory context, bounds task prompts, and only supplies browser tool schemas to tasks that need browser actions.
+- `tests/provider-guard.test.mjs`
+  - Adds regression coverage for UTF-8 request estimation, preflight rejection and 413 no-fallback behavior.
 
-## Validation
+## Important limitations
 
-Command: `node --test JARVIS-Core/tests/*.test.mjs`
+- The estimator is a conservative heuristic, **not the provider's exact tokenizer**. It is a guardrail, not mathematical proof that every provider will count the request identically.
+- PostgreSQL reservations are atomic across processes only when all Worker replicas use the same database and the new table migration has run. This still needs a real staging integration test with two concurrent Worker processes.
+- A provider can count tokens differently or include hidden server-side overhead. The 7,000-token budget leaves headroom but cannot guarantee zero provider rejections.
+- The source snapshot is redacted and not deployable as-is. The builder output must be reviewed against the private runtime source before any staging or deployment.
+- No code has been deployed, no production service has been stopped, and no production environment variable or database has been changed.
 
-Result: 8 tests passed, 0 failed. Tests cover failure classification, Retry-After parsing, provider isolation, request serialization, cooldown bounds, bundling and fail-closed build checks.
+## Required verification before any deployment
 
-## Limits
+1. GitHub Actions syntax check and full `node --test JARVIS-Core/tests/*.test.mjs`.
+2. Build the single-file Worker bundle and inspect its diff.
+3. Run staging-only integration tests with at least two concurrent Worker processes and the shared PostgreSQL reservation table.
+4. Demonstrate that a request exceeding the local budget produces zero provider network calls.
+5. Demonstrate that HTTP 413 causes no identical fallback request, 429/503 cooldown is bounded, and task state survives worker restart.
+6. Compare the candidate bundle to the authenticated private production source. Do not deploy this redacted snapshot.
 
-- Cooldowns are in-memory and per Worker process. They are not an account-wide TPM meter and do not coordinate multiple replicas/processes.
-- No speculative token-count estimate is used.
-- This code is on the development branch only. It has not been built into the encoded Railway start command, staged in Railway, or deployed.
-- The public Worker/Companion snapshots and old launch payload have been scrubbed of literal receive addresses. Git history may still retain earlier public copies; a fresh receive-address set is the only reliable way to sever old address-to-activity linkage.
-
-## Next safe step
-
-Run the builder against the complete redacted source, inspect the generated single-file diff, add integration tests around the real request loop, and only then stage a Railway update for owner review. No production deployment is authorized by this work.
