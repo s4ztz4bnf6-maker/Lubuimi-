@@ -50,6 +50,8 @@ test("live verifier reports inconclusive rather than false negative for a search
   assert.equal(result.goodStandingStatus, "NOT_VERIFIED");
   assert.equal(result.sources[0].fetched, true);
   assert.equal(result.sources[0].entityRecordReturned, false);
+  assert.equal(result.sources[0].searchInterfaceDetected, true);
+  assert.equal(result.sources[0].result, "search_ui_reachable_manual_record_lookup_required");
   assert.equal(result.nonAuthoritativeDossierPortal.queried, false);
 });
 
