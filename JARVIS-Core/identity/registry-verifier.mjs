@@ -130,6 +130,8 @@ export async function verifyJarvisEntity({ fetchImpl = fetch, registryRecord = n
       laicProfile.dossierReview.humanControlEvidence,
       laicProfile.dossierReview.managementAuthorityConflict,
       laicProfile.dossierReview.signatureAndSealAuthentication,
+      laicProfile.dossierReview.registeredOfficeConflict,
+      laicProfile.dossierReview.beneficialOwnerReportStatus,
     ],
     requiredNextEvidence: [
       "Exact public MIDAO registry record for registration number 968412 and the registered legal name.",
@@ -137,7 +139,8 @@ export async function verifyJarvisEntity({ fetchImpl = fetch, registryRecord = n
       "Current Certificate of Good Standing.",
       "Filed/current LLC Agreement confirming member-managed or algorithmically managed status.",
       "Current Registered Agent and Representative Agent records, including written consent and authority documents.",
-      "Current Beneficial Ownership Information Report and Registrar evidence identifying the natural person who retains control under §714(1)(d).",
+      "Current Beneficial Ownership Information Report filed with the Registrar under §712, with official filing receipt and confirmation of the natural person who retains control under §714(1)(d).",
+      "Confirmation that the registered office address matches the statutory Registered Agent address under §705(3).",
       "MIDAO/Registrar confirmation resolving the TCMI versus MIDAO Registered Agent discrepancy and the exact DAO LLC registered name.",
     ],
     limitations: [
