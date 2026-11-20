@@ -4,10 +4,21 @@ on:
   push:
     branches: [jarvis-lightning-receive-integration-2026-11-20]
   pull_request:
-    branches: [jarvis-core]
+    branches: [jarvis-lightning-receive-integration-2026-11-20]
     paths:
       - "JARVIS-Core/lightning/**"
       - "JARVIS-Core/tests/nwc-receive.test.mjs"
+      - "JARVIS-Core/communications/**"
+      - "JARVIS-Core/tests/twilio-telephony.test.mjs"
+      - "JARVIS-Core/engineering/**"
+      - "JARVIS-Core/tests/self-improvement-policy.test.mjs"
+      - "JARVIS-Core/agents/**"
+      - "JARVIS-Core/memory/**"
+      - "JARVIS-Core/compute/**"
+      - "JARVIS-Core/engineering/**"
+      - "JARVIS-Core/tests/agent-foundations.test.mjs"
+      - "JARVIS-Core/agents/tool-registry.mjs"
+      - "JARVIS-Core/tests/tool-registry.test.mjs"
       - ".github/workflows/jarvis-nwc-receive-tests.yml"
 
 permissions:
@@ -23,5 +34,7 @@ jobs:
           node-version: "22"
       - name: Syntax check
         run: node --check JARVIS-Core/lightning/nwc-receive.mjs
-      - name: Run receive-only adapter tests
-        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs
+      - name: Syntax check telephony adapter
+        run: node --check JARVIS-Core/communications/twilio-telephony.mjs
+      - name: Run JARVIS receive, telephony and engineering policy tests
+        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs JARVIS-Core/tests/twilio-telephony.test.mjs JARVIS-Core/tests/self-improvement-policy.test.mjs JARVIS-Core/tests/agent-foundations.test.mjs JARVIS-Core/tests/tool-registry.test.mjs
