@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
 import { voiceTwiML, inboundVoiceTwiML, inboundSmsReplyTwiML, verifyTwilioSignature } from "../communications/twilio-telephony.mjs";
 
 test("TwiML XML-escapes voice text", () => {
@@ -12,7 +13,6 @@ test("SMS reply XML escapes content", () => {
   assert.match(inboundSmsReplyTwiML({ reply: "a & b" }), /a &amp; b/);
 });
 test("Twilio signature accepts correct signature and rejects tampering", () => {
-  const { createHmac } = await import("node:crypto");
   const url = "https://example.test/webhook";
   const params = { Body: "hello", From: "+49123" };
   const token = "test-secret";
