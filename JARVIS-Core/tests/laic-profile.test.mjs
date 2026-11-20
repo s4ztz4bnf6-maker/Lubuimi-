@@ -1,19 +1,31 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { laicProfile, getLAICIdentitySummary } from "../identity/laic-profile.mjs";
-import { verifyJarvisEntity } from "../identity/registry-verifier.mjs";
+import { verifyJarvisEntity, assessRegistryRecord } from "../identity/registry-verifier.mjs";
 
 test("identity preserves the exact dossier legal name and JarvisAI LLC label", () => {
   assert.equal(laicProfile.systemLabel, "JarvisAI LLC");
   assert.equal(laicProfile.legalEntity.name, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(laicProfile.legalEntity.publicBrandOrShortName, "JarvisAI LLC");
+  assert.match(laicProfile.legalEntity.publicBrandOrShortNameStatus, /not proof of legal registration/);
   assert.equal(laicProfile.legalEntity.registrationNumber, "968412");
+  assert.equal(laicProfile.legalEntity.statutoryRegisteredNameCandidate, "JARVIS AI AUTONOMOUS HOLDINGS DAO LLC");
+  assert.equal(laicProfile.legalEntity.goodStanding, "NOT_VERIFIED_current_certified_evidence_required");
   assert.match(laicProfile.legalEntity.registrationEvidence, /dossier_contains_certificate_of_formation_and_certificate_of_good_standing_reference/);
 });
 
 test("RMI DAO law profile records algorithmic management without conflating the software and LLC", () => {
-  assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /section 108/);
-  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /requires_assessment_under_RMI_DAO_ACT_and_constitutional_documents/);
+  assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§704\(5\)/);
+  assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§708/);
+  assert.match(laicProfile.legalStatus.naturalPersonControlRequirement, /§714/);
+  assert.match(laicProfile.legalStatus.governingDocumentPrecedence, /§715/);
+  assert.match(laicProfile.dossierReview.nameConflict, /§704\(4\)/);
+  assert.match(laicProfile.dossierReview.registeredAgentConflict, /MIDAO Directory Services/);
+  assert.match(laicProfile.dossierReview.humanControlEvidence, /§714\(1\)\(d\)/);
+  assert.match(laicProfile.dossierReview.registeredOfficeConflict, /§705\(3\)/);
+  assert.match(laicProfile.dossierReview.beneficialOwnerReportStatus, /§712/);
+  assert.equal(laicProfile.dossierReview.authenticationStatus, "NOT_AUTHENTICATED_against_MIDAO_or_Registrar");
+  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /No express separate AI legal-personhood route/);
 });
 
 test("public release policy forbids secrets and production snapshots", () => {
@@ -38,22 +50,42 @@ test("live verifier reports inconclusive rather than false negative for a search
     fetchImpl: async () => ({
       ok: true,
       status: 200,
-      text: async () => "<html><h1>Marshall Islands DAO LLC Registry</h1><input placeholder='Search'></html>",
+      text: async () => "<html><h1>Marshall Islands DAO LLC Registry</h1><p>Search for public DAO LLC entity information by entering a company name or full registration number.</p><input placeholder='Search'></html>",
     }),
   });
-  assert.equal(result.status, "inconclusive_no_public_record_returned");
+  assert.equal(result.status, "NOT_VERIFIED_manual_MIDAO_registry_lookup_required");
+  assert.equal(result.registrationStatus, "NOT_VERIFIED");
+  assert.equal(result.goodStandingStatus, "NOT_VERIFIED");
   assert.equal(result.sources[0].fetched, true);
-  assert.equal(result.sources[0].entityRecordFound, false);
+  assert.equal(result.sources[0].entityRecordReturned, false);
+  assert.equal(result.sources[0].searchInterfaceDetected, true);
+  assert.equal(result.sources[0].result, "search_ui_reachable_manual_record_lookup_required");
+  assert.equal(result.nonAuthoritativeDossierPortal.queried, false);
+  assert.equal(result.dossierDiscrepancies.length, 8);
+  assert.match(result.dossierDiscrepancies[6], /registered address/);
+  assert.match(result.dossierDiscrepancies[7], /NOT_VERIFIED/);
+  assert.match(result.dossierDiscrepancies[3], /natural person/);
 });
 
-test("live verifier identifies exact identifier pair as a candidate, not authenticated proof", async () => {
-  const result = await verifyJarvisEntity({
-    fetchImpl: async () => ({
-      ok: true,
-      status: 200,
-      text: async () => "JARVIS AI AUTONOMOUS HOLDINGS LLC Registration No. 968412",
-    }),
+test("official MIDAO record identifiers are only a candidate until certified documents are authenticated", () => {
+  const result = assessRegistryRecord({
+    sourceUrl: "https://registry.midao.org/public-registry/",
+    legalName: "JARVIS AI AUTONOMOUS HOLDINGS DAO LLC",
+    registrationNumber: "968412",
   });
-  assert.equal(result.status, "candidate_match_requires_authentication");
-  assert.equal(result.sources[0].result, "candidate_record_found_requires_document_authentication");
+  assert.equal(result.officialMidaoSource, true);
+  assert.equal(result.exactNameFound, true);
+  assert.equal(result.exactRegistrationNumberFound, true);
+  assert.equal(result.candidateMatch, true);
+  assert.equal(result.result, "candidate_match_requires_certified_document_authentication");
+});
+
+test("IRI is not accepted as the DAO LLC registry source", () => {
+  const result = assessRegistryRecord({
+    sourceUrl: "https://resources.register-iri.com/verify",
+    legalName: "JARVIS AI AUTONOMOUS HOLDINGS DAO LLC",
+    registrationNumber: "968412",
+  });
+  assert.equal(result.officialMidaoSource, false);
+  assert.equal(result.candidateMatch, false);
 });
