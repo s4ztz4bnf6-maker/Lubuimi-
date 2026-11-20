@@ -1,4 +1,4 @@
-import { ProviderGuard, ProviderBudgetExceededError, RequestBudgetExceededError, assertRequestWithinBudget, reserveProviderTokens, shouldFallbackToNextProvider, classifyProviderFailure } from "../../tools/provider-guard.mjs";
+import { ProviderGuard, ProviderBudgetExceededError, RequestBudgetExceededError, assertRequestWithinBudget, reserveProviderTokens, shouldFallbackToNextProvider, classifyProviderFailure, providerQuotaKey } from "../../tools/provider-guard.mjs";
 import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";
 import postgres from "postgres";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -798,6 +798,7 @@ async function ask(messages, tools) {
   let lastBudgetError=null;
   for(const provider of providerCandidates){
     if(geminiQuotaBlocked&&provider.name.startsWith("google-gemini"))continue;
+    const quotaKey=providerQuotaKey(provider);
     const requestBody={
       model:provider.model,
       messages,
@@ -808,8 +809,8 @@ async function ask(messages, tools) {
     };
     const budget=assertRequestWithinBudget(requestBody,outputTokens,limit);
     try{
-      const data=await providerGuard.run(provider.name,async()=>{
-        await reserveProviderTokens(sql,provider.name,budget.reservedTokens,limit);
+      const data=await providerGuard.run(quotaKey,async()=>{
+        await reserveProviderTokens(sql,quotaKey,budget.reservedTokens,limit);
         const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{
           method:"POST",
           headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json; charset=utf-8"},
