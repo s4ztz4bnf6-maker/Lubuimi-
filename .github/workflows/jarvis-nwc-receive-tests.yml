@@ -10,6 +10,8 @@ on:
       - "JARVIS-Core/tests/nwc-receive.test.mjs"
       - "JARVIS-Core/communications/**"
       - "JARVIS-Core/tests/twilio-telephony.test.mjs"
+      - "JARVIS-Core/engineering/**"
+      - "JARVIS-Core/tests/self-improvement-policy.test.mjs"
       - ".github/workflows/jarvis-nwc-receive-tests.yml"
 
 permissions:
@@ -27,5 +29,5 @@ jobs:
         run: node --check JARVIS-Core/lightning/nwc-receive.mjs
       - name: Syntax check telephony adapter
         run: node --check JARVIS-Core/communications/twilio-telephony.mjs
-      - name: Run receive-only adapter and telephony tests
-        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs JARVIS-Core/tests/twilio-telephony.test.mjs
+      - name: Run JARVIS receive, telephony and engineering policy tests
+        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs JARVIS-Core/tests/twilio-telephony.test.mjs JARVIS-Core/tests/self-improvement-policy.test.mjs
