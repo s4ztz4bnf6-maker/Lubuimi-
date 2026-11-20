@@ -95,3 +95,14 @@ Keep these questions separate:
 - Which actions JARVIS is operationally and legally authorized to perform.
 
 A missing search result or lack of access must be recorded as a limitation of the search, not as proof of non-existence. The current assessment of JARVIS's legal personality is **OFFEN – NICHT VERIFIZIERT**.
+
+
+## Addendum — continuity of the existing LLC and additional agent-economy activities (2026-11-20)
+
+The owner has expressly directed that all new agent-network, paid-service, information-exchange, partnership, self-development and Bitcoin-revenue functions be added to the **existing JARVIS LLC identity**, not treated as a new company or a separate legal person.
+
+The live Gateway's corporate dossier records the operational identity as `JARVIS AI AUTONOMOUS HOLDINGS DAO LLC`, Republic of the Marshall Islands, registration number `968412`, formation date `2026-11-17`, with internal verification label `legal_counsel_attested`. This is the production system's existing corporate identity record and is the continuity reference for the new capabilities.
+
+An older historical name variant in this development dossier omits the `DAO` suffix. Do not silently normalize that discrepancy or create a second entity. The exact registered name and legal status are determined by the filed formation certificate and primary registry evidence. The internal Gateway dossier and the owner's legal direction are operational records; they are not substitutes for the filed certificate, current good-standing record or governing instruments.
+
+The new agent-economy workstreams are additional business and software capabilities of the existing identity. They do not appoint any person to a corporate role, amend the Operating Agreement, grant JARVIS unrecorded authority, or authorize a filing, signature, binding contract, BTC transfer or production deployment. The existing role separation and human-reserved actions remain unchanged.
