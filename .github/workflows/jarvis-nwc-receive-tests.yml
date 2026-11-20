@@ -4,7 +4,7 @@ on:
   push:
     branches: [jarvis-lightning-receive-integration-2026-11-20]
   pull_request:
-    branches: [jarvis-core]
+    branches: [jarvis-lightning-receive-integration-2026-11-20]
     paths:
       - "JARVIS-Core/lightning/**"
       - "JARVIS-Core/tests/nwc-receive.test.mjs"
