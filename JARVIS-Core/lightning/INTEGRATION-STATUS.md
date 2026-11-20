@@ -39,11 +39,11 @@ Date: 2026-11-20
 
 ## Public Companion inspection — 2026-11-20
 
-- Public login screen currently displays a registration disclaimer ending in "nicht verifiziert".
-- German text is rendered with UTF-8 mojibake (for example "zurÃ¼ck" and "persÃ¶nlichen"), indicating a charset/encoding problem.
+- Public login screen currently displays the brand line "JARVIS AI AUTONOMOUS HOLDINGS LLC · RMI-Registrierung laut Dossier, nicht verifiziert". The phrase "nicht verifiziert" remains visible and is not yet removed.
+- The screen renders German text with mojibake in the browser ("zurÃ¼ck", "persÃ¶nlichen"). The HTML source does contain a UTF-8 meta charset declaration; therefore the exact defect is not simply a missing meta tag. The HTTP Content-Type charset was not established in this inspection and must be checked.
+- The login page is a self-contained HTML document served on the Companion host, with inline CSS/SVG and no external JS or CSS assets. The Railway function source retrieved for the Companion exposes API routes but does not contain this HTML document or the login-page strings. The actual deployed HTML/template source therefore remains to be located before safe editing.
 - /health is public and returned HTTP 200. /api/lightning/status and /api/wallet returned HTTP 401 without owner login.
-- The deployed Companion function source available through Railway contains API routes but no HTML/login-screen template or charset header. Do not change the live UI blindly; locate the actual frontend/template source first.
-- The new UI wording and encoding defects remain open; no claim of repair is made.
+- Do not change the live UI blindly; preserve the last successful Companion build. The public wording and encoding defects remain open; no claim of repair is made.
 
 ## Release gates
 
@@ -54,8 +54,7 @@ Date: 2026-11-20
 - Store the NWC URL only as a backend secret.
 - Integrate the adapter into Gateway, persist invoices and settled incoming transactions, and expose only owner-authenticated PWA endpoints.
 - Implement a genuine on-chain watcher or a supported wallet connector before claiming BTC receipt monitoring.
-- Test with a small user-authorized incoming payment; never send an outgoing payment.
-- Locate the actual Companion frontend/template source, add an explicit UTF-8 response charset and UTF-8 document declaration, remove the public "nicht verifiziert" phrase from the visible brand line, and verify all German strings after deployment.
+- Locate the actual deployed Companion HTML/template source, inspect the HTTP Content-Type header, correct the actual UTF-8 decoding/encoding path, remove the public "nicht verifiziert" phrase from the visible brand line, and verify all German strings after deployment.
 - Keep production unchanged until source-safe deployment and rollback are demonstrated.
 
 ## App and licensing boundary
