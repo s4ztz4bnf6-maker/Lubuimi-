@@ -29,6 +29,22 @@ Date: 2026-11-20
 7. The Render A2A bridge and static edge are not substitutes for an always-on Lightning node.
 8. No incoming Lightning payment has been confirmed or credited.
 
+## Bitcoin address verification — 2026-11-20
+
+- The newer address previously placed in Railway configuration was rejected as invalid by mempool.space, Blockstream, and Blockchain.com. It must not be used.
+- The prior configured mainnet address passed mempool.space validation, but its confirmed and unconfirmed transaction counts were both zero at the time of checking.
+- Railway BTC_RECEIVE_ADDRESS was restored to that prior valid address on both the autonomous-worker and Companion services. The worker deployment completed successfully; the Companion's previous successful build was redeployed and its public /health endpoint returned HTTP 200, version 2.0.0.
+- Address validity is not proof of wallet-key ownership. No incoming BTC transaction was observed. No outgoing transaction was made.
+- The Companion API source reads jarvis_wallet_watch_addresses and jarvis_wallet_transactions but contains no INSERT/watcher implementation for those tables. The visible wallet summary is therefore not evidence of an active blockchain monitor.
+
+## Public Companion inspection — 2026-11-20
+
+- Public login screen currently displays a registration disclaimer ending in "nicht verifiziert".
+- German text is rendered with UTF-8 mojibake (for example "zurÃ¼ck" and "persÃ¶nlichen"), indicating a charset/encoding problem.
+- /health is public and returned HTTP 200. /api/lightning/status and /api/wallet returned HTTP 401 without owner login.
+- The deployed Companion function source available through Railway contains API routes but no HTML/login-screen template or charset header. Do not change the live UI blindly; locate the actual frontend/template source first.
+- The new UI wording and encoding defects remain open; no claim of repair is made.
+
 ## Release gates
 
 - Confirm an existing persistent Linux host or select an existing infrastructure workspace explicitly.
@@ -37,7 +53,9 @@ Date: 2026-11-20
 - Create an Alby Hub NWC app with only make_invoice, lookup_invoice, get_balance, and list_transactions.
 - Store the NWC URL only as a backend secret.
 - Integrate the adapter into Gateway, persist invoices and settled incoming transactions, and expose only owner-authenticated PWA endpoints.
+- Implement a genuine on-chain watcher or a supported wallet connector before claiming BTC receipt monitoring.
 - Test with a small user-authorized incoming payment; never send an outgoing payment.
+- Locate the actual Companion frontend/template source, add an explicit UTF-8 response charset and UTF-8 document declaration, remove the public "nicht verifiziert" phrase from the visible brand line, and verify all German strings after deployment.
 - Keep production unchanged until source-safe deployment and rollback are demonstrated.
 
 ## App and licensing boundary
