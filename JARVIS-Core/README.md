@@ -48,3 +48,5 @@ See `AGENT-ECONOMY-EXTENSION.md` for corporate continuity, the exact added works
 Validation: GitHub Actions JARVIS-Core tests succeeded for commit `3d5b37e3571a5de3dab8ae1a3e058b71ba840021` (syntax checks, regression tests and single-file Worker bundle).
 
 **Production status: NOT DEPLOYED.** The Worker source snapshot in this branch is intentionally scrubbed of private wallet receive addresses and is documented as not deployable as-is. Existing production services were left unchanged to preserve wallet monitoring and existing revenue paths.
+
+- `economy-scheduler/`: separate cron-service package that can enqueue the five new agent-economy tasks into the existing `agent_tasks` queue without replacing the live Worker. It is tested but not deployed; no production database writes have been made.
