@@ -31,12 +31,14 @@ export const laicProfile = Object.freeze({
     goodStanding: "claimed_in_dossier_not_independently_verified",
     statutoryNameCompliance: "requires_registrar_confirmation",
     registeredAgentDiscrepancy: "Dossier names TCMI; RMI DAO Regulations 2024 identify MIDAO Directory Services, Inc. as registered agent for DAO LLCs. Must be reconciled with Registrar.",
+    registrySourceDiscrepancy: "Dossier Certificate of Good Standing points to the IRI verification portal; MIDAO documentation states that the DAO LLC registry is separate from the IRI registry. The certificate reference must be authenticated directly.",
     legalCounselStatus: "user_reports_counsel_attestation_not_independently_verified",
   }),
   legalStatus: Object.freeze({
     companySeparateJuridicalPerson: "claimed_for_the_company_if_validly_formed_not_independently_verified",
     aiSystemSeparateLegalPerson: "not_established_by_company_registration",
     registeredAgentDiscrepancy: "Dossier names TCMI, while RMI DAO Regulations 2024 name MIDAO Directory Services, Inc. as registered agent for DAO LLCs; registrar confirmation required.",
+    registrySourceDiscrepancy: "Dossier points to IRI verification, but MIDAO says the DAO LLC registry is separate from the IRI registry; direct authentication required.",
     namingDiscrepancy: "Dossier's exact legal name omits the DAO LLC designation required by RMI DAO Act naming provision; registrar confirmation required.",
   }),
   operatingModel: Object.freeze({
