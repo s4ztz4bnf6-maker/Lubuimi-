@@ -40,9 +40,9 @@ test("adapter returns only settled incoming transactions", async () => {
       async listTransactions(args) {
         assert.equal(args.type, "incoming");
         return { transactions: [
-          { payment_hash: HASH, invoice: INVOICE, amount: 21000, state: "settled" },
-          { payment_hash: "b".repeat(64), invoice: "pending", amount: 1000, state: "pending" },
-          { payment_hash: "c".repeat(64), invoice: "outgoing", amount: 1000, state: "settled" }
+          { type: "incoming", payment_hash: HASH, invoice: INVOICE, amount: 21000, state: "settled" },
+          { type: "incoming", payment_hash: "b".repeat(64), invoice: "pending", amount: 1000, state: "pending" },
+          { type: "outgoing", payment_hash: "c".repeat(64), invoice: "outgoing", amount: 1000, state: "settled" }
         ] };
       },
       close() {}
