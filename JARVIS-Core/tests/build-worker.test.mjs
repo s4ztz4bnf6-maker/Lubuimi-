@@ -35,3 +35,23 @@ test("fails closed if required helper imports or exports are missing", () => {
     "export const notTheKernel = true;"
   ), /Agent autonomy helper is missing required exports/);
 });
+
+
+test("inlines every named provider-budget export used by the Worker", () => {
+  const providerImport = 'import { ProviderGuard, ProviderBudgetExceededError, RequestBudgetExceededError, assertRequestWithinBudget, reserveProviderTokens, shouldFallbackToNextProvider, classifyProviderFailure } from "../../tools/provider-guard.mjs";';
+  const helper = [
+    "export class ProviderGuard {}",
+    "export class ProviderBudgetExceededError {}",
+    "export class RequestBudgetExceededError {}",
+    "export function assertRequestWithinBudget() {}",
+    "export async function reserveProviderTokens() {}",
+    "export function shouldFallbackToNextProvider() {}",
+    "export function classifyProviderFailure() {}",
+    "export function providerQuotaKey() {}",
+  ].join("\n");
+  const bundled = bundleWorkerSource(providerImport + "\nconst guard = new ProviderGuard();", helper);
+  assert.equal(bundled.includes(providerImport), false);
+  for (const symbol of ["class ProviderBudgetExceededError", "class RequestBudgetExceededError", "function assertRequestWithinBudget", "function reserveProviderTokens", "function shouldFallbackToNextProvider", "function classifyProviderFailure", "function providerQuotaKey"]) {
+    assert.ok(bundled.includes(symbol), "missing bundled symbol: " + symbol);
+  }
+});

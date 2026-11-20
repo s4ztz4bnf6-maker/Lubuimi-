@@ -2,13 +2,14 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const PROVIDER_IMPORT = 'import { ProviderGuard } from "../../tools/provider-guard.mjs";';
+const PROVIDER_IMPORT_PATTERN = /^import \{[^}]+\} from "\.\.\/\.\.\/tools\/provider-guard\.mjs";$/m;
 const AUTONOMY_IMPORT = 'import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";';
 
 export function bundleWorkerSource(workerSource, helperSource, autonomySource = "") {
-  if (!workerSource.includes(PROVIDER_IMPORT)) throw new Error("Worker source does not contain the expected ProviderGuard import");
+  const providerImport = workerSource.match(PROVIDER_IMPORT_PATTERN)?.[0];
+  if (!providerImport) throw new Error("Worker source does not contain the expected ProviderGuard import");
   if (!helperSource.includes("class ProviderGuard")) throw new Error("Provider guard helper does not define ProviderGuard");
-  let bundled = workerSource.replace(PROVIDER_IMPORT, helperSource.replace(/^export\s+/gm, "") + "\n");
+  let bundled = workerSource.replace(providerImport, helperSource.replace(/^export\s+/gm, "") + "\n");
   if (bundled.includes(AUTONOMY_IMPORT)) {
     if (!autonomySource.includes("AGENT_ECONOMY_WORKSTREAMS") || !autonomySource.includes("function evaluateAutonomyAction")) {
       throw new Error("Agent autonomy helper is missing required exports");
