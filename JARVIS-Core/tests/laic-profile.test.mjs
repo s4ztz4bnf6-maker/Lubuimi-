@@ -59,7 +59,7 @@ test("live verifier reports inconclusive rather than false negative for a search
   assert.equal(result.sources[0].result, "search_ui_reachable_manual_record_lookup_required");
   assert.equal(result.nonAuthoritativeDossierPortal.queried, false);
   assert.equal(result.dossierDiscrepancies.length, 6);
-  assert.match(result.dossierDiscrepancies[3], /natural-person/);
+  assert.match(result.dossierDiscrepancies[3], /natural person/);
 });
 
 test("official MIDAO record identifiers are only a candidate until certified documents are authenticated", () => {
