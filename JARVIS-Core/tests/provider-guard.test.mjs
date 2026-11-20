@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { classifyProviderFailure, parseRetryAfterMs, ProviderCoolingDownError, ProviderGuard, RequestBudgetExceededError, assertRequestWithinBudget, estimateInputTokensConservatively, shouldFallbackToNextProvider } from "../tools/provider-guard.mjs";
+import { classifyProviderFailure, parseRetryAfterMs, ProviderCoolingDownError, ProviderGuard, RequestBudgetExceededError, assertRequestWithinBudget, estimateInputTokensConservatively, shouldFallbackToNextProvider, providerQuotaKey } from "../tools/provider-guard.mjs";
 
 test("classifies rate limits, oversized requests, transient and permanent failures", () => {
   assert.equal(classifyProviderFailure({ status: 429, body: "rate_limit_exceeded" }), "rate_limited");
@@ -76,4 +76,12 @@ test("HTTP 413 does not fall through to another provider with the same oversized
   assert.equal(shouldFallbackToNextProvider({ status: 413, body: "request too large" }), false);
   assert.equal(shouldFallbackToNextProvider({ status: 503, body: "temporarily unavailable" }), true);
   assert.equal(shouldFallbackToNextProvider({ status: 429, body: "rate limit" }), true);
+});
+
+
+test("same provider host shares one TPM/cooldown quota key across aliases", () => {
+  const groqPrimary = providerQuotaKey({ name: "groq-free-tier", baseUrl: "https://api.groq.com/openai/v1" });
+  const groqFallback = providerQuotaKey({ name: "custom-openai-compatible", baseUrl: "https://api.groq.com/openai/v1/" });
+  assert.equal(groqPrimary, "api.groq.com");
+  assert.equal(groqFallback, groqPrimary);
 });
