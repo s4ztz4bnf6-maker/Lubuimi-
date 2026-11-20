@@ -42,7 +42,7 @@ test("live verifier reports inconclusive rather than false negative for a search
     fetchImpl: async () => ({
       ok: true,
       status: 200,
-      text: async () => "<html><h1>Marshall Islands DAO LLC Registry</h1><input placeholder='Search'></html>",
+      text: async () => "<html><h1>Marshall Islands DAO LLC Registry</h1><p>Search for public DAO LLC entity information by entering a company name or full registration number.</p><input placeholder='Search'></html>",
     }),
   });
   assert.equal(result.status, "NOT_VERIFIED_manual_MIDAO_registry_lookup_required");
