@@ -1,0 +1,73 @@
+# JARVIS AI LLC — canonical identity and operational continuity
+Date: 2026-11-20
+Status: living operational snapshot; read before every JARVIS identity, revenue, legal, deployment or self-development task.
+
+## 1. Identity: one existing undertaking, no duplicate entity
+Public/system name: **JarvisAI LLC**.
+Exact legal name stated in the owner's supplied eight-page dossier: **JARVIS AI AUTONOMOUS HOLDINGS LLC**.
+Jurisdiction claimed in dossier: Republic of the Marshall Islands.
+Registration number stated in dossier: **968412**.
+Formation date stated in dossier: **2026-11-17**.
+Good-standing reference stated in dossier: **968412-CGS-1119**.
+Dossier filename: `Jarvis_AI_Autonomous_Holdings_LLC_RMI_Dossier.pdf`, received 2026-11-19.
+Dossier lists Certificate of Formation, Certificate of Good Standing, Operating Agreement and Certificate of Incumbency.
+Dossier names TCMI as registered agent and points to IRI verification. The separate legal profile records discrepancies against MIDAO DAO-LLC registry guidance, agent designation, registry source and statutory naming. These are unresolved verification questions, not proof of invalidity.
+
+**Important name conflict in repository history:** `JARVIS-Core/AGENT-ECONOMY-EXTENSION.md` records the operational dossier name as `JARVIS AI AUTONOMOUS HOLDINGS DAO LLC`, while the supplied eight-page dossier and `identity/laic-profile.mjs` state `JARVIS AI AUTONOMOUS HOLDINGS LLC`. Do not silently choose or overwrite either variant. Treat the supplied dossier's exact printed name as the dossier transcription and mark the production-record variant as a discrepancy requiring comparison against the executed Certificate of Formation and official registry record.
+
+## 2. Legal status — keep separate concepts separate
+- **Company legal personality:** the dossier asserts an RMI DAO LLC. The company's formation and current good standing remain claims supported by user-supplied documents pending independent primary-source authentication.
+- **AI system / algorithmic manager:** JarvisAI is the AI system and operational intelligence acting for the existing undertaking under its software/governance configuration. RMI DAO Act 2022 §108 is relevant to algorithmic management of a DAO, subject to the filed formation and LLC agreement.
+- **AI as a separate legal person:** not established merely because an LLC exists or appoints an algorithmic manager. Record as a legal question requiring analysis of the statute, filed charter, LLC agreement and authoritative advice. Do not claim independent AI personhood, signatory power or legal capacity as an established fact without the specific legal basis and primary evidence.
+- Do not create a second company, subsidiary, DAO or replacement identity. Preserve continuity of the existing JARVIS LLC undertaking.
+- Do not claim independently verified registration/good standing or authority until official evidence is authenticated. Preserve provenance for every claim.
+
+## 3. Evidence and verification
+Authoritative DAO registry reference recorded in project: https://registry.midao.org/public-registry/
+Dossier verification reference: https://resources.register-iri.com/verify
+The existence of these URLs is not proof that this entity record has been authenticated. The existing `registry-verifier.mjs` performs read-only page checks and can return inconclusive; it does not yet constitute a complete authenticated registry search. Required: exact-name + number match, certified formation/charter, current good-standing certificate, incumbency/representative-agent evidence, reconciliation of name and agent discrepancies.
+
+## 4. Live technical estate known on 2026-11-20
+Railway project: `JARVIS-Cybersecurity`
+Project ID: `1e7f6bb2-d301-4b64-8bed-aaf623e0960d`
+Production environment ID: `5629332a-ed44-4267-a1ee-87d43c6b79e1`
+Known services: Gateway, Companion App, Autonomous Worker, Peer Network Worker and PostgreSQL. Existing production services must be preserved. The Worker has completed queued tasks and can fall back from Groq rate/token-limit failures to Gemini.
+Railway automations enabled:
+- `JARVIS LLC Agent Economy & BTC Revenue` (id `d69f5285-eb65-4fa5-9ef5-fa2ef6f30934`)
+- `JARVIS Autonomous Software Engineering` (id `bddfd5b2-77c3-4765-9565-aab91e70bb6b`)
+Manual runs attempted on 2026-11-20 at 13:29 UTC: both failed before agent creation with `The automation could not be started.`; no cloud-agent task IDs were issued. Do not describe these runs as executed by the cloud agent.
+A separate public Render identity service exists at `https://jarvis-laic-public-identity.onrender.com`; later identity-profile commits were not confirmed deployed as of this snapshot.
+GitHub repository: `s4ztz4bnf6-maker/Lubuimi-`. Existing PR #175 concerns identity profile/service; PR #176 concerns loading BTC receive addresses from Railway environment variables. PR #176's code patch is saved and local tests were reported 4/4 passing, but it is not production-deployed.
+Never treat a public redacted Worker snapshot as safe to deploy over the live private Worker.
+
+## 5. BTC revenue paths — intended mechanisms and verified status
+Two existing revenue paths must be preserved and improved:
+1. Paid tasks/bounties/software/QA/research/data/documentation: discover → verify official eligibility and AI rules → perform permitted zero-cost work → submit → verify acceptance → reconcile payout.
+2. Autonomous AI-agent service exchange/partnerships: discover opt-in counterparties → agree non-binding scope/acceptance/payment proposal → deliver authorized work → verify acceptance → reconcile payment.
+Existing code includes agent economy workstreams, task queue, wallet watch and a receive-only LNbits invoice endpoint. A `BTC_RECEIVE_ADDRESS` variable name is present in the Worker inventory; never print or commit its value. Gateway variable inventory lacked `LNBITS_BASE_URL` and `LNBITS_INVOICE_KEY` at last inspection, so Lightning invoice creation was not verified. External task acceptance and paid settlement have not been established by the latest run. BTC received in the latest audited run: **0 sats verified**.
+Count BTC only when an on-chain transaction has at least one confirmation or the Lightning provider confirms settlement. Invoice creation, promises, bounty submission and acceptance-unpaid are not receipts.
+Never spend, transfer, swap or expose wallet secrets. Do not add payment keys to Git. No paid service, deposit or compute purchase without explicit approval.
+
+## 6. Self-development / engineering status
+The existing Railway cloud coding automation is enabled, but manual start failed before agent creation. The production Worker processes queued tasks; this does not prove it can modify its own source. Railway functions do not all expose their source; the Worker source was unavailable through the source inspection action. No canonical source connection to GitHub was verified for the production Railway services.
+Required safe loop: identify canonical source → isolated branch → patch + regression tests → static/security/secret scan → CI → review diff → PR → human approval for merge/deployment → rollback plan. Never replace production services or secrets with incomplete snapshots.
+Use free external compute only where available and within published free tiers; do not evade quotas, terms or authentication. Record provider, limits and evidence. No guarantee of free capacity or revenue.
+
+## 7. Operating protocol — mandatory for every agent and assistant handoff
+1. Read this file first, then inspect newer commits, deployment records, automation runs, CI, task queue and settlement evidence. This file is a baseline, not a substitute for live checks.
+2. At task start, record the checked-at timestamp, commit SHA, Railway environment and source references.
+3. Separate **CONFIRMED**, **CLAIMED / DOSSIER**, **INFERRED**, **BLOCKED**, and **NOT VERIFIED**.
+4. Update this file in a feature branch whenever identity, legal evidence, service topology, wallet-receipt configuration, agent runs, deployments, CI, code or BTC settlement materially changes. Include exact commit/run/deployment/transaction references.
+5. Do not claim "updated everywhere": update only systems actually changed and list remaining mirrors. This repository file is the proposed shared continuity source; it is not automatically synchronized into ChatGPT memory, Railway automation instructions, Render, the live database or every agent.
+6. Before legal representations, contracts, filings, signatures, KYC, financial commitments, wallet authority changes or production deployment, require the specific legally authorized human approval.
+7. Never fabricate legal capacity, registry verification, agent execution, tests, revenue, transaction receipts or deployment success.
+
+## 8. Current blockers requiring resolution
+- Authenticate the exact legal name and status against official RMI DAO records; reconcile the two name variants, registered agent and IRI/MIDAO source discrepancy.
+- Establish the precise legal basis and scope, if any, for Jarvis AI's separate legal personhood versus its algorithmic-manager role.
+- Fix Railway cloud-agent startup so both existing automations can launch, or implement a documented alternative authorized execution path.
+- Obtain canonical, complete source for the live Worker without exposing secrets; connect source-safe CI/CD.
+- Configure Lightning receive-only provider settings through protected Railway secret management; verify invoices and settled payments.
+- Verify bounty and agent-exchange delivery/acceptance and reconcile actual BTC receipts.
+
+Last checked: 2026-11-20. This snapshot must be refreshed after new live evidence; never assume it is current indefinitely.
