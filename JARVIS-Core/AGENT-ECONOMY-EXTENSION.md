@@ -62,7 +62,7 @@ The evaluator fails closed for unknown actions. Binding contracts, corporate fil
 ## Verification and deployment status
 
 - Source changes are saved on `jarvis-core`.
-- GitHub Actions JARVIS-Core test run for commit `3d5b37e3571a5de3dab8ae1a3e058b71ba840021`: **SUCCESS**. The workflow syntax-checked the tools, ran all Node regression tests and built the single-file Worker bundle.
+- GitHub Actions JARVIS-Core test run for commit `79ae5ecdedca62c1b50e48c2314de68daaab6a42` (run `44736658854`): **SUCCESS**. The workflow syntax-checked the tools, ran all Node regression tests (including the new autonomy-kernel and scheduler tests) and built the single-file Worker bundle.
 - The five existing Railway production services were reporting `SUCCESS` when inspected on 2026-11-20.
 - **NOT DEPLOYED TO PRODUCTION.** The public Worker snapshot is intentionally redacted and is explicitly documented as not deployable as-is; the live Worker has private receive-address material absent from this branch. Replacing the live Worker with this snapshot would risk breaking wallet monitoring. No production service, wallet, database schema or secret was changed by this extension.
 - The Render A2A bridge remains a separate, previously deployed component whose Supabase inbox configuration was not available. This extension does not claim that bridge is processing messages.
