@@ -5,9 +5,9 @@ import { bundleWorkerSource } from "../tools/build-worker.mjs";
 test("inlines the provider guard and agent autonomy kernel into the single-file Worker", () => {
   const providerImport = 'import { ProviderGuard } from "../../tools/provider-guard.mjs";';
   const autonomyImport = 'import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";';
-  const source = providerImport + "\\n" + autonomyImport + "\\nconst guard = new ProviderGuard();";
-  const provider = "export class ProviderGuard {}\\n";
-  const autonomy = "export const AGENT_ECONOMY_WORKSTREAMS = [];\\nexport function evaluateAutonomyAction() {}\\n";
+  const source = providerImport + "\n" + autonomyImport + "\nconst guard = new ProviderGuard();";
+  const provider = "export class ProviderGuard {}\n";
+  const autonomy = "export const AGENT_ECONOMY_WORKSTREAMS = [];\nexport function evaluateAutonomyAction() {}\n";
   const bundled = bundleWorkerSource(source, provider, autonomy);
   assert.equal(bundled.includes(providerImport), false);
   assert.equal(bundled.includes(autonomyImport), false);
@@ -18,8 +18,8 @@ test("inlines the provider guard and agent autonomy kernel into the single-file 
 });
 
 test("keeps backward compatibility when a Worker source has no autonomy import", () => {
-  const source = 'import { ProviderGuard } from "../../tools/provider-guard.mjs";\\nconst guard = new ProviderGuard();';
-  const helper = "export class ProviderGuard {}\\n";
+  const source = 'import { ProviderGuard } from "../../tools/provider-guard.mjs";\nconst guard = new ProviderGuard();';
+  const helper = "export class ProviderGuard {}\n";
   const bundled = bundleWorkerSource(source, helper);
   assert.equal(bundled.includes("../../tools/provider-guard.mjs"), false);
   assert.equal(bundled.includes("class ProviderGuard {}"), true);
@@ -29,9 +29,9 @@ test("fails closed if required helper imports or exports are missing", () => {
   assert.throws(() => bundleWorkerSource("const x = 1;", "export class ProviderGuard {}"), /expected ProviderGuard import/);
   assert.throws(() => bundleWorkerSource('import { ProviderGuard } from "../../tools/provider-guard.mjs";', "export const x = 1;"), /does not define ProviderGuard/);
   assert.throws(() => bundleWorkerSource(
-    'import { ProviderGuard } from "../../tools/provider-guard.mjs";\\n' +
+    'import { ProviderGuard } from "../../tools/provider-guard.mjs";\n' +
     'import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";',
-    "export class ProviderGuard {}\\n",
+    "export class ProviderGuard {}\n",
     "export const notTheKernel = true;"
   ), /Agent autonomy helper is missing required exports/);
 });
