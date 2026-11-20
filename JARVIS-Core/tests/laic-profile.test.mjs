@@ -18,7 +18,7 @@ test("RMI DAO law profile records algorithmic management without conflating the 
   assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§708/);
   assert.match(laicProfile.legalStatus.naturalPersonControlRequirement, /§714/);
   assert.match(laicProfile.legalStatus.governingDocumentPrecedence, /§715/);
-  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /requires_assessment_under_RMI_DAO_ACT_and_constitutional_documents/);
+  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /No express separate AI legal-personhood route/);
 });
 
 test("public release policy forbids secrets and production snapshots", () => {
