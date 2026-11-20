@@ -18,6 +18,10 @@ test("RMI DAO law profile records algorithmic management without conflating the 
   assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§708/);
   assert.match(laicProfile.legalStatus.naturalPersonControlRequirement, /§714/);
   assert.match(laicProfile.legalStatus.governingDocumentPrecedence, /§715/);
+  assert.match(laicProfile.dossierReview.nameConflict, /§704\(4\)/);
+  assert.match(laicProfile.dossierReview.registeredAgentConflict, /MIDAO Directory Services/);
+  assert.match(laicProfile.dossierReview.humanControlEvidence, /§714\(1\)\(d\)/);
+  assert.equal(laicProfile.dossierReview.authenticationStatus, "NOT_AUTHENTICATED_against_MIDAO_or_Registrar");
   assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /No express separate AI legal-personhood route/);
 });
 
