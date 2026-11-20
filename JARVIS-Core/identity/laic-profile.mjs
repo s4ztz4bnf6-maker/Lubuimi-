@@ -7,7 +7,7 @@
  */
 
 export const laicProfile = Object.freeze({
-  profileVersion: "1.1.0",
+  profileVersion: "1.2.0",
   systemLabel: "JarvisAI LLC",
   legalEntity: Object.freeze({
     // Exact legal name printed throughout the uploaded eight-page dossier.
