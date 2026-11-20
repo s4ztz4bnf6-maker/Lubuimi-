@@ -1,0 +1,27 @@
+name: JARVIS NWC receive tests
+
+on:
+  push:
+    branches: [jarvis-lightning-receive-integration-2026-11-20]
+  pull_request:
+    branches: [jarvis-core]
+    paths:
+      - "JARVIS-Core/lightning/**"
+      - "JARVIS-Core/tests/nwc-receive.test.mjs"
+      - ".github/workflows/jarvis-nwc-receive-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  nwc-receive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax check
+        run: node --check JARVIS-Core/lightning/nwc-receive.mjs
+      - name: Run receive-only adapter tests
+        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs
