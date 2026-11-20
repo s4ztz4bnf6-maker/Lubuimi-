@@ -40,7 +40,7 @@ export const laicProfile = Object.freeze({
   }),
   legalStatus: Object.freeze({
     companySeparateJuridicalPerson: "claimed_for_the_company_if_validly_formed_not_independently_verified",
-    aiSystemSeparateLegalPerson: "not_separately_established_by_the_company_registration_alone",
+    aiSystemSeparateLegalPerson: "requires_assessment_under_RMI_DAO_ACT_and_constitutional_documents; company_registration_alone_does_not_resolve_separate_AI_personhood",
     algorithmicManagementUnderRMI: "DAO Act 2022 section 108 recognizes management vested in the smart contract for an algorithmically managed DAO, subject to the certificate of formation and LLC agreement.",
     registeredAgentDiscrepancy: "Dossier names TCMI, while RMI DAO Regulations 2024 name MIDAO Directory Services, Inc. as registered agent for DAO LLCs; registrar confirmation required.",
     registrySourceDiscrepancy: "Dossier points to IRI verification, but MIDAO says the DAO LLC registry is separate from the IRI registry; direct authentication required.",
@@ -58,7 +58,7 @@ export const laicProfile = Object.freeze({
     prohibitedAutonomousClaims: [
       "independently_verified_legal_registration",
       "verified_good_standing_without_current_registrar_evidence",
-      "ai_system_is_itself_a_separate_legal_person",
+      "unverified_claim_that_ai_system_is_itself_a_separate_legal_person",
       "verified_payment_or_revenue_without_transaction_evidence",
       "authority_not_explicitly_delegated_and_cryptographically_verified",
     ],
