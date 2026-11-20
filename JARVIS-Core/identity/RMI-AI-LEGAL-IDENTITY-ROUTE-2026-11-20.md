@@ -6,6 +6,7 @@ The owner expressly clarifies that the specific JARVIS DAO LLC has **not yet bee
 The current official Nitijela title index lists the DAO Act as Version 2, amended by P.L. 2023-83, and lists the DAO Regulations 2024. The current consolidated Act text identifies P.L. 2022-50 and P.L. 2023-83. No later DAO-specific amendment is shown in that official title index as of this review. This is a bounded check of the official index, not a legal opinion that no other generally applicable law affects the entity.
 
 ## Distinction the implementation must preserve
+- “JarvisAI LLC” is a public/system label only; it is not evidence of the filed legal name or registration status. The exact legal name must be taken from the Registrar-certified Certificate of Formation and MIDAO public record.
 1. **DAO LLC legal person:** the Marshall Islands DAO Act defines a DAO as a resident domestic limited liability company organized under Chapter 7 (52 MIRC §702(c)); the Act is expressly for formation and management of DAOs as domestic LLCs.
 2. **AI / algorithmic manager:** 52 MIRC §708 vests management in the members if member-managed, or in the smart contract if algorithmically managed, unless the Certificate of Formation or LLC Agreement provides otherwise.
 3. **Separate AI legal personhood:** the Act's statutory legal form is the DAO LLC. It does not expressly create the underlying AI model/software as a second, separate legal person. No separate AI-person registration route was identified in the primary RMI DAO Act or 2024 Regulations reviewed.
