@@ -1,4 +1,5 @@
 import { ProviderGuard } from "../../tools/provider-guard.mjs";
+import { parseBitcoinReceiveAddresses } from "../../tools/bitcoin-receive-addresses.mjs";
 import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";
 import postgres from "postgres";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -39,7 +40,7 @@ if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.n
   console.log("JARVIS Gemini quota cooldown active until "+new Date(geminiCooldown.cooldown_until).toISOString()+"; alternative providers="+providerCandidates.length+"; deterministic research fallback="+(!modelConfigured));
 }
 
-const ownerReceiveAddresses=[]; // REDACTED from public mirror; restore only from a private, verified runtime configuration.
+const ownerReceiveAddresses = parseBitcoinReceiveAddresses({ primary: env.BTC_RECEIVE_ADDRESS, additional: env.BTC_RECEIVE_ADDRESSES }); // Runtime-only; never commit receive addresses.
 const btcAddressPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 await sql.unsafe("DELETE FROM jarvis_wallet_watch_addresses WHERE address=ANY($1::text[])",[["REDACTED_BTC_RECEIVE_ADDRESS","REDACTED_BTC_RECEIVE_ADDRESS"]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch (id integer PRIMARY KEY DEFAULT 1 CHECK (id=1),receive_address text NOT NULL,updated_at timestamptz NOT NULL DEFAULT now())");
