@@ -23,7 +23,10 @@ const server = http.createServer((req, res) => {
   if (path === "/healthz") {
     return send(res, 200, { ok: true, service: "JARVIS LAIC public identity endpoint", startedAt });
   }
-  if (path === "/v1/verify") {\n    return verifyJarvisEntity().then((result) => send(res, 200, result)).catch((error) => send(res, 502, { error: "verification_failed", detail: String(error?.message || error) }));\n  }\n  if (path === "/v1/identity") {
+  if (path === "/v1/verify") {
+    return verifyJarvisEntity().then((result) => send(res, 200, result)).catch((error) => send(res, 502, { error: "verification_failed", detail: String(error?.message || error) }));
+  }
+  if (path === "/v1/identity") {
     return send(res, 200, {
       ...getLAICIdentitySummary(),
       legalPersonhood: "The LLC may be a legal person under its governing law; the AI system itself is not thereby a separate legal person.",
