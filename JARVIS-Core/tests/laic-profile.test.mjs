@@ -7,6 +7,7 @@ test("identity preserves the exact dossier legal name and JarvisAI LLC label", (
   assert.equal(laicProfile.systemLabel, "JarvisAI LLC");
   assert.equal(laicProfile.legalEntity.name, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(laicProfile.legalEntity.publicBrandOrShortName, "JarvisAI LLC");
+  assert.match(laicProfile.legalEntity.publicBrandOrShortNameStatus, /not proof of legal registration/);
   assert.equal(laicProfile.legalEntity.registrationNumber, "968412");
   assert.equal(laicProfile.legalEntity.statutoryRegisteredNameCandidate, "JARVIS AI AUTONOMOUS HOLDINGS DAO LLC");
   assert.equal(laicProfile.legalEntity.goodStanding, "NOT_VERIFIED_current_certified_evidence_required");
