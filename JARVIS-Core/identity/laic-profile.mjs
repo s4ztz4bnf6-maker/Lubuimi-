@@ -13,6 +13,7 @@ export const laicProfile = Object.freeze({
     // Exact legal name printed throughout the uploaded eight-page dossier.
     name: "JARVIS AI AUTONOMOUS HOLDINGS LLC",
     publicBrandOrShortName: "JarvisAI LLC",
+    publicBrandOrShortNameStatus: "Public/system label only; not proof of legal registration or the exact filed entity name.",
     jurisdiction: "Republic of the Marshall Islands",
     registrationNumber: "968412",
     entityTypeClaimed: "Decentralized Autonomous Organization Limited Liability Company (DAO LLC), as claimed in the dossier",
