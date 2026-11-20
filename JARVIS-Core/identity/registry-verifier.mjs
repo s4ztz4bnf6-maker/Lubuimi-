@@ -122,7 +122,7 @@ export async function verifyJarvisEntity({ fetchImpl = fetch, registryRecord = n
       queried: false,
       reason: "IRI is not used as the DAO LLC registry; MIDAO documentation identifies a separate DAO LLC registry.",
     },
-    legalInterpretation: "52 MIRC §702 defines the DAO LLC legal form; §704(4) addresses the DAO LLC name; §708 permits algorithmic management subject to filed instruments; §714(1)(d) requires control by at least one natural person; §715(1) gives the filed Certificate/LLC Agreement precedence over conflicting smart-contract terms.",
+    legalInterpretation: "52 MIRC §702 defines the DAO LLC legal form; §704(4) addresses the DAO LLC name; §704(5) permits the Certificate/LLC Agreement to elect member-managed or algorithmically managed status; §708 vests management in members or the smart contract accordingly; §714(1)(d) requires control by at least one natural person; §715(1) gives the Certificate/LLC Agreement precedence over conflicting smart-contract terms.",
     dossierDiscrepancies: [
       laicProfile.dossierReview.nameConflict,
       laicProfile.dossierReview.registeredAgentConflict,
