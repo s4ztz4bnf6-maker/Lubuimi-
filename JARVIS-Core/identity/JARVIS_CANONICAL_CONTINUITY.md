@@ -70,4 +70,30 @@ Use free external compute only where available and within published free tiers; 
 - Configure Lightning receive-only provider settings through protected Railway secret management; verify invoices and settled payments.
 - Verify bounty and agent-exchange delivery/acceptance and reconcile actual BTC receipts.
 
-Last checked: 2026-11-20. This snapshot must be refreshed after new live evidence; never assume it is current indefinitely.
+## 9. Live recheck — 2026-11-20 13:32 UTC
+This section supersedes earlier operational statements where they differ. Checked against Railway live tools; secrets and wallet values were not read out.
+
+### Railway health
+- Production inventory: 5 services, all live resources, no staged environment changes.
+- Gateway: online, 1/1 replica; latest deployment SUCCESS. Two recent failed deployments are visible in the 8-hour health window.
+- Companion: online, 1/1 replica; latest deployment SUCCESS. Six recent failed deployments are visible in the 8-hour health window.
+- Autonomous Worker: cronSucceeded; latest deployment SUCCESS; most recent cron execution reported succeeded at 2026-11-20 13:32:13 UTC.
+- Peer Network Worker: online, 1/1 replica; latest deployment SUCCESS; no recent failures in the health window.
+- PostgreSQL: online, 1/1 replica; latest deployment SUCCESS; no recent failures in the health window.
+- The health tool reports 2 services with issues and 8 recent failures in total (Gateway 2, Companion 6). Online/latest-success does not erase this failure history; investigate before declaring the platform fully healthy.
+
+### Automation execution attempts
+- Agent Economy & BTC Revenue manual run 842f6b9e-29b0-4d96-8026-68c1a822cb54: FAILED at start, exact error: The automation could not be started. No cloudAgentTaskId, cloudAgentId or sessionId.
+- Autonomous Software Engineering manual run 937afc26-de54-4a0f-89dc-1246c5772384: FAILED at start with the same error; no cloud agent created.
+- These were explicit one-time attempts; do not automatically retry or claim an agent executed them. The service's independent cron execution at 13:32:13 succeeded, but that is not evidence the cloud coding agents started.
+
+### Source and configuration inspection
+- Railway Function source retrieval returned complete deployed source for Gateway (104,518 characters) and Companion (35,054 characters).
+- The same source action returned an empty string for the Autonomous Worker (0 characters). Do not overwrite or replace the Worker with an empty/public/redacted snapshot.
+- Companion's deployed system prompt asserts the historical name variant JARVIS AI AUTONOMOUS HOLDINGS DAO LLC and describes Jarvis AI as algorithmic manager. This is a production prompt assertion, not independent proof of registration, authority or separate AI legal personhood. It conflicts with the exact legal name transcribed from the dossier above. No prompt or production source was changed in this check.
+- Gateway variable-name inventory contains neither LNBITS_BASE_URL nor LNBITS_INVOICE_KEY. Worker variable-name inventory contains BTC_RECEIVE_ADDRESS; its value was deliberately not inspected or disclosed. Therefore Lightning settlement remains unverified and the presence of the on-chain receive variable alone does not prove a payment watcher works.
+- Render workspace discovery returned one workspace: tea-dbv3obd6e07s73al6050 (Der Dunkle's workspace). Render service inventory has not yet been fetched against that selected workspace.
+- Supabase project discovery returned an empty project list; no Supabase project was available to synchronize.
+- PR #177 remains OPEN and DRAFT, not merged. This file remains a GitHub branch/PR source of truth only; Railway automation instructions, Render, the live database and ChatGPT are not automatically synchronized.
+
+Last live check: 2026-11-20 13:32 UTC.
