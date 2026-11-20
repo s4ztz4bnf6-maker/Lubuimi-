@@ -68,3 +68,9 @@ The evaluator fails closed for unknown actions. Binding contracts, corporate fil
 - The Render A2A bridge remains a separate, previously deployed component whose Supabase inbox configuration was not available. This extension does not claim that bridge is processing messages.
 
 The next production step is a source-safe release path that preserves the private wallet configuration, connects the self-development branch to an authorized repository writer, and configures invoice-only Lightning credentials. Do not bypass these requirements by deploying the scrubbed snapshot.
+
+## Additive task enqueuer
+
+`economy-scheduler/` is a separate Node 20+ Railway cron-service package. It writes five recurring task definitions into its own `jarvis_agent_economy_scheduler` table and enqueues at most one due item per run into the existing `agent_tasks` queue, with a three-task backlog cap and duplicate suppression. The existing production Worker remains the task executor; this design avoids replacing its redacted launch payload.
+
+The scheduler code and regression tests are saved and CI-validated. **The scheduler service has not been created or deployed**, and it has not written to the production database. A Railway cron service would need a `DATABASE_URL` reference to the existing Postgres service. Deployment is intentionally pending confirmation that the additional compute stays within the current billing allowance; no paid resource was provisioned by this change.
