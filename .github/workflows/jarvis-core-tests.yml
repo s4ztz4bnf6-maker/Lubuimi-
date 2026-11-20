@@ -1,0 +1,35 @@
+name: JARVIS-Core tests
+
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - "JARVIS-Core/**"
+      - ".github/workflows/jarvis-core-tests.yml"
+  pull_request:
+    paths:
+      - "JARVIS-Core/**"
+      - ".github/workflows/jarvis-core-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  provider-guard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: JARVIS-Core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax-check development tools
+        run: |
+          node --check tools/provider-guard.mjs
+          node --check tools/build-worker.mjs
+      - name: Run regression tests
+        run: node --test tests/*.test.mjs
+      - name: Verify single-file Worker bundle
+        run: node tools/build-worker.mjs /tmp/jarvis-worker-bundle/index.ts
