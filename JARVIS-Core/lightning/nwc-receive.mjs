@@ -11,6 +11,7 @@ function validConnectionString(value) {
 
 function normalizeTransaction(tx) {
   return {
+    type: String(tx?.type || "unknown"),
     paymentHash: String(tx?.payment_hash || "").toLowerCase(),
     invoice: String(tx?.invoice || ""),
     amountMsat: Number(tx?.amount || 0),
@@ -107,7 +108,7 @@ export function createNwcReceiveAdapter({
       const response = await client.listTransactions({ type: "incoming", from, limit });
       return (Array.isArray(response?.transactions) ? response.transactions : [])
         .map(normalizeTransaction)
-        .filter(tx => tx.state === "settled" && PAYMENT_HASH.test(tx.paymentHash));
+        .filter(tx => tx.type === "incoming" && tx.state === "settled" && PAYMENT_HASH.test(tx.paymentHash));
     },
 
     close() {
