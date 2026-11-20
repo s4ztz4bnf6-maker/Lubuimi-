@@ -170,7 +170,7 @@ export async function reserveProviderTokens(sql, provider, tokens, limit = DEFAU
   if (requested > limit) throw new RequestBudgetExceededError(requested, 0, limit);
   return sql.begin(async (tx) => {
     await tx`SELECT pg_advisory_xact_lock(hashtext(${provider}))`;
-    await tx`DELETE FROM jarvis_provider_tpm_reservations WHERE reserved_at < NOW() - INTERVAL '60 seconds'`;
+    await tx`DELETE FROM jarvis_provider_tpm_reservations WHERE provider = ${provider} AND reserved_at < NOW() - INTERVAL '60 seconds'`;
     const [row] = await tx`
       SELECT COALESCE(SUM(tokens), 0)::int AS used
       FROM jarvis_provider_tpm_reservations
