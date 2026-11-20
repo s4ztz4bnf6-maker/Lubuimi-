@@ -189,6 +189,15 @@ export async function reserveProviderTokens(sql, provider, tokens, limit = DEFAU
   });
 }
 
+export function providerQuotaKey(provider) {
+  const baseUrl = typeof provider === "string" ? provider : provider?.baseUrl;
+  try {
+    return new URL(baseUrl).host.toLowerCase();
+  } catch {
+    return String(typeof provider === "string" ? provider : provider?.name || "unknown-provider").toLowerCase();
+  }
+}
+
 export function shouldFallbackToNextProvider(error) {
   return error?.code !== "REQUEST_BUDGET_EXCEEDED" &&
     classifyProviderFailure(error) !== "request_too_large";
