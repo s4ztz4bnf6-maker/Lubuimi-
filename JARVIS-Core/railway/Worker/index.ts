@@ -790,8 +790,10 @@ let geminiQuotaBlocked = false;
 async function ask(messages, tools) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
-  const limit=Math.max(1000,Math.min(7800,Number(env.JARVIS_PROVIDER_TPM_LIMIT||7000)));
-  const outputTokens=Math.max(128,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS||512)));
+  const configuredLimit=Number(env.JARVIS_PROVIDER_TPM_LIMIT||7000);
+  const configuredOutput=Number(env.JARVIS_MAX_OUTPUT_TOKENS||512);
+  const limit=Number.isFinite(configuredLimit)?Math.max(1000,Math.min(7800,configuredLimit)):7000;
+  const outputTokens=Number.isFinite(configuredOutput)?Math.max(128,Math.min(1024,configuredOutput)):512;
   let budgetBlocked=0;
   let lastBudgetError=null;
   for(const provider of providerCandidates){
