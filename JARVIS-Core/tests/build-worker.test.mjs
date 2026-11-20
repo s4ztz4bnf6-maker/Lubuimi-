@@ -47,10 +47,11 @@ test("inlines every named provider-budget export used by the Worker", () => {
     "export async function reserveProviderTokens() {}",
     "export function shouldFallbackToNextProvider() {}",
     "export function classifyProviderFailure() {}",
+    "export function providerQuotaKey() {}",
   ].join("\n");
   const bundled = bundleWorkerSource(providerImport + "\nconst guard = new ProviderGuard();", helper);
   assert.equal(bundled.includes(providerImport), false);
-  for (const symbol of ["class ProviderBudgetExceededError", "class RequestBudgetExceededError", "function assertRequestWithinBudget", "function reserveProviderTokens", "function shouldFallbackToNextProvider", "function classifyProviderFailure"]) {
+  for (const symbol of ["class ProviderBudgetExceededError", "class RequestBudgetExceededError", "function assertRequestWithinBudget", "function reserveProviderTokens", "function shouldFallbackToNextProvider", "function classifyProviderFailure", "function providerQuotaKey"]) {
     assert.ok(bundled.includes(symbol), "missing bundled symbol: " + symbol);
   }
 });
