@@ -15,6 +15,8 @@ test("registration and good standing cannot be represented as verified without r
   assert.equal(laicProfile.legalEntity.goodStanding, "claimed_in_dossier_not_independently_verified");
   assert.match(laicProfile.legalEntity.registeredAgentDiscrepancy, /TCMI/);
   assert.match(laicProfile.legalStatus.registeredAgentDiscrepancy, /MIDAO Directory Services/);
+  assert.match(laicProfile.legalEntity.registrySourceDiscrepancy, /IRI/);
+  assert.match(laicProfile.legalStatus.registrySourceDiscrepancy, /separate from the IRI registry/);
   assert.equal(laicProfile.verificationPlan.status, "pending_external_registrar_confirmation");
   assert.equal(laicProfile.legalStatus.aiSystemSeparateLegalPerson, "not_established_by_company_registration");
 });
