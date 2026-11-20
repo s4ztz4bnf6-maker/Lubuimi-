@@ -17,6 +17,8 @@ on:
       - "JARVIS-Core/compute/**"
       - "JARVIS-Core/engineering/**"
       - "JARVIS-Core/tests/agent-foundations.test.mjs"
+      - "JARVIS-Core/agents/tool-registry.mjs"
+      - "JARVIS-Core/tests/tool-registry.test.mjs"
       - ".github/workflows/jarvis-nwc-receive-tests.yml"
 
 permissions:
@@ -35,4 +37,4 @@ jobs:
       - name: Syntax check telephony adapter
         run: node --check JARVIS-Core/communications/twilio-telephony.mjs
       - name: Run JARVIS receive, telephony and engineering policy tests
-        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs JARVIS-Core/tests/twilio-telephony.test.mjs JARVIS-Core/tests/self-improvement-policy.test.mjs JARVIS-Core/tests/agent-foundations.test.mjs
+        run: node --test JARVIS-Core/tests/nwc-receive.test.mjs JARVIS-Core/tests/twilio-telephony.test.mjs JARVIS-Core/tests/self-improvement-policy.test.mjs JARVIS-Core/tests/agent-foundations.test.mjs JARVIS-Core/tests/tool-registry.test.mjs
