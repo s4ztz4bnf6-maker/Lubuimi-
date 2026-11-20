@@ -9,7 +9,7 @@ Minimal public-facing identity/status endpoint, intentionally isolated from the 
 - Claimed registration number: **968412**
 - Claimed entity type: DAO LLC
 
-The dossier's legal name omits the words "DAO LLC" even though the Marshall Islands DAO Act requires a DAO designation in the registered name. This discrepancy is explicitly flagged for confirmation by the Registrar. The dossier's assertions of registration, active status, good standing, and AI signatory authority have not been independently authenticated.
+The dossier's legal name omits the words "DAO LLC" even though the Marshall Islands DAO Act requires the DAO designation in a DAO's registered name. In addition, the dossier names The Trust Company of the Marshall Islands, Inc. (TCMI) as registered agent, while the 2024 RMI DAO Regulations identify MIDAO Directory Services, Inc. as the registered agent for DAO LLCs. Both discrepancies require direct Registrar confirmation. The dossier's assertions of registration, active status, good standing, and AI signatory authority have not been independently authenticated.
 
 ## Endpoints
 - `GET /` service description
