@@ -123,12 +123,22 @@ export async function verifyJarvisEntity({ fetchImpl = fetch, registryRecord = n
       reason: "IRI is not used as the DAO LLC registry; MIDAO documentation identifies a separate DAO LLC registry.",
     },
     legalInterpretation: "52 MIRC §702 defines the DAO LLC legal form; §704(4) addresses the DAO LLC name; §708 permits algorithmic management subject to filed instruments; §714(1)(d) requires control by at least one natural person; §715(1) gives the filed Certificate/LLC Agreement precedence over conflicting smart-contract terms.",
+    dossierDiscrepancies: [
+      laicProfile.dossierReview.nameConflict,
+      laicProfile.dossierReview.registeredAgentConflict,
+      laicProfile.dossierReview.goodStandingPortalConflict,
+      laicProfile.dossierReview.humanControlEvidence,
+      laicProfile.dossierReview.managementAuthorityConflict,
+      laicProfile.dossierReview.signatureAndSealAuthentication,
+    ],
     requiredNextEvidence: [
       "Exact public MIDAO registry record for registration number 968412 and the registered legal name.",
       "Certified Certificate of Formation and Charter from the Registrar.",
       "Current Certificate of Good Standing.",
       "Filed/current LLC Agreement confirming member-managed or algorithmically managed status.",
       "Current Registered Agent and Representative Agent records, including written consent and authority documents.",
+      "Current Beneficial Ownership Information Report and Registrar evidence identifying the natural person who retains control under §714(1)(d).",
+      "MIDAO/Registrar confirmation resolving the TCMI versus MIDAO Registered Agent discrepancy and the exact DAO LLC registered name.",
     ],
     limitations: [
       "A reachable search form is not proof of registration.",
