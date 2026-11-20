@@ -97,3 +97,9 @@ This section supersedes earlier operational statements where they differ. Checke
 - PR #177 remains OPEN and DRAFT, not merged. This file remains a GitHub branch/PR source of truth only; Railway automation instructions, Render, the live database and ChatGPT are not automatically synchronized.
 
 Last live check: 2026-11-20 13:32 UTC.
+
+### Render and CI recheck
+- Render workspace: Der Dunkle's workspace (tea-dbv3obd6e07s73al6050). Three services are present and their latest deployments are LIVE: jarvis-laic-public-identity (Free web service, Frankfurt, branch jarvis-selfdev-loop-2026-11-20); jarvis-global-edge (static site, branch jarvis-global-edge-cdn-2026-11-20); jarvis-a2a-bridge (Free web service, Ohio, branch jarvis-a2a-render-2026-11-20).
+- These Render services deploy from three different Git branches. The continuity PR branch jarvis-identity-continuity-2026-11-20 is not the source branch for any of them; updating the PR does not synchronize or redeploy Render.
+- On commit cf2215a16ec93121a36c94732da13b556e75d16a, GitHub Actions reported JARVIS-Core tests run 44745317432 IN_PROGRESS and Lean degenerate-witness audit run 44745317435 QUEUED at the time checked. Do not claim CI passed until final conclusions are available.
+- No Render service code, environment variables, database records, Railway automation instructions, or production deployment was changed by this continuity update.
