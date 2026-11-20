@@ -45,7 +45,7 @@ export const laicProfile = Object.freeze({
   }),
   legalStatus: Object.freeze({
     companySeparateJuridicalPerson: "A validly formed DAO LLC is a domestic LLC under 52 MIRC §702; the specific JARVIS entity formation remains NOT VERIFIED pending official MIDAO/Registrar evidence.",
-    aiSystemSeparateLegalPerson: "requires_assessment_under_RMI_DAO_ACT_and_constitutional_documents; company_registration_alone_does_not_resolve_separate_AI_personhood",
+    aiSystemSeparateLegalPerson: "No express separate AI legal-personhood route is identified in the current RMI DAO Act. JARVIS is software; the DAO LLC is the legal person if validly formed. Company registration does not confer separate legal personality on the AI system.",
     algorithmicManagementUnderRMI: "52 MIRC §708 permits management vested in the smart contract for an algorithmically managed DAO, subject to the Certificate of Formation and LLC Agreement.",
     naturalPersonControlRequirement: "52 MIRC §714(1)(d) permits dissolution if the DAO LLC is no longer under the control of at least one natural person.",
     governingDocumentPrecedence: "52 MIRC §715(1): the Certificate of Formation and LLC Agreement prevail over conflicting smart-contract provisions.",
