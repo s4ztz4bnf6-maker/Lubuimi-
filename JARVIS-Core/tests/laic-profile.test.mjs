@@ -15,6 +15,7 @@ test("identity preserves the exact dossier legal name and JarvisAI LLC label", (
 });
 
 test("RMI DAO law profile records algorithmic management without conflating the software and LLC", () => {
+  assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§704\(5\)/);
   assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /§708/);
   assert.match(laicProfile.legalStatus.naturalPersonControlRequirement, /§714/);
   assert.match(laicProfile.legalStatus.governingDocumentPrecedence, /§715/);
