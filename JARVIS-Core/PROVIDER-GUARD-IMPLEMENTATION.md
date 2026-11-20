@@ -9,7 +9,7 @@ The actual Worker source in this repository is a single-file Bun/TypeScript snap
 - `tools/provider-guard.mjs`
   - Adds preflight request-size estimation over the fully serialized model request.
   - Reserves completion tokens separately; default output cap is 512 and hard maximum 1,024.
-  - Adds a PostgreSQL-backed rolling 60-second reservation using a provider-scoped transaction advisory lock. This coordinates concurrent Worker processes sharing the same PostgreSQL database.
+  - Adds a PostgreSQL-backed rolling 60-second reservation using a quota-host-scoped transaction advisory lock. This coordinates concurrent Worker processes sharing the same PostgreSQL database.
   - Stops fallback on HTTP 413 or a local request-budget rejection; sending the same oversized payload to another provider is prohibited.
   - Keeps bounded provider cooldowns for 429 and transient failures.
 - `railway/Worker/index.ts`
