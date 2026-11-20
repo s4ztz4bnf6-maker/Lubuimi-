@@ -28,6 +28,9 @@ test("identity summary exposes dossier and verification status", () => {
   assert.equal(summary.label, "JarvisAI LLC");
   assert.equal(summary.entity, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(summary.registrationNumber, "968412");
+  assert.equal(summary.certificateOfGoodStandingReference, "968412-CGS-1119");
+  assert.equal(summary.dossierReceivedDate, "2026-11-19");
+  assert.deepEqual(summary.dossierDocuments, ["Certificate of Formation", "Certificate of Good Standing", "Operating Agreement", "Certificate of Incumbency"]);
 });
 
 test("live verifier reports inconclusive rather than false negative for a search-form-only response", async () => {
