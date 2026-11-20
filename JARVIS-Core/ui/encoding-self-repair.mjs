@@ -21,7 +21,8 @@ function latin1RoundTrip(value) {
   for (const character of value) {
     if (character.codePointAt(0) > 0xff) return null;
   }
-  return Buffer.from(value, "latin1").toString("utf8");
+  const bytes = Uint8Array.from([...value], (character) => character.codePointAt(0));
+  return new TextDecoder("utf-8").decode(bytes);
 }
 
 /**
