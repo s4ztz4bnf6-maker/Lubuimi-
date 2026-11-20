@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { classifyProviderFailure, parseRetryAfterMs, ProviderCoolingDownError, ProviderGuard } from "../tools/provider-guard.mjs";
+import { classifyProviderFailure, parseRetryAfterMs, ProviderCoolingDownError, ProviderGuard, RequestBudgetExceededError, assertRequestWithinBudget, estimateInputTokensConservatively, shouldFallbackToNextProvider } from "../tools/provider-guard.mjs";
 
 test("classifies rate limits, oversized requests, transient and permanent failures", () => {
   assert.equal(classifyProviderFailure({ status: 429, body: "rate_limit_exceeded" }), "rate_limited");
@@ -52,4 +52,28 @@ test("caps untrusted retry delays to the configured maximum", () => {
   const guard = new ProviderGuard({ now: () => 0, maxCooldownMs: 120_000 });
   assert.equal(guard.recordFailure("groq", { status: 429, body: "retry in 3h" }), "rate_limited");
   assert.equal(guard.remainingMs("groq"), 120_000);
+});
+
+
+test("conservative request budget counts UTF-8 payload and reserves output tokens", () => {
+  const ascii = estimateInputTokensConservatively({ messages: [{ role: "user", content: "plain text" }] });
+  const german = estimateInputTokensConservatively({ messages: [{ role: "user", content: "äöüß – Grüße aus München" }] });
+  assert.ok(german > 0);
+  assert.ok(ascii > 0);
+  const accepted = assertRequestWithinBudget({ messages: [{ role: "user", content: "short" }] }, 512, 7000);
+  assert.equal(accepted.outputTokens, 512);
+  assert.ok(accepted.reservedTokens <= 7000);
+});
+
+test("request budget fails closed before provider calls when serialized input is too large", () => {
+  assert.throws(
+    () => assertRequestWithinBudget({ messages: [{ role: "user", content: "x".repeat(100_000) }] }, 512, 7000),
+    RequestBudgetExceededError
+  );
+});
+
+test("HTTP 413 does not fall through to another provider with the same oversized payload", () => {
+  assert.equal(shouldFallbackToNextProvider({ status: 413, body: "request too large" }), false);
+  assert.equal(shouldFallbackToNextProvider({ status: 503, body: "temporarily unavailable" }), true);
+  assert.equal(shouldFallbackToNextProvider({ status: 429, body: "rate limit" }), true);
 });
