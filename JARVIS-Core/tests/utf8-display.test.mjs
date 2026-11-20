@@ -10,6 +10,8 @@ test("German Companion prompt contains no replacement characters and preserves u
   assert.match(source, /Geschäftsführungsbefugnis/);
   assert.match(source, /Zeichnungsberechtigter/);
   assert.match(source, /MIDAO/);
+  assert.match(source, /verifyJarvisLegalIdentity/);
+  assert.match(source, /NOT_VERIFIED/);
 });
 
 test("Companion and LAIC HTTP responses explicitly declare UTF-8", async () => {
