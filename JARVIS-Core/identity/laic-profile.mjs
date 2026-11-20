@@ -70,6 +70,17 @@ export const laicProfile = Object.freeze({
       "authority_not_explicitly_delegated_and_cryptographically_verified",
     ],
   }),
+  dossierReview: Object.freeze({
+    sourceFile: "Jarvis_AI_Autonomous_Holdings_LLC_RMI_Dossier.pdf",
+    ownerSuppliedDocumentOnly: true,
+    authenticationStatus: "NOT_AUTHENTICATED_against_MIDAO_or_Registrar",
+    nameConflict: "Certificate of Formation page 1 prints JARVIS AI AUTONOMOUS HOLDINGS LLC without DAO LLC, although it classifies the entity as a DAO LLC; 52 MIRC §704(4) requires the DAO LLC designation.",
+    registeredAgentConflict: "Certificate of Formation and Certificate of Incumbency name TCMI; DAO Act §702(q) and DAO Regulations 2024 §5(1) identify MIDAO Directory Services, Inc. as the DAO LLC Registered Agent. Reconcile with Registrar; do not infer invalidity.",
+    goodStandingPortalConflict: "The dossier's Certificate of Good Standing points to resources.register-iri.com/verify. MIDAO documents identify a separate DAO LLC public registry; the IRI link is not sufficient DAO LLC authentication.",
+    humanControlEvidence: "Dossier page 4 assigns Jarvis AI 100% executive/operational/voting control and the Class B natural-person member 0% voting power and passive status. 52 MIRC §714(1)(d) requires control by at least one natural person. The dossier does not demonstrate how a natural person retains that control.",
+    managementAuthorityConflict: "Operating Agreement §5.1 cites Section 109 and appoints Jarvis AI as sole manager/signatory. Current consolidated Act uses §708 for algorithmic management and §714(1)(d) for natural-person control. The filed governing instruments and legal effect of the system identifier require Registrar/MIDAO confirmation.",
+    signatureAndSealAuthentication: "The PDF contains visual seals, typed/signed attestations and cryptographic identifiers; none has been independently authenticated against the Registrar or an on-chain transaction.",
+  }),
   verificationPlan: Object.freeze({
     authoritativeRegistry: "https://registry.midao.org/public-registry/",
     lookupKey: "968412",
