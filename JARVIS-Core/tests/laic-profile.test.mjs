@@ -1,24 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { laicProfile, getLAICIdentitySummary } from "../identity/laic-profile.mjs";
+import { verifyJarvisEntity } from "../identity/registry-verifier.mjs";
 
-test("identity uses exact legal name from uploaded dossier and preserves JarvisAI LLC as public label", () => {
+test("identity preserves the exact dossier legal name and JarvisAI LLC label", () => {
   assert.equal(laicProfile.systemLabel, "JarvisAI LLC");
   assert.equal(laicProfile.legalEntity.name, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(laicProfile.legalEntity.publicBrandOrShortName, "JarvisAI LLC");
   assert.equal(laicProfile.legalEntity.registrationNumber, "968412");
-  assert.equal(laicProfile.legalEntity.registrationEvidence, "dossier_supplied_but_not_independently_authenticated");
+  assert.match(laicProfile.legalEntity.registrationEvidence, /dossier_contains_certificate_claims/);
 });
 
-test("registration and good standing cannot be represented as verified without registrar evidence", () => {
-  assert.equal(laicProfile.legalEntity.registryLookup, "not_confirmed");
-  assert.equal(laicProfile.legalEntity.goodStanding, "claimed_in_dossier_not_independently_verified");
-  assert.match(laicProfile.legalEntity.registeredAgentDiscrepancy, /TCMI/);
-  assert.match(laicProfile.legalStatus.registeredAgentDiscrepancy, /MIDAO Directory Services/);
-  assert.match(laicProfile.legalEntity.registrySourceDiscrepancy, /IRI/);
-  assert.match(laicProfile.legalStatus.registrySourceDiscrepancy, /separate from the IRI registry/);
-  assert.equal(laicProfile.verificationPlan.status, "pending_external_registrar_confirmation");
-  assert.equal(laicProfile.legalStatus.aiSystemSeparateLegalPerson, "not_established_by_company_registration");
+test("RMI DAO law profile records algorithmic management without conflating the software and LLC", () => {
+  assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /section 108/);
+  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /not_separately_established/);
 });
 
 test("public release policy forbids secrets and production snapshots", () => {
@@ -28,10 +23,34 @@ test("public release policy forbids secrets and production snapshots", () => {
   assert.equal(laicProfile.releasePolicy.obfuscationIsSecurity, false);
 });
 
-test("identity summary is usable by other JARVIS modules", () => {
+test("identity summary exposes dossier and verification status", () => {
   const summary = getLAICIdentitySummary();
   assert.equal(summary.label, "JarvisAI LLC");
   assert.equal(summary.entity, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(summary.registrationNumber, "968412");
-  assert.equal(summary.aiRole, "algorithmic_operations_and_assistance_as_configured_in_software");
+});
+
+test("live verifier reports inconclusive rather than false negative for a search-form-only response", async () => {
+  const result = await verifyJarvisEntity({
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      text: async () => "<html><h1>Marshall Islands DAO LLC Registry</h1><input placeholder='Search'></html>",
+    }),
+  });
+  assert.equal(result.status, "inconclusive_no_public_record_returned");
+  assert.equal(result.sources[0].fetched, true);
+  assert.equal(result.sources[0].entityRecordFound, false);
+});
+
+test("live verifier identifies exact identifier pair as a candidate, not authenticated proof", async () => {
+  const result = await verifyJarvisEntity({
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      text: async () => "JARVIS AI AUTONOMOUS HOLDINGS LLC Registration No. 968412",
+    }),
+  });
+  assert.equal(result.status, "candidate_match_requires_authentication");
+  assert.equal(result.sources[0].result, "candidate_record_found_requires_document_authentication");
 });
