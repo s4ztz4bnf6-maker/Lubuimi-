@@ -38,3 +38,13 @@ Validation on 2026-11-19: `node --test JARVIS-Core/tests/*.test.mjs` — 8 passe
 ## Audit rule
 
 A source snapshot, decoded artifact, test result, staging operation and production deployment are different evidence classes. Never describe one as another. Missing or redacted source must be labelled as such, not guessed or silently restored.
+
+## Agent-economy extension — 2026-11-20
+
+An additive agent-economy capability is now implemented in the `jarvis-core` development branch under the existing JARVIS LLC identity (no second entity). It adds agent service exchange, paid information exchange, partnerships, BTC settlement reconciliation and an isolated self-development workstream. The new `tools/agent-autonomy.mjs` kernel includes action-authority checks, payment-evidence classification and message read-back verification; the Worker bundler inlines it into the single-file artifact.
+
+See `AGENT-ECONOMY-EXTENSION.md` for corporate continuity, the exact added workstreams, BTC-receipt requirements and blockers.
+
+Validation: GitHub Actions JARVIS-Core tests succeeded for commit `3d5b37e3571a5de3dab8ae1a3e058b71ba840021` (syntax checks, regression tests and single-file Worker bundle).
+
+**Production status: NOT DEPLOYED.** The Worker source snapshot in this branch is intentionally scrubbed of private wallet receive addresses and is documented as not deployable as-is. Existing production services were left unchanged to preserve wallet monitoring and existing revenue paths.
