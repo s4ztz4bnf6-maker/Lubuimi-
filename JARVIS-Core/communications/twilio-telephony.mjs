@@ -35,13 +35,15 @@ export async function startVoiceCall({ to, speech, webhookUrl }) {
   const sid = env("TWILIO_ACCOUNT_SID");
   const token = env("TWILIO_AUTH_TOKEN");
   const from = env("TWILIO_PHONE_NUMBER");
+  const target = new URL(webhookUrl);
+  target.searchParams.set("speech", speech);
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Calls.json`, {
     method: "POST",
     headers: {
       Authorization: "Basic " + Buffer.from(`${sid}:${token}`).toString("base64"),
       "Content-Type": "application/x-www-form-urlencoded"
     },
-    body: form({ From: from, To: to, Url: webhookUrl, Method: "POST" })
+    body: form({ From: from, To: to, Url: target.toString(), Method: "POST" })
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(`Twilio call failed (${response.status}): ${payload.message ?? "provider error"}`);
