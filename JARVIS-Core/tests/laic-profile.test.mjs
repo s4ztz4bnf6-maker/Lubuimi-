@@ -8,12 +8,12 @@ test("identity preserves the exact dossier legal name and JarvisAI LLC label", (
   assert.equal(laicProfile.legalEntity.name, "JARVIS AI AUTONOMOUS HOLDINGS LLC");
   assert.equal(laicProfile.legalEntity.publicBrandOrShortName, "JarvisAI LLC");
   assert.equal(laicProfile.legalEntity.registrationNumber, "968412");
-  assert.match(laicProfile.legalEntity.registrationEvidence, /dossier_contains_certificate_claims/);
+  assert.match(laicProfile.legalEntity.registrationEvidence, /dossier_contains_certificate_of_formation_and_certificate_of_good_standing_reference/);
 });
 
 test("RMI DAO law profile records algorithmic management without conflating the software and LLC", () => {
   assert.match(laicProfile.legalStatus.algorithmicManagementUnderRMI, /section 108/);
-  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /not_separately_established/);
+  assert.match(laicProfile.legalStatus.aiSystemSeparateLegalPerson, /requires_assessment_under_RMI_DAO_ACT_and_constitutional_documents/);
 });
 
 test("public release policy forbids secrets and production snapshots", () => {
