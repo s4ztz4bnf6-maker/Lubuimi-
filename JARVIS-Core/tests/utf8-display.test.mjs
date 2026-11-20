@@ -15,7 +15,7 @@ test("German Companion prompt contains no replacement characters and preserves u
   const worker = await readFile(new URL("railway/Worker/index.ts", root), "utf8");
   assert.equal(worker.includes("\uFFFD"), false, "Worker source must not contain U+FFFD replacement characters");
   assert.match(worker, /MIDAO public DAO LLC registry/);
-  assert.match(worker, /registry\\|verification\\|verify/);
+  assert.ok(worker.includes("registry|verification|verify|legal identity"));
 });
 
 test("Companion and LAIC HTTP responses explicitly declare UTF-8", async () => {
