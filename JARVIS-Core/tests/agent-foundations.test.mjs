@@ -33,7 +33,7 @@ test("self-evaluation requires required checks and all pass", () => {
 test("recovery only allowed after deployment", async () => {
   let restored = false;
   const r = createRecoveryPlan({ currentVersion: "old", candidateVersion: "new", rollbackAction: async () => { restored = true; return "done"; } });
-  assert.throws(() => r.rollback(), /deployed/);
+  await assert.rejects(r.rollback(), /deployed/);
   r.markDeployed();
   const result = await r.rollback();
   assert.equal(restored, true);
