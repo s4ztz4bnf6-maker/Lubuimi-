@@ -100,3 +100,15 @@ Example response contract from each agent: `{ message: string, done: boolean, ha
 The host injects `invokeAgent` and `verify`; no provider credentials or tool permissions are assumed. Calls, total agent-call budget and overall deadline are bounded. Timeout/cancellation races are bounded even when a provider ignores AbortSignal, while cooperative cancellation is still passed to the provider. Any failed phase aborts peer work. This is deliberation only: agents cannot execute external actions through this module.
 
 Each model response must have `{ summary, claims, evidence, openQuestions }`; each claim has `{ subject, position: "supports" | "opposes" | "uncertain", statement, evidenceRefs }`. The verifier returns `{ ok, issues }`. Conflicting claims always escalate to human review, even if the verifier reports success.
+
+
+## Multi-agent task decomposition and coordinated execution
+
+`agent-team-workflow.mjs` adds a bounded plan → parallel work → verified merge boundary:
+1. A host-injected planner assigns at least two independent subtasks to registered specialist agents.
+2. The coordinator validates unique task IDs and agent assignments before execution.
+3. Specialist work runs under a configurable concurrency cap and retains accepted plan order regardless of completion timing.
+4. Each work product must include a summary, evidence references and open questions.
+5. A host-injected deliberator receives the complete plan and ordered work products; it must return either `verified` or `needs_review`.
+
+Planning, execution and deliberation callbacks are injected by the host. This module does not provide model credentials or tools and is intended for analytical work products, not external side effects. The host must keep each callback cancellation-aware; a callback that ignores AbortSignal can continue its own work after the coordinator times out. Invalid plans, unknown agents, malformed outputs and failed phases fail closed and are audited. Dependent subtasks are intentionally not inferred or run in parallel: the planner must return independent work units for this version.
