@@ -7,6 +7,7 @@ This folder contains dependency-injected runtime primitives. It is not wired int
 - Persistent task queue contract with atomic claim/recovery delegated to a storage adapter
 - Inter-agent message authorization
 - Durable PostgreSQL conversation store with atomic version compare-and-set
+- Crash recovery that resumes active conversations from the persisted transcript without replaying completed agent turns
 - Human approval gateway
 - Per-agent token/cost budget
 - Provider failover with cooldown and provenance
