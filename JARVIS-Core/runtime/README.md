@@ -70,3 +70,17 @@ This is an integration seam, not a production activation. The current Railway Wo
 
 - Concurrent callers share one in-flight tick, preventing duplicate polling by overlapping schedulers.
 - `disable(reason)` blocks subsequent autonomous ticks and gracefully drains the current tick; it does not claim to cancel a handler already executing. The runtime's own task deadline and cooperative AbortSignal remain responsible for execution timeout.
+
+
+## Multi-agent dialogue and collaboration
+
+`agent-dialog.mjs` adds bounded, resumable conversations across authorized agents:
+- A durable transcript records user messages, agent turns, handoffs, timestamps and completion state.
+- Agents explicitly hand off to another registered participant through the permission-checked message bus.
+- A turn limit prevents unbounded agent-to-agent loops; an agent can finish or pause for user input.
+- `reply()` resumes a paused conversation with the next participant.
+- Each turn receives the full transcript, task/conversation IDs, turn number and cooperative AbortSignal.
+- A timeout, cancellation, invalid response, invalid handoff or storage conflict fails closed and is audited.
+- The host supplies model invocation and durable storage. Database `append` and `setStatus` must use atomic version compare-and-set; process-local serialization is not a substitute for durable concurrency control.
+
+Example response contract from each agent: `{ message: string, done: boolean, handoffTo?: agentId }`. The dialog layer does not execute tools or side effects; tool permissions and approval checks remain the responsibility of the host runtime.
