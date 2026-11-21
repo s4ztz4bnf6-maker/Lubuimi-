@@ -114,3 +114,18 @@ test("expired approved task cannot be resumed",async()=>{
  const approvals={get:async()=>({approval_id:"a-expired",task_id:"t-expired",action:"production_deploy",status:"approved",expires_at:new Date(1).toISOString()})};
  await assert.rejects(resumeApprovedTask({queue,approvals,taskId:"t-expired",approvalId:"a-expired"}),/expired/);
 });
+
+
+test("approval expiry validation fails closed for past and malformed timestamps",async()=>{
+ const rows=new Map();
+ const gateway=new ApprovalGateway({authorizeReviewer:async()=>true,store:{
+  create:async row=>{rows.set(row.approvalId,row);return row;},
+  get:async id=>rows.get(id)??null,
+  resolve:async row=>{const old=rows.get(row.approvalId);const next={...old,status:row.decision};rows.set(row.approvalId,next);return next;}
+ }});
+ await assert.rejects(gateway.request({taskId:"t-expiry",agentId:"executor",action:"production_deploy",expiresAt:"not-a-date"}),/valid future timestamp/);
+ await assert.rejects(gateway.request({taskId:"t-expiry",agentId:"executor",action:"production_deploy",expiresAt:1}),/valid future timestamp/);
+ const request=await gateway.request({taskId:"t-expiry",agentId:"executor",action:"production_deploy"});
+ rows.set(request.approvalId,{...request,status:"approved",expiresAt:"not-a-date"});
+ assert.equal(await gateway.authorizes({task:{taskId:"t-expiry",payload:{approvalId:request.approvalId}},action:"production_deploy"}),false);
+});
