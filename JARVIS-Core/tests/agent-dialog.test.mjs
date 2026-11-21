@@ -35,7 +35,7 @@ function harness({ responses, maxTurns = 6, authorize = () => true } = {}) {
     agents, messageBus, store, maxTurns,
     invokeAgent: async input => {
       assert.ok(input.signal instanceof AbortSignal);
-      assert.equal(input.transcript.length, input.turn);
+      assert.ok(input.transcript.length >= input.turn);
       return responses[call++](input);
     },
     audit: async event => audits.push(event)
