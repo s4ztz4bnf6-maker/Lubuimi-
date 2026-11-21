@@ -26,3 +26,9 @@ Important:
 - The runtime is not wired into the scrubbed Worker snapshot. That snapshot is explicitly non-deployable because owner wallet configuration was redacted.
 - No production database migration or Railway deployment has been performed.
 \nThe Worker renews the task lease every third of the configured lease duration. A failed renewal aborts the attempt so another worker can recover the task. Handlers must still honor the provided AbortSignal. The runtime can reject a timed-out task, but JavaScript cannot forcibly stop a handler that ignores cancellation; side-effecting handlers must implement cooperative cancellation and idempotency.\n
+
+## Feature gate and rollback contract
+
+The optional `runtime/feature-flag.mjs` module keeps the legacy execution path as the default. The host may opt in with `JARVIS_AUTONOMOUS_RUNTIME_ENABLED=true`; `JARVIS_AUTONOMOUS_RUNTIME_KILL_SWITCH=true` always overrides it. The host can also call the gate's `disable(reason)` to roll back the current process. The gate deliberately does not fall back to legacy execution after a runtime exception because the runtime may have performed a side effect before the failure became visible.
+
+The feature gate is not yet connected to `railway/Worker/index.ts`. Do not set the environment flag in Railway until the real Worker integration, provider adapters, verifier, authenticated reviewer directory, database migrations, and staging contract tests have been completed. No Railway environment variable or service was changed by this commit.
