@@ -67,6 +67,7 @@ test("overlapping callers share one in-flight runtime tick", async () => {
   });
   const first = gate.runOnce();
   const second = gate.runOnce();
+  await new Promise(resolve => setImmediate(resolve));
   assert.equal(gate.status().busy, true);
   assert.equal(calls, 1);
   release();
@@ -89,6 +90,7 @@ test("disable drains the active tick and prevents the next runtime tick", async 
   });
   const active = gate.runOnce();
   const disabling = gate.disable("controlled rollback");
+  await new Promise(resolve => setImmediate(resolve));
   assert.equal(gate.status().enabled, false);
   release();
   assert.deepEqual(await active, { mode: "autonomous-runtime", result: "finished" });
