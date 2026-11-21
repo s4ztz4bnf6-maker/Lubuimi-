@@ -50,3 +50,36 @@ test("worker enforces timeout even when handler never settles",async()=>{
  assert.match(result.error,/timed out/);
  assert.equal(s.agents.active,0);
 });
+
+
+test("critical action is parked for human approval before handler side effects",async()=>{
+ let invoked=false;
+ const s=setup({handler:async()=>{invoked=true;return {ok:true};}});
+ s.queue.claim=async()=>({taskId:"critical-1",type:"compute",payload:{action:"production_deploy"},attempts:1,status:"running"});
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"waiting_approval");
+ assert.equal(invoked,false);
+ assert.equal(s.getTask().status,"waiting_approval");
+ assert.ok(s.events.some(e=>e.event==="task.waiting_approval"));
+ assert.equal(s.agents.active,0);
+});
+
+test("critical action runs only when injected approval authorizer explicitly allows it",async()=>{
+ let invoked=false;
+ const s=setup({handler:async()=>{invoked=true;return {ok:true};}});
+ s.queue.claim=async()=>({taskId:"critical-2",type:"compute",payload:{action:"production_deploy"},attempts:1,status:"running"});
+ s.worker.authorizeAction=async()=>true;
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"completed");
+ assert.equal(invoked,true);
+});
+
+test("worker timeout also bounds a verifier that never settles",async()=>{
+ const s=setup();
+ s.worker.verifier=()=>new Promise(()=>{});
+ s.worker.timeoutMs=10;
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"queued");
+ assert.match(result.error,/timed out/);
+ assert.equal(s.agents.active,0);
+});
