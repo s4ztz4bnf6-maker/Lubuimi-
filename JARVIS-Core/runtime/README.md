@@ -1,0 +1,114 @@
+# Autonomous Agent Runtime
+
+This folder contains dependency-injected runtime primitives. It is not wired into the production Worker yet.
+
+## Modules
+- Agent lifecycle, bounded concurrency and explicit permissions
+- Persistent task queue contract with atomic claim/recovery delegated to a storage adapter
+- Inter-agent message authorization
+- Durable PostgreSQL conversation store with atomic version compare-and-set
+- Crash recovery that resumes active conversations from the persisted transcript without replaying completed agent turns
+- Human approval gateway
+- Per-agent token/cost budget
+- Provider failover with cooldown and provenance
+- Expired-task watchdog
+- Critical-action classification
+
+## Required host adapters
+The Railway Worker must provide:
+1. PostgreSQL-backed task store implementing `insert`, `get`, `update`, atomic `claimNext`, `recoverExpired`, and optional `findByIdempotencyKey`.
+2. Durable approval store implementing `create` and `resolve`.
+3. Append-only audit writer.
+4. Provider adapters with measured token/cost usage.
+
+The runtime intentionally refuses to pretend an in-memory queue is durable. Concurrent workers must use atomic database claims (e.g. a transaction with row locking / SKIP LOCKED). Do not enable execution until these adapters and migrations are implemented and integration-tested.
+
+## Safety
+Unknown permissions fail closed. Critical actions require an explicit human approval workflow. This module does not send payments, deploy production, or mutate secrets.
+
+## Runtime worker execution
+`worker.mjs` adds a bounded single-task execution cycle. It claims a durable task, acquires agent capacity, executes a registered handler with an AbortSignal timeout, invokes an independent verifier, and only then transitions the task to completed. Failed or unverified results are retried through the queue adapter. Every path releases agent capacity.
+
+The worker is a library primitive, not yet wired into the production Worker process. Handlers must not perform critical side effects before an approval check; use a prepare/approve/execute workflow for deployments, payments, secrets, deletion, or other irreversible operations.
+
+
+## Execution safety hardening
+
+- The worker checks action authorization before invoking a handler. Critical actions (production deploys, BTC transfers/spending, secret changes, persistent-data deletion, external contracts and cost-incurring actions) are parked in `waiting_approval` unless the injected `authorizeAction` callback explicitly returns `true`.
+- The default authorizer denies critical actions. The host must connect it to the durable approval store and verify a pending approval was explicitly approved by an authorized human reviewer. Never implement this callback as an unconditional `true`.
+- Authorization, handler execution, and independent verification share the worker deadline. The handler receives the task idempotency key (or task id fallback) and an AbortSignal.
+- A timed-out handler must cooperate with AbortSignal. A handler that ignores cancellation may continue its own side effects; therefore side-effecting handlers must be idempotent and check cancellation immediately before committing effects.
+- After a human approval is recorded, the host approval workflow must move the task from `waiting_approval` back to `queued` using a compare-and-set transition. The worker does not self-approve or automatically resume approvals.
+
+
+## Durable human approval lifecycle
+
+The PostgreSQL approval adapter supports lookup as well as creation and reviewer resolution. The Worker host can wire the runtime as follows:
+
+```js
+const authorizeAction = ({ task, action }) =>
+  requireHumanApproval(action) ? approvals.authorizes({ task, action }) : true;
+const requestApproval = ({ task, agentId, action }) =>
+  approvals.request({ taskId: task.taskId, agentId, action, reason: "Critical action requires human review" });
+```
+
+Pass both callbacks to `RuntimeWorker`. A denied critical task is parked and its approval ID is persisted in the task payload. After a named human reviewer resolves it, call `resumeApprovedTask({ queue, approvals, taskId, approvalId })`; it verifies exact task, action and approval identity before compare-and-set requeue. The next execution still rechecks the approved record before any handler side effect. A rejected, expired, missing or mismatched approval fails closed.
+
+
+## Reviewer authorization and expiry
+
+- `ApprovalGateway` defaults to denying every reviewer. The host must inject `authorizeReviewer`, backed by a trusted identity/role directory; a non-empty reviewer ID alone is not authorization.\n- Approval resolution checks pending state and expiry before the store's atomic pending/expiry-guarded update.\n- Approved records are checked for expiry again at execution authorization and task resumption.\n- Do not trust reviewer IDs supplied by an agent or task payload; derive them from an authenticated human session.\n
+
+## Feature-flagged Railway integration boundary
+
+`feature-flag.mjs` provides a narrow execution gate for the existing Railway Worker host:
+- `JARVIS_AUTONOMOUS_RUNTIME_ENABLED=true` opts in; every other value keeps the legacy path.
+- `JARVIS_AUTONOMOUS_RUNTIME_KILL_SWITCH=true` overrides opt-in and returns execution to the legacy path.
+- A host-side `disable()` provides an immediate in-process rollback and emits an audit event.
+- If the flag is enabled but runtime dependencies are missing, execution fails closed instead of silently invoking legacy code.
+- Runtime errors are never replayed through the legacy handler, avoiding duplicate side effects after ambiguous failures.
+
+This is an integration seam, not a production activation. The current Railway Worker entrypoint has not yet been wired to this gate, and the flag must remain unset until the host supplies the PostgreSQL stores, authenticated reviewer authorization, provider adapters, verifier, and a bounded legacy tick. Add contract tests around the actual Worker task lifecycle before enabling it in staging.
+
+- Concurrent callers share one in-flight tick, preventing duplicate polling by overlapping schedulers.
+- `disable(reason)` blocks subsequent autonomous ticks and gracefully drains the current tick; it does not claim to cancel a handler already executing. The runtime's own task deadline and cooperative AbortSignal remain responsible for execution timeout.
+
+
+## Multi-agent dialogue and collaboration
+
+`agent-dialog.mjs` adds bounded, resumable conversations across authorized agents:
+- A durable transcript records user messages, agent turns, handoffs, timestamps and completion state.
+- Agents explicitly hand off to another registered participant through the permission-checked message bus.
+- A turn limit prevents unbounded agent-to-agent loops; an agent can finish or pause for user input.
+- `reply()` resumes a paused conversation with the next participant.
+- Each turn receives the full transcript, task/conversation IDs, turn number and cooperative AbortSignal.
+- A timeout, cancellation, invalid response, invalid handoff or storage conflict fails closed and is audited.
+- The host supplies model invocation and durable storage. Database `append` and `setStatus` must use atomic version compare-and-set; process-local serialization is not a substitute for durable concurrency control.
+
+Example response contract from each agent: `{ message: string, done: boolean, handoffTo?: agentId }`. The dialog layer does not execute tools or side effects; tool permissions and approval checks remain the responsibility of the host runtime.
+
+
+## Structured multi-agent deliberation
+
+`agent-deliberation.mjs` adds a bounded research-and-review workflow:
+1. Independent specialist analyses run concurrently with a configurable concurrency cap.
+2. Each specialist critiques the peer analyses; results are retained in participant order, not completion order.
+3. Structured claims are compared and contradictory positions are detected.
+4. A designated synthesis agent produces a consolidated response.
+5. A separate host verifier decides whether the result is verified; detected contradictions or verifier issues produce `needs_review` rather than a false success.
+
+The host injects `invokeAgent` and `verify`; no provider credentials or tool permissions are assumed. Calls, total agent-call budget and overall deadline are bounded. Timeout/cancellation races are bounded even when a provider ignores AbortSignal, while cooperative cancellation is still passed to the provider. Any failed phase aborts peer work. This is deliberation only: agents cannot execute external actions through this module.
+
+Each model response must have `{ summary, claims, evidence, openQuestions }`; each claim has `{ subject, position: "supports" | "opposes" | "uncertain", statement, evidenceRefs }`. The verifier returns `{ ok, issues }`. Conflicting claims always escalate to human review, even if the verifier reports success.
+
+
+## Multi-agent task decomposition and coordinated execution
+
+`agent-team-workflow.mjs` adds a bounded plan → parallel work → verified merge boundary:
+1. A host-injected planner assigns at least two independent subtasks to registered specialist agents.
+2. The coordinator validates unique task IDs and agent assignments before execution.
+3. Specialist work runs under a configurable concurrency cap and retains accepted plan order regardless of completion timing.
+4. Each work product must include a summary, evidence references and open questions.
+5. A host-injected deliberator receives the complete plan and ordered work products; it must return either `verified` or `needs_review`.
+
+Planning, execution and deliberation callbacks are injected by the host. This module does not provide model credentials or tools and is intended for analytical work products, not external side effects. The host must keep each callback cancellation-aware; a callback that ignores AbortSignal can continue its own work after the coordinator times out. Invalid plans, unknown agents, malformed outputs and failed phases fail closed and are audited. Dependent subtasks are intentionally not inferred or run in parallel: the planner must return independent work units for this version.
