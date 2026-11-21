@@ -33,7 +33,7 @@ export async function pollMailboxOnce({ config, sql, log = console }: Options) {
   if (accepted) {
     log.info(`[Mailbox] Queued ${accepted} message(s) for review`);
     // An ACK is not a generated agent answer.
-    await writeReply(config, `# JARVIS mailbox receipt\n\nQueued ${accepted} new message(s) at ${new Date().toISOString()}.\n\nStatus: RECEIVED / PENDING APPROVAL. This is an automated receipt, not an agent response.\n`);
+    if (config.token) await writeReply(config, `# JARVIS mailbox receipt\n\nQueued ${accepted} new message(s) at ${new Date().toISOString()}.\n\nStatus: RECEIVED / PENDING APPROVAL. This is an automated receipt, not an agent response.\n`);
   }
   return accepted;
 }
@@ -49,7 +49,7 @@ export async function initMailboxSchema(sql: Sql) {
 }
 export function startMailboxPolling(options: Options) {
   const log = options.log ?? console;
-  if (!options.config.token || !options.config.repository) {
+  if (!options.config.repository) {
     log.warn("[Mailbox] Disabled: missing bridge configuration");
     return () => {};
   }
@@ -64,6 +64,6 @@ export function startMailboxPolling(options: Options) {
   };
   const timer = setInterval(() => { void run(); }, Math.max(options.intervalMs ?? 60_000, 10_000));
   void run();
-  log.info("[Mailbox] Polling initialized");
+  log.info(options.config.token ? "[Mailbox] Polling initialized (read/write)" : "[Mailbox] Polling initialized (public read-only)");
   return () => { stopped = true; clearInterval(timer); };
 }
