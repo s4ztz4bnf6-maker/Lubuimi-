@@ -86,10 +86,19 @@ export class AgentDeliberation {
     const invoke = async (agent, phase, context) => {
       if (++calls > this.#maxCalls) throw new Error("deliberation agent-call budget exceeded");
       if (controller.signal.aborted) throw controller.signal.reason ?? new Error("deliberation cancelled");
-      const raw = await this.#invoke({
-        agentId: agent.agentId, role: agent.role, phase, task,
-        context: clone(context), signal: controller.signal
-      });
+      let rejectOnAbort;
+      const aborted = new Promise((_, reject) => { rejectOnAbort = reject; });
+      const onAbort = () => rejectOnAbort(controller.signal.reason ?? new Error("deliberation cancelled"));
+      controller.signal.addEventListener("abort", onAbort, { once: true });
+      let raw;
+      try {
+        raw = await Promise.race([Promise.resolve().then(() => this.#invoke({
+          agentId: agent.agentId, role: agent.role, phase, task,
+          context: clone(context), signal: controller.signal
+        })), aborted]);
+      } finally {
+        controller.signal.removeEventListener("abort", onAbort);
+      }
       if (controller.signal.aborted) throw controller.signal.reason ?? new Error("deliberation cancelled");
       const result = validateResult(raw, phase);
       await this.#audit({ event: "deliberation.agent_completed", agentId: agent.agentId, phase });
@@ -149,6 +158,7 @@ export class AgentDeliberation {
         conflictCount: conflicts.length });
       return output;
     } catch (error) {
+      if (!controller.signal.aborted) controller.abort(error);
       await this.#audit({ event: "deliberation.failed", error: String(error?.message ?? error) });
       throw error;
     } finally {
