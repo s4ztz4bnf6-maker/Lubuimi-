@@ -52,7 +52,7 @@ test("persistent budget accounting uses a conditional atomic upsert", async () =
   const budget=new PostgresAgentBudget(sql);
   const result=await budget.consume("a",{tokens:10,cost:0.01},{tokens:100,cost:0.1});
   assert.equal(result.allowed,true);
-  assert.match(sql.calls[0].query,/ON CONFLICT(agent_id) DO UPDATE/);
+  assert.equal(sql.calls[0].query.includes("ON CONFLICT(agent_id) DO UPDATE"), true);
   assert.match(sql.calls[0].query,/tokens_used\+EXCLUDED.tokens_used <= \$4/);
   await assert.rejects(budget.consume("a",{tokens:1,cost:0},{tokens:Infinity,cost:0.1}),/explicit finite/);
 });
