@@ -1,4 +1,6 @@
 import postgres from "postgres";
+import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
+
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
@@ -9,6 +11,16 @@ const databaseUrl = env.DATABASE_URL;
 if (!apiKey || !databaseUrl) throw new Error("AGENT_API_KEY and DATABASE_URL are required");
 
 const sql = postgres(databaseUrl, { max: 5, idle_timeout: 20, connect_timeout: 10 });
+if (env.JARVIS_BRIDGE_TOKEN && env.JARVIS_BRIDGE_REPOSITORY) {
+  try {
+    await initMailboxSchema(sql);
+    startMailboxPolling({ sql, config: { token: env.JARVIS_BRIDGE_TOKEN, repository: env.JARVIS_BRIDGE_REPOSITORY } });
+  } catch (error) {
+    console.error("[Mailbox] Initialization failed; gateway continues without mailbox", error);
+  }
+} else {
+  console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_TOKEN or JARVIS_BRIDGE_REPOSITORY");
+}
 const mediaS3=env.JARVIS_MEDIA_S3_ENDPOINT&&env.JARVIS_MEDIA_S3_BUCKET&&env.JARVIS_MEDIA_S3_ACCESS_KEY_ID&&env.JARVIS_MEDIA_S3_SECRET_ACCESS_KEY?new S3Client({region:env.JARVIS_MEDIA_S3_REGION||"ams",endpoint:env.JARVIS_MEDIA_S3_ENDPOINT,forcePathStyle:true,credentials:{accessKeyId:env.JARVIS_MEDIA_S3_ACCESS_KEY_ID,secretAccessKey:env.JARVIS_MEDIA_S3_SECRET_ACCESS_KEY}}):null;
 await sql`
   CREATE TABLE IF NOT EXISTS agent_messages (
