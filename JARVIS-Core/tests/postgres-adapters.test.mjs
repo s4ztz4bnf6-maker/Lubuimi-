@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PostgresTaskStore, PostgresApprovalStore, PostgresRuntimeAudit, PostgresRuntimeMessageStore, PostgresAgentBudget, PostgresAgentConversationStore } from "../runtime/postgres-adapters.mjs";
+import { PostgresTaskStore, PostgresApprovalStore, PostgresRuntimeAudit, PostgresRuntimeMessageStore, PostgresAgentBudget, PostgresAgentConversationStore, PostgresAgentMemoryStore } from "../runtime/postgres-adapters.mjs";
 
 function fakeSql(handler) {
   const calls=[];
@@ -163,4 +163,78 @@ test("conversation adapter rejects invalid initial rows and status values", asyn
   await assert.rejects(store.setStatus({
     conversationId:"c1",expectedVersion:0,status:"approved",activeAgent:"critic"
   }),/invalid conversation status/);
+});
+
+
+test("shared memory creates and updates with version CAS and an atomic history snapshot", async () => {
+  const row = {
+    memory_id:7,namespace:"shared",memory_key:"project.status",value:{state:"ready"},
+    provenance:{source:"verified"},version:2,created_by:"research",updated_by:"auditor",
+    created_at:new Date(0),updated_at:new Date(2)
+  };
+  const sql=fakeSql(async q => q.includes("WITH written AS") ? [row] : []);
+  const store=new PostgresAgentMemoryStore(sql);
+  const result=await store.put({
+    namespace:"shared",key:"project.status",value:{state:"ready"},
+    provenance:{source:"verified"},actorId:"auditor",expectedVersion:1
+  });
+  assert.equal(result.ok,true);
+  assert.equal(result.memory.version,2);
+  assert.deepEqual(result.memory.value,{state:"ready"});
+  assert.match(sql.calls[0].query,/ON CONFLICT\(namespace,memory_key\) DO UPDATE/);
+  assert.match(sql.calls[0].query,/WHERE jarvis_runtime_memories.version=\$6/);
+  assert.match(sql.calls[0].query,/INSERT INTO jarvis_runtime_memory_versions/);
+});
+
+test("shared memory records a stale-write conflict without overwriting current data", async () => {
+  const current = {
+    memory_id:3,namespace:"shared",memory_key:"policy",value:{revision:4},
+    provenance:{source:"owner"},version:4,created_by:"owner",updated_by:"owner",
+    created_at:new Date(0),updated_at:new Date(4)
+  };
+  const sql=fakeSql(async q => {
+    if(q.includes("WITH written AS")) return [];
+    if(q.startsWith("SELECT * FROM jarvis_runtime_memories")) return [current];
+    return [];
+  });
+  const store=new PostgresAgentMemoryStore(sql);
+  const result=await store.put({
+    namespace:"shared",key:"policy",value:{revision:5},
+    provenance:{source:"stale-agent"},actorId:"agent-a",expectedVersion:3
+  });
+  assert.equal(result.ok,false);
+  assert.equal(result.conflict,true);
+  assert.equal(result.current.version,4);
+  assert.equal(sql.calls.length,3);
+  assert.match(sql.calls[2].query,/INSERT INTO jarvis_runtime_memory_conflicts/);
+  assert.deepEqual(sql.calls[2].params.slice(0,4),["shared","policy",3,4]);
+});
+
+test("shared memory rejects missing identity, invalid versions and non-object provenance", async () => {
+  const store=new PostgresAgentMemoryStore(fakeSql(async () => []));
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:1,actorId:"agent",expectedVersion:-1
+  }),/invalid memory write/);
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:1,provenance:[],actorId:"agent",expectedVersion:0
+  }),/invalid memory write/);
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:undefined,actorId:"agent",expectedVersion:0
+  }),/invalid memory JSON/);
+});
+
+test("shared memory list and history queries are namespace/key scoped and bounded", async () => {
+  const sql=fakeSql(async q => q.includes("memory_versions") ? [{
+    memory_id:7,version:2,value:{x:2},provenance:{source:"test"},actor_id:"agent",created_at:new Date(2)
+  }] : [{
+    memory_id:7,namespace:"shared",memory_key:"k",value:{x:2},provenance:{source:"test"},
+    version:2,created_by:"agent",updated_by:"agent",created_at:new Date(0),updated_at:new Date(2)
+  }]);
+  const store=new PostgresAgentMemoryStore(sql);
+  const listed=await store.list("shared",9999);
+  assert.equal(listed.length,1);
+  assert.equal(sql.calls[0].params[1],500);
+  const history=await store.history("shared","k",10);
+  assert.equal(history[0].version,2);
+  assert.match(sql.calls[1].query,/m\.namespace=\$1 AND m\.memory_key=\$2/);
 });
