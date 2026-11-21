@@ -93,3 +93,13 @@ test("expired or non-running task lease cannot be renewed", async () => {
   const store=new PostgresTaskStore(sql);
   assert.equal(await store.extendLease({taskId:"t1",now:90000,leaseUntil:150000}),undefined);
 });
+
+
+test("Postgres approval lookup retrieves a decision by approval id",async()=>{
+ const sql=fakeSql(async q=>q.startsWith("SELECT * FROM jarvis_runtime_approvals")?[{approval_id:"a2",task_id:"t2",action:"production_deploy",status:"approved"}]:[]);
+ const store=new PostgresApprovalStore(sql);
+ const row=await store.get("a2");
+ assert.equal(row.task_id,"t2");
+ assert.equal(row.status,"approved");
+ assert.match(sql.calls[0].query,/WHERE approval_id=\$1/);
+});
