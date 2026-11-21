@@ -73,6 +73,7 @@ export class TaskQueue {
     const updated = { ...task, ...clone(patch), status: next, expectedStatus: task.status, updatedAt: this.#now() };
     await this.#store.update(updated); return clone(updated);
   }
+  async get(taskId) { return this.#store.get(taskId); }
   async claim({ leaseMs = 60_000 } = {}) {
     if (!Number.isInteger(leaseMs) || leaseMs < 1000) throw new Error("leaseMs must be >= 1000");
     if (typeof this.#store.claimNext !== "function") throw new Error("store must implement atomic claimNext for concurrent workers");
@@ -118,7 +119,16 @@ export class InterAgentMessageBus {
 
 export class ApprovalGateway {
   #store;
-  constructor({ store }) { if (!store?.create || !store?.resolve) throw new Error("approval store required"); this.#store = store; }
+  constructor({ store }) { if (!store?.create || !store?.resolve || !store?.get) throw new Error("approval store with get/create/resolve required"); this.#store = store; }
+  async get(approvalId) { return this.#store.get(approvalId); }
+  async authorizes({ task, action }) {
+    const approvalId=task?.payload?.approvalId;
+    if (!approvalId) return false;
+    const approval=await this.#store.get(approvalId);
+    if (!approval || approval.status!=="approved") return false;
+    const taskId=approval.task_id ?? approval.taskId;
+    return String(taskId)===String(task.taskId) && String(approval.action)===String(action);
+  }
   async request({ taskId, agentId, action, reason, expiresAt }) {
     if (!taskId || !agentId || !action) throw new Error("approval request incomplete");
     return this.#store.create({ approvalId: id("approval"), taskId, agentId, action, reason: String(reason ?? ""),
@@ -180,4 +190,19 @@ export class RuntimeWatchdog {
 export function requireHumanApproval(action) {
   return new Set(["production_deploy", "send_btc", "spend_btc", "transfer_btc", "delete_persistent_data",
     "change_secrets", "external_contract", "incur_cost"]).has(String(action));
+}
+
+
+/** Resume a parked task only after its exact task/action approval is approved. */
+export async function resumeApprovedTask({ queue, approvals, taskId, approvalId }) {
+  if (!queue?.get || !queue?.transition || !approvals?.get) throw new Error("queue and approval gateway required");
+  const [task,approval]=await Promise.all([queue.get(taskId),approvals.get(approvalId)]);
+  if (!task || task.status!=="waiting_approval") throw new Error("task is not waiting for approval");
+  if (!approval || approval.status!=="approved") throw new Error("approval is missing or not approved");
+  const approvedTaskId=approval.task_id ?? approval.taskId;
+  const action=task.payload?.action ?? task.action ?? task.type;
+  if (String(approvedTaskId)!==String(taskId) || String(approval.action)!==String(action) || String(task.payload?.approvalId)!==String(approvalId)) {
+    throw new Error("approval does not match task, action, and approval reference");
+  }
+  return queue.transition(taskId,"queued",{leaseUntil:null});
 }
