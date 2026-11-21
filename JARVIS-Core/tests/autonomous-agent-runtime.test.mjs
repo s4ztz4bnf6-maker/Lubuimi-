@@ -106,3 +106,11 @@ test("approval gateway fails closed for unauthorized reviewers and expired appro
  rows.set(request.approvalId,{...rows.get(request.approvalId),expiresAt:1});
  assert.equal(await gateway.authorizes({task:{taskId:"t-sec",payload:{approvalId:request.approvalId}},action:"production_deploy"}),false);
 });
+
+
+test("expired approved task cannot be resumed",async()=>{
+ const task={taskId:"t-expired",type:"deploy",payload:{action:"production_deploy",approvalId:"a-expired"},status:"waiting_approval"};
+ const queue={get:async()=>task,transition:async()=>{throw new Error("must not resume");}};
+ const approvals={get:async()=>({approval_id:"a-expired",task_id:"t-expired",action:"production_deploy",status:"approved",expires_at:new Date(1).toISOString()})};
+ await assert.rejects(resumeApprovedTask({queue,approvals,taskId:"t-expired",approvalId:"a-expired"}),/expired/);
+});
