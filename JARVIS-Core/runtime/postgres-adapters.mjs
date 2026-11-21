@@ -36,6 +36,13 @@ export class PostgresTaskStore {
     );
     return taskFromRow(rows[0]);
   }
+  async extendLease({ taskId, now, leaseUntil }) {
+    const rows = await this.sql.unsafe(
+      "UPDATE jarvis_runtime_tasks SET lease_until=to_timestamp($3/1000.0),updated_at=to_timestamp($2/1000.0) WHERE task_id=$1 AND status='running' AND lease_until > to_timestamp($2/1000.0) RETURNING *",
+      [taskId,now,leaseUntil]
+    );
+    return taskFromRow(rows[0]);
+  }
   async recoverExpired(now) {
     const rows = await this.sql.unsafe(
       "UPDATE jarvis_runtime_tasks SET status=CASE WHEN attempts >= max_attempts THEN 'failed' ELSE 'queued' END,lease_until=NULL,last_error=COALESCE(last_error,'Worker lease expired; task recovered'),updated_at=to_timestamp($1/1000.0) WHERE status='running' AND lease_until <= to_timestamp($1/1000.0) RETURNING *",
