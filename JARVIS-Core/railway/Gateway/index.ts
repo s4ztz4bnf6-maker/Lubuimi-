@@ -34,7 +34,7 @@ await sql`
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )
 `;
-if (env.JARVIS_BRIDGE_TOKEN && env.JARVIS_BRIDGE_REPOSITORY) {
+if (env.JARVIS_BRIDGE_REPOSITORY) {
   try {
     await initMailboxSchema(sql);
     startMailboxPolling({ sql, config: { token: env.JARVIS_BRIDGE_TOKEN, repository: env.JARVIS_BRIDGE_REPOSITORY } });
@@ -42,7 +42,7 @@ if (env.JARVIS_BRIDGE_TOKEN && env.JARVIS_BRIDGE_REPOSITORY) {
     console.error("[Mailbox] Initialization failed; gateway continues without mailbox", error);
   }
 } else {
-  console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_TOKEN or JARVIS_BRIDGE_REPOSITORY");
+  console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_REPOSITORY");
 }
 await sql`CREATE INDEX IF NOT EXISTS agent_messages_status_idx ON agent_messages(status, created_at DESC)`;
 await sql`
