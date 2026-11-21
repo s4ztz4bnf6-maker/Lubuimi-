@@ -1,12 +1,12 @@
 # Autonomous Runtime PostgreSQL persistence
 
-Apply `migrations/001_autonomous_runtime.sql` and then `migrations/002_runtime_task_results.sql` to a dedicated development database. Migration 002 is safe for databases that already applied migration 001.
+Apply `migrations/001_autonomous_runtime.sql`, `migrations/002_runtime_task_results.sql`, and then `migrations/003_runtime_audit_immutable.sql` to a dedicated development database. Migration 002 is safe for databases that already applied migration 001.
 The migration creates durable task, approval, message, audit, and per-agent usage tables.
 
 Adapters in `postgres-adapters.mjs` use the existing postgres.js client:
 - `PostgresTaskStore`: atomic queue claim with `FOR UPDATE SKIP LOCKED`, attempt counter, idempotency lookup, active-lease renewal, expired-lease recovery, durable result/verification JSON, and compare-and-set status updates.
 - `PostgresApprovalStore`: durable approval lookup plus pending-only human decision update; expired approvals cannot be approved.
-- `PostgresRuntimeAudit`: append-only event insertion API.
+- `PostgresRuntimeAudit`: event insertion API. Migration 003 adds a database trigger that rejects UPDATE/DELETE and revokes UPDATE/DELETE/TRUNCATE from PUBLIC. The runtime database role should not own the audit table and should receive only SELECT/INSERT.
 
 Example wiring (not enabled in production):
 ```js
