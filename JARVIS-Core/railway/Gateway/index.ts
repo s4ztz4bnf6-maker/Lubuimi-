@@ -402,7 +402,7 @@ const server = Bun.serve({
           ORDER BY id DESC LIMIT 1
         `;
         if (existing) return json({ id: existing.id, status: existing.status, requestId, answer: existing.delivery_result?.answer ?? null, duplicate: true });
-        const base = (env.MODEL_BASE_URL || "https://api.openai.com/v1").replace(/\\/$/, "");
+        const base = (env.MODEL_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
         const endpoint = base.endsWith("/v1") ? base + "/chat/completions" : base + "/v1/chat/completions";
         let upstream;
         try {
