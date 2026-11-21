@@ -15,6 +15,11 @@ const TRANSITIONS = Object.freeze({
 
 const id = (prefix) => prefix + "_" + globalThis.crypto.randomUUID();
 const clone = (value) => structuredClone(value);
+const expiryIsInvalidOrElapsed = (value, now = Date.now()) => {
+  if (value == null) return false;
+  const timestamp = new Date(value).getTime();
+  return !Number.isFinite(timestamp) || timestamp <= now;
+};
 
 export class AgentLifecycleManager {
   #agents = new Map();
@@ -132,12 +137,13 @@ export class ApprovalGateway {
     const approval=await this.#store.get(approvalId);
     if (!approval || approval.status!=="approved") return false;
     const expiresAt=approval.expires_at ?? approval.expiresAt;
-    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) return false;
+    if (expiryIsInvalidOrElapsed(expiresAt)) return false;
     const taskId=approval.task_id ?? approval.taskId;
     return String(taskId)===String(task.taskId) && String(approval.action)===String(action);
   }
   async request({ taskId, agentId, action, reason, expiresAt }) {
     if (!taskId || !agentId || !action) throw new Error("approval request incomplete");
+    if (expiresAt != null && expiryIsInvalidOrElapsed(expiresAt)) throw new Error("approval expiry must be a valid future timestamp");
     return this.#store.create({ approvalId: id("approval"), taskId, agentId, action, reason: String(reason ?? ""),
       status: "pending", expiresAt: expiresAt ?? null, createdAt: Date.now() });
   }
@@ -146,7 +152,7 @@ export class ApprovalGateway {
     const approval=await this.#store.get(approvalId);
     if (!approval || approval.status!=="pending") throw new Error("approval missing or not pending");
     const expiresAt=approval.expires_at ?? approval.expiresAt;
-    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) throw new Error("approval expired");
+    if (expiryIsInvalidOrElapsed(expiresAt)) throw new Error("approval expired or has invalid expiry");
     if (await this.#authorizeReviewer({ reviewerId, approval, decision }) !== true) throw new Error("reviewer is not authorized");
     return this.#store.resolve({ approvalId, decision, reviewerId, resolvedAt: Date.now() });
   }
@@ -212,7 +218,7 @@ export async function resumeApprovedTask({ queue, approvals, taskId, approvalId 
   if (!task || task.status!=="waiting_approval") throw new Error("task is not waiting for approval");
   if (!approval || approval.status!=="approved") throw new Error("approval is missing or not approved");
   const expiresAt=approval.expires_at ?? approval.expiresAt;
-  if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) throw new Error("approval has expired");
+  if (expiryIsInvalidOrElapsed(expiresAt)) throw new Error("approval has expired or has invalid expiry");
   const approvedTaskId=approval.task_id ?? approval.taskId;
   const action=task.payload?.action ?? task.action ?? task.type;
   if (String(approvedTaskId)!==String(taskId) || String(approval.action)!==String(action) || String(task.payload?.approvalId)!==String(approvalId)) {
