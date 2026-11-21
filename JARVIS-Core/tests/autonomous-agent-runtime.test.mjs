@@ -53,6 +53,7 @@ test("approval gateway requires a named human reviewer and explicit decision", a
   const rows = new Map();
   const gateway = new ApprovalGateway({ store: {
     create: async row => { rows.set(row.approvalId, row); return row; },
+    get: async id => rows.get(id) ?? null,
     resolve: async row => { const old = rows.get(row.approvalId); if (!old || old.status !== "pending") throw new Error("not pending"); const next = { ...old, status: row.decision, reviewerId: row.reviewerId, resolvedAt: row.resolvedAt }; rows.set(row.approvalId, next); return next; }
   } });
   const request = await gateway.request({ taskId: "t", agentId: "executor", action: "deploy", reason: "release" });
@@ -64,4 +65,17 @@ test("approval gateway requires a named human reviewer and explicit decision", a
 test("critical actions are explicitly gated", () => {
   for (const action of ["production_deploy", "send_btc", "spend_btc", "change_secrets"]) assert.equal(requireHumanApproval(action), true);
   assert.equal(requireHumanApproval("public_research"), false);
+});
+
+
+test("approval gateway authorizes only the exact approved task and action",async()=>{
+ const rows=new Map();
+ const gateway=new ApprovalGateway({store:{create:async row=>{rows.set(row.approvalId,row);return row;},get:async id=>rows.get(id)??null,resolve:async row=>{const old=rows.get(row.approvalId);const next={...old,status:row.decision,reviewerId:row.reviewerId};rows.set(row.approvalId,next);return next;}}});
+ const request=await gateway.request({taskId:"task-1",agentId:"executor",action:"production_deploy"});
+ const task={taskId:"task-1",payload:{action:"production_deploy",approvalId:request.approvalId}};
+ assert.equal(await gateway.authorizes({task,action:"production_deploy"}),false);
+ await gateway.resolve(request.approvalId,"approved","human-1");
+ assert.equal(await gateway.authorizes({task,action:"production_deploy"}),true);
+ assert.equal(await gateway.authorizes({task,action:"send_btc"}),false);
+ assert.equal(await gateway.authorizes({task:{...task,taskId:"task-2"},action:"production_deploy"}),false);
 });
