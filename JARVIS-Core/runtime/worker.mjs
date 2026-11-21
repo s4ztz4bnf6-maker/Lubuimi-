@@ -8,7 +8,7 @@ export class RuntimeWorker {
   constructor({ queue, agents, handlers, verifier, audit = async () => {}, resolveAgent,
     authorizeAction = async ({ task }) =>
       !requireHumanApproval(task.payload?.action ?? task.action ?? task.type),
-    leaseMs = 60_000, timeoutMs = 45_000 }) {
+    requestApproval = null, leaseMs = 60_000, timeoutMs = 45_000 }) {
     if (!queue || !agents || !handlers || typeof verifier !== "function" ||
         typeof resolveAgent !== "function" || typeof authorizeAction !== "function") {
       throw new Error("worker dependencies incomplete");
@@ -19,6 +19,8 @@ export class RuntimeWorker {
     }
     this.queue=queue; this.agents=agents; this.handlers=handlers; this.verifier=verifier;
     this.audit=audit; this.resolveAgent=resolveAgent; this.authorizeAction=authorizeAction;
+    if (requestApproval !== null && typeof requestApproval !== "function") throw new Error("requestApproval must be a function");
+    this.requestApproval=requestApproval;
     this.leaseMs=leaseMs; this.timeoutMs=timeoutMs;
   }
   async runOnce() {
@@ -48,8 +50,11 @@ export class RuntimeWorker {
       const action=task.payload?.action ?? task.action ?? task.type;
       const allowed=await Promise.race([this.authorizeAction({task:structuredClone(task),agentId,action}),timeout]);
       if (requireHumanApproval(action) && allowed !== true) {
-        await this.queue.transition(task.taskId,"waiting_approval",{leaseUntil:null});
-        await this.audit({event:"task.waiting_approval",taskId:task.taskId,actorId:agentId,action});
+        const request=this.requestApproval ? await Promise.race([this.requestApproval({task:structuredClone(task),agentId,action}),timeout]) : null;
+        const approvalId=request?.approvalId ?? request?.approval_id ?? null;
+        const payload=approvalId ? {...task.payload,approvalId} : task.payload;
+        await this.queue.transition(task.taskId,"waiting_approval",{leaseUntil:null,payload});
+        await this.audit({event:"task.waiting_approval",taskId:task.taskId,actorId:agentId,action,approvalId});
         return {worked:true,taskId:task.taskId,status:"waiting_approval"};
       }
       if (allowed !== true) throw new Error("task action authorization denied");
