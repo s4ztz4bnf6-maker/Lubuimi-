@@ -73,3 +73,41 @@ export class PostgresRuntimeAudit {
     );
   }
 }
+
+export class PostgresRuntimeMessageStore {
+  constructor(sql) { if (typeof sql?.unsafe !== "function") throw new Error("postgres.js client required"); this.sql = sql; }
+  async append(message) {
+    const rows = await this.sql.unsafe(
+      "INSERT INTO jarvis_runtime_messages(message_id,task_id,sender_agent_id,recipient_agent_id,message_type,payload,created_at) VALUES($1,$2,$3,$4,$5,$6::jsonb,to_timestamp($7/1000.0)) RETURNING message_id",
+      [message.messageId,message.taskId,message.from,message.to,message.type,JSON.stringify(message.payload),message.createdAt]
+    );
+    return rows[0].message_id;
+  }
+  async listForTask(taskId, limit = 100) {
+    const rows = await this.sql.unsafe(
+      "SELECT message_id AS \"messageId\",task_id AS \"taskId\",sender_agent_id AS \"from\",recipient_agent_id AS \"to\",message_type AS type,payload,created_at AS \"createdAt\" FROM jarvis_runtime_messages WHERE task_id=$1 ORDER BY created_at ASC LIMIT $2",
+      [taskId,Math.max(1,Math.min(500,Number(limit)||100))]
+    );
+    return rows;
+  }
+}
+
+/** Atomic persistent token/cost accounting. Limits must be finite and explicit. */
+export class PostgresAgentBudget {
+  constructor(sql) { if (typeof sql?.unsafe !== "function") throw new Error("postgres.js client required"); this.sql = sql; }
+  async consume(agentId, { tokens = 0, cost = 0 }, limits) {
+    if (!agentId || !Number.isSafeInteger(tokens) || tokens < 0 || !Number.isFinite(cost) || cost < 0 ||
+        !Number.isSafeInteger(limits?.tokens) || limits.tokens < 0 || !Number.isFinite(limits?.cost) || limits.cost < 0) {
+      throw new Error("explicit finite agent budget and valid usage required");
+    }
+    const rows = await this.sql.unsafe(
+      "INSERT INTO jarvis_runtime_agent_usage(agent_id,tokens_used,cost_used,updated_at) VALUES($1,$2,$3,now()) ON CONFLICT(agent_id) DO UPDATE SET tokens_used=jarvis_runtime_agent_usage.tokens_used+EXCLUDED.tokens_used,cost_used=jarvis_runtime_agent_usage.cost_used+EXCLUDED.cost_used,updated_at=now() WHERE jarvis_runtime_agent_usage.tokens_used+EXCLUDED.tokens_used <= $4 AND jarvis_runtime_agent_usage.cost_used+EXCLUDED.cost_used <= $5 RETURNING agent_id,tokens_used,cost_used",
+      [agentId,tokens,String(cost),limits.tokens,String(limits.cost)]
+    );
+    if (!rows.length) {
+      const current = await this.sql.unsafe("SELECT tokens_used,cost_used FROM jarvis_runtime_agent_usage WHERE agent_id=$1",[agentId]);
+      return { allowed:false, usage:current[0] ?? {tokens_used:0,cost_used:"0"}, reason:"agent budget exceeded" };
+    }
+    return { allowed:true, usage:rows[0] };
+  }
+}
