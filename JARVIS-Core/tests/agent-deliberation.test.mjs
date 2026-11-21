@@ -101,3 +101,12 @@ test("rejects invalid participant sets and call budgets", () => {
     verify: async () => ({ ok: true, issues: [] })
   }), /invalid deliberation limits/);
 });
+
+test("deadline also bounds an independent verifier that never settles", async () => {
+  const deliberation = new AgentDeliberation({
+    agents, timeoutMs: 15,
+    invokeAgent: async ({ phase }) => answer(phase),
+    verify: () => new Promise(() => {})
+  });
+  await assert.rejects(deliberation.run({ task: "Verifier must time out." }), /deadline exceeded/);
+});
