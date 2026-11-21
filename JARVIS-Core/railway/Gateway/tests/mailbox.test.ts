@@ -30,8 +30,12 @@ test("rejects invalid UTF-8", async () => {
 test("rejects files exceeding limit", async () => {
   expect(await readMailbox(harness(Buffer.alloc(65_537)))).toHaveLength(0);
 });
-test("requires token", async () => {
-  await expect(readMailbox({ ...harness(Buffer.from("x")), token: "" })).rejects.toThrow();
+test("reads public mailbox without token", async () => {
+  const messages = await readMailbox({ ...harness(Buffer.from("x")), token: "" });
+  expect(messages[0].text).toBe("x");
+});
+test("rejects writes without token", async () => {
+  await expect(writeReply({ ...harness(Buffer.from("x")), token: "" }, "ACK")).rejects.toThrow("Write requires");
 });
 test("writes reply using contents API", async () => {
   expect(await writeReply(harness(Buffer.from("x")), "ACK")).toBe("commit123");
