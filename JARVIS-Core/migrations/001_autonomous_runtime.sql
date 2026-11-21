@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS jarvis_runtime_tasks (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   lease_until TIMESTAMPTZ,
-  last_error TEXT
+  last_error TEXT,
+  result JSONB,
+  verification JSONB
 );
 CREATE INDEX IF NOT EXISTS jarvis_runtime_tasks_claim_idx
   ON jarvis_runtime_tasks (priority DESC, created_at ASC)
