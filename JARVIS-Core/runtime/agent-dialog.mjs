@@ -75,6 +75,44 @@ export class AgentDialog {
     });
   }
 
+  /**
+   * Recover a conversation left active by a process restart. The durable
+   * transcript is authoritative: an already-recorded agent turn is never
+   * invoked again merely because the host restarted between persistence steps.
+   */
+  async resume({ conversationId, signal }) {
+    if (!validId(conversationId)) throw new Error("invalid conversation id");
+    return this.#exclusive(conversationId, async () => {
+      let conversation = await this.#store.get(conversationId);
+      if (!conversation || conversation.status !== "active") {
+        throw new Error("conversation is missing or not recoverable");
+      }
+      const agentEntries = conversation.entries.filter(entry => entry.role === "agent");
+      const turns = agentEntries.length;
+      const last = conversation.entries.at(-1);
+      if (last?.role === "agent") {
+        if (last.done) {
+          conversation = await this.#setStatus(conversation, "completed", last.agentId);
+          return { conversation, status: "completed", turns };
+        }
+        if (!last.handoffTo) {
+          conversation = await this.#setStatus(conversation, "awaiting_user", last.agentId);
+          return { conversation, status: "awaiting_user", turns };
+        }
+        if (!conversation.participants.includes(last.handoffTo)) {
+          throw new Error("persisted dialogue handoff target is no longer a participant");
+        }
+        await this.#bus.send({
+          from: last.agentId, to: last.handoffTo, taskId: conversation.taskId,
+          type: "dialog.handoff.recovered",
+          payload: { conversationId: conversation.conversationId, turn: turns }
+        });
+        return this.#execute(conversation, last.handoffTo, signal, turns);
+      }
+      return this.#execute(conversation, conversation.activeAgent, signal, turns);
+    });
+  }
+
   async reply({ conversationId, userMessage, signal }) {
     if (!validId(conversationId) || typeof userMessage !== "string" || !userMessage.trim()) {
       throw new Error("invalid dialogue reply");
@@ -93,7 +131,7 @@ export class AgentDialog {
     });
   }
 
-  async #execute(initial, firstAgent, externalSignal) {
+  async #execute(initial, firstAgent, externalSignal, completedTurns = 0) {
     let conversation = initial;
     let currentAgent = firstAgent;
     const controller = new AbortController();
@@ -105,7 +143,7 @@ export class AgentDialog {
     const aborted = new Promise((_, reject) => { rejectOnAbort = reject; });
     const onAbort = () => rejectOnAbort(controller.signal.reason ?? new Error("dialogue cancelled"));
     controller.signal.addEventListener("abort", onAbort, { once: true });
-    let turns = 0;
+    let turns = completedTurns;
 
     try {
       while (turns < this.#maxTurns) {
