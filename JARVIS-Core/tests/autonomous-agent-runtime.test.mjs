@@ -53,7 +53,7 @@ test("approval gateway requires a named human reviewer and explicit decision", a
   const rows = new Map();
   const gateway = new ApprovalGateway({ store: {
     create: async row => { rows.set(row.approvalId, row); return row; },
-    resolve: async row => { const old = rows.get(row.approvalId); if (!old || old.status !== "pending") throw new Error("not pending"); const next = { ...old, ...row }; rows.set(row.approvalId, next); return next; }
+    resolve: async row => { const old = rows.get(row.approvalId); if (!old || old.status !== "pending") throw new Error("not pending"); const next = { ...old, status: row.decision, reviewerId: row.reviewerId, resolvedAt: row.resolvedAt }; rows.set(row.approvalId, next); return next; }
   } });
   const request = await gateway.request({ taskId: "t", agentId: "executor", action: "deploy", reason: "release" });
   assert.equal(request.status, "pending");
