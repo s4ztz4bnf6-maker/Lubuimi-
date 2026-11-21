@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS jarvis_runtime_conversations (
   conversation_id TEXT PRIMARY KEY,
   task_id TEXT NOT NULL,
-  participants JSONB NOT NULL CHECK (jsonb_typeof(participants) = 'array' AND jsonb_array_length(participants) > 0),
+  participants JSONB NOT NULL CHECK (CASE WHEN jsonb_typeof(participants) = 'array' THEN jsonb_array_length(participants) > 0 ELSE false END),
   status TEXT NOT NULL CHECK (status IN ('active','awaiting_user','completed','turn_limit','failed')),
   active_agent TEXT NOT NULL,
   version BIGINT NOT NULL DEFAULT 0 CHECK (version >= 0),
