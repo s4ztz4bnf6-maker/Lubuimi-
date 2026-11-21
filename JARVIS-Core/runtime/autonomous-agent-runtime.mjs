@@ -78,6 +78,14 @@ export class TaskQueue {
     if (typeof this.#store.claimNext !== "function") throw new Error("store must implement atomic claimNext for concurrent workers");
     return this.#store.claimNext({ now: this.#now(), leaseUntil: this.#now() + leaseMs });
   }
+  async extendLease(taskId, leaseMs = 60_000) {
+    if (!Number.isInteger(leaseMs) || leaseMs < 1000) throw new Error("leaseMs must be >= 1000");
+    if (typeof this.#store.extendLease !== "function") throw new Error("store must implement atomic extendLease");
+    const leaseUntil=this.#now()+leaseMs;
+    const renewed=await this.#store.extendLease({taskId,now:this.#now(),leaseUntil});
+    if (!renewed) throw new Error("task is no longer running or its lease has expired");
+    return renewed;
+  }
   async retry(taskId, error) {
     const task = await this.#store.get(taskId);
     if (!task || task.status !== "running") throw new Error("only running tasks can retry");
