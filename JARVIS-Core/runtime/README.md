@@ -37,3 +37,17 @@ The worker is a library primitive, not yet wired into the production Worker proc
 - Authorization, handler execution, and independent verification share the worker deadline. The handler receives the task idempotency key (or task id fallback) and an AbortSignal.
 - A timed-out handler must cooperate with AbortSignal. A handler that ignores cancellation may continue its own side effects; therefore side-effecting handlers must be idempotent and check cancellation immediately before committing effects.
 - After a human approval is recorded, the host approval workflow must move the task from `waiting_approval` back to `queued` using a compare-and-set transition. The worker does not self-approve or automatically resume approvals.
+
+
+## Durable human approval lifecycle
+
+The PostgreSQL approval adapter supports lookup as well as creation and reviewer resolution. The Worker host can wire the runtime as follows:
+
+```js
+const authorizeAction = ({ task, action }) =>
+  requireHumanApproval(action) ? approvals.authorizes({ task, action }) : true;
+const requestApproval = ({ task, agentId, action }) =>
+  approvals.request({ taskId: task.taskId, agentId, action, reason: "Critical action requires human review" });
+```
+
+Pass both callbacks to `RuntimeWorker`. A denied critical task is parked and its approval ID is persisted in the task payload. After a named human reviewer resolves it, call `resumeApprovedTask({ queue, approvals, taskId, approvalId })`; it verifies exact task, action and approval identity before compare-and-set requeue. The next execution still rechecks the approved record before any handler side effect. A rejected, expired, missing or mismatched approval fails closed.
