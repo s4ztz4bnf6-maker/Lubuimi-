@@ -119,13 +119,20 @@ export class InterAgentMessageBus {
 
 export class ApprovalGateway {
   #store;
-  constructor({ store }) { if (!store?.create || !store?.resolve || !store?.get) throw new Error("approval store with get/create/resolve required"); this.#store = store; }
+  #authorizeReviewer;
+  constructor({ store, authorizeReviewer = async () => false }) {
+    if (!store?.create || !store?.resolve || !store?.get) throw new Error("approval store with get/create/resolve required");
+    if (typeof authorizeReviewer !== "function") throw new Error("authorizeReviewer must be a function");
+    this.#store = store; this.#authorizeReviewer = authorizeReviewer;
+  }
   async get(approvalId) { return this.#store.get(approvalId); }
   async authorizes({ task, action }) {
     const approvalId=task?.payload?.approvalId;
     if (!approvalId) return false;
     const approval=await this.#store.get(approvalId);
     if (!approval || approval.status!=="approved") return false;
+    const expiresAt=approval.expires_at ?? approval.expiresAt;
+    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) return false;
     const taskId=approval.task_id ?? approval.taskId;
     return String(taskId)===String(task.taskId) && String(approval.action)===String(action);
   }
@@ -199,6 +206,8 @@ export async function resumeApprovedTask({ queue, approvals, taskId, approvalId 
   const [task,approval]=await Promise.all([queue.get(taskId),approvals.get(approvalId)]);
   if (!task || task.status!=="waiting_approval") throw new Error("task is not waiting for approval");
   if (!approval || approval.status!=="approved") throw new Error("approval is missing or not approved");
+  const expiresAt=approval.expires_at ?? approval.expiresAt;
+  if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) throw new Error("approval has expired");
   const approvedTaskId=approval.task_id ?? approval.taskId;
   const action=task.payload?.action ?? task.action ?? task.type;
   if (String(approvedTaskId)!==String(taskId) || String(approval.action)!==String(action) || String(task.payload?.approvalId)!==String(approvalId)) {
