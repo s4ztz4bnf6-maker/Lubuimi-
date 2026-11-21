@@ -122,3 +122,67 @@ export class PostgresAgentBudget {
     return { allowed:true, usage:rows[0] };
   }
 }
+
+
+const conversationFromRow = r => r && ({
+  conversationId: r.conversation_id,
+  taskId: r.task_id,
+  participants: r.participants,
+  status: r.status,
+  activeAgent: r.active_agent,
+  version: Number(r.version),
+  entries: r.entries,
+  createdAt: new Date(r.created_at).getTime(),
+  updatedAt: new Date(r.updated_at).getTime()
+});
+
+/**
+ * Durable conversation store. Every mutation is a single SQL compare-and-set.
+ * A null return means the conversation was missing or its version changed.
+ */
+export class PostgresAgentConversationStore {
+  constructor(sql) {
+    if (typeof sql?.unsafe !== "function") throw new Error("postgres.js client required");
+    this.sql = sql;
+  }
+  async create(row) {
+    if (!row?.conversationId || !row?.taskId || !Array.isArray(row.participants) ||
+        !row.participants.length || !Array.isArray(row.entries) ||
+        !Number.isSafeInteger(row.version) || row.version !== 0) {
+      throw new Error("invalid initial conversation");
+    }
+    const rows = await this.sql.unsafe(
+      "INSERT INTO jarvis_runtime_conversations(conversation_id,task_id,participants,status,active_agent,version,entries,created_at,updated_at) VALUES($1,$2,$3::jsonb,$4,$5,$6,$7::jsonb,now(),now()) RETURNING *",
+      [row.conversationId,row.taskId,JSON.stringify(row.participants),row.status,row.activeAgent,row.version,JSON.stringify(row.entries)]
+    );
+    return conversationFromRow(rows[0]);
+  }
+  async get(conversationId) {
+    const rows = await this.sql.unsafe(
+      "SELECT * FROM jarvis_runtime_conversations WHERE conversation_id=$1 LIMIT 1",
+      [conversationId]
+    );
+    return conversationFromRow(rows[0] ?? null);
+  }
+  async append({ conversationId, expectedVersion, entry }) {
+    if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0 || !entry || typeof entry !== "object") {
+      throw new Error("invalid conversation append");
+    }
+    const rows = await this.sql.unsafe(
+      "UPDATE jarvis_runtime_conversations SET entries=entries || jsonb_build_array($3::jsonb),version=version+1,updated_at=now() WHERE conversation_id=$1 AND version=$2 AND status IN ('active','awaiting_user') RETURNING *",
+      [conversationId,expectedVersion,JSON.stringify(entry)]
+    );
+    return conversationFromRow(rows[0] ?? null);
+  }
+  async setStatus({ conversationId, expectedVersion, status, activeAgent }) {
+    if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0 ||
+        !["active","awaiting_user","completed","turn_limit","failed"].includes(status)) {
+      throw new Error("invalid conversation status transition");
+    }
+    const rows = await this.sql.unsafe(
+      "UPDATE jarvis_runtime_conversations SET status=$3,active_agent=$4,version=version+1,updated_at=now() WHERE conversation_id=$1 AND version=$2 AND status IN ('active','awaiting_user') RETURNING *",
+      [conversationId,expectedVersion,status,activeAgent]
+    );
+    return conversationFromRow(rows[0] ?? null);
+  }
+}
