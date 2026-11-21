@@ -62,7 +62,7 @@ export class TaskQueue {
       if (prior) return prior;
     }
     const task = { taskId, type, payload: clone(payload ?? {}), priority, idempotencyKey: idempotencyKey ?? null,
-      status: "created", attempts: 0, maxAttempts, createdAt: this.#now(), updatedAt: this.#now(),
+      status: "queued", attempts: 0, maxAttempts, createdAt: this.#now(), updatedAt: this.#now(),
       leaseUntil: null, lastError: null };
     await this.#store.insert(task); return clone(task);
   }
