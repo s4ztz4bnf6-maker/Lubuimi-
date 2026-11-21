@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PostgresTaskStore, PostgresApprovalStore, PostgresRuntimeAudit, PostgresRuntimeMessageStore, PostgresAgentBudget } from "../runtime/postgres-adapters.mjs";
+import { PostgresTaskStore, PostgresApprovalStore, PostgresRuntimeAudit, PostgresRuntimeMessageStore, PostgresAgentBudget, PostgresAgentConversationStore } from "../runtime/postgres-adapters.mjs";
 
 function fakeSql(handler) {
   const calls=[];
@@ -102,4 +102,65 @@ test("Postgres approval lookup retrieves a decision by approval id",async()=>{
  assert.equal(row.task_id,"t2");
  assert.equal(row.status,"approved");
  assert.match(sql.calls[0].query,/WHERE approval_id=\$1/);
+});
+
+
+test("conversation adapter persists transcripts and maps database rows", async () => {
+  const dbRow = {
+    conversation_id:"c1",task_id:"t1",participants:["research","critic"],status:"active",
+    active_agent:"research",version:0,entries:[],created_at:new Date(0),updated_at:new Date(0)
+  };
+  const sql=fakeSql(async (q,params) => {
+    if(q.startsWith("INSERT INTO jarvis_runtime_conversations")) return [{...dbRow}];
+    if(q.startsWith("SELECT * FROM jarvis_runtime_conversations")) return [{...dbRow}];
+    if(q.startsWith("UPDATE jarvis_runtime_conversations SET entries")) {
+      return [{...dbRow,entries:[JSON.parse(params[2])],version:1}];
+    }
+    if(q.startsWith("UPDATE jarvis_runtime_conversations SET status")) {
+      return [{...dbRow,status:params[2],active_agent:params[3],version:2}];
+    }
+    return [];
+  });
+  const store=new PostgresAgentConversationStore(sql);
+  const created=await store.create({
+    conversationId:"c1",taskId:"t1",participants:["research","critic"],
+    status:"active",activeAgent:"research",version:0,entries:[]
+  });
+  assert.equal(created.conversationId,"c1");
+  assert.equal(created.version,0);
+  assert.deepEqual((await store.get("c1")).participants,["research","critic"]);
+  const appended=await store.append({
+    conversationId:"c1",expectedVersion:0,
+    entry:{role:"user",content:"Investigate",createdAt:1}
+  });
+  assert.equal(appended.version,1);
+  assert.equal(appended.entries[0].content,"Investigate");
+  const paused=await store.setStatus({
+    conversationId:"c1",expectedVersion:1,status:"awaiting_user",activeAgent:"research"
+  });
+  assert.equal(paused.status,"awaiting_user");
+  assert.equal(paused.version,2);
+  assert.match(sql.calls[2].query,/WHERE conversation_id=\$1 AND version=\$2/);
+  assert.match(sql.calls[2].query,/jsonb_build_array/);
+  assert.match(sql.calls[3].query,/WHERE conversation_id=\$1 AND version=\$2/);
+});
+
+test("conversation adapter returns null on compare-and-set conflict", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresAgentConversationStore(sql);
+  assert.equal(await store.append({
+    conversationId:"c1",expectedVersion:4,entry:{role:"agent",content:"stale"}
+  }),null);
+  assert.equal(await store.setStatus({
+    conversationId:"c1",expectedVersion:4,status:"completed",activeAgent:"critic"
+  }),null);
+});
+
+test("conversation adapter rejects invalid initial rows and status values", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresAgentConversationStore(sql);
+  await assert.rejects(store.create({conversationId:"c1"}),/invalid initial/);
+  await assert.rejects(store.setStatus({
+    conversationId:"c1",expectedVersion:0,status:"approved",activeAgent:"critic"
+  }),/invalid conversation status/);
 });
