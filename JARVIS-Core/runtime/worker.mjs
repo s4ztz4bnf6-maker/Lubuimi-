@@ -36,6 +36,14 @@ export class RuntimeWorker {
       controller.signal.addEventListener("abort", onAbort, { once: true });
     });
     const timer=setTimeout(() => controller.abort(new Error("task execution timed out")),this.timeoutMs);
+    // Keep the durable lease alive while a handler or verifier is still working.
+    // A failed renewal aborts this attempt so another worker can safely recover it.
+    const heartbeatMs=Math.max(250,Math.floor(this.leaseMs/3));
+    const heartbeat=setInterval(() => {
+      this.queue.extendLease(task.taskId,this.leaseMs).catch(error => {
+        if(!controller.signal.aborted) controller.abort(new Error("task lease lost: "+String(error?.message??error)));
+      });
+    },heartbeatMs);
     try {
       const action=task.payload?.action ?? task.action ?? task.type;
       const allowed=await Promise.race([this.authorizeAction({task:structuredClone(task),agentId,action}),timeout]);
@@ -73,6 +81,7 @@ export class RuntimeWorker {
       return {worked:true,taskId:task.taskId,status:updated.status,error:String(error?.message??error)};
     } finally {
       clearTimeout(timer);
+      clearInterval(heartbeat);
       controller.signal.removeEventListener("abort",onAbort);
       this.agents.release(agentId);
     }
