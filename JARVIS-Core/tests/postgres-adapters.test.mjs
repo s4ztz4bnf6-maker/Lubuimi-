@@ -73,3 +73,23 @@ test("task update persists result and verification with compare-and-set status",
   assert.match(sql.calls[0].query,/AND status=\$13/);
   assert.equal(sql.calls[0].params[12],"running");
 });
+
+
+test("task lease renewal only extends an active running task", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_tasks SET lease_until") ? [{
+    task_id:"t1",task_type:"compute",payload:{},priority:1,status:"running",attempts:1,max_attempts:3,
+    created_at:new Date(0),updated_at:new Date(2),lease_until:new Date(90000),last_error:null
+  }] : []);
+  const store=new PostgresTaskStore(sql);
+  const renewed=await store.extendLease({taskId:"t1",now:30000,leaseUntil:90000});
+  assert.equal(renewed.status,"running");
+  assert.equal(renewed.leaseUntil,90000);
+  assert.match(sql.calls[0].query,/status='running'/);
+  assert.match(sql.calls[0].query,/lease_until > to_timestamp/);
+});
+
+test("expired or non-running task lease cannot be renewed", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresTaskStore(sql);
+  assert.equal(await store.extendLease({taskId:"t1",now:90000,leaseUntil:150000}),null);
+});
