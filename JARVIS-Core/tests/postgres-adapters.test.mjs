@@ -91,5 +91,5 @@ test("task lease renewal only extends an active running task", async () => {
 test("expired or non-running task lease cannot be renewed", async () => {
   const sql=fakeSql(async () => []);
   const store=new PostgresTaskStore(sql);
-  assert.equal(await store.extendLease({taskId:"t1",now:90000,leaseUntil:150000}),null);
+  assert.equal(await store.extendLease({taskId:"t1",now:90000,leaseUntil:150000}),undefined);
 });
