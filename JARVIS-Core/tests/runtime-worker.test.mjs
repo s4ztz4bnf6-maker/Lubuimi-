@@ -41,3 +41,12 @@ test("worker leaves empty queue untouched",async()=>{
  const s=setup(); s.queue.claim=async()=>null;
  assert.deepEqual(await s.worker.runOnce(),{worked:false});
 });
+
+test("worker enforces timeout even when handler never settles",async()=>{
+ const s=setup({handler:()=>new Promise(()=>{})});
+ s.worker.timeoutMs=10;
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"queued");
+ assert.match(result.error,/timed out/);
+ assert.equal(s.agents.active,0);
+});
