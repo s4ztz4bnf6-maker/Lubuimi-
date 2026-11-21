@@ -56,3 +56,20 @@ test("persistent budget accounting uses a conditional atomic upsert", async () =
   assert.match(sql.calls[0].query,/tokens_used\+EXCLUDED.tokens_used <= \$4/);
   await assert.rejects(budget.consume("a",{tokens:1,cost:0},{tokens:Infinity,cost:0.1}),/explicit finite/);
 });
+
+test("task update persists result and verification with compare-and-set status", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_tasks") ? [{
+    task_id:"t1",task_type:"compute",payload:{},priority:1,status:"completed",attempts:1,max_attempts:3,
+    created_at:new Date(0),updated_at:new Date(2),lease_until:null,last_error:null,
+    result:{answer:42},verification:{verified:true}
+  }] : []);
+  const store=new PostgresTaskStore(sql);
+  const updated=await store.update({taskId:"t1",type:"compute",payload:{},priority:1,status:"completed",
+    expectedStatus:"running",attempts:1,maxAttempts:3,updatedAt:2,leaseUntil:null,lastError:null,
+    result:{answer:42},verification:{verified:true}});
+  assert.deepEqual(updated.result,{answer:42});
+  assert.deepEqual(updated.verification,{verified:true});
+  assert.match(sql.calls[0].query,/result=\$11::jsonb,verification=\$12::jsonb/);
+  assert.match(sql.calls[0].query,/AND status=\$13/);
+  assert.equal(sql.calls[0].params[12],"running");
+});
