@@ -38,7 +38,7 @@ export class RuntimeWorker {
     const timer=setTimeout(() => controller.abort(new Error("task execution timed out")),this.timeoutMs);
     try {
       const action=task.payload?.action ?? task.action ?? task.type;
-      const allowed=await this.authorizeAction({task:structuredClone(task),agentId,action});
+      const allowed=await Promise.race([this.authorizeAction({task:structuredClone(task),agentId,action}),timeout]);
       if (requireHumanApproval(action) && allowed !== true) {
         await this.queue.transition(task.taskId,"waiting_approval",{leaseUntil:null});
         await this.audit({event:"task.waiting_approval",taskId:task.taskId,actorId:agentId,action});
