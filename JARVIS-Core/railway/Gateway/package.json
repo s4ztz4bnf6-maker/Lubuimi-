@@ -1,0 +1,14 @@
+{
+  "name": "jarvis-gateway",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "check": "bun build ./index.ts --target=bun --outdir=/tmp/jarvis-gateway-check",
+    "test": "bun test tests/mailbox.test.ts"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5",
+    "@aws-sdk/client-s3": "^3.800.0"
+  }
+}
