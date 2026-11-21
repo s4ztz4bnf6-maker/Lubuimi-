@@ -70,7 +70,7 @@ export class TaskQueue {
     const task = await this.#store.get(taskId);
     if (!task) throw new Error("task not found");
     if (!TRANSITIONS[task.status]?.has(next)) throw new Error("invalid task transition " + task.status + " -> " + next);
-    const updated = { ...task, ...clone(patch), status: next, updatedAt: this.#now() };
+    const updated = { ...task, ...clone(patch), status: next, expectedStatus: task.status, updatedAt: this.#now() };
     await this.#store.update(updated); return clone(updated);
   }
   async claim({ leaseMs = 60_000 } = {}) {
