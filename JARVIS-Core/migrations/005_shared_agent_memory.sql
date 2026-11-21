@@ -43,3 +43,30 @@ CREATE TABLE IF NOT EXISTS jarvis_runtime_memory_conflicts (
 
 CREATE INDEX IF NOT EXISTS jarvis_runtime_memory_conflicts_key_idx
   ON jarvis_runtime_memory_conflicts (namespace, memory_key, detected_at DESC);
+
+-- Version snapshots and conflict records are append-only. Runtime roles should
+-- receive INSERT/SELECT only on these tables and must not own them.
+CREATE OR REPLACE FUNCTION jarvis_runtime_reject_memory_history_mutation()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RAISE EXCEPTION 'jarvis runtime memory history is append-only; % is forbidden', TG_OP
+    USING ERRCODE = '55000';
+END;
+$$;
+
+DROP TRIGGER IF EXISTS jarvis_runtime_memory_versions_no_mutation
+  ON jarvis_runtime_memory_versions;
+CREATE TRIGGER jarvis_runtime_memory_versions_no_mutation
+BEFORE UPDATE OR DELETE ON jarvis_runtime_memory_versions
+FOR EACH ROW EXECUTE FUNCTION jarvis_runtime_reject_memory_history_mutation();
+
+DROP TRIGGER IF EXISTS jarvis_runtime_memory_conflicts_no_mutation
+  ON jarvis_runtime_memory_conflicts;
+CREATE TRIGGER jarvis_runtime_memory_conflicts_no_mutation
+BEFORE UPDATE OR DELETE ON jarvis_runtime_memory_conflicts
+FOR EACH ROW EXECUTE FUNCTION jarvis_runtime_reject_memory_history_mutation();
+
+REVOKE UPDATE, DELETE, TRUNCATE ON jarvis_runtime_memory_versions FROM PUBLIC;
+REVOKE UPDATE, DELETE, TRUNCATE ON jarvis_runtime_memory_conflicts FROM PUBLIC;
