@@ -101,6 +101,10 @@ export class AgentDialog {
     if (externalSignal?.aborted) abortFromCaller();
     else externalSignal?.addEventListener("abort", abortFromCaller, { once: true });
     const timer = setTimeout(() => controller.abort(new Error("dialogue turn timed out")), this.#timeoutMs);
+    let rejectOnAbort;
+    const aborted = new Promise((_, reject) => { rejectOnAbort = reject; });
+    const onAbort = () => rejectOnAbort(controller.signal.reason ?? new Error("dialogue cancelled"));
+    controller.signal.addEventListener("abort", onAbort, { once: true });
     let turns = 0;
 
     try {
@@ -109,7 +113,7 @@ export class AgentDialog {
         turns++;
         conversation = await this.#setStatus(conversation, "active", currentAgent);
         const transcript = clone(conversation.entries);
-        const response = await this.#invoke({
+        const invocation = Promise.resolve().then(() => this.#invoke({
           agentId: currentAgent,
           taskId: conversation.taskId,
           conversationId: conversation.conversationId,
@@ -117,7 +121,8 @@ export class AgentDialog {
           transcript,
           turn: turns,
           signal: controller.signal
-        });
+        }));
+        const response = await Promise.race([invocation, aborted]);
         if (controller.signal.aborted) throw controller.signal.reason ?? new Error("dialogue cancelled");
         if (!response || typeof response.message !== "string" || !response.message.trim() ||
             typeof response.done !== "boolean") {
@@ -175,6 +180,7 @@ export class AgentDialog {
       throw error;
     } finally {
       clearTimeout(timer);
+      controller.signal.removeEventListener("abort", onAbort);
       externalSignal?.removeEventListener("abort", abortFromCaller);
     }
   }
