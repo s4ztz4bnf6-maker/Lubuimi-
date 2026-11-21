@@ -24,7 +24,12 @@ export class RuntimeWorker {
       const handler=this.handlers[task.type];
       if(typeof handler!=="function") throw new Error("no handler registered for task type: "+task.type);
       await this.audit({event:"task.started",taskId:task.taskId,actorId:agentId,attempt:task.attempts});
-      const result=await handler({task:structuredClone(task),signal:controller.signal,agentId});
+      const timeout = new Promise((_, reject) => {
+        const onAbort = () => reject(controller.signal.reason ?? new Error("task execution timed out"));
+        controller.signal.addEventListener("abort", onAbort, { once: true });
+      });
+      const execution = Promise.resolve().then(() => handler({task:structuredClone(task),signal:controller.signal,agentId}));
+      const result = await Promise.race([execution, timeout]);
       if(controller.signal.aborted) throw controller.signal.reason ?? new Error("task aborted");
       const verdict=await this.verifier({task:structuredClone(task),result:structuredClone(result),agentId});
       if(!verdict || verdict.verified!==true) {
