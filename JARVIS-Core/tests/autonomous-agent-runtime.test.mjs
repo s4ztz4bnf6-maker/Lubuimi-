@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   AgentLifecycleManager, InterAgentMessageBus, AgentBudget, ModelFailover,
-  ApprovalGateway, requireHumanApproval
+  ApprovalGateway, requireHumanApproval, resumeApprovedTask
 } from "../runtime/autonomous-agent-runtime.mjs";
 
 test("agent lifecycle enforces transitions, concurrency and permissions", () => {
@@ -78,4 +78,16 @@ test("approval gateway authorizes only the exact approved task and action",async
  assert.equal(await gateway.authorizes({task,action:"production_deploy"}),true);
  assert.equal(await gateway.authorizes({task,action:"send_btc"}),false);
  assert.equal(await gateway.authorizes({task:{...task,taskId:"task-2"},action:"production_deploy"}),false);
+});
+
+
+test("approved task resumes only with its matching approval record",async()=>{
+ const task={taskId:"t-resume",type:"deploy",payload:{action:"production_deploy",approvalId:"a-resume"},status:"waiting_approval"};
+ let transitioned;
+ const queue={get:async()=>task,transition:async(id,status,patch)=>{transitioned={id,status,patch};return {...task,...patch,status};}};
+ const approvals={get:async()=>({approval_id:"a-resume",task_id:"t-resume",action:"production_deploy",status:"approved"})};
+ const resumed=await resumeApprovedTask({queue,approvals,taskId:"t-resume",approvalId:"a-resume"});
+ assert.equal(resumed.status,"queued");
+ assert.equal(transitioned.status,"queued");
+ await assert.rejects(resumeApprovedTask({queue,approvals:{get:async()=>({approval_id:"wrong",task_id:"t-resume",action:"production_deploy",status:"approved"})},taskId:"t-resume",approvalId:"wrong"}),/does not match/);
 });
