@@ -56,3 +56,14 @@ Pass both callbacks to `RuntimeWorker`. A denied critical task is parked and its
 ## Reviewer authorization and expiry
 
 - `ApprovalGateway` defaults to denying every reviewer. The host must inject `authorizeReviewer`, backed by a trusted identity/role directory; a non-empty reviewer ID alone is not authorization.\n- Approval resolution checks pending state and expiry before the store's atomic pending/expiry-guarded update.\n- Approved records are checked for expiry again at execution authorization and task resumption.\n- Do not trust reviewer IDs supplied by an agent or task payload; derive them from an authenticated human session.\n
+
+## Feature-flagged Railway integration boundary
+
+`feature-flag.mjs` provides a narrow execution gate for the existing Railway Worker host:
+- `JARVIS_AUTONOMOUS_RUNTIME_ENABLED=true` opts in; every other value keeps the legacy path.
+- `JARVIS_AUTONOMOUS_RUNTIME_KILL_SWITCH=true` overrides opt-in and returns execution to the legacy path.
+- A host-side `disable()` provides an immediate in-process rollback and emits an audit event.
+- If the flag is enabled but runtime dependencies are missing, execution fails closed instead of silently invoking legacy code.
+- Runtime errors are never replayed through the legacy handler, avoiding duplicate side effects after ambiguous failures.
+
+This is an integration seam, not a production activation. The current Railway Worker entrypoint has not yet been wired to this gate, and the flag must remain unset until the host supplies the PostgreSQL stores, authenticated reviewer authorization, provider adapters, verifier, and a bounded legacy tick. Add contract tests around the actual Worker task lifecycle before enabling it in staging.
