@@ -1,7 +1,7 @@
 # Autonomous Runtime PostgreSQL persistence
 
 Apply `migrations/001_autonomous_runtime.sql`, `migrations/002_runtime_task_results.sql`, and then `migrations/003_runtime_audit_immutable.sql` to a dedicated development database. Migration 002 is safe for databases that already applied migration 001.
-The migration creates durable task, approval, message, audit, and per-agent usage tables.
+The migrations create durable task, approval, message, audit, per-agent usage, and conversation transcript tables. Apply `004_agent_conversations.sql` after migrations 001-003 for durable multi-agent dialogue.
 
 Adapters in `postgres-adapters.mjs` use the existing postgres.js client:
 - `PostgresTaskStore`: atomic queue claim with `FOR UPDATE SKIP LOCKED`, attempt counter, idempotency lookup, active-lease renewal, expired-lease recovery, durable result/verification JSON, and compare-and-set status updates.
@@ -34,3 +34,16 @@ The optional `runtime/feature-flag.mjs` module keeps the legacy execution path a
 The feature gate is not yet connected to `railway/Worker/index.ts`. Do not set the environment flag in Railway until the real Worker integration, provider adapters, verifier, authenticated reviewer directory, database migrations, and staging contract tests have been completed. No Railway environment variable or service was changed by this commit.
 
 The gate also enforces single-flight execution: overlapping `runOnce()` calls share one promise and cannot start parallel ticks through the same gate. `disable(reason)` first marks the gate locally disabled, records the event, and waits for the current tick to settle before returning. This is a graceful drain, not forced cancellation. A host-level environment kill switch prevents new autonomous ticks but cannot retroactively cancel a tick already in progress.
+
+
+## Durable multi-agent conversations
+
+`PostgresAgentConversationStore` implements the `AgentDialog` storage contract:
+- `create` inserts a version-zero conversation and initial participant list.
+- `get` retrieves the durable transcript and state.
+- `append` appends one JSONB entry and increments the version in one conditional UPDATE.
+- `setStatus` changes state and increments the version in one conditional UPDATE.
+- Stale writers receive `null`; they cannot overwrite a newer transcript.
+- The database schema constrains statuses, participant arrays, transcript arrays and nonnegative versions.
+
+The process-local lock in `AgentDialog` only serializes calls in one process. PostgreSQL compare-and-set is the cross-process concurrency authority. Apply migration 004 only in a dedicated development/staging database first. This change adds the migration and adapter but does not apply any database migration or activate the production Worker.
