@@ -50,3 +50,20 @@ The process-local lock in `AgentDialog` only serializes calls in one process. Po
 
 
 Recovery behavior: `AgentDialog.resume({conversationId})` reloads an active conversation after a host restart. It counts already-persisted agent entries toward the turn limit, recognizes a completed or user-paused final turn, and resumes at a persisted handoff target rather than invoking the previous agent again. If a crash occurs after persisting a handoff but before delivering its bus notification, the recovery path emits a recovery handoff event. Message delivery should be idempotent in the host adapter.
+
+
+## Shared versioned agent memory
+
+Migration 005 adds a namespaced memory store, immutable version snapshots, and append-only conflict records. Apply it only after migrations 001-004 in a dedicated development/staging database.
+
+`PostgresAgentMemoryStore` supports:
+- `get(namespace, key)` and bounded `list(namespace, limit)`.
+- `put({ namespace, key, value, provenance, actorId, expectedVersion })` with optimistic compare-and-set. Use `expectedVersion: 0` only to create a key; updates must supply the exact version last read.
+- Each successful write and its immutable version snapshot are committed in one SQL statement. A stale write does not overwrite current data; it returns `{ ok: false, conflict: true, current }` and records the attempted value and observed version for review.
+- `history(namespace, key, limit)` reads prior snapshots.
+
+Important security boundary: namespaces are identifiers, not authorization. The host must authenticate the actor and authorize access to each namespace before calling this adapter. Do not expose arbitrary namespace reads/writes directly to agents. Keep runtime database permissions least-privilege; the migration makes version and conflict records append-only and revokes mutation privileges from PUBLIC. The current-value table still requires host/database role controls.
+
+Provenance is caller-supplied structured JSON. The adapter validates its shape but does not independently establish that a source is truthful. The host should attach source references, timestamps, confidence/verification state and actor identity, and should distinguish user-confirmed facts from model-inferred notes. Conflicts are retained for explicit reconciliation; the adapter never silently chooses a winner.
+
+No migration has been applied to any database. The Worker is still not wired to this store, and no Railway environment or deployment has been changed.
