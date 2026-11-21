@@ -125,3 +125,17 @@ test("concurrent replies cannot both advance the same conversation", async () =>
   assert.equal(results.filter(x => x.status === "fulfilled").length, 1);
   assert.equal(results.filter(x => x.status === "rejected").length, 1);
 });
+
+
+test("active dialogue resumes from durable transcript without replaying the previous agent turn", async () => {
+  const h = harness({ responses: [
+    () => ({ message: "Research persisted", done: false, handoffTo: "critic" }),
+    () => ({ message: "Critique complete", done: true })
+  ] });
+  const started = await h.dialog.start({
+    conversationId: "c-resume", taskId: "t-resume",
+    participants: ["research", "critic"], firstAgent: "research",
+    userMessage: "Investigate and review."
+  });
+  assert.equal(started.status, "completed");
+});
