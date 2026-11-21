@@ -51,3 +51,8 @@ const requestApproval = ({ task, agentId, action }) =>
 ```
 
 Pass both callbacks to `RuntimeWorker`. A denied critical task is parked and its approval ID is persisted in the task payload. After a named human reviewer resolves it, call `resumeApprovedTask({ queue, approvals, taskId, approvalId })`; it verifies exact task, action and approval identity before compare-and-set requeue. The next execution still rechecks the approved record before any handler side effect. A rejected, expired, missing or mismatched approval fails closed.
+
+
+## Reviewer authorization and expiry
+
+- `ApprovalGateway` defaults to denying every reviewer. The host must inject `authorizeReviewer`, backed by a trusted identity/role directory; a non-empty reviewer ID alone is not authorization.\n- Approval resolution checks pending state and expiry before the store's atomic pending/expiry-guarded update.\n- Approved records are checked for expiry again at execution authorization and task resumption.\n- Do not trust reviewer IDs supplied by an agent or task payload; derive them from an authenticated human session.\n
