@@ -67,3 +67,6 @@ Pass both callbacks to `RuntimeWorker`. A denied critical task is parked and its
 - Runtime errors are never replayed through the legacy handler, avoiding duplicate side effects after ambiguous failures.
 
 This is an integration seam, not a production activation. The current Railway Worker entrypoint has not yet been wired to this gate, and the flag must remain unset until the host supplies the PostgreSQL stores, authenticated reviewer authorization, provider adapters, verifier, and a bounded legacy tick. Add contract tests around the actual Worker task lifecycle before enabling it in staging.
+
+- Concurrent callers share one in-flight tick, preventing duplicate polling by overlapping schedulers.
+- `disable(reason)` blocks subsequent autonomous ticks and gracefully drains the current tick; it does not claim to cancel a handler already executing. The runtime's own task deadline and cooperative AbortSignal remain responsible for execution timeout.
