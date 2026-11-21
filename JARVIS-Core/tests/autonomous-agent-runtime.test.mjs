@@ -51,7 +51,7 @@ test("model failover skips cooled providers and returns provider provenance", as
 
 test("approval gateway requires a named human reviewer and explicit decision", async () => {
   const rows = new Map();
-  const gateway = new ApprovalGateway({ store: {
+  const gateway = new ApprovalGateway({ authorizeReviewer: async () => true, store: {
     create: async row => { rows.set(row.approvalId, row); return row; },
     get: async id => rows.get(id) ?? null,
     resolve: async row => { const old = rows.get(row.approvalId); if (!old || old.status !== "pending") throw new Error("not pending"); const next = { ...old, status: row.decision, reviewerId: row.reviewerId, resolvedAt: row.resolvedAt }; rows.set(row.approvalId, next); return next; }
@@ -70,7 +70,7 @@ test("critical actions are explicitly gated", () => {
 
 test("approval gateway authorizes only the exact approved task and action",async()=>{
  const rows=new Map();
- const gateway=new ApprovalGateway({store:{create:async row=>{rows.set(row.approvalId,row);return row;},get:async id=>rows.get(id)??null,resolve:async row=>{const old=rows.get(row.approvalId);const next={...old,status:row.decision,reviewerId:row.reviewerId};rows.set(row.approvalId,next);return next;}}});
+ const gateway=new ApprovalGateway({authorizeReviewer:async()=>true,store:{create:async row=>{rows.set(row.approvalId,row);return row;},get:async id=>rows.get(id)??null,resolve:async row=>{const old=rows.get(row.approvalId);const next={...old,status:row.decision,reviewerId:row.reviewerId};rows.set(row.approvalId,next);return next;}}});
  const request=await gateway.request({taskId:"task-1",agentId:"executor",action:"production_deploy"});
  const task={taskId:"task-1",payload:{action:"production_deploy",approvalId:request.approvalId}};
  assert.equal(await gateway.authorizes({task,action:"production_deploy"}),false);
@@ -90,4 +90,19 @@ test("approved task resumes only with its matching approval record",async()=>{
  assert.equal(resumed.status,"queued");
  assert.equal(transitioned.status,"queued");
  await assert.rejects(resumeApprovedTask({queue,approvals:{get:async()=>({approval_id:"wrong",task_id:"t-resume",action:"production_deploy",status:"approved"})},taskId:"t-resume",approvalId:"wrong"}),/does not match/);
+});
+
+
+test("approval gateway fails closed for unauthorized reviewers and expired approvals",async()=>{
+ const rows=new Map();
+ const gateway=new ApprovalGateway({authorizeReviewer:async({reviewerId})=>reviewerId==="security-reviewer",store:{
+  create:async row=>{rows.set(row.approvalId,row);return row;},
+  get:async id=>rows.get(id)??null,
+  resolve:async row=>{const old=rows.get(row.approvalId);const next={...old,status:row.decision,reviewerId:row.reviewerId};rows.set(row.approvalId,next);return next;}
+ }});
+ const request=await gateway.request({taskId:"t-sec",agentId:"executor",action:"production_deploy"});
+ await assert.rejects(gateway.resolve(request.approvalId,"approved","random-user"),/not authorized/);
+ await gateway.resolve(request.approvalId,"approved","security-reviewer");
+ rows.set(request.approvalId,{...rows.get(request.approvalId),expiresAt:1});
+ assert.equal(await gateway.authorizes({task:{taskId:"t-sec",payload:{approvalId:request.approvalId}},action:"production_deploy"}),false);
 });
