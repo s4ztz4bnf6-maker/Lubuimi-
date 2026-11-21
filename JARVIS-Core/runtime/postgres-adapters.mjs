@@ -61,6 +61,10 @@ export class PostgresApprovalStore {
     );
     return rows[0];
   }
+  async get(approvalId) {
+    const rows = await this.sql.unsafe("SELECT * FROM jarvis_runtime_approvals WHERE approval_id=$1 LIMIT 1",[approvalId]);
+    return rows[0] ?? null;
+  }
   async resolve({ approvalId, decision, reviewerId, resolvedAt }) {
     const rows = await this.sql.unsafe(
       "UPDATE jarvis_runtime_approvals SET status=$2,reviewer_id=$3,resolved_at=to_timestamp($4/1000.0) WHERE approval_id=$1 AND status='pending' AND (expires_at IS NULL OR expires_at>now()) RETURNING *",
