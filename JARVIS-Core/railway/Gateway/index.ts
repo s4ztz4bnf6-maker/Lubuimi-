@@ -380,6 +380,44 @@ const server = Bun.serve({
       return json({ error: "Unauthorized" }, 401);
     }
     try {
+      // Authenticated bridge: uses the existing AGENT_API_KEY; no new GitHub PAT.
+      // External content is data, never an instruction with elevated authority.
+      if (url.pathname === "/v1/bridge/messages" && req.method === "POST") {
+        const raw = await req.text();
+        if (Buffer.byteLength(raw, "utf8") > 32768) return json({ error: "Payload too large" }, 413);
+        let body;
+        try { body = JSON.parse(raw); } catch { return json({ error: "Invalid JSON" }, 400); }
+        const sender = String(body?.sender ?? "").trim();
+        const content = String(body?.content ?? "").trim();
+        const requestId = String(body?.requestId ?? "").trim();
+        if (!/^(chatgpt|jarvis|agent:[a-z0-9_-]{1,40})$/.test(sender) ||
+            !/^[a-zA-Z0-9_-]{8,100}$/.test(requestId) ||
+            !content || Buffer.byteLength(content, "utf8") > 16000)
+          return json({ error: "Invalid bridge message" }, 400);
+        const subject = "bridge:" + requestId;
+        const [existing] = await sql`
+          SELECT id, status FROM agent_messages
+          WHERE channel = 'agent_bridge' AND subject = ${subject}
+          LIMIT 1
+        `;
+        if (existing) return json({ id: existing.id, status: existing.status, duplicate: true });
+        const [saved] = await sql`
+          INSERT INTO agent_messages (channel, recipient, subject, body, status)
+          VALUES ('agent_bridge', 'jarvis', ${subject}, ${JSON.stringify({ sender, content })}, 'pending_approval')
+          RETURNING id, status
+        `;
+        return json({ id: saved.id, status: saved.status, requestId }, 202);
+      }
+      if (url.pathname === "/v1/bridge/messages" && req.method === "GET") {
+        const after = Number(url.searchParams.get("after") || "0");
+        if (!Number.isSafeInteger(after) || after < 0) return json({ error: "Invalid cursor" }, 400);
+        const rows = await sql`
+          SELECT id, recipient, subject, body, status, created_at
+          FROM agent_messages WHERE channel = 'agent_bridge' AND id > ${after}
+          ORDER BY id ASC LIMIT 50
+        `;
+        return json({ messages: rows, nextCursor: rows.length ? rows[rows.length - 1].id : after });
+      }
       if (req.method === "GET" && (url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/identity/public")) {
         const [row] = await sql.unsafe("SELECT identity_key,dossier,verification_status,source_note,created_at,updated_at FROM jarvis_corporate_identity WHERE identity_key=$1", ["marshall-islands-dossier-v1"]);
         if (!row) return json({ error: "Corporate identity dossier not initialized" }, 404);
