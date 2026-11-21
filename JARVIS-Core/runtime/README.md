@@ -23,3 +23,8 @@ The runtime intentionally refuses to pretend an in-memory queue is durable. Conc
 
 ## Safety
 Unknown permissions fail closed. Critical actions require an explicit human approval workflow. This module does not send payments, deploy production, or mutate secrets.
+
+## Runtime worker execution
+`worker.mjs` adds a bounded single-task execution cycle. It claims a durable task, acquires agent capacity, executes a registered handler with an AbortSignal timeout, invokes an independent verifier, and only then transitions the task to completed. Failed or unverified results are retried through the queue adapter. Every path releases agent capacity.
+
+The worker is a library primitive, not yet wired into the production Worker process. Handlers must not perform critical side effects before an approval check; use a prepare/approve/execute workflow for deployments, payments, secrets, deletion, or other irreversible operations.
