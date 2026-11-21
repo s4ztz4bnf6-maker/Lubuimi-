@@ -133,11 +133,20 @@ export class AgentDeliberation {
 
       // Phase 4: separate host verifier; no automatic acceptance of a model's
       // self-certification. Unresolved conflicts or failed verification escalate.
-      const verification = await this.#verify({
-        task, synthesis: clone(synthesis), analyses: clone(analyses),
-        critiques: clone(critiques), conflicts: clone(conflicts),
-        signal: controller.signal
-      });
+      let rejectVerificationOnAbort;
+      const verificationAborted = new Promise((_, reject) => { rejectVerificationOnAbort = reject; });
+      const onVerificationAbort = () => rejectVerificationOnAbort(controller.signal.reason ?? new Error("deliberation cancelled"));
+      controller.signal.addEventListener("abort", onVerificationAbort, { once: true });
+      let verification;
+      try {
+        verification = await Promise.race([Promise.resolve().then(() => this.#verify({
+          task, synthesis: clone(synthesis), analyses: clone(analyses),
+          critiques: clone(critiques), conflicts: clone(conflicts),
+          signal: controller.signal
+        })), verificationAborted]);
+      } finally {
+        controller.signal.removeEventListener("abort", onVerificationAbort);
+      }
       if (!verification || typeof verification.ok !== "boolean" ||
           !Array.isArray(verification.issues) ||
           !verification.issues.every(validText)) {
