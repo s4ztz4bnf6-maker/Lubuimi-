@@ -106,3 +106,15 @@ test("worker aborts and retries when its durable lease is lost",async()=>{
  assert.match(result.error,/task lease lost/);
  assert.equal(s.agents.active,0);
 });
+
+
+test("worker creates a durable approval request and stores its reference",async()=>{
+ let created;
+ const s=setup({handler:async()=>({ok:true})});
+ s.queue.claim=async()=>({taskId:"critical-3",type:"compute",payload:{action:"production_deploy"},attempts:1,status:"running"});
+ s.worker.requestApproval=async input=>{created=input;return {approvalId:"approval-3",status:"pending"};};
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"waiting_approval");
+ assert.equal(created.task.taskId,"critical-3");
+ assert.equal(s.getTask().payload.approvalId,"approval-3");
+});
