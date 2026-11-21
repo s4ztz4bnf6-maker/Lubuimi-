@@ -47,3 +47,6 @@ The gate also enforces single-flight execution: overlapping `runOnce()` calls sh
 - The database schema constrains statuses, participant arrays, transcript arrays and nonnegative versions.
 
 The process-local lock in `AgentDialog` only serializes calls in one process. PostgreSQL compare-and-set is the cross-process concurrency authority. Apply migration 004 only in a dedicated development/staging database first. This change adds the migration and adapter but does not apply any database migration or activate the production Worker.
+
+
+Recovery behavior: `AgentDialog.resume({conversationId})` reloads an active conversation after a host restart. It counts already-persisted agent entries toward the turn limit, recognizes a completed or user-paused final turn, and resumes at a persisted handoff target rather than invoking the previous agent again. If a crash occurs after persisting a handoff but before delivering its bus notification, the recovery path emits a recovery handoff event. Message delivery should be idempotent in the host adapter.
