@@ -394,19 +394,48 @@ const server = Bun.serve({
             !/^[a-zA-Z0-9_-]{8,100}$/.test(requestId) ||
             !content || Buffer.byteLength(content, "utf8") > 16000)
           return json({ error: "Invalid bridge message" }, 400);
+        if (!env.MODEL_API_KEY) return json({ error: "MODEL_API_KEY is not configured" }, 503);
         const subject = "bridge:" + requestId;
         const [existing] = await sql`
-          SELECT id, status FROM agent_messages
-          WHERE channel = 'agent_bridge' AND subject = ${subject}
-          LIMIT 1
+          SELECT id, status, delivery_result FROM agent_messages
+          WHERE channel = 'agent_bridge' AND subject = ${subject} AND recipient = 'jarvis'
+          ORDER BY id DESC LIMIT 1
         `;
-        if (existing) return json({ id: existing.id, status: existing.status, duplicate: true });
+        if (existing) return json({ id: existing.id, status: existing.status, requestId, answer: existing.delivery_result?.answer ?? null, duplicate: true });
+        const base = (env.MODEL_BASE_URL || "https://api.openai.com/v1").replace(/\\/$/, "");
+        const endpoint = base.endsWith("/v1") ? base + "/chat/completions" : base + "/v1/chat/completions";
+        let upstream;
+        try {
+          upstream = await fetch(endpoint, {
+            method: "POST",
+            headers: { authorization: `Bearer ${env.MODEL_API_KEY}`, "content-type": "application/json" },
+            body: JSON.stringify({ model: env.MODEL_NAME || "gpt-4o-mini", messages: [{ role: "user", content }] }),
+            signal: AbortSignal.timeout(60000)
+          });
+        } catch (error) {
+          console.error("[Bridge] Model connection failed:", error instanceof Error ? error.name : "unknown");
+          return json({ error: "Model connection failed" }, 502);
+        }
+        if (!upstream.ok) {
+          console.error("[Bridge] Model upstream status:", upstream.status);
+          return json({ error: "Model provider rejected request", upstreamStatus: upstream.status }, 502);
+        }
+        let answer;
+        try {
+          const result = await upstream.json();
+          answer = result?.choices?.[0]?.message?.content;
+        } catch { return json({ error: "Invalid model response" }, 502); }
+        if (typeof answer !== "string" || !answer.trim()) return json({ error: "Empty model response" }, 502);
         const [saved] = await sql`
-          INSERT INTO agent_messages (channel, recipient, subject, body, status)
-          VALUES ('agent_bridge', 'jarvis', ${subject}, ${JSON.stringify({ sender, content })}, 'pending_approval')
+          INSERT INTO agent_messages (channel, recipient, subject, body, status, delivered_at, delivery_result)
+          VALUES ('agent_bridge', 'jarvis', ${subject}, ${JSON.stringify({ sender, content })}, 'delivered', NOW(), ${sql.json({ requestId, answer })})
           RETURNING id, status
         `;
-        return json({ id: saved.id, status: saved.status, requestId }, 202);
+        await sql`
+          INSERT INTO agent_messages (channel, recipient, subject, body, status, delivered_at)
+          VALUES ('agent_bridge', ${sender}, ${subject}, ${JSON.stringify({ sender: "jarvis", content: answer, requestId })}, 'delivered', NOW())
+        `;
+        return json({ id: saved.id, status: saved.status, requestId, answer }, 200);
       }
       if (url.pathname === "/v1/bridge/messages" && req.method === "GET") {
         const after = Number(url.searchParams.get("after") || "0");
