@@ -83,3 +83,26 @@ test("worker timeout also bounds a verifier that never settles",async()=>{
  assert.match(result.error,/timed out/);
  assert.equal(s.agents.active,0);
 });
+
+
+test("worker renews the durable lease while a task is running",async()=>{
+ const s=setup({handler:async()=>{await new Promise(resolve=>setTimeout(resolve,700));return {ok:true};}});
+ let renewals=0;
+ s.queue.extendLease=async()=>{renewals++;return {taskId:"t1"};};
+ s.worker.leaseMs=1000;
+ s.worker.timeoutMs=1500;
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"completed");
+ assert.ok(renewals>=1);
+});
+
+test("worker aborts and retries when its durable lease is lost",async()=>{
+ const s=setup({handler:()=>new Promise(()=>{})});
+ s.queue.extendLease=async()=>{throw new Error("database lease conflict");};
+ s.worker.leaseMs=1000;
+ s.worker.timeoutMs=5000;
+ const result=await s.worker.runOnce();
+ assert.equal(result.status,"queued");
+ assert.match(result.error,/task lease lost/);
+ assert.equal(s.agents.active,0);
+});
