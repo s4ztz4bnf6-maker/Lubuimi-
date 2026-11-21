@@ -52,3 +52,47 @@ test("host kill switch disables runtime and local disable is immediate", async (
   assert.equal((await gate.runOnce()).mode, "legacy");
   assert.equal(runtimeCalls, 0); assert.equal(events[0].event, "runtime.feature_disabled");
 });
+
+test("overlapping callers share one in-flight runtime tick", async () => {
+  let calls = 0;
+  let release;
+  const gate = createRuntimeExecutionGate({
+    env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },
+    legacyRunOnce: async () => "legacy",
+    runtimeWorker: { runOnce: async () => {
+      calls++;
+      await new Promise(resolve => { release = resolve; });
+      return "single-result";
+    } }
+  });
+  const first = gate.runOnce();
+  const second = gate.runOnce();
+  assert.equal(gate.status().busy, true);
+  assert.equal(calls, 1);
+  release();
+  assert.deepEqual(await first, { mode: "autonomous-runtime", result: "single-result" });
+  assert.deepEqual(await second, { mode: "autonomous-runtime", result: "single-result" });
+  assert.equal(gate.status().busy, false);
+});
+
+test("disable drains the active tick and prevents the next runtime tick", async () => {
+  let release;
+  let runtimeCalls = 0;
+  const gate = createRuntimeExecutionGate({
+    env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },
+    legacyRunOnce: async () => "legacy",
+    runtimeWorker: { runOnce: async () => {
+      runtimeCalls++;
+      await new Promise(resolve => { release = resolve; });
+      return "finished";
+    } }
+  });
+  const active = gate.runOnce();
+  const disabling = gate.disable("controlled rollback");
+  assert.equal(gate.status().enabled, false);
+  release();
+  assert.deepEqual(await active, { mode: "autonomous-runtime", result: "finished" });
+  assert.deepEqual(await disabling, { disabled: true, drained: true });
+  assert.equal((await gate.runOnce()).mode, "legacy");
+  assert.equal(runtimeCalls, 1);
+});
