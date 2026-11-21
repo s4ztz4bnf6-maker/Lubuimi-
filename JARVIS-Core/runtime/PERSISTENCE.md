@@ -5,7 +5,7 @@ The migration creates durable task, approval, message, audit, and per-agent usag
 
 Adapters in `postgres-adapters.mjs` use the existing postgres.js client:
 - `PostgresTaskStore`: atomic queue claim with `FOR UPDATE SKIP LOCKED`, attempt counter, idempotency lookup, active-lease renewal, expired-lease recovery, durable result/verification JSON, and compare-and-set status updates.
-- `PostgresApprovalStore`: pending-only human decision update; expired approvals cannot be approved.
+- `PostgresApprovalStore`: durable approval lookup plus pending-only human decision update; expired approvals cannot be approved.
 - `PostgresRuntimeAudit`: append-only event insertion API.
 
 Example wiring (not enabled in production):
