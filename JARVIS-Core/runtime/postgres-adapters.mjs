@@ -186,3 +186,100 @@ export class PostgresAgentConversationStore {
     return conversationFromRow(rows[0] ?? null);
   }
 }
+
+
+const memoryFromRow = r => r && ({
+  memoryId: Number(r.memory_id),
+  namespace: r.namespace,
+  key: r.memory_key,
+  value: r.value,
+  provenance: r.provenance,
+  version: Number(r.version),
+  createdBy: r.created_by,
+  updatedBy: r.updated_by,
+  createdAt: new Date(r.created_at).getTime(),
+  updatedAt: new Date(r.updated_at).getTime()
+});
+
+const jsonValue = (value, label) => {
+  let encoded;
+  try { encoded = JSON.stringify(value); } catch { throw new Error(`invalid ${label} JSON value`); }
+  if (encoded === undefined) throw new Error(`invalid ${label} JSON value`);
+  return encoded;
+};
+
+/**
+ * Shared namespaced memory with optimistic concurrency and immutable version snapshots.
+ * Authorization for namespaces is deliberately delegated to the authenticated host.
+ */
+export class PostgresAgentMemoryStore {
+  constructor(sql) {
+    if (typeof sql?.unsafe !== "function") throw new Error("postgres.js client required");
+    this.sql = sql;
+  }
+
+  async get(namespace, key) {
+    if (typeof namespace !== "string" || !namespace || typeof key !== "string" || !key) {
+      throw new Error("memory namespace and key required");
+    }
+    const rows = await this.sql.unsafe(
+      "SELECT * FROM jarvis_runtime_memories WHERE namespace=$1 AND memory_key=$2 LIMIT 1",
+      [namespace, key]
+    );
+    return memoryFromRow(rows[0] ?? null);
+  }
+
+  async list(namespace, limit = 100) {
+    if (typeof namespace !== "string" || !namespace) throw new Error("memory namespace required");
+    const boundedLimit = Math.max(1, Math.min(500, Number(limit) || 100));
+    const rows = await this.sql.unsafe(
+      "SELECT * FROM jarvis_runtime_memories WHERE namespace=$1 ORDER BY updated_at DESC,memory_key ASC LIMIT $2",
+      [namespace, boundedLimit]
+    );
+    return rows.map(memoryFromRow);
+  }
+
+  /**
+   * expectedVersion=0 creates a key; a positive value updates exactly that version.
+   * Returns { ok:true, memory } or { ok:false, conflict:true, current }.
+   * The current-row write and immutable snapshot are one SQL statement.
+   */
+  async put({ namespace, key, value, provenance = {}, actorId, expectedVersion }) {
+    if (typeof namespace !== "string" || !namespace || namespace.length > 200 ||
+        typeof key !== "string" || !key || key.length > 500 ||
+        typeof actorId !== "string" || !actorId ||
+        !Number.isSafeInteger(expectedVersion) || expectedVersion < 0 ||
+        provenance === null || typeof provenance !== "object" || Array.isArray(provenance)) {
+      throw new Error("invalid memory write; namespace, key, actor, provenance and expectedVersion are required");
+    }
+    const encodedValue = jsonValue(value, "memory");
+    const encodedProvenance = jsonValue(provenance, "memory provenance");
+    const rows = await this.sql.unsafe(
+      "WITH written AS (INSERT INTO jarvis_runtime_memories(namespace,memory_key,value,provenance,version,created_by,updated_by,created_at,updated_at) SELECT $1,$2,$3::jsonb,$4::jsonb,1,$5,$5,now(),now() WHERE $6::bigint=0 ON CONFLICT(namespace,memory_key) DO UPDATE SET value=EXCLUDED.value,provenance=EXCLUDED.provenance,version=jarvis_runtime_memories.version+1,updated_by=EXCLUDED.updated_by,updated_at=now() WHERE jarvis_runtime_memories.version=$6 RETURNING *), snapshot AS (INSERT INTO jarvis_runtime_memory_versions(memory_id,version,value,provenance,actor_id,created_at) SELECT memory_id,version,value,provenance,updated_by,updated_at FROM written RETURNING memory_id) SELECT * FROM written",
+      [namespace,key,encodedValue,encodedProvenance,actorId,expectedVersion]
+    );
+    if (rows.length) return { ok:true, memory:memoryFromRow(rows[0]) };
+
+    const current = await this.get(namespace, key);
+    await this.sql.unsafe(
+      "INSERT INTO jarvis_runtime_memory_conflicts(namespace,memory_key,expected_version,actual_version,attempted_value,attempted_provenance,actor_id) VALUES($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7)",
+      [namespace,key,expectedVersion,current?.version ?? null,encodedValue,encodedProvenance,actorId]
+    );
+    return { ok:false, conflict:true, current };
+  }
+
+  async history(namespace, key, limit = 100) {
+    if (typeof namespace !== "string" || !namespace || typeof key !== "string" || !key) {
+      throw new Error("memory namespace and key required");
+    }
+    const boundedLimit = Math.max(1, Math.min(500, Number(limit) || 100));
+    const rows = await this.sql.unsafe(
+      "SELECT v.memory_id,v.version,v.value,v.provenance,v.actor_id,v.created_at FROM jarvis_runtime_memory_versions v JOIN jarvis_runtime_memories m ON m.memory_id=v.memory_id WHERE m.namespace=$1 AND m.memory_key=$2 ORDER BY v.version DESC LIMIT $3",
+      [namespace,key,boundedLimit]
+    );
+    return rows.map(r => ({
+      memoryId:Number(r.memory_id), version:Number(r.version), value:r.value,
+      provenance:r.provenance, actorId:r.actor_id, createdAt:new Date(r.created_at).getTime()
+    }));
+  }
+}
