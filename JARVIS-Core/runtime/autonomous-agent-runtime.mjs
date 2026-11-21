@@ -143,6 +143,11 @@ export class ApprovalGateway {
   }
   async resolve(approvalId, decision, reviewerId) {
     if (!["approved", "rejected"].includes(decision) || !reviewerId) throw new Error("valid human reviewer decision required");
+    const approval=await this.#store.get(approvalId);
+    if (!approval || approval.status!=="pending") throw new Error("approval missing or not pending");
+    const expiresAt=approval.expires_at ?? approval.expiresAt;
+    if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) throw new Error("approval expired");
+    if (await this.#authorizeReviewer({ reviewerId, approval, decision }) !== true) throw new Error("reviewer is not authorized");
     return this.#store.resolve({ approvalId, decision, reviewerId, resolvedAt: Date.now() });
   }
 }
