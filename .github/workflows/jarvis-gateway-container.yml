@@ -1,0 +1,20 @@
+name: JARVIS Gateway Container Build
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Gateway/**'
+      - '.github/workflows/jarvis-gateway-container.yml'
+  workflow_dispatch:
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production container
+        run: docker build -f JARVIS-Core/railway/Gateway/Dockerfile JARVIS-Core/railway/Gateway
+      - name: Bun unit tests
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: cd JARVIS-Core/railway/Gateway && bun install && bun run check && bun run test
