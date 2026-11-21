@@ -6,6 +6,7 @@ This folder contains dependency-injected runtime primitives. It is not wired int
 - Agent lifecycle, bounded concurrency and explicit permissions
 - Persistent task queue contract with atomic claim/recovery delegated to a storage adapter
 - Inter-agent message authorization
+- Durable PostgreSQL conversation store with atomic version compare-and-set
 - Human approval gateway
 - Per-agent token/cost budget
 - Provider failover with cooldown and provenance
