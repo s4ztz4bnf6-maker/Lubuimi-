@@ -8,7 +8,7 @@ const taskFromRow = (r) => r && ({
   maxAttempts: r.max_attempts, createdAt: new Date(r.created_at).getTime(),
   updatedAt: new Date(r.updated_at).getTime(),
   leaseUntil: r.lease_until ? new Date(r.lease_until).getTime() : null,
-  lastError: r.last_error
+  lastError: r.last_error, result: r.result ?? null, verification: r.verification ?? null
 });
 
 export class PostgresTaskStore {
@@ -23,10 +23,10 @@ export class PostgresTaskStore {
   async findByIdempotencyKey(key) { const rows = await this.sql.unsafe("SELECT * FROM jarvis_runtime_tasks WHERE idempotency_key=$1",[key]); return taskFromRow(rows[0]); }
   async update(t) {
     const rows = await this.sql.unsafe(
-      "UPDATE jarvis_runtime_tasks SET task_type=$2,payload=$3::jsonb,priority=$4,status=$5,attempts=$6,max_attempts=$7,updated_at=to_timestamp($8/1000.0),lease_until=CASE WHEN $9::bigint IS NULL THEN NULL ELSE to_timestamp($9/1000.0) END,last_error=$10 WHERE task_id=$1 RETURNING *",
-      [t.taskId,t.type,JSON.stringify(t.payload),t.priority,t.status,t.attempts,t.maxAttempts,t.updatedAt,t.leaseUntil,t.lastError]
+      "UPDATE jarvis_runtime_tasks SET task_type=$2,payload=$3::jsonb,priority=$4,status=$5,attempts=$6,max_attempts=$7,updated_at=to_timestamp($8/1000.0),lease_until=CASE WHEN $9::bigint IS NULL THEN NULL ELSE to_timestamp($9/1000.0) END,last_error=$10,result=$11::jsonb,verification=$12::jsonb WHERE task_id=$1 AND status=$13 RETURNING *",
+      [t.taskId,t.type,JSON.stringify(t.payload),t.priority,t.status,t.attempts,t.maxAttempts,t.updatedAt,t.leaseUntil,t.lastError,JSON.stringify(t.result ?? null),JSON.stringify(t.verification ?? null),t.expectedStatus ?? t.status]
     );
-    if (!rows.length) throw new Error("task not found during update");
+    if (!rows.length) throw new Error("task missing or concurrently changed during update");
     return taskFromRow(rows[0]);
   }
   async claimNext({ now, leaseUntil }) {
