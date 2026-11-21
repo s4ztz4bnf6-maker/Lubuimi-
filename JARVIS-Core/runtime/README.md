@@ -86,3 +86,17 @@ This is an integration seam, not a production activation. The current Railway Wo
 - The host supplies model invocation and durable storage. Database `append` and `setStatus` must use atomic version compare-and-set; process-local serialization is not a substitute for durable concurrency control.
 
 Example response contract from each agent: `{ message: string, done: boolean, handoffTo?: agentId }`. The dialog layer does not execute tools or side effects; tool permissions and approval checks remain the responsibility of the host runtime.
+
+
+## Structured multi-agent deliberation
+
+`agent-deliberation.mjs` adds a bounded research-and-review workflow:
+1. Independent specialist analyses run concurrently with a configurable concurrency cap.
+2. Each specialist critiques the peer analyses; results are retained in participant order, not completion order.
+3. Structured claims are compared and contradictory positions are detected.
+4. A designated synthesis agent produces a consolidated response.
+5. A separate host verifier decides whether the result is verified; detected contradictions or verifier issues produce `needs_review` rather than a false success.
+
+The host injects `invokeAgent` and `verify`; no provider credentials or tool permissions are assumed. Calls, total agent-call budget and overall deadline are bounded. Timeout/cancellation races are bounded even when a provider ignores AbortSignal, while cooperative cancellation is still passed to the provider. Any failed phase aborts peer work. This is deliberation only: agents cannot execute external actions through this module.
+
+Each model response must have `{ summary, claims, evidence, openQuestions }`; each claim has `{ subject, position: "supports" | "opposes" | "uncertain", statement, evidenceRefs }`. The verifier returns `{ ok, issues }`. Conflicting claims always escalate to human review, even if the verifier reports success.
