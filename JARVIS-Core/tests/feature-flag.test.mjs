@@ -1,1 +1,54 @@
-import test from "node:test";\nimport assert from "node:assert/strict";\nimport { createRuntimeExecutionGate, readRuntimeFeatureFlags } from "../runtime/feature-flag.mjs";\n\ntest("autonomous runtime is disabled by default", () => {\n  const flags = readRuntimeFeatureFlags({});\n  assert.equal(flags.enabled, false);\n  assert.equal(flags.mode, "legacy");\n});\ntest("feature flag accepts only an explicit true value", () => {\n  assert.equal(readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "yes" }).enabled, false);\n  assert.equal(readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "TRUE" }).enabled, true);\n});\ntest("kill switch overrides an enabled runtime flag", () => {\n  const flags = readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true", JARVIS_AUTONOMOUS_RUNTIME_KILL_SWITCH: "true" });\n  assert.equal(flags.enabled, false);\n  assert.equal(flags.mode, "legacy");\n});\ntest("disabled gate preserves the legacy execution path", async () => {\n  let legacyCalls = 0, runtimeCalls = 0;\n  const gate = createRuntimeExecutionGate({ env: {}, legacyRunOnce: async () => { legacyCalls++; return "legacy-result"; },\n    runtimeWorker: { runOnce: async () => { runtimeCalls++; return "runtime-result"; } } });\n  assert.deepEqual(await gate.runOnce(), { mode: "legacy", result: "legacy-result" });\n  assert.equal(legacyCalls, 1); assert.equal(runtimeCalls, 0);\n});\ntest("enabled gate invokes only the autonomous runtime", async () => {\n  let legacyCalls = 0, runtimeCalls = 0;\n  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },\n    legacyRunOnce: async () => { legacyCalls++; }, runtimeWorker: { runOnce: async () => { runtimeCalls++; return { worked: true }; } } });\n  assert.deepEqual(await gate.runOnce(), { mode: "autonomous-runtime", result: { worked: true } });\n  assert.equal(runtimeCalls, 1); assert.equal(legacyCalls, 0);\n});\ntest("enabled gate fails closed if runtime dependencies are missing", async () => {\n  let legacyCalls = 0; const events = [];\n  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },\n    legacyRunOnce: async () => { legacyCalls++; }, audit: async event => events.push(event) });\n  await assert.rejects(gate.runOnce(), /runtimeWorker.runOnce is unavailable/);\n  assert.equal(legacyCalls, 0); assert.equal(events[0].event, "runtime.feature_configuration_error");\n});\ntest("runtime errors never trigger legacy replay", async () => {\n  let legacyCalls = 0;\n  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },\n    legacyRunOnce: async () => { legacyCalls++; }, runtimeWorker: { runOnce: async () => { throw new Error("ambiguous provider timeout"); } } });\n  await assert.rejects(gate.runOnce(), /ambiguous provider timeout/); assert.equal(legacyCalls, 0);\n});\ntest("host kill switch disables runtime and local disable is immediate", async () => {\n  let runtimeCalls = 0; const events = []; const env = { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" };\n  const gate = createRuntimeExecutionGate({ env, legacyRunOnce: async () => "legacy",\n    runtimeWorker: { runOnce: async () => { runtimeCalls++; return "runtime"; } }, audit: async event => events.push(event) });\n  await gate.disable("operator requested rollback");\n  assert.equal(gate.status().enabled, false);\n  assert.equal((await gate.runOnce()).mode, "legacy");\n  assert.equal(runtimeCalls, 0); assert.equal(events[0].event, "runtime.feature_disabled");\n});\n
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createRuntimeExecutionGate, readRuntimeFeatureFlags } from "../runtime/feature-flag.mjs";
+
+test("autonomous runtime is disabled by default", () => {
+  const flags = readRuntimeFeatureFlags({});
+  assert.equal(flags.enabled, false);
+  assert.equal(flags.mode, "legacy");
+});
+test("feature flag accepts only an explicit true value", () => {
+  assert.equal(readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "yes" }).enabled, false);
+  assert.equal(readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "TRUE" }).enabled, true);
+});
+test("kill switch overrides an enabled runtime flag", () => {
+  const flags = readRuntimeFeatureFlags({ JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true", JARVIS_AUTONOMOUS_RUNTIME_KILL_SWITCH: "true" });
+  assert.equal(flags.enabled, false);
+  assert.equal(flags.mode, "legacy");
+});
+test("disabled gate preserves the legacy execution path", async () => {
+  let legacyCalls = 0, runtimeCalls = 0;
+  const gate = createRuntimeExecutionGate({ env: {}, legacyRunOnce: async () => { legacyCalls++; return "legacy-result"; },
+    runtimeWorker: { runOnce: async () => { runtimeCalls++; return "runtime-result"; } } });
+  assert.deepEqual(await gate.runOnce(), { mode: "legacy", result: "legacy-result" });
+  assert.equal(legacyCalls, 1); assert.equal(runtimeCalls, 0);
+});
+test("enabled gate invokes only the autonomous runtime", async () => {
+  let legacyCalls = 0, runtimeCalls = 0;
+  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },
+    legacyRunOnce: async () => { legacyCalls++; }, runtimeWorker: { runOnce: async () => { runtimeCalls++; return { worked: true }; } } });
+  assert.deepEqual(await gate.runOnce(), { mode: "autonomous-runtime", result: { worked: true } });
+  assert.equal(runtimeCalls, 1); assert.equal(legacyCalls, 0);
+});
+test("enabled gate fails closed if runtime dependencies are missing", async () => {
+  let legacyCalls = 0; const events = [];
+  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },
+    legacyRunOnce: async () => { legacyCalls++; }, audit: async event => events.push(event) });
+  await assert.rejects(gate.runOnce(), /runtimeWorker.runOnce is unavailable/);
+  assert.equal(legacyCalls, 0); assert.equal(events[0].event, "runtime.feature_configuration_error");
+});
+test("runtime errors never trigger legacy replay", async () => {
+  let legacyCalls = 0;
+  const gate = createRuntimeExecutionGate({ env: { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" },
+    legacyRunOnce: async () => { legacyCalls++; }, runtimeWorker: { runOnce: async () => { throw new Error("ambiguous provider timeout"); } } });
+  await assert.rejects(gate.runOnce(), /ambiguous provider timeout/); assert.equal(legacyCalls, 0);
+});
+test("host kill switch disables runtime and local disable is immediate", async () => {
+  let runtimeCalls = 0; const events = []; const env = { JARVIS_AUTONOMOUS_RUNTIME_ENABLED: "true" };
+  const gate = createRuntimeExecutionGate({ env, legacyRunOnce: async () => "legacy",
+    runtimeWorker: { runOnce: async () => { runtimeCalls++; return "runtime"; } }, audit: async event => events.push(event) });
+  await gate.disable("operator requested rollback");
+  assert.equal(gate.status().enabled, false);
+  assert.equal((await gate.runOnce()).mode, "legacy");
+  assert.equal(runtimeCalls, 0); assert.equal(events[0].event, "runtime.feature_disabled");
+});
