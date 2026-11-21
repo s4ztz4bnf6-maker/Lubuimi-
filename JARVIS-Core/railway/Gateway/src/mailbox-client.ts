@@ -6,25 +6,25 @@ const NAME = /^CHATGPT-[A-Za-z0-9._-]+\.md$/;
 const MAX_BYTES = 65_536;
 export type MailboxMessage = { name: string; sha: string; text: string };
 export type MailboxConfig = {
-  token: string;
+  token?: string;
   repository: string;
   fetchImpl?: typeof fetch;
 };
 
 function configuration(c: MailboxConfig) {
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(c.repository)) throw new Error("Invalid repository");
-  if (!c.token) throw new Error("Missing JARVIS_BRIDGE_TOKEN");
 }
 function blobSha(bytes: Uint8Array) {
   return createHash("sha1").update(`blob ${bytes.byteLength}\0`).update(bytes).digest("hex");
 }
 async function github(c: MailboxConfig, path: string, init: RequestInit = {}) {
   configuration(c);
-  const url = `https://api.github.com/repos/${c.repository}/contents/${path}?ref=${BRANCH}`;
+  if (init.method && init.method !== "GET" && !c.token) throw new Error("Write requires JARVIS_BRIDGE_TOKEN");
+  const url = `https://api.github.com/repos/${c.repository}/contents/${path}${init.method === "PUT" ? "" : `?ref=${BRANCH}`}`;
   const response = await (c.fetchImpl ?? fetch)(url, {
     ...init,
     headers: {
-      Authorization: `Bearer ${c.token}`,
+      ...(c.token ? { Authorization: `Bearer ${c.token}` } : {}),
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
       ...(init.headers ?? {}),
