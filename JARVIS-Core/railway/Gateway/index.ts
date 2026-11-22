@@ -388,7 +388,7 @@ const server = Bun.serve({
       // Bound memory before decoding JSON, including chunked transfer encoding.
       // Reject declared oversized bodies before allocating a stream reader.
       const declaredLength = req.headers.get("content-length");
-      if (declaredLength !== null && /^\\d+$/.test(declaredLength) && Number(declaredLength) > 2048)
+      if (declaredLength !== null && /^\d+$/.test(declaredLength) && Number(declaredLength) > 2048)
         return json({ error: "Payload too large" }, 413);
       // Atomic shared limit: 120 authenticated probes per UTC minute across instances.
       try {
