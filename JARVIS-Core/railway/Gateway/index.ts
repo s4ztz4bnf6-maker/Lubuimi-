@@ -244,10 +244,18 @@ await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_external_opportunities (source TEXT NOT NULL, external_id TEXT NOT NULL, title TEXT NOT NULL, source_url TEXT NOT NULL, reward_text TEXT, status TEXT NOT NULL DEFAULT 'unverified', discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), metadata JSONB NOT NULL DEFAULT '{}'::jsonb, PRIMARY KEY(source,external_id))");
 async function scanPublicBounties(){
  const now=new Date().toISOString(),found=[];
- const response=await fetch("https://api.github.com/search/issues?q="+encodeURIComponent('is:issue is:open is:public label:bounty,"💎 Bounty"')+"&sort=updated&order=desc&per_page=30",{headers:{"Accept":"application/vnd.github+json","User-Agent":"JARVIS-AI-Opportunity-Scout"},signal:AbortSignal.timeout(14000)});
- if(!response.ok)throw Error("GitHub bounty discovery HTTP "+response.status);
- const payload=await response.json();
- for(const issue of Array.isArray(payload.items)?payload.items:[]){
+ const queries=['is:issue is:open label:bounty','is:issue is:open "bounty" "$"','is:issue is:open "paid" "USD"'];
+ const candidates=new Map();
+ for(const query of queries){
+  try{
+   const response=await fetch("https://api.github.com/search/issues?q="+encodeURIComponent(query)+"&sort=updated&order=desc&per_page=50",{headers:{"Accept":"application/vnd.github+json","User-Agent":"JARVIS-AI-Opportunity-Scout"},signal:AbortSignal.timeout(14000)});
+   if(!response.ok){console.warn("[BountyScout] GitHub search",response.status,query);continue}
+   const payload=await response.json();
+   for(const issue of Array.isArray(payload.items)?payload.items:[])if(issue?.id)candidates.set(String(issue.id),issue);
+  }catch(e){console.warn("[BountyScout] query error",query,String(e))}
+ }
+ console.log("[BountyScout] public search candidates:",candidates.size);
+ for(const issue of candidates.values()){
   if(!issue||!issue.html_url||!issue.id||issue.pull_request||issue.repository?.private)continue;
   const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
   const match=(title+" "+body).match(/(?:USD\\s*|\\$\\s*)([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
