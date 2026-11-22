@@ -1,3 +1,4 @@
+import { voicePage } from "./src/voice-page";
 import { validateIban, prepareBankInvoice } from "./src/bank-receive-only";
 import postgres from "postgres";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
@@ -492,6 +493,7 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "GET" && url.pathname === "/v1/voice/local") return new Response(voicePage, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" } });
     // Receive-only bank instructions: owner-only; never expose IBAN in public APIs or logs.
     if (url.pathname === "/v1/payments/bank-receive/status" && req.method === "GET") {
       if (!ownerAuthorized(req)) return json({ error: "Unauthorized" }, 401);
