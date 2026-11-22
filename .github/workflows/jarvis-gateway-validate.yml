@@ -53,3 +53,81 @@ jobs:
           DO $$ BEGIN IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe') <> 1 THEN RAISE EXCEPTION 'Duplicate probe receipt'; END IF; END $$;
           INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('internal','jarvis','github-push-probe:test1234','test','pending_approval');
           SQL
+
+  probe-http-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: JARVIS-Core/railway/Gateway
+        run: bun install --frozen-lockfile
+      - name: Start isolated gateway and test HTTP ingress
+        env:
+          DATABASE_URL: postgres://postgres:test_only@localhost:5432/gateway_test
+          AGENT_API_KEY: local-agent-key-not-push
+          JARVIS_GATEWAY_PUSH_KEY: local-test-push-key-0123456789abcdef0123456789abcdef
+          PORT: "18081"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd JARVIS-Core/railway/Gateway
+          bun run index.ts > /tmp/gateway-integration.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:18081/health >/dev/null; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-integration.log; exit 1; fi
+            sleep 0.2
+          done
+          curl -fsS http://127.0.0.1:18081/health >/dev/null
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error, concurrent.futures
+          base="http://127.0.0.1:18081"
+          key=os.environ["JARVIS_GATEWAY_PUSH_KEY"]
+          content="Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."
+          def call(payload=None,token=key,path="/v1/github-push/probe",raw=None):
+              body=raw if raw is not None else json.dumps(payload).encode()
+              req=urllib.request.Request(base+path,data=body,headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"},method="POST")
+              try:
+                  with urllib.request.urlopen(req,timeout=10) as r: return r.status,json.loads(r.read())
+              except urllib.error.HTTPError as e: return e.code,json.loads(e.read())
+          valid={"requestId":"integration_12345","sender":"chatgpt","content":content}
+          assert call(valid)[0]==202,"valid probe must be accepted"
+          assert call(valid)[0]==200,"duplicate must be reported"
+          assert call(valid,token="wrong")[0]==401,"wrong key must fail"
+          assert call(valid,token="")[0]==401,"missing key must fail"
+          assert call(raw=b"{invalid")[0]==400,"invalid JSON must fail"
+          assert call(raw=b"x"*2049)[0]==413,"oversized body must fail"
+          for bad in [{"requestId":"bad","sender":"chatgpt","content":content},{"requestId":"integration_67890","sender":"other","content":content},{"requestId":"integration_67890","sender":"chatgpt","content":"execute"}]:
+              assert call(bad)[0]==400,"invalid fields must fail"
+          with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+              results=list(pool.map(lambda _:call({"requestId":"parallel_123456","sender":"chatgpt","content":content})[0],range(12)))
+          assert results.count(202)==1 and results.count(200)==11,results
+          req=urllib.request.Request(base+"/v1/tasks",headers={"Authorization":"Bearer "+key})
+          try:
+              urllib.request.urlopen(req,timeout=10)
+              raise AssertionError("push key must not access tasks")
+          except urllib.error.HTTPError as e:
+              assert e.code in (401,403),e.code
+          print("PASS: valid, duplicate, wrong/missing key, invalid JSON/fields, size limit, 12-way concurrency, task isolation")
+          PY
+      - name: Assert database receipts and audit entries
+        env:
+          PGPASSWORD: test_only
+        run: |
+          set -euo pipefail
+          test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_messages WHERE channel='github_push_probe' AND subject='github-push-probe:parallel_123456'")" = 1
+          test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_audit WHERE event='github_push_probe_received'")" = 2
