@@ -46,7 +46,31 @@ if (env.JARVIS_BRIDGE_REPOSITORY) {
 }
 await sql`CREATE INDEX IF NOT EXISTS agent_messages_status_idx ON agent_messages(status, created_at DESC)`;
 // Unique receipt key for the isolated GitHub push probe, including under concurrent requests.
-await sql`CREATE UNIQUE INDEX IF NOT EXISTS agent_messages_github_push_probe_unique ON agent_messages(channel, subject) WHERE channel = 'github_push_probe'`;
+// Archive pre-existing duplicate probe receipts before enforcing idempotency.
+// Keep the lowest original ID, preserve every removed row as JSONB for recovery.
+await sql.begin(async (tx) => {
+  await tx`LOCK TABLE agent_messages IN SHARE ROW EXCLUSIVE MODE`;
+  await tx`
+    CREATE TABLE IF NOT EXISTS agent_message_probe_duplicate_archive (
+      original_id BIGINT PRIMARY KEY,
+      snapshot JSONB NOT NULL,
+      archived_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+  await tx`
+    WITH ranked AS (
+      SELECT id, ROW_NUMBER() OVER (PARTITION BY channel, subject ORDER BY id) AS rn
+      FROM agent_messages WHERE channel = 'github_push_probe'
+    ), removed AS (
+      DELETE FROM agent_messages m USING ranked r
+      WHERE m.id = r.id AND r.rn > 1
+      RETURNING m.*
+    )
+    INSERT INTO agent_message_probe_duplicate_archive(original_id, snapshot)
+    SELECT id, to_jsonb(removed) FROM removed
+  `;
+  await tx`CREATE UNIQUE INDEX IF NOT EXISTS agent_messages_github_push_probe_unique ON agent_messages(channel, subject) WHERE channel = 'github_push_probe'`;
+});
 await sql`
   CREATE TABLE IF NOT EXISTS agent_tasks (
     id BIGSERIAL PRIMARY KEY,
