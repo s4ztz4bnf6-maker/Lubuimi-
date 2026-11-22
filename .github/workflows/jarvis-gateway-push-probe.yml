@@ -36,13 +36,13 @@ jobs:
           payload=$(jq -nc --arg id "${REQUEST_ID}" '{sender:"chatgpt",requestId:$id,content:"Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."}')
           code=$(curl --silent --show-error --output /tmp/jarvis-probe-response --write-out '%{http_code}' \
             --max-time 20 --retry 0 \
-            -X POST "${GATEWAY_URL%/}/v1/bridge/messages" \
+            -X POST "${GATEWAY_URL%/}/v1/github-push/probe" \
             -H "Authorization: Bearer ${BRIDGE_API_KEY}" \
             -H "Content-Type: application/json" \
             --data-binary "${payload}")
           echo "Gateway HTTP status: ${code}"
-          if [[ "${code}" != 200 && "${code}" != 201 ]]; then
+          if [[ "${code}" != 200 && "${code}" != 202 ]]; then
             echo "::error::Gateway probe failed (response body withheld to avoid leaks)"
             exit 1
           fi
-          echo "Gateway accepted probe request ${REQUEST_ID}; worker execution NOT verified."
+          echo "Gateway accepted probe request ${REQUEST_ID}; database receipt expected, worker execution NOT verified."
