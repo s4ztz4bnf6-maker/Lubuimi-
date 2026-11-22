@@ -1,0 +1,55 @@
+name: JARVIS Gateway PR validation
+on:
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Gateway/**'
+      - '.github/workflows/jarvis-gateway-validate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gateway-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun test
+  postgres-idempotency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install Postgres client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Verify partial unique index and duplicate suppression
+        env:
+          PGPASSWORD: test_only
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test <<'SQL'
+          CREATE TABLE agent_messages (id BIGSERIAL PRIMARY KEY, channel TEXT NOT NULL, recipient TEXT, subject TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending_approval');
+          CREATE UNIQUE INDEX agent_messages_github_push_probe_unique ON agent_messages(channel, subject) WHERE channel = 'github_push_probe';
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('github_push_probe','jarvis','github-push-probe:test1234','test','pending_approval') ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING;
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('github_push_probe','jarvis','github-push-probe:test1234','test','pending_approval') ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING;
+          DO $$ BEGIN IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe') <> 1 THEN RAISE EXCEPTION 'Duplicate probe receipt'; END IF; END $$;
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('internal','jarvis','github-push-probe:test1234','test','pending_approval');
+          SQL
