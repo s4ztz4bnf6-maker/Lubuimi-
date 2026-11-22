@@ -162,7 +162,10 @@ jobs:
           count=subprocess.check_output(["psql","-h","localhost","-U","postgres","-d","gateway_test","-At","-c","SELECT count(*) FROM agent_messages WHERE subject='github-push-probe:auditfail_1234'"],env=env,text=True)
           assert count.strip().splitlines()[-1].strip()=="0","audit failure must roll back receipt"
           subprocess.run(db+["DROP TRIGGER reject_probe_audit ON agent_audit; DROP FUNCTION reject_probe_audit()"],env=env,check=True,capture_output=True)
-          print("PASS: valid, duplicate, wrong/missing key, invalid JSON/fields, size limit, 12-way concurrency, task isolation, audit rollback")
+          # A13: unauthenticated flood is rejected without database-backed auth.
+          unauth_statuses=[call(valid,token="wrong")[0] for _ in range(350)]
+          assert 429 in unauth_statuses,"unauthenticated flood must be limited"
+          print("PASS: valid, duplicate, wrong/missing key, invalid JSON/fields, size limit, 12-way concurrency, task isolation, audit rollback, unauthenticated flood guard")
           PY
       - name: Assert database receipts and audit entries
         env:
