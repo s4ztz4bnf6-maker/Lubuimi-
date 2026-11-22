@@ -1,0 +1,48 @@
+name: JARVIS Gateway authenticated push probe
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: "Unique probe ID (8-100 letters, numbers, underscores or hyphens)"
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Validate configuration and send non-executable probe
+        env:
+          GATEWAY_URL: ${{ vars.JARVIS_GATEWAY_URL }}
+          BRIDGE_API_KEY: ${{ secrets.JARVIS_GATEWAY_PUSH_KEY }}
+          REQUEST_ID: ${{ inputs.request_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${GATEWAY_URL}" || -z "${BRIDGE_API_KEY}" ]]; then
+            echo "::error::Configure JARVIS_GATEWAY_URL repository variable and JARVIS_GATEWAY_PUSH_KEY secret."
+            exit 1
+          fi
+          if [[ ! "${REQUEST_ID}" =~ ^[A-Za-z0-9_-]{8,100}$ ]]; then
+            echo "::error::Invalid request ID"
+            exit 1
+          fi
+          case "${GATEWAY_URL}" in
+            https://*.up.railway.app) ;;
+            *) echo "::error::Gateway must be a Railway HTTPS URL"; exit 1 ;;
+          esac
+          payload=$(jq -nc --arg id "${REQUEST_ID}" '{sender:"chatgpt",requestId:$id,content:"Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."}')
+          code=$(curl --silent --show-error --output /tmp/jarvis-probe-response --write-out '%{http_code}' \
+            --max-time 20 --retry 0 \
+            -X POST "${GATEWAY_URL%/}/v1/github-push/probe" \
+            -H "Authorization: Bearer ${BRIDGE_API_KEY}" \
+            -H "Content-Type: application/json" \
+            --data-binary "${payload}")
+          echo "Gateway HTTP status: ${code}"
+          if [[ "${code}" != 200 && "${code}" != 202 ]]; then
+            echo "::error::Gateway probe failed (response body withheld to avoid leaks)"
+            exit 1
+          fi
+          echo "Gateway accepted probe request ${REQUEST_ID}; database receipt expected, worker execution NOT verified."

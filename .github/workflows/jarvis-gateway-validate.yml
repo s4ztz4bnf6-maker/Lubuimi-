@@ -1,0 +1,289 @@
+name: JARVIS Gateway PR validation
+on:
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Gateway/**'
+      - '.github/workflows/jarvis-gateway-validate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gateway-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun test
+  postgres-idempotency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install Postgres client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Verify partial unique index and duplicate suppression
+        env:
+          PGPASSWORD: test_only
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test <<'SQL'
+          CREATE TABLE agent_messages (id BIGSERIAL PRIMARY KEY, channel TEXT NOT NULL, recipient TEXT, subject TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending_approval');
+          CREATE UNIQUE INDEX agent_messages_github_push_probe_unique ON agent_messages(channel, subject) WHERE channel = 'github_push_probe';
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('github_push_probe','jarvis','github-push-probe:test1234','test','pending_approval') ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING;
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('github_push_probe','jarvis','github-push-probe:test1234','test','pending_approval') ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING;
+          DO $$ BEGIN IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe') <> 1 THEN RAISE EXCEPTION 'Duplicate probe receipt'; END IF; END $$;
+          INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES ('internal','jarvis','github-push-probe:test1234','test','pending_approval');
+          SQL
+
+  probe-http-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: JARVIS-Core/railway/Gateway
+        run: bun install --frozen-lockfile
+      - name: Apply explicit probe receipt migration before gateway start
+        env:
+          PGPASSWORD: test_only
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test -f JARVIS-Core/railway/Gateway/migrations/github_probe_receipts.sql
+      - name: Start isolated gateway and test HTTP ingress
+        env:
+          DATABASE_URL: postgres://postgres:test_only@localhost:5432/gateway_test
+          AGENT_API_KEY: local-agent-key-not-push
+          JARVIS_GATEWAY_PUSH_KEY: local-test-push-key-0123456789abcdef0123456789abcdef
+          PORT: "18081"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd JARVIS-Core/railway/Gateway
+          bun run index.ts > /tmp/gateway-integration.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:18081/health >/dev/null; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-integration.log; exit 1; fi
+            sleep 0.2
+          done
+          curl -fsS http://127.0.0.1:18081/health >/dev/null
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error, concurrent.futures
+          base="http://127.0.0.1:18081"
+          key=os.environ["JARVIS_GATEWAY_PUSH_KEY"]
+          content="Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."
+          def call(payload=None,token=key,path="/v1/github-push/probe",raw=None):
+              body=raw if raw is not None else json.dumps(payload).encode()
+              req=urllib.request.Request(base+path,data=body,headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"},method="POST")
+              try:
+                  with urllib.request.urlopen(req,timeout=10) as r: return r.status,json.loads(r.read())
+              except urllib.error.HTTPError as e: return e.code,json.loads(e.read())
+          valid={"requestId":"integration_12345","sender":"chatgpt","content":content}
+          assert call(valid)[0]==202,"valid probe must be accepted"
+          assert call(valid)[0]==200,"duplicate must be reported"
+          # The shared limiter permits 120 authenticated requests in one minute.
+          # These tests consume the same minute bucket; 150 requests guarantee 429.
+          statuses=[call(valid)[0] for _ in range(150)]
+          assert 429 in statuses,"rate limiter must reject excess traffic"
+          # Reset the isolated test bucket before the remaining integration cases.
+          import subprocess
+          subprocess.run(["psql","-h","localhost","-U","postgres","-d","gateway_test","-c","TRUNCATE github_probe_rate_limits"],env=dict(os.environ,PGPASSWORD="test_only"),check=True,capture_output=True)
+
+          assert call(valid,token="wrong")[0]==401,"wrong key must fail"
+          assert call(valid,token="")[0]==401,"missing key must fail"
+          assert call(raw=b"{invalid")[0]==400,"invalid JSON must fail"
+          assert call(raw=b"x"*2049)[0]==413,"oversized body must fail"
+          # Declared oversized requests must be rejected before body parsing.
+          assert call(raw=b"x"*3000)[0]==413,"declared oversized body must fail"
+
+          # Reject oversized bodies even without a Content-Length header.
+          import http.client
+          conn=http.client.HTTPConnection("127.0.0.1",18081,timeout=10)
+          conn.putrequest("POST","/v1/github-push/probe")
+          conn.putheader("Authorization","Bearer "+key)
+          conn.putheader("Content-Type","application/json")
+          conn.putheader("Transfer-Encoding","chunked")
+          conn.endheaders()
+          conn.send(b"801\r\n"+b"x"*2049+b"\r\n0\r\n\r\n")
+          response=conn.getresponse()
+          assert response.status==413,("chunked oversized body",response.status)
+          response.read()
+          conn.close()
+
+          for bad in [{"requestId":"bad","sender":"chatgpt","content":content},{"requestId":"integration_67890","sender":"other","content":content},{"requestId":"integration_67890","sender":"chatgpt","content":"execute"}]:
+              assert call(bad)[0]==400,"invalid fields must fail"
+          with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+              results=list(pool.map(lambda _:call({"requestId":"parallel_123456","sender":"chatgpt","content":content})[0],range(12)))
+          assert results.count(202)==1 and results.count(200)==11,results
+          req=urllib.request.Request(base+"/v1/tasks",headers={"Authorization":"Bearer "+key})
+          try:
+              urllib.request.urlopen(req,timeout=10)
+              raise AssertionError("push key must not access tasks")
+          except urllib.error.HTTPError as e:
+              assert e.code in (401,403),e.code
+          # Force audit INSERT to fail and verify transactional rollback.
+          import subprocess
+          db=["psql","-h","localhost","-U","postgres","-d","gateway_test","-v","ON_ERROR_STOP=1","-c"]
+          env=dict(os.environ,PGPASSWORD="test_only")
+          subprocess.run(db+["CREATE OR REPLACE FUNCTION reject_probe_audit() RETURNS trigger LANGUAGE plpgsql AS $audit$ BEGIN IF NEW.event='github_push_probe_received' THEN RAISE EXCEPTION 'forced audit failure'; END IF; RETURN NEW; END $audit$; CREATE TRIGGER reject_probe_audit BEFORE INSERT ON agent_audit FOR EACH ROW EXECUTE FUNCTION reject_probe_audit();"],env=env,check=True,capture_output=True)
+          assert call({"requestId":"auditfail_1234","sender":"chatgpt","content":content})[0]==503,"audit failure must fail closed"
+          count=subprocess.check_output(["psql","-h","localhost","-U","postgres","-d","gateway_test","-At","-c","SELECT count(*) FROM agent_messages WHERE subject='github-push-probe:auditfail_1234'"],env=env,text=True)
+          assert count.strip().splitlines()[-1].strip()=="0","audit failure must roll back receipt"
+          subprocess.run(db+["DROP TRIGGER reject_probe_audit ON agent_audit; DROP FUNCTION reject_probe_audit()"],env=env,check=True,capture_output=True)
+          # A13: unauthenticated flood is rejected without database-backed auth.
+          unauth_statuses=[call(valid,token="wrong")[0] for _ in range(350)]
+          assert 429 in unauth_statuses,"unauthenticated flood must be limited"
+          print("PASS: valid, duplicate, wrong/missing key, invalid JSON/fields, size limit, 12-way concurrency, task isolation, audit rollback, unauthenticated flood guard")
+          PY
+      - name: Assert database receipts and audit entries
+        env:
+          PGPASSWORD: test_only
+        run: |
+          set -euo pipefail
+          test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_messages WHERE channel='github_push_probe' AND subject='github-push-probe:parallel_123456'")" = 1
+          test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_audit WHERE event='github_push_probe_received'")" = 2
+
+  phase-a-failure-modes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install gateway dependencies
+        working-directory: JARVIS-Core/railway/Gateway
+        run: bun install --frozen-lockfile
+      - name: Apply explicit probe receipt migration before gateway start
+        env:
+          PGPASSWORD: test_only
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test -f JARVIS-Core/railway/Gateway/migrations/github_probe_receipts.sql
+      - name: Test unconfigured push secret and database outage
+        env:
+          DATABASE_URL: postgres://postgres:test_only@127.0.0.1:5432/gateway_test
+          AGENT_API_KEY: local-agent-key-not-push
+          PORT: "18082"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd JARVIS-Core/railway/Gateway
+          unset JARVIS_GATEWAY_PUSH_KEY
+          bun run index.ts > /tmp/gateway-failure-modes.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:18082/health >/dev/null 2>&1; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-failure-modes.log; exit 1; fi
+            sleep 0.25
+          done
+          curl -fsS http://127.0.0.1:18082/health >/dev/null
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:18082/v1/github-push/probe -H 'Content-Type: application/json' -d '{}')
+          test "$code" = 503
+          kill "$pid" && wait "$pid" || true
+          export JARVIS_GATEWAY_PUSH_KEY=local-test-push-key-0123456789abcdef0123456789abcdef
+          bun run index.ts > /tmp/gateway-outage.log 2>&1 &
+          pid=$!
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:18082/health >/dev/null 2>&1; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-outage.log; exit 1; fi
+            sleep 0.25
+          done
+          curl -fsS http://127.0.0.1:18082/health >/dev/null
+          db_container=$(docker ps --filter ancestor=postgres:16 --format '{{.ID}}' | head -n 1)
+          test -n "$db_container"
+          docker stop "$db_container" >/dev/null
+          payload='{"sender":"chatgpt","requestId":"dboutage_12345","content":"Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."}'
+          code=$(curl -s --max-time 15 -o /tmp/outage-response -w '%{http_code}' -X POST http://127.0.0.1:18082/v1/github-push/probe -H "Authorization: Bearer $JARVIS_GATEWAY_PUSH_KEY" -H 'Content-Type: application/json' --data-binary "$payload")
+          test "$code" = 503
+          echo "PASS: unconfigured secret and database outage return 503"
+  migration-existing-duplicates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - name: Verify transactional duplicate archive, unique index and idempotent rerun
+        env:
+          PGPASSWORD: test_only
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test <<'SQL'
+          CREATE TABLE agent_messages(id BIGSERIAL PRIMARY KEY, channel TEXT NOT NULL, subject TEXT NOT NULL, body TEXT NOT NULL DEFAULT 'payload');
+          INSERT INTO agent_messages(channel,subject) VALUES ('github_push_probe','github-push-probe:existing'),('github_push_probe','github-push-probe:existing'),('github_push_probe','github-push-probe:existing'),('internal','github-push-probe:existing');
+          BEGIN;
+          LOCK TABLE agent_messages IN SHARE ROW EXCLUSIVE MODE;
+          CREATE TABLE IF NOT EXISTS agent_message_probe_duplicate_archive(original_id BIGINT PRIMARY KEY, snapshot JSONB NOT NULL, archived_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+          WITH ranked AS (SELECT id, ROW_NUMBER() OVER (PARTITION BY channel,subject ORDER BY id) AS rn FROM agent_messages WHERE channel='github_push_probe'),
+          removed AS (DELETE FROM agent_messages m USING ranked r WHERE m.id=r.id AND r.rn>1 RETURNING m.*)
+          INSERT INTO agent_message_probe_duplicate_archive(original_id,snapshot) SELECT id,to_jsonb(removed) FROM removed;
+          CREATE UNIQUE INDEX IF NOT EXISTS agent_messages_github_push_probe_unique ON agent_messages(channel,subject) WHERE channel='github_push_probe';
+          COMMIT;
+          DO $$ BEGIN
+            IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe') <> 1 THEN RAISE EXCEPTION 'Probe duplicates remain'; END IF;
+            IF (SELECT COUNT(*) FROM agent_message_probe_duplicate_archive) <> 2 THEN RAISE EXCEPTION 'Duplicate archive incomplete'; END IF;
+            IF (SELECT COUNT(*) FROM agent_messages WHERE channel='internal') <> 1 THEN RAISE EXCEPTION 'Unrelated row modified'; END IF;
+            IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe' AND id=1) <> 1 THEN RAISE EXCEPTION 'Canonical receipt changed'; END IF;
+          END $$;
+          INSERT INTO agent_messages(channel,subject) VALUES ('github_push_probe','github-push-probe:existing') ON CONFLICT (channel,subject) WHERE channel='github_push_probe' DO NOTHING;
+          DO $$ BEGIN IF (SELECT COUNT(*) FROM agent_messages WHERE channel='github_push_probe') <> 1 THEN RAISE EXCEPTION 'Index not enforcing uniqueness'; END IF; END $$;
+          BEGIN;
+          LOCK TABLE agent_messages IN SHARE ROW EXCLUSIVE MODE;
+          WITH ranked AS (SELECT id, ROW_NUMBER() OVER (PARTITION BY channel,subject ORDER BY id) AS rn FROM agent_messages WHERE channel='github_push_probe'),
+          removed AS (DELETE FROM agent_messages m USING ranked r WHERE m.id=r.id AND r.rn>1 RETURNING m.*)
+          INSERT INTO agent_message_probe_duplicate_archive(original_id,snapshot) SELECT id,to_jsonb(removed) FROM removed;
+          COMMIT;
+          DO $$ BEGIN IF (SELECT COUNT(*) FROM agent_message_probe_duplicate_archive) <> 2 THEN RAISE EXCEPTION 'Rerun changed archive'; END IF; END $$;
+          SQL

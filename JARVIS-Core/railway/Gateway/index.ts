@@ -5,6 +5,9 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
+// Per-process fixed-window ingress counter: O(1) memory, resets every minute.
+let preAuthProbeMinute = -1;
+let preAuthProbeCount = 0;
 const env = Bun.env;
 const apiKey = env.AGENT_API_KEY;
 const databaseUrl = env.DATABASE_URL;
@@ -44,7 +47,16 @@ if (env.JARVIS_BRIDGE_REPOSITORY) {
 } else {
   console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_REPOSITORY");
 }
+// Shared PostgreSQL rate limiter across gateway instances (fixed one-minute buckets).
+await sql`
+  CREATE TABLE IF NOT EXISTS github_probe_rate_limits (
+    bucket BIGINT PRIMARY KEY,
+    hits INTEGER NOT NULL
+  )
+`;
 await sql`CREATE INDEX IF NOT EXISTS agent_messages_status_idx ON agent_messages(status, created_at DESC)`;
+// The unique probe index is installed by a separate, audited migration.
+// Never lock and rewrite the agent_messages table during normal gateway startup.
 await sql`
   CREATE TABLE IF NOT EXISTS agent_tasks (
     id BIGSERIAL PRIMARY KEY,
@@ -366,6 +378,91 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    // Constant-memory, per-process ingress guard before authentication or DB access.
+    // Protects this process; edge-level limits are still needed for distributed floods.
+    if (req.method === "POST" && url.pathname === "/v1/github-push/probe") {
+      const minute = Math.floor(Date.now() / 60000);
+      if (minute !== preAuthProbeMinute) {
+        preAuthProbeMinute = minute;
+        preAuthProbeCount = 0;
+      }
+      if (++preAuthProbeCount > 300) return json({ error: "Ingress rate limit exceeded" }, 429);
+    }
+    // Dedicated least-privilege ingress for manually triggered GitHub Actions probes.
+    // Never grants access to general agent routes or creates executable tasks.
+    if (req.method === "POST" && url.pathname === "/v1/github-push/probe") {
+      const configuredKey = env.JARVIS_GATEWAY_PUSH_KEY;
+      if (!configuredKey || configuredKey.length < 32) return json({ error: "Push ingress not configured" }, 503);
+      const supplied = req.headers.get("authorization") || "";
+      const expected = "Bearer " + configuredKey;
+      const { timingSafeEqual } = await import("node:crypto");
+      const a = Buffer.from(supplied), b = Buffer.from(expected);
+      if (a.length !== b.length || !timingSafeEqual(a, b)) return json({ error: "Unauthorized" }, 401);
+      // Bound memory before decoding JSON, including chunked transfer encoding.
+      // Reject declared oversized bodies before allocating a stream reader.
+      const declaredLength = req.headers.get("content-length");
+      if (declaredLength !== null && /^\d+$/.test(declaredLength) && Number(declaredLength) > 2048)
+        return json({ error: "Payload too large" }, 413);
+      // Atomic shared limit: 120 authenticated probes per UTC minute across instances.
+      try {
+        const bucket = Math.floor(Date.now() / 60000);
+        const [limit] = await sql`
+          INSERT INTO github_probe_rate_limits(bucket, hits) VALUES (${bucket}, 1)
+          ON CONFLICT (bucket) DO UPDATE SET hits = github_probe_rate_limits.hits + 1
+          RETURNING hits
+        `;
+        if (Number(limit.hits) > 120) return json({ error: "Rate limit exceeded" }, 429);
+      } catch {
+        return json({ error: "Probe rate limiter unavailable" }, 503);
+      }
+      const reader = req.body?.getReader();
+      if (!reader) return json({ error: "Invalid JSON" }, 400);
+      const chunks: Uint8Array[] = [];
+      let bytes = 0;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          bytes += value.byteLength;
+          if (bytes > 2048) {
+            await reader.cancel().catch(() => {});
+            return json({ error: "Payload too large" }, 413);
+          }
+          chunks.push(value);
+        }
+      } catch {
+        return json({ error: "Invalid request body" }, 400);
+      }
+      const raw = Buffer.concat(chunks, bytes).toString("utf8");
+      let body;
+      try { body = JSON.parse(raw); } catch { return json({ error: "Invalid JSON" }, 400); }
+      const requestId = String(body?.requestId ?? "");
+      if (!/^[A-Za-z0-9_-]{8,100}$/.test(requestId) || body?.sender !== "chatgpt" ||
+          body?.content !== "Integration connectivity probe only. Do not execute any task, access secrets, or take external actions.")
+        return json({ error: "Invalid probe" }, 400);
+      const subject = "github-push-probe:" + requestId;
+      try {
+        const receipt = await sql.begin(async (tx) => {
+          const [row] = await tx`
+            INSERT INTO agent_messages(channel, recipient, subject, body, status)
+            VALUES ('github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval')
+            ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING
+            RETURNING id, status
+          `;
+          if (!row) {
+            const [existing] = await tx`SELECT id,status FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject} LIMIT 1`;
+            if (!existing) throw new Error("Probe receipt missing after conflict");
+            return { accepted: true, requestId, id: existing.id, status: existing.status, duplicate: true };
+          }
+          await tx`INSERT INTO agent_audit(event, detail) VALUES ('github_push_probe_received', ${tx.json({ id: row.id, requestId })})`;
+          return { accepted: true, requestId, id: row.id, status: row.status, workerExecuted: false };
+        });
+        return json(receipt, receipt.duplicate ? 200 : 202);
+      } catch (error) {
+        console.error("[Push probe] Persistence failed", error instanceof Error ? error.name : "unknown");
+        return json({ error: "Probe persistence unavailable" }, 503);
+      }
+    }
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
     const ownerOnly = (url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
     if (ownerOnly) {
