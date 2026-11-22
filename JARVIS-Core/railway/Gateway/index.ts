@@ -5,6 +5,9 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
+// Per-process fixed-window ingress counter: O(1) memory, resets every minute.
+let preAuthProbeMinute = -1;
+let preAuthProbeCount = 0;
 const env = Bun.env;
 const apiKey = env.AGENT_API_KEY;
 const databaseUrl = env.DATABASE_URL;
@@ -375,6 +378,16 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    // Constant-memory, per-process ingress guard before authentication or DB access.
+    // Protects this process; edge-level limits are still needed for distributed floods.
+    if (req.method === "POST" && url.pathname === "/v1/github-push/probe") {
+      const minute = Math.floor(Date.now() / 60000);
+      if (minute !== preAuthProbeMinute) {
+        preAuthProbeMinute = minute;
+        preAuthProbeCount = 0;
+      }
+      if (++preAuthProbeCount > 300) return json({ error: "Ingress rate limit exceeded" }, 429);
+    }
     // Dedicated least-privilege ingress for manually triggered GitHub Actions probes.
     // Never grants access to general agent routes or creates executable tasks.
     if (req.method === "POST" && url.pathname === "/v1/github-push/probe") {
