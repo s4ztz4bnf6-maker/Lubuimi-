@@ -1,3 +1,4 @@
+import { catalogQueries, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
 import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
@@ -305,12 +306,14 @@ void scanPublicBounties().catch(e=>console.warn("[BountyScout] initial scan:",St
 setInterval(()=>{void scanPublicBounties().catch(e=>console.warn("[BountyScout] scan:",String(e)))},30*60*1000);
 // FreeGoods read-only discovery; runs independently of BountyScout.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_freegoods_public_leads (kind TEXT NOT NULL, source_url TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL, query TEXT NOT NULL, score INTEGER NOT NULL, flags JSONB NOT NULL DEFAULT '[]'::jsonb, discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(kind,source_url))");
-const freegoodsQueries=(env.JARVIS_FREEGOODS_QUERIES||"camera,headphones,smartphone,console,laptop,watch").split(",").map(x=>x.trim()).filter(x=>x.length>=2&&x.length<=80).slice(0,12);
+const freegoodsCatalog=catalogQueries((env.JARVIS_FREEGOODS_BRANDS||"").split(","),(env.JARVIS_FREEGOODS_CATEGORIES||"").split(","),(env.JARVIS_FREEGOODS_QUERIES||"").split(","));
+const freegoodsBatchSize=Math.min(24,Math.max(1,Number(env.JARVIS_FREEGOODS_BATCH_SIZE)||8));
 let freegoodsRunning=false;
 async function scanFreegoods(){
  if(freegoodsRunning)return;freegoodsRunning=true;
  try{
   const feeds=(env.JARVIS_FREEGOODS_RSS_FEEDS||"").split(",").map(x=>x.trim()).filter(Boolean);
+  const freegoodsQueries=queryBatch(freegoodsCatalog,Math.floor(Date.now()/(60*60*1000)),freegoodsBatchSize);
   for(const query of freegoodsQueries){
    const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
    for(const lead of rankLeads([...leads.gifts,...leads.demands],100)){
@@ -319,7 +322,7 @@ async function scanFreegoods(){
     ON CONFLICT(kind,source_url) DO UPDATE SET last_seen_at=NOW(),score=EXCLUDED.score,flags=EXCLUDED.flags,description=EXCLUDED.description`;
    }
   }
-  console.log("[FreeGoodsScout] read-only discovery completed",freegoodsQueries.length,"queries",feeds.length,"feeds");
+  console.log("[FreeGoodsScout] read-only discovery completed",freegoodsQueries.length,"queries of",freegoodsCatalog.length,"catalog terms",feeds.length,"feeds");
  }finally{freegoodsRunning=false}
 }
 void scanFreegoods().catch(e=>console.warn("[FreeGoodsScout] initial scan",String(e)));
@@ -520,7 +523,7 @@ const server = Bun.serve({
     if (req.method === "GET" && url.pathname === "/v1/freegoods/leads") {
       if (!authorized(req)) return json({error:"Unauthorized"},401);
       const leads=await sql`SELECT kind,source_url,title,description,query,score,flags,last_seen_at FROM jarvis_freegoods_public_leads ORDER BY score DESC,last_seen_at DESC LIMIT 100`;
-      return json({leads,verification:"not_verified",tradeActions:"disabled"});
+      return json({leads,catalogTerms:freegoodsCatalog.length,batchSize:freegoodsBatchSize,verification:"not_verified",tradeActions:"disabled"});
     }
     if (req.method === "GET" && url.pathname === "/v1/freegoods/discover") {
       if (!authorized(req)) return json({error:"Unauthorized"},401);
