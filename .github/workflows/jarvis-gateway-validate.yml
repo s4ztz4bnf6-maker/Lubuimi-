@@ -125,6 +125,9 @@ jobs:
           assert call(valid,token="")[0]==401,"missing key must fail"
           assert call(raw=b"{invalid")[0]==400,"invalid JSON must fail"
           assert call(raw=b"x"*2049)[0]==413,"oversized body must fail"
+          # Declared oversized requests must be rejected before body parsing.
+          assert call(raw=b"x"*3000)[0]==413,"declared oversized body must fail"
+
           # Reject oversized bodies even without a Content-Length header.
           import http.client
           conn=http.client.HTTPConnection("127.0.0.1",18081,timeout=10)
