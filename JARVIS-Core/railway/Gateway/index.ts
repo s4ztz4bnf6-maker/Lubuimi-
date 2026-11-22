@@ -240,6 +240,26 @@ for (const [title,prompt] of nextTasks) {
 }
 await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["owner_autonomy_and_execution_policy_deployed",JSON.stringify({permissions:autonomyPermissions.map(x=>x[0]),tasks:nextTasks.map(x=>x[0]),ownerAccessCredentialsChanged:false,externalAccountsCreated:false,devicesAccessed:false,financialActionsTaken:false})]);
 
+// Public-source paid-work scanner. Discovery is not acceptance or payment.
+await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_external_opportunities (source TEXT NOT NULL, external_id TEXT NOT NULL, title TEXT NOT NULL, source_url TEXT NOT NULL, reward_text TEXT, status TEXT NOT NULL DEFAULT 'unverified', discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), metadata JSONB NOT NULL DEFAULT '{}'::jsonb, PRIMARY KEY(source,external_id))");
+async function scanPublicBounties(){
+ const now=new Date().toISOString(),found=[];
+ const response=await fetch("https://api.github.com/search/issues?q="+encodeURIComponent('is:issue is:open is:public label:bounty,"💎 Bounty"')+"&sort=updated&order=desc&per_page=30",{headers:{"Accept":"application/vnd.github+json","User-Agent":"JARVIS-AI-Opportunity-Scout"},signal:AbortSignal.timeout(14000)});
+ if(!response.ok)throw Error("GitHub bounty discovery HTTP "+response.status);
+ const payload=await response.json();
+ for(const issue of Array.isArray(payload.items)?payload.items:[]){
+  if(!issue||!issue.html_url||!issue.id||issue.pull_request||issue.repository?.private)continue;
+  const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
+  const match=(title+" "+body).match(/(?:\\$|USD\\s*)([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
+  const reward=match?match[0]:null;
+  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,acceptance_confirmed:false,btc_payout_confirmed:false})]);
+  found.push({title,url:issue.html_url,reward,source:"github",status:"unverified"});
+ }
+ console.log("[BountyScout] public GitHub candidates recorded:",found.length);
+ return found;
+}
+void scanPublicBounties().catch(e=>console.warn("[BountyScout] initial scan:",String(e)));
+setInterval(()=>{void scanPublicBounties().catch(e=>console.warn("[BountyScout] scan:",String(e)))},30*60*1000);
 // Autonomous public opportunity discovery: recurring, idempotent, no external commitments.
 async function scheduleOpportunityDiscovery() {
   const slot = Math.floor(Date.now() / (6 * 60 * 60 * 1000));
@@ -384,7 +404,7 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
-    const ownerOnly = (url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
+    const ownerOnly = (url.pathname === "/v1/opportunities" || url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
     if (ownerOnly) {
       if (!ownerAuthorized(req)) {
         const ip=(req.headers.get("x-forwarded-for")||"").split(",")[0].trim().slice(0,80);
