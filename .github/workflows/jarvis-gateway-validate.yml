@@ -113,6 +113,14 @@ jobs:
           valid={"requestId":"integration_12345","sender":"chatgpt","content":content}
           assert call(valid)[0]==202,"valid probe must be accepted"
           assert call(valid)[0]==200,"duplicate must be reported"
+          # The shared limiter permits 120 authenticated requests in one minute.
+          # These tests consume the same minute bucket; 150 requests guarantee 429.
+          statuses=[call(valid)[0] for _ in range(150)]
+          assert 429 in statuses,"rate limiter must reject excess traffic"
+          # Reset the isolated test bucket before the remaining integration cases.
+          import subprocess
+          subprocess.run(["psql","-h","localhost","-U","postgres","-d","gateway_test","-c","TRUNCATE github_probe_rate_limits"],env=dict(os.environ,PGPASSWORD="test_only"),check=True,capture_output=True)
+
           assert call(valid,token="wrong")[0]==401,"wrong key must fail"
           assert call(valid,token="")[0]==401,"missing key must fail"
           assert call(raw=b"{invalid")[0]==400,"invalid JSON must fail"
