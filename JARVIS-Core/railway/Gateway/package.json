@@ -5,7 +5,7 @@
   "scripts": {
     "start": "bun run index.ts",
     "check": "bun build ./index.ts --target=bun --outdir=/tmp/jarvis-gateway-check",
-    "test": "bun test tests/mailbox.test.ts"
+    "test": "bun test tests/mailbox.test.ts src/opportunity-triage.test.ts"
   },
   "dependencies": {
     "postgres": "^3.4.5",
