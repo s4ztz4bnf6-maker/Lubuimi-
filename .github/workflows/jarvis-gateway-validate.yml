@@ -125,6 +125,20 @@ jobs:
           assert call(valid,token="")[0]==401,"missing key must fail"
           assert call(raw=b"{invalid")[0]==400,"invalid JSON must fail"
           assert call(raw=b"x"*2049)[0]==413,"oversized body must fail"
+          # Reject oversized bodies even without a Content-Length header.
+          import http.client
+          conn=http.client.HTTPConnection("127.0.0.1",18081,timeout=10)
+          conn.putrequest("POST","/v1/github-push/probe")
+          conn.putheader("Authorization","Bearer "+key)
+          conn.putheader("Content-Type","application/json")
+          conn.putheader("Transfer-Encoding","chunked")
+          conn.endheaders()
+          conn.send(b"801\\r\\n"+b"x"*2049+b"\\r\\n0\\r\\n\\r\\n")
+          response=conn.getresponse()
+          assert response.status==413,("chunked oversized body",response.status)
+          response.read()
+          conn.close()
+
           for bad in [{"requestId":"bad","sender":"chatgpt","content":content},{"requestId":"integration_67890","sender":"other","content":content},{"requestId":"integration_67890","sender":"chatgpt","content":"execute"}]:
               assert call(bad)[0]==400,"invalid fields must fail"
           with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
