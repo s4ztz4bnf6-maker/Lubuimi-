@@ -1,3 +1,6 @@
+import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
+import { rankLeads } from "./src/freegoods-ranking";
+import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
 
@@ -301,6 +304,29 @@ async function scanPublicBounties(){
 }
 void scanPublicBounties().catch(e=>console.warn("[BountyScout] initial scan:",String(e)));
 setInterval(()=>{void scanPublicBounties().catch(e=>console.warn("[BountyScout] scan:",String(e)))},30*60*1000);
+// FreeGoods read-only discovery; runs independently of BountyScout.
+await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_freegoods_public_leads (kind TEXT NOT NULL, source_url TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL, query TEXT NOT NULL, score INTEGER NOT NULL, flags JSONB NOT NULL DEFAULT '[]'::jsonb, discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(kind,source_url))");
+const freegoodsCatalog=expandedSearchTerms(3000,(env.JARVIS_FREEGOODS_BRANDS||"").split(",").filter(Boolean),(env.JARVIS_FREEGOODS_CATEGORIES||"").split(",").filter(Boolean));
+const freegoodsBatchSize=Math.min(24,Math.max(1,Number(env.JARVIS_FREEGOODS_BATCH_SIZE)||8));
+let freegoodsRunning=false;
+async function scanFreegoods(){
+ if(freegoodsRunning)return;freegoodsRunning=true;
+ try{
+  const feeds=(env.JARVIS_FREEGOODS_RSS_FEEDS||"").split(",").map(x=>x.trim()).filter(Boolean);
+  const freegoodsQueries=queryBatch(freegoodsCatalog,Math.floor(Date.now()/(60*60*1000)),freegoodsBatchSize);
+  for(const query of freegoodsQueries){
+   const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
+   for(const lead of rankLeads([...leads.gifts,...leads.demands],100)){
+    await sql`INSERT INTO jarvis_freegoods_public_leads(kind,source_url,title,description,query,score,flags)
+    VALUES (${lead.kind},${lead.sourceUrl},${lead.title},${lead.description},${query},${lead.score},${sql.json(lead.flags)})
+    ON CONFLICT(kind,source_url) DO UPDATE SET last_seen_at=NOW(),score=EXCLUDED.score,flags=EXCLUDED.flags,description=EXCLUDED.description`;
+   }
+  }
+  console.log("[FreeGoodsScout] read-only discovery completed",freegoodsQueries.length,"queries of",freegoodsCatalog.length,"catalog terms",feeds.length,"feeds");
+ }finally{freegoodsRunning=false}
+}
+void scanFreegoods().catch(e=>console.warn("[FreeGoodsScout] initial scan",String(e)));
+setInterval(()=>{void scanFreegoods().catch(e=>console.warn("[FreeGoodsScout] scan",String(e)))},60*60*1000);
 // Owner-controlled payouts: requests only, no autonomous bank transfers.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_payout_requests (id BIGSERIAL PRIMARY KEY, provider TEXT NOT NULL, amount_minor BIGINT NOT NULL CHECK(amount_minor>0), currency TEXT NOT NULL, beneficiary_name TEXT NOT NULL, beneficiary_iban TEXT NOT NULL, purpose TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending_owner_approval', owner_approved_at TIMESTAMPTZ, provider_transfer_id TEXT, provider_status TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 // Provider onboarding workflow: no credentials, KYC images or bank details in source.
@@ -494,6 +520,19 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "GET" && url.pathname === "/v1/freegoods/leads") {
+      if (!authorized(req)) return json({error:"Unauthorized"},401);
+      const leads=await sql`SELECT kind,source_url,title,description,query,score,flags,last_seen_at FROM jarvis_freegoods_public_leads ORDER BY score DESC,last_seen_at DESC LIMIT 100`;
+      return json({leads,catalogTerms:freegoodsCatalog.length,batchSize:freegoodsBatchSize,verification:"not_verified",tradeActions:"disabled"});
+    }
+    if (req.method === "GET" && url.pathname === "/v1/freegoods/discover") {
+      if (!authorized(req)) return json({error:"Unauthorized"},401);
+      const query=(url.searchParams.get("q")||"").trim();
+      if (query.length<2||query.length>80) return json({error:"Query length must be 2-80 characters"},400);
+      const feeds=(env.JARVIS_FREEGOODS_RSS_FEEDS||"").split(",").map(x=>x.trim()).filter(Boolean);
+      const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
+      return json({...leads,rankedGifts:rankLeads(leads.gifts),rankedDemands:rankLeads(leads.demands),configuredGiftFeeds:feeds.length,execution:"read_only",darknet:"not_configured",tradeActions:"disabled"});
+    }
     if (req.method === "GET" && url.pathname === "/v1/payments/bitcoin/status") {
       const address = env.BTC_RECEIVE_ADDRESS || "";
       if (!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(address)) return json({error:"Bitcoin watch-only address not configured"},503);

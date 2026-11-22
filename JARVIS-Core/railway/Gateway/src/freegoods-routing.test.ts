@@ -1,0 +1,5 @@
+import {test,expect} from "bun:test";import {validateShippingPlan,validatePaymentRoute} from "./freegoods-routing";
+const buyer={recipient:"Buyer",line1:"Street 1",city:"Paris",postalCode:"75001",country:"FR"};
+test("buyer is final shipping destination, not company bank or wallet address",()=>expect(validateShippingPlan({orderId:"o1",buyerDestination:buyer,fulfillment:"direct_supplier_to_buyer",buyerAddressVerified:true,sourceAllowsDestination:true,partnerConfirmed:false}).ready).toBe(true));
+test("hub cannot be assumed without partner",()=>expect(validateShippingPlan({orderId:"o1",buyerDestination:buyer,fulfillment:"supplier_to_hub_to_buyer",buyerAddressVerified:true,sourceAllowsDestination:true,partnerConfirmed:false}).ready).toBe(false));
+test("payment routing is separate and requires verification",()=>{expect(validatePaymentRoute({method:"btc",recipientReference:"wallet-ref",currency:"BTC",verified:false}).ready).toBe(false);expect(validatePaymentRoute({method:"bank",recipientReference:"bank-ref",currency:"EUR",verified:true}).ready).toBe(true)});
