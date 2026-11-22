@@ -30,9 +30,9 @@ export class GitHubConnector implements PlatformConnector {
     return response.status === 204 ? null : response.json();
   }
   async beginConnect(_identityId: string, _requestedScopes: readonly string[]): Promise<ConnectResult> {
-    const data = await this.api(`/app/installations/${this.credentials.installationId}`);
+    const data = await this.api("/installation/repositories");
     return { state: "connected", grant: {
-      provider: "github", accountId: String(data.id), scopes: Object.keys(this.cached?.permissions ?? {}),
+      provider: "github", accountId: this.credentials.installationId, scopes: Object.keys(this.cached?.permissions ?? {}),
       expiresAt: this.cached?.expiresAt,
     }};
   }
