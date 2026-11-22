@@ -1,3 +1,5 @@
+import { voicePage } from "./src/voice-page";
+import { validateIban, prepareBankInvoice } from "./src/bank-receive-only";
 import postgres from "postgres";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
 
@@ -491,6 +493,30 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "GET" && url.pathname === "/v1/voice/local") return new Response(voicePage, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" } });
+    // Receive-only bank instructions: owner-only; never expose IBAN in public APIs or logs.
+    if (url.pathname === "/v1/payments/bank-receive/status" && req.method === "GET") {
+      if (!ownerAuthorized(req)) return json({ error: "Unauthorized" }, 401);
+      const iban = String(env.JARVIS_RECEIVE_ONLY_IBAN || "");
+      return json({ mode: "receive_only", configured: validateIban(iban), bankAccess: false, payoutsEnabled: false, transfersEnabled: false, autoReconciliation: false });
+    }
+    if (url.pathname === "/v1/payments/bank-receive/instructions" && req.method === "POST") {
+      if (!ownerAuthorized(req)) return json({ error: "Unauthorized" }, 401);
+      const iban = String(env.JARVIS_RECEIVE_ONLY_IBAN || "");
+      const payee = String(env.JARVIS_RECEIVE_ONLY_PAYEE || "");
+      if (!validateIban(iban) || !payee.trim()) return json({ error: "Receive-only IBAN/payee not configured" }, 503);
+      const body = await req.json().catch(() => null);
+      if (!body || !["EUR","USD","GBP"].includes(body.currency) || typeof body.amountMinor !== "string" || !/^[1-9][0-9]{0,14}$/.test(body.amountMinor))
+        return json({ error: "Invalid currency or amountMinor" }, 400);
+      try {
+        const instructions = prepareBankInvoice({
+          invoiceId: String(body.invoiceId || ""), currency: body.currency,
+          amountMinor: BigInt(body.amountMinor), payee, iban,
+          paymentReference: String(body.paymentReference || ""),
+        });
+        return json(instructions, 200);
+      } catch { return json({ error: "Invalid invoice details" }, 400); }
+    }
     if (req.method === "GET" && url.pathname === "/v1/payments/bitcoin/status") {
       const address = env.BTC_RECEIVE_ADDRESS || "";
       if (!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(address)) return json({error:"Bitcoin watch-only address not configured"},503);
