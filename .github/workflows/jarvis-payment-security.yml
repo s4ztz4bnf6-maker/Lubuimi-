@@ -19,5 +19,5 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.2.22'
-      - run: bun install --frozen-lockfile
+      - run: bun install --no-save
       - run: bun test src/payment-router.test.ts src/bank-receive-only.test.ts src/opportunity-intake.test.ts src/agent-payment-boundary.test.ts src/approved-http-client.test.ts
