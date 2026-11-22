@@ -1,3 +1,4 @@
+import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
 
@@ -494,6 +495,14 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "GET" && url.pathname === "/v1/freegoods/discover") {
+      if (!authorized(req)) return json({error:"Unauthorized"},401);
+      const query=(url.searchParams.get("q")||"").trim();
+      if (query.length<2||query.length>80) return json({error:"Query length must be 2-80 characters"},400);
+      const feeds=(env.JARVIS_FREEGOODS_RSS_FEEDS||"").split(",").map(x=>x.trim()).filter(Boolean);
+      const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
+      return json({...leads,configuredGiftFeeds:feeds.length,execution:"read_only",darknet:"not_configured",tradeActions:"disabled"});
+    }
     if (req.method === "GET" && url.pathname === "/v1/payments/bitcoin/status") {
       const address = env.BTC_RECEIVE_ADDRESS || "";
       if (!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(address)) return json({error:"Bitcoin watch-only address not configured"},503);
