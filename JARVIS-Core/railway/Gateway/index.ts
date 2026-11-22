@@ -366,6 +366,38 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    // Dedicated least-privilege ingress for manually triggered GitHub Actions probes.
+    // Never grants access to general agent routes or creates executable tasks.
+    if (req.method === "POST" && url.pathname === "/v1/github-push/probe") {
+      const configuredKey = env.JARVIS_GATEWAY_PUSH_KEY;
+      if (!configuredKey || configuredKey.length < 32) return json({ error: "Push ingress not configured" }, 503);
+      const supplied = req.headers.get("authorization") || "";
+      const expected = "Bearer " + configuredKey;
+      const { timingSafeEqual } = await import("node:crypto");
+      const a = Buffer.from(supplied), b = Buffer.from(expected);
+      if (a.length !== b.length || !timingSafeEqual(a, b)) return json({ error: "Unauthorized" }, 401);
+      const raw = await req.text();
+      if (Buffer.byteLength(raw, "utf8") > 2048) return json({ error: "Payload too large" }, 413);
+      let body;
+      try { body = JSON.parse(raw); } catch { return json({ error: "Invalid JSON" }, 400); }
+      const requestId = String(body?.requestId ?? "");
+      if (!/^[A-Za-z0-9_-]{8,100}$/.test(requestId) || body?.sender !== "chatgpt" ||
+          body?.content !== "Integration connectivity probe only. Do not execute any task, access secrets, or take external actions.")
+        return json({ error: "Invalid probe" }, 400);
+      const subject = "github-push-probe:" + requestId;
+      const [row] = await sql`
+        INSERT INTO agent_messages(channel, recipient, subject, body, status)
+        SELECT 'github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval'
+        WHERE NOT EXISTS (SELECT 1 FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject})
+        RETURNING id, status
+      `;
+      if (!row) {
+        const [existing] = await sql`SELECT id,status FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject} ORDER BY id DESC LIMIT 1`;
+        return json({ accepted: true, requestId, id: existing?.id, status: existing?.status, duplicate: true }, 200);
+      }
+      await sql`INSERT INTO agent_audit(event, detail) VALUES ('github_push_probe_received', ${sql.json({ id: row.id, requestId })})`;
+      return json({ accepted: true, requestId, id: row.id, status: row.status, workerExecuted: false }, 202);
+    }
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
     const ownerOnly = (url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
     if (ownerOnly) {
