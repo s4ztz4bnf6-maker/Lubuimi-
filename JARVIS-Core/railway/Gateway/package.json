@@ -5,7 +5,7 @@
   "scripts": {
     "start": "bun run index.ts",
     "check": "bun build ./index.ts --target=bun --outdir=/tmp/jarvis-gateway-check",
-    "test": "bun test tests/mailbox.test.ts src/payment-router.test.ts src/bank-receive-only.test.ts src/opportunity-intake.test.ts src/agent-payment-boundary.test.ts src/approved-http-client.test.ts services/btc-monitor/monitor.test.ts src/invoice-payment-details.test.ts src/payment-followups.test.ts src/agent-dispatch.test.ts"
+    "test": "bun test tests/mailbox.test.ts src/payment-router.test.ts src/bank-receive-only.test.ts src/opportunity-intake.test.ts src/agent-payment-boundary.test.ts src/approved-http-client.test.ts services/btc-monitor/monitor.test.ts src/invoice-payment-details.test.ts src/payment-followups.test.ts src/agent-dispatch.test.ts src/opportunity-triage.test.ts"
   },
   "dependencies": {
     "postgres": "^3.4.5",
