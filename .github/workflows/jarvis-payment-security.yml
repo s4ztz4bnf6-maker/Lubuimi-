@@ -20,4 +20,4 @@ jobs:
         with:
           bun-version: '1.2.22'
       - run: bun install --no-save
-      - run: bun test src/payment-router.test.ts src/bank-receive-only.test.ts src/opportunity-intake.test.ts src/agent-payment-boundary.test.ts src/approved-http-client.test.ts services/btc-monitor/monitor.test.ts src/invoice-payment-details.test.ts src/payment-followups.test.ts src/agent-dispatch.test.ts
+      - run: bun test src/payment-router.test.ts src/bank-receive-only.test.ts src/opportunity-intake.test.ts src/agent-payment-boundary.test.ts src/approved-http-client.test.ts services/btc-monitor/monitor.test.ts src/invoice-payment-details.test.ts src/payment-followups.test.ts src/agent-dispatch.test.ts src/opportunity-triage.test.ts
