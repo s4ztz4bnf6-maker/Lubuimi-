@@ -250,10 +250,19 @@ async function scanPublicBounties(){
  for(const issue of Array.isArray(payload.items)?payload.items:[]){
   if(!issue||!issue.html_url||!issue.id||issue.pull_request||issue.repository?.private)continue;
   const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
-  const match=(title+" "+body).match(/(?:\\$|USD\\s*)([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
+  const match=(title+" "+body).match(/(?:USD\\s*|\\$\\s*)([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
   const reward=match?match[0]:null;
-  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,acceptance_confirmed:false,btc_payout_confirmed:false})]);
-  found.push({title,url:issue.html_url,reward,source:"github",status:"unverified"});
+  const rewardUsd=match?Number(match[1].replace(/,/g,"")):null;
+  const estimatedHours=2,estimatedHourlyUsd=15,estimatedApiUsd=5,estimatedFeesUsd=5;
+  const estimatedCostUsd=estimatedHours*estimatedHourlyUsd+estimatedApiUsd+estimatedFeesUsd;
+  const estimatedNetUsd=rewardUsd===null?null:rewardUsd-estimatedCostUsd;
+  // Conservative triage only: a quoted amount does not establish an actual payable contract.
+  const eligibleForReview=Number.isFinite(rewardUsd)&&estimatedNetUsd>0&&!/deposit|registration fee|upfront payment|pay to apply/i.test(title+" "+body);
+  if(!eligibleForReview)continue;
+  const profitAssessment={reward_usd_unverified:rewardUsd,estimated_cost_usd:estimatedCostUsd,estimated_net_usd:estimatedNetUsd,estimated_hours:estimatedHours,estimated_hourly_usd:estimatedHourlyUsd,estimated_api_usd:estimatedApiUsd,estimated_fees_usd:estimatedFeesUsd,profit_verified:false,payout_verified:false,needs_manual_scope_estimate:true};
+
+  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,profit_assessment:profitAssessment,acceptance_confirmed:false,btc_payout_confirmed:false})]);
+  found.push({title,url:issue.html_url,reward,estimatedNetUsd,source:"github",status:"unverified_profitable_candidate"});
  }
  console.log("[BountyScout] public GitHub candidates recorded:",found.length);
  return found;
