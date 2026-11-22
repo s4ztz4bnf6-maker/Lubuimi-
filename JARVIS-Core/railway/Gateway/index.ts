@@ -454,7 +454,7 @@ async function microService(req,url) {
     let body;try{body=await req.json()}catch{return json({error:"Invalid JSON request"},400)}
     if(body?.product!=="json-format-v1"||typeof body?.input!=="string"||Buffer.byteLength(body.input,"utf8")>8192)return json({error:"Invalid product or input (max 8192 bytes)"},400);
     try{JSON.parse(body.input)}catch{return json({error:"Input is not valid JSON; this service formats valid JSON only"},422)}
-    const base=String(env.LNBITS_BASE_URL).replace(/\\/+$/,"");
+    const base=String(env.LNBITS_BASE_URL).replace(/\/+$/,"");
     if(!/^https:\/\//.test(base))return json({error:"Provider must use HTTPS"},503);
     const orderId=crypto.randomUUID();
     let upstream;try{upstream=await fetch(base+"/api/v1/payments",{method:"POST",headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY,"content-type":"application/json"},body:JSON.stringify({out:false,amount:100,memo:"JARVIS JSON format "+orderId,expiry:900}),signal:AbortSignal.timeout(12000)})}catch{return json({error:"Invoice provider unreachable"},502)}
@@ -471,7 +471,7 @@ async function microService(req,url) {
     if(!o)return json({error:"Order not found"},404);
     if(o.status==="paid")return json({order_id:o.id,status:"paid",product:o.product,result:JSON.stringify(JSON.parse(o.input_text),null,2)});
     if(!env.LNBITS_BASE_URL||!env.LNBITS_INVOICE_KEY)return json({order_id:o.id,status:"pending",error:"Payment verification unavailable"},503);
-    const base=String(env.LNBITS_BASE_URL).replace(/\\/+$/,"");
+    const base=String(env.LNBITS_BASE_URL).replace(/\/+$/,"");
     let upstream;try{upstream=await fetch(base+"/api/v1/payments/"+encodeURIComponent(o.checking_id||o.payment_hash),{headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY},signal:AbortSignal.timeout(12000)})}catch{return json({order_id:o.id,status:"pending",error:"Payment verification unavailable"},502)}
     if(!upstream.ok)return json({order_id:o.id,status:"pending",error:"Payment verification failed"},502);
     const state=await upstream.json().catch(()=>({}));
