@@ -447,23 +447,27 @@ if(removedAssistantDoctrine.length){
 // Public pay-before-delivery microservice. Invoice-only LNbits key; no spending authority.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_micro_orders (id UUID PRIMARY KEY, product TEXT NOT NULL, input_text TEXT NOT NULL, payment_hash TEXT NOT NULL UNIQUE, checking_id TEXT, bolt11 TEXT NOT NULL, amount_sats INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), paid_at TIMESTAMPTZ)");
 async function microService(req,url) {
-  if(req.method==="GET" && url.pathname==="/v1/microservices") return json({products:[{id:"json-format-v1",description:"Validate and canonical-format JSON; no AI, no code execution",price_sats:100,max_input_bytes:8192}],payment:"Lightning",configured:Boolean(env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY),status:env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY?"ready":"awaiting_invoice_only_credentials"});
+  if(req.method==="GET" && url.pathname==="/v1/microservices") return json({products:[{id:"json-format-v1",description:"Validate and canonical-format JSON; no AI, no code execution",price_sats_from:100,price_sats_over_2kb:250,max_input_bytes:8192}],payment:"Lightning",configured:Boolean(env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY),status:env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY?"ready":"awaiting_invoice_only_credentials"});
   if(req.method==="POST" && url.pathname==="/v1/microservices/orders"){
     if(!env.LNBITS_BASE_URL||!env.LNBITS_INVOICE_KEY)return json({error:"Lightning invoice provider not configured"},503);
     if(Number(req.headers.get("content-length")||0)>12000)return json({error:"Request too large"},413);
     let body;try{body=await req.json()}catch{return json({error:"Invalid JSON request"},400)}
     if(body?.product!=="json-format-v1"||typeof body?.input!=="string"||Buffer.byteLength(body.input,"utf8")>8192)return json({error:"Invalid product or input (max 8192 bytes)"},400);
-    try{JSON.parse(body.input)}catch{return json({error:"Input is not valid JSON; this service formats valid JSON only"},422)}
+    let parsed;try{parsed=JSON.parse(body.input)}catch{return json({error:"Input is not valid JSON; this service formats valid JSON only"},422)}
+    // Bound nesting before invoice issuance to avoid expensive serialization.
+    const stack=[[parsed,0]];let nodes=0;
+    while(stack.length){const [value,depth]=stack.pop();if(depth>32||++nodes>4000)return json({error:"JSON nesting or node limit exceeded"},422);if(value&&typeof value==="object")for(const child of Object.values(value))stack.push([child,depth+1]);}
+    const amountSats=Buffer.byteLength(body.input,"utf8")<=2048?100:250;
     const base=String(env.LNBITS_BASE_URL).replace(/\/+$/,"");
     if(!/^https:\/\//.test(base))return json({error:"Provider must use HTTPS"},503);
     const orderId=crypto.randomUUID();
-    let upstream;try{upstream=await fetch(base+"/api/v1/payments",{method:"POST",headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY,"content-type":"application/json"},body:JSON.stringify({out:false,amount:100,memo:"JARVIS JSON format "+orderId,expiry:900}),signal:AbortSignal.timeout(12000)})}catch{return json({error:"Invoice provider unreachable"},502)}
+    let upstream;try{upstream=await fetch(base+"/api/v1/payments",{method:"POST",headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY,"content-type":"application/json"},body:JSON.stringify({out:false,amount:amountSats,memo:"JARVIS JSON format "+orderId,expiry:900}),signal:AbortSignal.timeout(12000)})}catch{return json({error:"Invoice provider unreachable"},502)}
     if(!upstream.ok)return json({error:"Invoice provider refused request",providerStatus:upstream.status},502);
     const inv=await upstream.json().catch(()=>({}));
     const hash=String(inv.payment_hash||"").toLowerCase(),checking=String(inv.checking_id||hash),bolt11=String(inv.payment_request||"");
     if(!/^[a-f0-9]{64}$/.test(hash)||!bolt11||checking.length>256)return json({error:"Incomplete invoice response"},502);
-    await sql.unsafe("INSERT INTO jarvis_micro_orders(id,product,input_text,payment_hash,checking_id,bolt11,amount_sats) VALUES($1,$2,$3,$4,$5,$6,$7)",[orderId,"json-format-v1",body.input,hash,checking,bolt11,100]);
-    return json({order_id:orderId,price_sats:100,bolt11,payment_hash:hash,expires_in_seconds:900,status:"pending",status_url:"/v1/microservices/orders/"+orderId},201);
+    await sql.unsafe("INSERT INTO jarvis_micro_orders(id,product,input_text,payment_hash,checking_id,bolt11,amount_sats) VALUES($1,$2,$3,$4,$5,$6,$7)",[orderId,"json-format-v1",body.input,hash,checking,bolt11,amountSats]);
+    return json({order_id:orderId,price_sats:amountSats,bolt11,payment_hash:hash,expires_in_seconds:900,status:"pending",status_url:"/v1/microservices/orders/"+orderId},201);
   }
   const m=url.pathname.match(/^\/v1\/microservices\/orders\/([a-f0-9-]{36})$/);
   if(m&&req.method==="GET"){
