@@ -260,6 +260,8 @@ async function scanPublicBounties(){
 }
 void scanPublicBounties().catch(e=>console.warn("[BountyScout] initial scan:",String(e)));
 setInterval(()=>{void scanPublicBounties().catch(e=>console.warn("[BountyScout] scan:",String(e)))},30*60*1000);
+// Auditable external task lifecycle: no fabricated platform acceptance or BTC settlement.
+await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_paid_workflow (id BIGSERIAL PRIMARY KEY, source TEXT NOT NULL, source_url TEXT NOT NULL, title TEXT NOT NULL, payout_address TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'discovered', external_account_id TEXT, acceptance_evidence_url TEXT, delivery_evidence_url TEXT, payment_txid TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 // Autonomous public opportunity discovery: recurring, idempotent, no external commitments.
 async function scheduleOpportunityDiscovery() {
   const slot = Math.floor(Date.now() / (6 * 60 * 60 * 1000));
@@ -404,7 +406,7 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
-    const ownerOnly = (url.pathname === "/v1/opportunities" || url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
+    const ownerOnly = (url.pathname.startsWith("/v1/paid-workflows") || url.pathname === "/v1/opportunities" || url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
     if (ownerOnly) {
       if (!ownerAuthorized(req)) {
         const ip=(req.headers.get("x-forwarded-for")||"").split(",")[0].trim().slice(0,80);
@@ -509,7 +511,10 @@ const server = Bun.serve({
         const rows = await sql`SELECT id, event, detail, created_at FROM agent_learning_events ORDER BY created_at DESC LIMIT 100`;
         return json({ events: rows });
       }
-      if (req.method === "GET" && url.pathname === "/v1/status") {
+      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows"){const rows=await sql.unsafe("SELECT * FROM jarvis_paid_workflow ORDER BY updated_at DESC LIMIT 100");return json({items:rows,notice:"Evidence-backed workflow; on-chain payment not independently verified by this endpoint"})}
+    if(req.method==="POST"&&url.pathname==="/v1/paid-workflows"){const b=await req.json(),title=String(b.title||"").trim(),source=String(b.source||"").trim(),sourceUrl=String(b.source_url||"");if(title.length<4||!source||!/^https:\/\//.test(sourceUrl))return json({error:"Valid source, title and HTTPS listing URL required"},400);const [item]=await sql.unsafe("INSERT INTO jarvis_paid_workflow(source,source_url,title,payout_address) VALUES($1,$2,$3,$4) RETURNING *",[source.slice(0,80),sourceUrl.slice(0,1500),title.slice(0,300),"bc1qdmzr4m78ulj2saa97vg9kmpzuxu3477gvc2rct"]);return json({item},201)}
+    if(req.method==="POST"&&/^\/v1\/paid-workflows\/\d+\/advance$/.test(url.pathname)){const id=Number(url.pathname.split("/")[3]),b=await req.json(),[row]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);if(!row)return json({error:"Not found"},404);const allowed={discovered:"account_ready",account_ready:"accepted",accepted:"delivered",delivered:"payment_reported"},next=String(b.status||"");if(allowed[row.status]!==next)return json({error:"Invalid transition",current:row.status,expected:allowed[row.status]},409);const evidence=String(b.evidence_url||"");if(!/^https:\/\//.test(evidence))return json({error:"Independent HTTPS evidence URL required"},400);let field=next==="account_ready"?"external_account_id":next==="accepted"?"acceptance_evidence_url":next==="delivered"?"delivery_evidence_url":"payment_txid";if(next==="payment_reported"&&!/^[a-fA-F0-9]{64}$/.test(String(b.txid||"")))return json({error:"64-character BTC transaction ID required"},400);const [item]=await sql.unsafe("UPDATE jarvis_paid_workflow SET status=$2,external_account_id=CASE WHEN $2='account_ready' THEN $3 ELSE external_account_id END,acceptance_evidence_url=CASE WHEN $2='accepted' THEN $3 ELSE acceptance_evidence_url END,delivery_evidence_url=CASE WHEN $2='delivered' THEN $3 ELSE delivery_evidence_url END,payment_txid=CASE WHEN $2='payment_reported' THEN $4 ELSE payment_txid END,updated_at=NOW() WHERE id=$1 RETURNING *",[id,next,evidence,String(b.txid||"")]);return json({item,verified:false,notice:"Evidence recorded; external platform/payment confirmation still required"})}
+    if (req.method === "GET" && url.pathname === "/v1/status") {
         const counts = await sql`SELECT status, COUNT(*)::int AS count FROM agent_messages GROUP BY status`;
         return json({ ok: true, modelConfigured: Boolean(env.MODEL_API_KEY), counts });
       }
