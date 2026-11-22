@@ -44,6 +44,13 @@ if (env.JARVIS_BRIDGE_REPOSITORY) {
 } else {
   console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_REPOSITORY");
 }
+// Shared PostgreSQL rate limiter across gateway instances (fixed one-minute buckets).
+await sql`
+  CREATE TABLE IF NOT EXISTS github_probe_rate_limits (
+    bucket BIGINT PRIMARY KEY,
+    hits INTEGER NOT NULL
+  )
+`;
 await sql`CREATE INDEX IF NOT EXISTS agent_messages_status_idx ON agent_messages(status, created_at DESC)`;
 // Unique receipt key for the isolated GitHub push probe, including under concurrent requests.
 // Archive pre-existing duplicate probe receipts before enforcing idempotency.
@@ -403,6 +410,18 @@ const server = Bun.serve({
       const a = Buffer.from(supplied), b = Buffer.from(expected);
       if (a.length !== b.length || !timingSafeEqual(a, b)) return json({ error: "Unauthorized" }, 401);
       // Bound memory before decoding JSON, including chunked transfer encoding.
+      // Atomic shared limit: 120 authenticated probes per UTC minute across instances.
+      try {
+        const bucket = Math.floor(Date.now() / 60000);
+        const [limit] = await sql`
+          INSERT INTO github_probe_rate_limits(bucket, hits) VALUES (${bucket}, 1)
+          ON CONFLICT (bucket) DO UPDATE SET hits = github_probe_rate_limits.hits + 1
+          RETURNING hits
+        `;
+        if (Number(limit.hits) > 120) return json({ error: "Rate limit exceeded" }, 429);
+      } catch {
+        return json({ error: "Probe rate limiter unavailable" }, 503);
+      }
       const reader = req.body?.getReader();
       if (!reader) return json({ error: "Invalid JSON" }, 400);
       const chunks: Uint8Array[] = [];
