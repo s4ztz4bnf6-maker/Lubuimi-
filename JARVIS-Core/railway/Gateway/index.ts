@@ -387,18 +387,27 @@ const server = Bun.serve({
           body?.content !== "Integration connectivity probe only. Do not execute any task, access secrets, or take external actions.")
         return json({ error: "Invalid probe" }, 400);
       const subject = "github-push-probe:" + requestId;
-      const [row] = await sql`
-        INSERT INTO agent_messages(channel, recipient, subject, body, status)
-        VALUES ('github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval')
-        ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING
-        RETURNING id, status
-      `;
-      if (!row) {
-        const [existing] = await sql`SELECT id,status FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject} ORDER BY id DESC LIMIT 1`;
-        return json({ accepted: true, requestId, id: existing?.id, status: existing?.status, duplicate: true }, 200);
+      try {
+        const receipt = await sql.begin(async (tx) => {
+          const [row] = await tx`
+            INSERT INTO agent_messages(channel, recipient, subject, body, status)
+            VALUES ('github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval')
+            ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING
+            RETURNING id, status
+          `;
+          if (!row) {
+            const [existing] = await tx`SELECT id,status FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject} LIMIT 1`;
+            if (!existing) throw new Error("Probe receipt missing after conflict");
+            return { accepted: true, requestId, id: existing.id, status: existing.status, duplicate: true };
+          }
+          await tx`INSERT INTO agent_audit(event, detail) VALUES ('github_push_probe_received', ${tx.json({ id: row.id, requestId })})`;
+          return { accepted: true, requestId, id: row.id, status: row.status, workerExecuted: false };
+        });
+        return json(receipt, receipt.duplicate ? 200 : 202);
+      } catch (error) {
+        console.error("[Push probe] Persistence failed", error instanceof Error ? error.name : "unknown");
+        return json({ error: "Probe persistence unavailable" }, 503);
       }
-      await sql`INSERT INTO agent_audit(event, detail) VALUES ('github_push_probe_received', ${sql.json({ id: row.id, requestId })})`;
-      return json({ accepted: true, requestId, id: row.id, status: row.status, workerExecuted: false }, 202);
     }
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
     const ownerOnly = (url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
