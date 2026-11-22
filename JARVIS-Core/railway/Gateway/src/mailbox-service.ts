@@ -65,9 +65,9 @@ export function startMailboxPolling(options: Options) {
     } catch (error) {
       const message = String(error instanceof Error ? error.message : error);
       // GitHub authorization failures need credential repair, not rapid retries.
-      retryAfter = Date.now() + (/GitHub HTTP (401|403)\\b/.test(message) ? 15 * 60_000 : 60_000);
+      retryAfter = Date.now() + (/GitHub HTTP (401|403)\b/.test(message) ? 15 * 60_000 : 60_000);
       log.warn("[Mailbox] Poll unavailable; retry scheduled", {
-        reason: /GitHub HTTP (401|403)\\b/.test(message) ? "github_auth" : "temporary_error",
+        reason: /GitHub HTTP (401|403)\b/.test(message) ? "github_auth" : "temporary_error",
         retryMinutes: Math.ceil((retryAfter - Date.now()) / 60_000)
       });
     } finally { busy = false; }
