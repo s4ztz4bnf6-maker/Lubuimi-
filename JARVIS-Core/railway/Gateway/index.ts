@@ -444,12 +444,51 @@ if(removedAssistantDoctrine.length){
  await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["owner_feedback_doctrine_removed",JSON.stringify({title:assistantDoctrineTitle,removed:removedIds.length,reason:"Owner requested removal of assistant-authored value framework"})]);
  console.log("JARVIS removed assistant-authored value directive from persistent memory: "+removedIds.length);
 }
+// Public pay-before-delivery microservice. Invoice-only LNbits key; no spending authority.
+await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_micro_orders (id UUID PRIMARY KEY, product TEXT NOT NULL, input_text TEXT NOT NULL, payment_hash TEXT NOT NULL UNIQUE, checking_id TEXT, bolt11 TEXT NOT NULL, amount_sats INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), paid_at TIMESTAMPTZ)");
+async function microService(req,url) {
+  if(req.method==="GET" && url.pathname==="/v1/microservices") return json({products:[{id:"json-format-v1",description:"Validate and canonical-format JSON; no AI, no code execution",price_sats:100,max_input_bytes:8192}],payment:"Lightning",configured:Boolean(env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY),status:env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY?"ready":"awaiting_invoice_only_credentials"});
+  if(req.method==="POST" && url.pathname==="/v1/microservices/orders"){
+    if(!env.LNBITS_BASE_URL||!env.LNBITS_INVOICE_KEY)return json({error:"Lightning invoice provider not configured"},503);
+    if(Number(req.headers.get("content-length")||0)>12000)return json({error:"Request too large"},413);
+    let body;try{body=await req.json()}catch{return json({error:"Invalid JSON request"},400)}
+    if(body?.product!=="json-format-v1"||typeof body?.input!=="string"||Buffer.byteLength(body.input,"utf8")>8192)return json({error:"Invalid product or input (max 8192 bytes)"},400);
+    try{JSON.parse(body.input)}catch{return json({error:"Input is not valid JSON; this service formats valid JSON only"},422)}
+    const base=String(env.LNBITS_BASE_URL).replace(/\\/+$/,"");
+    if(!/^https:\/\//.test(base))return json({error:"Provider must use HTTPS"},503);
+    const orderId=crypto.randomUUID();
+    let upstream;try{upstream=await fetch(base+"/api/v1/payments",{method:"POST",headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY,"content-type":"application/json"},body:JSON.stringify({out:false,amount:100,memo:"JARVIS JSON format "+orderId,expiry:900}),signal:AbortSignal.timeout(12000)})}catch{return json({error:"Invoice provider unreachable"},502)}
+    if(!upstream.ok)return json({error:"Invoice provider refused request",providerStatus:upstream.status},502);
+    const inv=await upstream.json().catch(()=>({}));
+    const hash=String(inv.payment_hash||"").toLowerCase(),checking=String(inv.checking_id||hash),bolt11=String(inv.payment_request||"");
+    if(!/^[a-f0-9]{64}$/.test(hash)||!bolt11||checking.length>256)return json({error:"Incomplete invoice response"},502);
+    await sql.unsafe("INSERT INTO jarvis_micro_orders(id,product,input_text,payment_hash,checking_id,bolt11,amount_sats) VALUES($1,$2,$3,$4,$5,$6,$7)",[orderId,"json-format-v1",body.input,hash,checking,bolt11,100]);
+    return json({order_id:orderId,price_sats:100,bolt11,payment_hash:hash,expires_in_seconds:900,status:"pending",status_url:"/v1/microservices/orders/"+orderId},201);
+  }
+  const m=url.pathname.match(/^\/v1\/microservices\/orders\/([a-f0-9-]{36})$/);
+  if(m&&req.method==="GET"){
+    const [o]=await sql.unsafe("SELECT * FROM jarvis_micro_orders WHERE id=$1",[m[1]]);
+    if(!o)return json({error:"Order not found"},404);
+    if(o.status==="paid")return json({order_id:o.id,status:"paid",product:o.product,result:JSON.stringify(JSON.parse(o.input_text),null,2)});
+    if(!env.LNBITS_BASE_URL||!env.LNBITS_INVOICE_KEY)return json({order_id:o.id,status:"pending",error:"Payment verification unavailable"},503);
+    const base=String(env.LNBITS_BASE_URL).replace(/\\/+$/,"");
+    let upstream;try{upstream=await fetch(base+"/api/v1/payments/"+encodeURIComponent(o.checking_id||o.payment_hash),{headers:{"X-Api-Key":env.LNBITS_INVOICE_KEY},signal:AbortSignal.timeout(12000)})}catch{return json({order_id:o.id,status:"pending",error:"Payment verification unavailable"},502)}
+    if(!upstream.ok)return json({order_id:o.id,status:"pending",error:"Payment verification failed"},502);
+    const state=await upstream.json().catch(()=>({}));
+    if(state.paid===true && state.details?.status!=="failed"){
+      await sql.unsafe("UPDATE jarvis_micro_orders SET status='paid',paid_at=NOW() WHERE id=$1 AND status='pending'",[o.id]);
+      return json({order_id:o.id,status:"paid",product:o.product,result:JSON.stringify(JSON.parse(o.input_text),null,2)});
+    }
+    return json({order_id:o.id,status:"pending",paid:false});
+  }
+  return json({error:"Not found"},404);
+}
 const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
-    const ownerOnly = (url.pathname.startsWith("/v1/payout-requests") || url.pathname.startsWith("/v1/business-banking") || url.pathname.startsWith("/v1/paid-workflows") || url.pathname === "/v1/opportunities" || url.pathname === "/v1/revenue-readiness" || url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
+    if(url.pathname==="/v1/microservices" || url.pathname.startsWith("/v1/microservices/")) return microService(req,url);\n    const ownerOnly = (url.pathname.startsWith("/v1/payout-requests") || url.pathname.startsWith("/v1/business-banking") || url.pathname.startsWith("/v1/paid-workflows") || url.pathname === "/v1/opportunities" || url.pathname === "/v1/revenue-readiness" || url.pathname === "/v1/identity/corporate" || url.pathname === "/v1/lightning/status" || url.pathname === "/v1/lightning/invoices" || url.pathname.startsWith("/v1/lightning/invoices/") || url.pathname === "/v1/owner" || url.pathname === "/v1/memory" || url.pathname === "/v1/learning" || url.pathname.startsWith("/v1/security/") || url.pathname === "/v1/agents" || url.pathname.startsWith("/v1/agents/") || url.pathname === "/v1/agent-invitations" || url.pathname.startsWith("/v1/media/") || url.pathname.startsWith("/v1/calls/") || (url.pathname === "/v1/feedback" && req.method === "POST"));
     if (ownerOnly) {
       if (!ownerAuthorized(req)) {
         const ip=(req.headers.get("x-forwarded-for")||"").split(",")[0].trim().slice(0,80);
