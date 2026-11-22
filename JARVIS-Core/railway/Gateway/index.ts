@@ -402,8 +402,26 @@ const server = Bun.serve({
       const { timingSafeEqual } = await import("node:crypto");
       const a = Buffer.from(supplied), b = Buffer.from(expected);
       if (a.length !== b.length || !timingSafeEqual(a, b)) return json({ error: "Unauthorized" }, 401);
-      const raw = await req.text();
-      if (Buffer.byteLength(raw, "utf8") > 2048) return json({ error: "Payload too large" }, 413);
+      // Bound memory before decoding JSON, including chunked transfer encoding.
+      const reader = req.body?.getReader();
+      if (!reader) return json({ error: "Invalid JSON" }, 400);
+      const chunks: Uint8Array[] = [];
+      let bytes = 0;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          bytes += value.byteLength;
+          if (bytes > 2048) {
+            await reader.cancel().catch(() => {});
+            return json({ error: "Payload too large" }, 413);
+          }
+          chunks.push(value);
+        }
+      } catch {
+        return json({ error: "Invalid request body" }, 400);
+      }
+      const raw = Buffer.concat(chunks, bytes).toString("utf8");
       let body;
       try { body = JSON.parse(raw); } catch { return json({ error: "Invalid JSON" }, 400); }
       const requestId = String(body?.requestId ?? "");
