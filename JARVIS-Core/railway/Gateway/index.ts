@@ -240,6 +240,7 @@ for (const [title,prompt] of nextTasks) {
 }
 await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["owner_autonomy_and_execution_policy_deployed",JSON.stringify({permissions:autonomyPermissions.map(x=>x[0]),tasks:nextTasks.map(x=>x[0]),ownerAccessCredentialsChanged:false,externalAccountsCreated:false,devicesAccessed:false,financialActionsTaken:false})]);
 
+import { assessLead } from "./src/opportunity-triage";
 // Public-source paid-work scanner. Discovery is not acceptance or payment.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_external_opportunities (source TEXT NOT NULL, external_id TEXT NOT NULL, title TEXT NOT NULL, source_url TEXT NOT NULL, reward_text TEXT, status TEXT NOT NULL DEFAULT 'unverified', discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), metadata JSONB NOT NULL DEFAULT '{}'::jsonb, PRIMARY KEY(source,external_id))");
 async function scanPublicBounties(){
@@ -258,6 +259,8 @@ async function scanPublicBounties(){
  for(const issue of candidates.values()){
   if(!issue||!issue.html_url||!issue.id||issue.pull_request||issue.repository?.private)continue;
   const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
+  const assessment=assessLead({id:String(issue.id),title,body,url:String(issue.html_url),labels:(issue.labels||[]).map(x=>String(x.name||"")),isOpen:issue.state==="open",isPullRequest:!!issue.pull_request,isPrivate:!!issue.repository?.private});
+  if(assessment.status!=="review")continue;
   const match=(title+" "+body).match(/(?:USD\s*|\$\s*)([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i);
   const reward=match?match[0]:null;
   const rewardUsd=match?Number(match[1].replace(/,/g,"")):null;
@@ -269,7 +272,7 @@ async function scanPublicBounties(){
   if(!eligibleForReview)continue;
   const profitAssessment={reward_usd_unverified:rewardUsd,estimated_cost_usd:estimatedCostUsd,estimated_net_usd:estimatedNetUsd,estimated_hours:estimatedHours,estimated_hourly_usd:estimatedHourlyUsd,estimated_api_usd:estimatedApiUsd,estimated_fees_usd:estimatedFeesUsd,profit_verified:false,payout_verified:false,needs_manual_scope_estimate:true};
 
-  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,profit_assessment:profitAssessment,acceptance_confirmed:false,btc_payout_confirmed:false})]);
+  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,triage_assessment:assessment,profit_assessment:profitAssessment,acceptance_confirmed:false,btc_payout_confirmed:false})]);
   // Record qualifying leads in the evidence-gated workflow without claiming acceptance or payment.
   await sql.unsafe("INSERT INTO jarvis_paid_workflow(source,source_url,title,payout_address,status) SELECT 'github',$1,$2,$3,'discovered' WHERE NOT EXISTS (SELECT 1 FROM jarvis_paid_workflow WHERE source='github' AND source_url=$1)",[String(issue.html_url),title,"bc1qdmzr4m78ulj2saa97vg9kmpzuxu3477gvc2rct"]);
   // Autonomous activation: queue a bounded agent task for each qualifying lead.
