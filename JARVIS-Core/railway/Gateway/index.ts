@@ -286,7 +286,11 @@ async function scanPublicBounties(){
     "Do not contact buyers, accept contracts, publish code, spend money or claim payment without authorization.",
     "Return verifiable evidence and explicit next actions."
   ].join("\\n");
-  await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[agentTaskTitle,agentPrompt]);
+  try {
+    await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[agentTaskTitle,agentPrompt]);
+  } catch (taskError) {
+    console.warn("[BountyScout] agent task queue failed for issue",String(issue.id),String(taskError));
+  }
   found.push({title,url:issue.html_url,reward,estimatedNetUsd,source:"github",status:"unverified_profitable_candidate"});
  }
  console.log("[BountyScout] public GitHub candidates recorded:",found.length);
