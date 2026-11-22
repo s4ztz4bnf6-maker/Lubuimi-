@@ -36,3 +36,38 @@ export function routePayment(request: PaymentRequest, providers: readonly Provid
 export function isConfirmedPayment(state: PaymentState): boolean {
   return state === "confirmed";
 }
+
+/** Provider quotes are informational only. Never initiate a charge or exchange. */
+export type ConversionQuote = {
+  sourceAmountMinor: bigint;
+  sourceCurrency: Exclude<Currency, "BTC">;
+  grossBtcSats: bigint;
+  providerFeeSats: bigint;
+  networkFeeSats: bigint;
+  otherFeeSats: bigint;
+  expiresAtEpochMs: number;
+};
+export type ConversionDecision =
+  | { permitted: true; netBtcSats: bigint; totalFeeSats: bigint; approvalRequired: true }
+  | { permitted: false; reason: string };
+/**
+ * A conversion may be presented for approval only after external fiat funds
+ * are independently confirmed as settled and spendable. Fee deductions must
+ * come exclusively from those proceeds; no prepaid fees or negative balances.
+ */
+export function evaluateConversion(
+  quote: ConversionQuote,
+  context: { fiatSettled: boolean; providerVerified: boolean; nowEpochMs: number },
+): ConversionDecision {
+  if (!context.providerVerified) return { permitted: false, reason: "provider_not_verified" };
+  if (!context.fiatSettled) return { permitted: false, reason: "fiat_not_settled" };
+  if (!Number.isFinite(context.nowEpochMs) || !Number.isFinite(quote.expiresAtEpochMs) || context.nowEpochMs >= quote.expiresAtEpochMs)
+    return { permitted: false, reason: "quote_expired" };
+  if (quote.sourceAmountMinor <= 0n || quote.grossBtcSats <= 0n) return { permitted: false, reason: "invalid_quote" };
+  if ([quote.providerFeeSats, quote.networkFeeSats, quote.otherFeeSats].some(fee => fee < 0n))
+    return { permitted: false, reason: "invalid_fee" };
+  const totalFeeSats = quote.providerFeeSats + quote.networkFeeSats + quote.otherFeeSats;
+  const netBtcSats = quote.grossBtcSats - totalFeeSats;
+  if (netBtcSats <= 0n) return { permitted: false, reason: "fees_exceed_proceeds" };
+  return { permitted: true, netBtcSats, totalFeeSats, approvalRequired: true };
+}
