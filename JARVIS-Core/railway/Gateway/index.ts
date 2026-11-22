@@ -1,4 +1,4 @@
-import { catalogQueries, queryBatch } from "./src/freegoods-catalog";
+import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
 import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
@@ -306,7 +306,7 @@ void scanPublicBounties().catch(e=>console.warn("[BountyScout] initial scan:",St
 setInterval(()=>{void scanPublicBounties().catch(e=>console.warn("[BountyScout] scan:",String(e)))},30*60*1000);
 // FreeGoods read-only discovery; runs independently of BountyScout.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_freegoods_public_leads (kind TEXT NOT NULL, source_url TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL, query TEXT NOT NULL, score INTEGER NOT NULL, flags JSONB NOT NULL DEFAULT '[]'::jsonb, discovered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(kind,source_url))");
-const freegoodsCatalog=catalogQueries((env.JARVIS_FREEGOODS_BRANDS||"").split(","),(env.JARVIS_FREEGOODS_CATEGORIES||"").split(","),(env.JARVIS_FREEGOODS_QUERIES||"").split(","));
+const freegoodsCatalog=expandedSearchTerms(3000,(env.JARVIS_FREEGOODS_BRANDS||"").split(",").filter(Boolean),(env.JARVIS_FREEGOODS_CATEGORIES||"").split(",").filter(Boolean));
 const freegoodsBatchSize=Math.min(24,Math.max(1,Number(env.JARVIS_FREEGOODS_BATCH_SIZE)||8));
 let freegoodsRunning=false;
 async function scanFreegoods(){
