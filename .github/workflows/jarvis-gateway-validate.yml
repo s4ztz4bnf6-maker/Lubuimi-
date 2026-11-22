@@ -128,7 +128,7 @@ jobs:
           env=dict(os.environ,PGPASSWORD="test_only")
           subprocess.run(db+["CREATE OR REPLACE FUNCTION reject_probe_audit() RETURNS trigger LANGUAGE plpgsql AS $audit$ BEGIN IF NEW.event='github_push_probe_received' THEN RAISE EXCEPTION 'forced audit failure'; END IF; RETURN NEW; END $audit$; CREATE TRIGGER reject_probe_audit BEFORE INSERT ON agent_audit FOR EACH ROW EXECUTE FUNCTION reject_probe_audit();"],env=env,check=True,capture_output=True)
           assert call({"requestId":"auditfail_1234","sender":"chatgpt","content":content})[0]==503,"audit failure must fail closed"
-          count=subprocess.check_output(db+["SELECT count(*) FROM agent_messages WHERE subject='github-push-probe:auditfail_1234'"],env=env,text=True)
+          count=subprocess.check_output(["psql","-h","localhost","-U","postgres","-d","gateway_test","-At","-c","SELECT count(*) FROM agent_messages WHERE subject='github-push-probe:auditfail_1234'"],env=env,text=True)
           assert count.strip().splitlines()[-1].strip()=="0","audit failure must roll back receipt"
           subprocess.run(db+["DROP TRIGGER reject_probe_audit ON agent_audit; DROP FUNCTION reject_probe_audit()"],env=env,check=True,capture_output=True)
           print("PASS: valid, duplicate, wrong/missing key, invalid JSON/fields, size limit, 12-way concurrency, task isolation, audit rollback")
