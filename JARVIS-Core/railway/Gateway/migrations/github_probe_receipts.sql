@@ -1,5 +1,17 @@
 -- Run once before deploying the probe gateway; never during gateway startup.
 -- Fail closed if other writers hold locks; retry during a maintenance window.
+CREATE TABLE IF NOT EXISTS agent_messages (
+  id BIGSERIAL PRIMARY KEY,
+  channel TEXT NOT NULL DEFAULT 'internal',
+  recipient TEXT,
+  subject TEXT NOT NULL,
+  body TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending_approval',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  approved_at TIMESTAMPTZ,
+  delivered_at TIMESTAMPTZ,
+  delivery_result JSONB
+);
 SET lock_timeout = '2s';
 SET statement_timeout = '30s';
 BEGIN;
