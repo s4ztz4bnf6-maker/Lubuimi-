@@ -258,7 +258,7 @@ async function scanPublicBounties(){
  for(const issue of candidates.values()){
   if(!issue||!issue.html_url||!issue.id||issue.pull_request||issue.repository?.private)continue;
   const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
-  const match=(title+" "+body).match(/(?:USD\\s*|\\$\\s*)([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
+  const match=(title+" "+body).match(/(?:USD\s*|\$\s*)([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i);
   const reward=match?match[0]:null;
   const rewardUsd=match?Number(match[1].replace(/,/g,"")):null;
   const estimatedHours=2,estimatedHourlyUsd=15,estimatedApiUsd=5,estimatedFeesUsd=5;
