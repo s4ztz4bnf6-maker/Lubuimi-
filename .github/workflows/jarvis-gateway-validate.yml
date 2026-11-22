@@ -133,7 +133,7 @@ jobs:
           conn.putheader("Content-Type","application/json")
           conn.putheader("Transfer-Encoding","chunked")
           conn.endheaders()
-          conn.send(b"801\\r\\n"+b"x"*2049+b"\\r\\n0\\r\\n\\r\\n")
+          conn.send(b"801\r\n"+b"x"*2049+b"\r\n0\r\n\r\n")
           response=conn.getresponse()
           assert response.status==413,("chunked oversized body",response.status)
           response.read()
