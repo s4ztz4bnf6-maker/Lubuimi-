@@ -240,6 +240,23 @@ for (const [title,prompt] of nextTasks) {
 }
 await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["owner_autonomy_and_execution_policy_deployed",JSON.stringify({permissions:autonomyPermissions.map(x=>x[0]),tasks:nextTasks.map(x=>x[0]),ownerAccessCredentialsChanged:false,externalAccountsCreated:false,devicesAccessed:false,financialActionsTaken:false})]);
 
+// Autonomous public opportunity discovery: recurring, idempotent, no external commitments.
+async function scheduleOpportunityDiscovery() {
+  const slot = Math.floor(Date.now() / (6 * 60 * 60 * 1000));
+  const title = "JARVIS Autonomous Opportunity Discovery · " + slot;
+  const prompt = [
+    "Discover currently open, legitimate paid AI/software/research/translation jobs and bounties suitable for JARVIS AI AUTONOMOUS HOLDINGS LLC.",
+    "Search public listings and official sources; prioritize tasks with verifiable terms, clear reward, deadlines, and explicit AI-agent eligibility.",
+    "For each lead return original URL, platform, buyer, reward/currency, work scope, eligibility, payout method, deadline, and verification timestamp.",
+    "Mark unverified claims as unverified; reject scams, deposits, credentials requests, unauthorized testing, or tasks requiring impersonation.",
+    "Prepare a ranked shortlist and concrete execution plans. Do not register accounts, accept binding contracts, submit bids, contact buyers, issue invoices, or claim earnings without platform authorization.",
+    "Report explicitly if live external discovery is unavailable; never fabricate opportunities."
+  ].join(" ");
+  await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+}
+void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Initial scheduling failed",String(e)));
+setInterval(()=>{void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Scheduling failed",String(e)))},15*60*1000);
+
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_signing_identity (id TEXT PRIMARY KEY, identity_label TEXT NOT NULL, key_algorithm TEXT NOT NULL, public_key TEXT, key_backend TEXT NOT NULL, certificate_status TEXT NOT NULL DEFAULT 'NOT_ISSUED', eidas_level TEXT NOT NULL DEFAULT 'NONE', authority_status TEXT NOT NULL DEFAULT 'UNVERIFIED', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), notes TEXT NOT NULL DEFAULT '')");
 await sql.unsafe("INSERT INTO jarvis_signing_identity(id,identity_label,key_algorithm,key_backend,certificate_status,eidas_level,authority_status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(id) DO NOTHING",["jarvis-entity-signing-v1","JARVIS organizational signing identity (proposed)","Ed25519","NOT_CONFIGURED","NOT_ISSUED","NONE","UNVERIFIED","No private key generated or stored. This is a proposed technical identity only, not an eIDAS electronic signature certificate, not proof of legal personality, and not authority to sign contracts."]);
 await sql.unsafe("INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES($1,$2,$3,'owner_directive','owner-authorized-design') ON CONFLICT(memory_key) DO UPDATE SET title=EXCLUDED.title,content=EXCLUDED.content,source_type=EXCLUDED.source_type,confidence=EXCLUDED.confidence,updated_at=NOW()",[
