@@ -141,6 +141,64 @@ jobs:
           test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_messages WHERE channel='github_push_probe' AND subject='github-push-probe:parallel_123456'")" = 1
           test "$(psql -h localhost -U postgres -d gateway_test -Atc "SELECT count(*) FROM agent_audit WHERE event='github_push_probe_received'")" = 2
 
+  phase-a-failure-modes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install gateway dependencies
+        working-directory: JARVIS-Core/railway/Gateway
+        run: bun install --frozen-lockfile
+      - name: Test unconfigured push secret and database outage
+        env:
+          DATABASE_URL: postgres://postgres:test_only@127.0.0.1:5432/gateway_test
+          AGENT_API_KEY: local-agent-key-not-push
+          PORT: "18082"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd JARVIS-Core/railway/Gateway
+          unset JARVIS_GATEWAY_PUSH_KEY
+          bun run index.ts > /tmp/gateway-failure-modes.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:18082/health >/dev/null 2>&1; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-failure-modes.log; exit 1; fi
+            sleep 0.25
+          done
+          curl -fsS http://127.0.0.1:18082/health >/dev/null
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:18082/v1/github-push/probe -H 'Content-Type: application/json' -d '{}')
+          test "$code" = 503
+          kill "$pid" && wait "$pid" || true
+          export JARVIS_GATEWAY_PUSH_KEY=local-test-push-key-0123456789abcdef0123456789abcdef
+          bun run index.ts > /tmp/gateway-outage.log 2>&1 &
+          pid=$!
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:18082/health >/dev/null 2>&1; then break; fi
+            if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/gateway-outage.log; exit 1; fi
+            sleep 0.25
+          done
+          curl -fsS http://127.0.0.1:18082/health >/dev/null
+          db_container=$(docker ps --filter ancestor=postgres:16 --format '{{.ID}}' | head -n 1)
+          test -n "$db_container"
+          docker stop "$db_container" >/dev/null
+          payload='{"sender":"chatgpt","requestId":"dboutage_12345","content":"Integration connectivity probe only. Do not execute any task, access secrets, or take external actions."}'
+          code=$(curl -s --max-time 15 -o /tmp/outage-response -w '%{http_code}' -X POST http://127.0.0.1:18082/v1/github-push/probe -H "Authorization: Bearer $JARVIS_GATEWAY_PUSH_KEY" -H 'Content-Type: application/json' --data-binary "$payload")
+          test "$code" = 503
+          echo "PASS: unconfigured secret and database outage return 503"
   migration-existing-duplicates:
     runs-on: ubuntu-latest
     timeout-minutes: 8
