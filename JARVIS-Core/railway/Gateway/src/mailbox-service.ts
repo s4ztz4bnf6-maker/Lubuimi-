@@ -55,12 +55,22 @@ export function startMailboxPolling(options: Options) {
   }
   let stopped = false;
   let busy = false;
+  let retryAfter = 0;
   const run = async () => {
-    if (stopped || busy) return;
+    if (stopped || busy || Date.now() < retryAfter) return;
     busy = true;
-    try { await pollMailboxOnce(options); }
-    catch (error) { log.error("[Mailbox] Poll failed", error); }
-    finally { busy = false; }
+    try {
+      await pollMailboxOnce(options);
+      retryAfter = 0;
+    } catch (error) {
+      const message = String(error instanceof Error ? error.message : error);
+      // GitHub authorization failures need credential repair, not rapid retries.
+      retryAfter = Date.now() + (/GitHub HTTP (401|403)\\b/.test(message) ? 15 * 60_000 : 60_000);
+      log.warn("[Mailbox] Poll unavailable; retry scheduled", {
+        reason: /GitHub HTTP (401|403)\\b/.test(message) ? "github_auth" : "temporary_error",
+        retryMinutes: Math.ceil((retryAfter - Date.now()) / 60_000)
+      });
+    } finally { busy = false; }
   };
   const timer = setInterval(() => { void run(); }, Math.max(options.intervalMs ?? 60_000, 10_000));
   void run();
