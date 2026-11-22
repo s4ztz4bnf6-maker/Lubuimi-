@@ -45,6 +45,8 @@ if (env.JARVIS_BRIDGE_REPOSITORY) {
   console.warn("[Mailbox] Disabled: missing JARVIS_BRIDGE_REPOSITORY");
 }
 await sql`CREATE INDEX IF NOT EXISTS agent_messages_status_idx ON agent_messages(status, created_at DESC)`;
+// Unique receipt key for the isolated GitHub push probe, including under concurrent requests.
+await sql`CREATE UNIQUE INDEX IF NOT EXISTS agent_messages_github_push_probe_unique ON agent_messages(channel, subject) WHERE channel = 'github_push_probe'`;
 await sql`
   CREATE TABLE IF NOT EXISTS agent_tasks (
     id BIGSERIAL PRIMARY KEY,
@@ -387,8 +389,8 @@ const server = Bun.serve({
       const subject = "github-push-probe:" + requestId;
       const [row] = await sql`
         INSERT INTO agent_messages(channel, recipient, subject, body, status)
-        SELECT 'github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval'
-        WHERE NOT EXISTS (SELECT 1 FROM agent_messages WHERE channel='github_push_probe' AND subject=${subject})
+        VALUES ('github_push_probe', 'jarvis', ${subject}, ${body.content}, 'pending_approval')
+        ON CONFLICT (channel, subject) WHERE channel = 'github_push_probe' DO NOTHING
         RETURNING id, status
       `;
       if (!row) {
