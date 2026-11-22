@@ -491,6 +491,18 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "GET" && url.pathname === "/v1/payments/bitcoin/status") {
+      const address = env.BTC_RECEIVE_ADDRESS || "";
+      if (!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(address)) return json({error:"Bitcoin watch-only address not configured"},503);
+      try {
+        const response = await fetch("https://mempool.space/api/address/" + encodeURIComponent(address), {signal:AbortSignal.timeout(8000),headers:{accept:"application/json"}});
+        if (!response.ok) return json({error:"Blockchain provider unavailable",provider_status:response.status},502);
+        const data = await response.json();
+        const confirmed = data.chain_stats || {};
+        const mempool = data.mempool_stats || {};
+        return json({network:"bitcoin-mainnet",address,watch_only:true,wallet_ownership_verified:false,confirmed_funded_sats:confirmed.funded_txo_sum ?? null,confirmed_spent_sats:confirmed.spent_txo_sum ?? null,confirmed_balance_sats:(Number(confirmed.funded_txo_sum||0)-Number(confirmed.spent_txo_sum||0)),confirmed_transaction_count:confirmed.tx_count ?? null,unconfirmed_transaction_count:mempool.tx_count ?? null,unconfirmed_balance_delta_sats:Number(mempool.funded_txo_sum||0)-Number(mempool.spent_txo_sum||0),source:"mempool.space",warning:"Public blockchain activity does not establish wallet ownership, business revenue, or spendability"});
+      } catch {return json({error:"Blockchain provider request failed"},502);}
+    }
     if (req.method === "GET" && url.pathname === "/v1/payments/receive") return json({ lightning_address: env.JARVIS_LIGHTNING_ADDRESS || null, method: "lightning_address", wallet_verified: false, automated_invoice_processing: Boolean(env.LNBITS_BASE_URL && env.LNBITS_INVOICE_KEY), notice: "Lightning address is a payment contact, not proof of wallet availability or payment receipt" });
     if (req.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "JARVIS Gateway", version: "0.1.0", database: "connected", capabilities: ["web-read", "persistent-memory", "message-queue", "approval-gated-delivery", "model-proxy"] });
     if(url.pathname==="/v1/microservices" || url.pathname.startsWith("/v1/microservices/")) return microService(req,url);
