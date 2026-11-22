@@ -21,3 +21,13 @@ Status: BLOCKED until Phase A A13 and A14 pass on the exact commit to deploy.
 ## Hard boundaries
 - This file does not authorize merge, production migration, deployment, secrets creation, or worker activation.
 - A successful probe is not a ChatGPT-to-JARVIS conversational link. Phase C must separately verify authorized responses and safe task handling.
+
+## One-pass operator checklist (execute only after explicit production authorization)
+- Pin the reviewed commit and record the five Gateway CI job conclusions.
+- Generate the gateway secret out of band, install the identical value in Railway and GitHub Actions; never echo it.
+- Apply the SQL migration once against the target database and verify the unique index.
+- Deploy the pinned gateway commit, wait for health, dispatch the manual probe workflow.
+- Verify 202 on first request, 200 on duplicate, one receipt, audit entry, no task execution.
+- If any assertion fails: stop probe, roll back gateway, revoke/rotate the key and investigate.
+
+This is intentionally a checklist rather than a one-click production workflow: GitHub Actions cannot safely assume authority to modify Railway secrets or production schema. Those operations require separate authorization and verified target environment.
