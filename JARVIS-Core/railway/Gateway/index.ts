@@ -270,6 +270,8 @@ async function scanPublicBounties(){
   const profitAssessment={reward_usd_unverified:rewardUsd,estimated_cost_usd:estimatedCostUsd,estimated_net_usd:estimatedNetUsd,estimated_hours:estimatedHours,estimated_hourly_usd:estimatedHourlyUsd,estimated_api_usd:estimatedApiUsd,estimated_fees_usd:estimatedFeesUsd,profit_verified:false,payout_verified:false,needs_manual_scope_estimate:true};
 
   await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,profit_assessment:profitAssessment,acceptance_confirmed:false,btc_payout_confirmed:false})]);
+  // Record qualifying leads in the evidence-gated workflow without claiming acceptance or payment.
+  await sql.unsafe("INSERT INTO jarvis_paid_workflow(source,source_url,title,payout_address,status) SELECT 'github',$1,$2,$3,'discovered' WHERE NOT EXISTS (SELECT 1 FROM jarvis_paid_workflow WHERE source='github' AND source_url=$1)",[String(issue.html_url),title,"bc1qdmzr4m78ulj2saa97vg9kmpzuxu3477gvc2rct"]);
   found.push({title,url:issue.html_url,reward,estimatedNetUsd,source:"github",status:"unverified_profitable_candidate"});
  }
  console.log("[BountyScout] public GitHub candidates recorded:",found.length);
