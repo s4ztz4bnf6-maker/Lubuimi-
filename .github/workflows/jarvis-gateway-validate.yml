@@ -74,6 +74,12 @@ jobs:
       - name: Install dependencies
         working-directory: JARVIS-Core/railway/Gateway
         run: bun install --frozen-lockfile
+      - name: Apply explicit probe receipt migration before gateway start
+        env:
+          PGPASSWORD: test_only
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test -f JARVIS-Core/railway/Gateway/migrations/github_probe_receipts.sql
       - name: Start isolated gateway and test HTTP ingress
         env:
           DATABASE_URL: postgres://postgres:test_only@localhost:5432/gateway_test
@@ -161,6 +167,12 @@ jobs:
       - name: Install gateway dependencies
         working-directory: JARVIS-Core/railway/Gateway
         run: bun install --frozen-lockfile
+      - name: Apply explicit probe receipt migration before gateway start
+        env:
+          PGPASSWORD: test_only
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d gateway_test -f JARVIS-Core/railway/Gateway/migrations/github_probe_receipts.sql
       - name: Test unconfigured push secret and database outage
         env:
           DATABASE_URL: postgres://postgres:test_only@127.0.0.1:5432/gateway_test
