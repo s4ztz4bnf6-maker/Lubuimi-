@@ -1,0 +1,29 @@
+name: JARVIS Core tests
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Gateway/**'
+      - '.github/workflows/jarvis-core-test.yml'
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Gateway/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gateway:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Compile gateway
+        run: bun run check
+      - name: Run full gateway test suite
+        run: bun run test
