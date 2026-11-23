@@ -1,3 +1,4 @@
+import {publicAgentCard,probePublicAgent} from "./src/agent-public-bridge";
 import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
 import {validateWish} from "./src/customer-wishlist";
@@ -836,6 +837,11 @@ const server = Bun.serve({
       const [updated]=await sql`UPDATE jarvis_bank_invoices SET status='disputed' WHERE id=${id} RETURNING id,invoice_number,status`;
       await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event) VALUES(${id},'payment_disputed')`;
       return json({invoice:updated});
+    }
+    if(req.method==="GET"&&url.pathname==="/.well-known/agent.json")return json(publicAgentCard);
+    if(req.method==="GET"&&url.pathname==="/v1/agent/peers/nexus/status"){
+      if(!authorized(req))return json({error:"Unauthorized"},401);
+      return json({peer:"NEXUS",...await probePublicAgent("https://nexus-core-2qrj.onrender.com/mcp"),access:"read_only",ownership:"not_claimed"});
     }
     if (req.method === "GET" && url.pathname === "/v1/freegoods/leads") {
       if (!authorized(req)) return json({error:"Unauthorized"},401);
