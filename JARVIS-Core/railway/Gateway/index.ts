@@ -1,4 +1,4 @@
-import {publicAgentCard,probePublicAgent} from "./src/agent-public-bridge";
+import {publicAgentCard,probePublicAgent,exchangeWithPeer} from "./src/agent-public-bridge";
 import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
 import {validateWish} from "./src/customer-wishlist";
@@ -839,6 +839,16 @@ const server = Bun.serve({
       return json({invoice:updated});
     }
     if(req.method==="GET"&&url.pathname==="/.well-known/agent.json")return json(publicAgentCard);
+    if(req.method==="POST"&&url.pathname==="/v1/agent/peers/exchange"){
+      if(!authorized(req))return json({error:"Unauthorized"},401);
+      let body:any;try{body=await req.json()}catch{return json({error:"Invalid JSON"},400)}
+      if(!body||typeof body.taskId!=="string"||typeof body.content!=="string")return json({error:"Invalid request"},400);
+      const endpoint=env.JARVIS_PEER_MCP_URL||"";
+      const token=env.JARVIS_PEER_MCP_TOKEN||"";
+      const result=await exchangeWithPeer(endpoint,{taskId:body.taskId,content:body.content},token);
+      await sql`INSERT INTO agent_audit(event,detail) VALUES ('external_peer_exchange',${sql.json({taskId:body.taskId,ok:result.ok,error:result.error||null})})`;
+      return json(result,result.ok?200:502);
+    }
     if(req.method==="GET"&&url.pathname==="/v1/agent/peers/nexus/status"){
       if(!authorized(req))return json({error:"Unauthorized"},401);
       return json({peer:"NEXUS",...await probePublicAgent("https://nexus-core-2qrj.onrender.com/mcp"),access:"read_only",ownership:"not_claimed"});
