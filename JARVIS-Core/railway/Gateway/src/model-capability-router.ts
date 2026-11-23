@@ -30,7 +30,15 @@ export function configuredChatModels(env:Record<string,string|undefined>):ModelE
   if(url.protocol!=='https:'&&!(['localhost','127.0.0.1','::1'].includes(url.hostname)&&url.protocol==='http:'))return [];
   const capabilities=(env['JARVIS_MODEL_'+id+'_CAPABILITIES']||'text').split(',').map(x=>x.trim()).filter(Boolean);
   return [{id,kind:(env['JARVIS_MODEL_'+id+'_KIND']==='open_source'?'open_source':'hosted') as ModelEndpoint['kind'],capabilities,enabled:true,costPerAttempt:Number(env['JARVIS_MODEL_'+id+'_COST']||0),invoke:async(request:{capability:string;input:string},signal:AbortSignal)=>{
-   try{const response=await fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:request.input}],stream:false})});
+   try{
+    // Reserve output tokens and keep requests safely below common free-tier TPM limits.
+    // This is a conservative character-based estimate, not an exact tokenizer.
+    const maxInputChars=12000;
+    const input=request.input.length>maxInputChars?request.input.slice(-maxInputChars):request.input;
+    const send=async(text:string)=>fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:text}],max_tokens:512,stream:false})});
+    let response=await send(input);
+    if(response.status===413 && input.length>2000) response=await send(input.slice(-Math.min(4000,input.length)));
+
     if(response.status===401||response.status===403)return {ok:false,error:'permission_denied' as const};
     if(response.status===429)return {ok:false,error:'rate_limit' as const};
     if(!response.ok)return {ok:false,error:response.status>=500?'unavailable' as const:'invalid_request' as const};
