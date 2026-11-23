@@ -537,7 +537,7 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
-    const pdfInvoiceMatch=url.pathname.match(/^\\/v1\\/bank\\/invoices\\/([0-9a-f-]{36})\\/pdf$/i);
+    const pdfInvoiceMatch = /^\/v1\/bank\/invoices\/([0-9a-f-]{36})\/pdf$/i.exec(url.pathname);
     if(pdfInvoiceMatch && req.method==="GET"){
       if(!authorized(req) && !ownerAuthorized(req))return json({error:"Unauthorized"},401);
       const [invoice]=await sql`SELECT * FROM jarvis_bank_invoices WHERE id=${pdfInvoiceMatch[1]}`;
