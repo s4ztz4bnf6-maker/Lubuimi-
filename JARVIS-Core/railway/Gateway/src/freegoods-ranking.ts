@@ -15,7 +15,7 @@ export function rankLead(lead:PublicLead):RankedLead{
  if(restrictions.test(body))flags.push("possible_resale_restriction");
  if(!lead.productKey)flags.push("exact_product_identity_unknown");
  flags.push("terms_and_entitlement_unverified");
- const score=Math.max(0,Math.min(100,20+(signals.includes("recognized_brand")?25:0)+(signals.includes("potential_high_value")?25:0)+(signals.includes("gift_language")?15:0)-(flags.includes("potential_fee_scam")?70:0)-(flags.includes("possible_resale_restriction")?50:0)));
+ const score=flags.includes("potential_fee_scam")?0:Math.max(0,Math.min(100,20+(signals.includes("recognized_brand")?25:0)+(signals.includes("potential_high_value")?25:0)+(signals.includes("gift_language")?15:0)-(flags.includes("potential_fee_scam")?70:0)-(flags.includes("possible_resale_restriction")?50:0)));
  return {...lead,score,signals,flags};
 }
 export function rankLeads(leads:PublicLead[],max=100):RankedLead[]{
