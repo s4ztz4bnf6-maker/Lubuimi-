@@ -840,9 +840,15 @@ const server = Bun.serve({
        if(!caps.includes("authorized_external_submission"))return json({error:"Peer lacks verified authorized_external_submission capability"},409);
        const artifact=String(b.deliverable_url||""),invoice=String(b.invoice_url||""),instructions=String(b.instructions||"");
        if(!/^https:\/\//.test(artifact)||!/^https:\/\//.test(invoice)||artifact.length>2000||invoice.length>2000||instructions.length>4000)return json({error:"HTTPS deliverable and invoice URLs required"},400);
+       const currency=String(b.currency||"").trim().toUpperCase();
+       if(!/^[A-Z]{3}$/.test(currency))return json({error:"Explicit ISO currency required (BTC or fiat)"},400);
        const wallet=String(env.BTC_RECEIVE_ADDRESS||"").trim();
-       if(!wallet||!item.payout_address||item.payout_address!==wallet)return json({error:"Payment address does not match configured JARVIS watch-only wallet; handoff blocked"},409);
-       const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,payout_address:wallet,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
+       const iban=String(env.JARVIS_INVOICE_IBAN||"").replace(/\\s/g,"").toUpperCase();
+       const isBtc=currency==="BTC";
+       const paymentDestination=isBtc?wallet:iban;
+       if(isBtc&&(!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(wallet)||item.payout_address!==wallet))return json({error:"BTC payout must match configured JARVIS watch-only wallet"},409);
+       if(!isBtc&&(!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)||String(b.invoice_iban||"").replace(/\\s/g,"").toUpperCase()!==iban))return json({error:"Fiat invoice IBAN must match configured JARVIS bank account"},409);
+       const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,currency,payment_method:isBtc?"bitcoin_onchain":"bank_transfer",payment_destination:paymentDestination,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
        const [task]=await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,status",[("JARVIS customer submission handoff · "+id).slice(0,300),"Prepare controlled external-agent submission for peer "+peer.name+" ("+peer.endpoint+"). Handoff JSON: "+JSON.stringify(payload)+". Do not claim delivery without independent platform receipt. No account impersonation or unauthorized access. Do not change payment details. Confirm protocol, authorization and live endpoint before any transmission."]);
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submission_handoff_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id,invoiceUrl:invoice,deliverableUrl:artifact})]);
        return json({handoff:payload,peer:{id:peer.id,name:peer.name},task,peer_contacted:false,submission_confirmed:false,notice:"Prepared for authorized external submission; actual peer transmission and customer receipt still require verification."},202);
