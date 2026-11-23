@@ -20,10 +20,10 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const score = issue => {
   const s = ((issue.title || "") + " " + (issue.body || "").slice(0, 4000)).toLowerCase();
   let points = 0;
-  if (/\\bbounty\\b|\\bpaid\\b|\\breward\\b/.test(s)) points += 2;
-  if (/(?:\\$|usd\\s*|usdc\\s*|sats?\\s*|btc\\s*)\\d|\\d[\\d,.]*\\s*(?:usd|usdc|sats?|btc)\\b/.test(s)) points += 3;
-  if (/\\b(?:bug|fix|feature|test|documentation|typescript|python|api)\\b/.test(s)) points += 1;
-  if (/\\b(?:claimed|assigned|closed|cancelled|expired)\\b/.test(s)) points -= 2;
+  if (/\bbounty\b|\bpaid\b|\breward\b/.test(s)) points += 2;
+  if (/(?:\$|usd\s*|usdc\s*|sats?\s*|btc\s*)\d|\d[\d,.]*\s*(?:usd|usdc|sats?|btc)\b/.test(s)) points += 3;
+  if (/\b(?:bug|fix|feature|test|documentation|typescript|python|api)\b/.test(s)) points += 1;
+  if (/\b(?:claimed|assigned|closed|cancelled|expired)\b/.test(s)) points -= 2;
   if (issue.assignee || (issue.assignees || []).length) points -= 1;
   if (issue.pull_request) points -= 8;
   return points;
@@ -72,7 +72,7 @@ async function main() {
     const fingerprint = candidate.updated_at;
     if (state.seen[url] === fingerprint) continue;
     state.seen[url] = fingerprint;
-    process.stdout.write(JSON.stringify({ ...candidate, discovered_at: now }) + "\\n");
+    process.stdout.write(JSON.stringify({ ...candidate, discovered_at: now }) + "\n");
     fresh++;
   }
   const keys = Object.keys(state.seen);
