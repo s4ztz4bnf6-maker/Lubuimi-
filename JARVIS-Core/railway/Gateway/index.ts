@@ -1,3 +1,4 @@
+import { renderBankInvoicePdf } from "./src/invoice-pdf";
 import { invoiceFooter } from "./src/invoice-footer";
 import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
@@ -536,6 +537,16 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    const pdfInvoiceMatch=url.pathname.match(/^\\/v1\\/bank\\/invoices\\/([0-9a-f-]{36})\\/pdf$/i);
+    if(pdfInvoiceMatch && req.method==="GET"){
+      if(!authorized(req) && !ownerAuthorized(req))return json({error:"Unauthorized"},401);
+      const [invoice]=await sql`SELECT * FROM jarvis_bank_invoices WHERE id=${pdfInvoiceMatch[1]}`;
+      if(!invoice)return json({error:"Invoice not found"},404);
+      const billingCountry=String(url.searchParams.get("billingCountry")||"").toUpperCase();
+      if(!/^[A-Z]{2}$/.test(billingCountry))return json({error:"billingCountry ISO country code required"},400);
+      const pdf=await renderBankInvoicePdf(invoice,billingCountry);
+      return new Response(pdf,{headers:{"Content-Type":"application/pdf","Content-Disposition":'attachment; filename="'+String(invoice.invoice_number).replace(/[^A-Z0-9-]/gi,"")+'.pdf"',"Cache-Control":"no-store"}});
+    }
     if (url.pathname === "/v1/bank/invoices" && req.method === "GET") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       const rows=await sql`SELECT id,invoice_number,customer_name,description,amount_minor,currency,status,created_at,reported_at,confirmed_at,confirmed_amount_minor,payment_reference FROM jarvis_bank_invoices ORDER BY created_at DESC LIMIT 100`;
