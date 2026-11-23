@@ -374,6 +374,16 @@ async function scheduleAgentPartnerDiscovery(){
 void scheduleAgentPartnerDiscovery().catch(e=>console.warn("[AgentDiscovery] startup",String(e)));
 setInterval(()=>{void scheduleAgentPartnerDiscovery().catch(e=>console.warn("[AgentDiscovery] schedule",String(e)))},30*60*1000);
 
+// Discover registration-free open-source model backends and their separately verified tools.
+async function scheduleOpenModelExtensionDiscovery(){
+  const slot=Math.floor(Date.now()/(6*60*60*1000));
+  const title="JARVIS OPEN MODEL EXTENSION DISCOVERY · "+slot;
+  const prompt=["Audit the open-source / uncensored model backends already configured for JARVIS before proposing replacements.","Identify publicly documented, legally accessible registration-free inference endpoints or locally hostable open-weight models, and separately identify browser/API tool runners. Model inference is NOT external platform access.","For each candidate record license, actual no-signup availability, endpoint/protocol, cost, rate limits, privacy/data retention, health-check evidence, tool-call compatibility and required JARVIS-controlled connector.","Recommend the best existing model+tool pairing for authorized customer submission and invoice delivery, without sharing customer personal data or secrets to unverified services.","Do not create accounts, grant credentials, assert platform access, or claim invoices were sent. Produce a tested integration proposal and evidence of any live public health checks."].join("\n");
+  await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+}
+void scheduleOpenModelExtensionDiscovery().catch(e=>console.warn("[OpenModelDiscovery] startup",String(e)));
+setInterval(()=>{void scheduleOpenModelExtensionDiscovery().catch(e=>console.warn("[OpenModelDiscovery] schedule",String(e)))},30*60*1000);
+
 // Continuous self-first fulfillment: only independently evidenced accepted work, never fabricated revenue.
 async function scheduleVerifiedPaidFulfillment(){
   const rows=await sql.unsafe("SELECT id,title,source,source_url,acceptance_evidence_url FROM jarvis_paid_workflow WHERE status='accepted' AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NULL ORDER BY updated_at ASC LIMIT 20");
