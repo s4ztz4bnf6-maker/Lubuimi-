@@ -1,3 +1,4 @@
+import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
 import {validateWish} from "./src/customer-wishlist";
 import {suggestCustomerIntent} from "./src/customer-intent";
 import {validateCustomerInquiry} from "./src/customer-inquiries";
@@ -1453,6 +1454,19 @@ const server = Bun.serve({
         `;
         if (paid && existing.status !== "paid") await sql`INSERT INTO agent_audit(event, detail) VALUES ('lightning_invoice_paid', ${sql.json({ paymentHash, amountSats: existing.amount_sats, taskId: existing.task_id })})`;
         return json({ ...updated, providerCheck: "ok" });
+      }
+      if (url.pathname === "/v1/agent/models/status" && req.method === "GET") {
+        if (!apiKey || req.headers.get("x-agent-api-key") !== apiKey) return json({error:"Unauthorized"},401);
+        const models=configuredChatModels(env);
+        return json({configured:models.length,models:models.map(m=>({id:m.id,kind:m.kind,capabilities:m.capabilities}))});
+      }
+      if (url.pathname === "/v1/agent/models/execute" && req.method === "POST") {
+        if (!apiKey || req.headers.get("x-agent-api-key") !== apiKey) return json({error:"Unauthorized"},401);
+        const body=await req.json() as {capability?:string;input?:string};
+        if(typeof body.capability!=="string"||body.capability.length>80||typeof body.input!=="string"||body.input.length>12000)return json({error:"Invalid request"},400);
+        const result=await runAcrossModels(body.capability,body.input,configuredChatModels(env),{maxAttempts:5,timeoutMs:30000,budget:1});
+        await sql`INSERT INTO agent_audit(event,detail) VALUES ('external_model_execution',${sql.json({capability:body.capability,ok:result.ok,attempted:result.attempted,reason:result.reason})})`;
+        return json(result,result.ok?200:503);
       }
       return json({ error: "Not found" }, 404);
     } catch (e) {
