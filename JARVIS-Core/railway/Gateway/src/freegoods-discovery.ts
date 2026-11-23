@@ -6,7 +6,10 @@ function safeUrl(u:string){try{const x=new URL(u);return x.protocol==="https:"&&
 /** No hidden service or Tor support unless an independently audited, approved connector is configured. */
 export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetcher:typeof fetch=fetch):Promise<PublicLead[]>{
  const result:PublicLead[]=[];const q=query.toLowerCase().trim();if(!q||q.length<2)return result;
- for(const feed of feedUrls.slice(0,12)){
+ const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`];
+ const publicSearchFeeds=discoveryQueries.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"en",gl:"US",ceid:"US:en"}).toString());
+ const sources=[...new Set([...feedUrls,...publicSearchFeeds])].slice(0,12);
+ for(const feed of sources){
   if(!safeUrl(feed))continue;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
    if(!r.ok||Number(r.headers.get("content-length")||0)>1_000_000)continue;
