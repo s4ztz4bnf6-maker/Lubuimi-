@@ -740,7 +740,31 @@ const server = Bun.serve({
       const lightningConfigured=Boolean(env.LNBITS_BASE_URL&&env.LNBITS_INVOICE_KEY);
       return json({gateway:"running",leadsStored:leads[0]?.count||0,workflowStages:stages,bitcoin:{onchainAddress:"bc1qdmzr4m78ulj2saa97vg9kmpzuxu3477gvc2rct",lightningInvoiceConfigured:lightningConfigured,bitcoinReceiptsIndependentlyVerified:false},blockers:["Customer acceptance not verified","Work delivery not verified","Bitcoin payment not independently verified",...(!lightningConfigured?["LNbits invoice-only integration not configured"]:[])],note:"Leads and advertised rewards are not earned revenue; this endpoint does not establish payment."});
     }
-    if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/actionable"){
+    // Actual customer delivery for an accepted GitHub issue, via the configured GitHub account.
+// Never equate posting with acceptance or payment. Idempotency prevents duplicate submissions.
+     if(req.method==="POST"&&/^\\/v1\\/paid-workflows\\/\\d+\\/submit-github$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]),b=await req.json();
+       const [item]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       if(item.source!=="github"||item.status!=="accepted"||!item.acceptance_evidence_url)return json({error:"Verified external acceptance required before submission",status:item.status},409);
+       if(item.delivery_evidence_url)return json({error:"Already submitted",delivery_evidence_url:item.delivery_evidence_url},409);
+       const match=/^https:\/\/github\\.com\/([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)\/issues\/([1-9][0-9]*)$/.exec(item.source_url);
+       if(!match)return json({error:"Only canonical GitHub issue URLs supported"},400);
+       const body=String(b.delivery_text||"").trim(),proof=String(b.artifact_url||"").trim();
+       if(body.length<40||body.length>12000||!/^https:\/\//.test(proof))return json({error:"Delivery text (40-12000 chars) and HTTPS artifact URL required"},400);
+       if(b.authorized_submission!==true)return json({error:"Explicit authorized submission confirmation required"},403);
+       if(!env.GITHUB_TOKEN)return json({error:"GitHub delivery credential not configured"},503);
+       const comment="Completed work submission for this issue:\\n\\n"+body+"\\n\\nDeliverable: "+proof+"\\n\\nPlease review and confirm acceptance and payment according to the published terms.";
+       const target="https://api.github.com/repos/"+encodeURIComponent(match[1])+"/"+encodeURIComponent(match[2])+"/issues/"+match[3]+"/comments";
+       const response=await fetch(target,{method:"POST",headers:{"Authorization":"Bearer "+env.GITHUB_TOKEN,"Accept":"application/vnd.github+json","Content-Type":"application/json","User-Agent":"JARVIS-AI-Delivery"},body:JSON.stringify({body:comment}),signal:AbortSignal.timeout(15000)});
+       if(!response.ok){await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_delivery_failed",JSON.stringify({id,provider:"github",status:response.status})]);return json({error:"GitHub delivery failed",provider_status:response.status},502)}
+       const receipt=await response.json();const receiptUrl=String(receipt.html_url||"");
+       if(!/^https:\/\/github\\.com\//.test(receiptUrl))return json({error:"GitHub returned no verifiable submission receipt; inspect issue before retrying"},502);
+       const [updated]=await sql.unsafe("UPDATE jarvis_paid_workflow SET status='delivered',delivery_evidence_url=$2,updated_at=NOW() WHERE id=$1 AND status='accepted' AND delivery_evidence_url IS NULL RETURNING *",[id,receiptUrl]);
+       await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submitted_to_github",JSON.stringify({id,receiptUrl,artifactUrl:proof})]);
+       return json({item:updated||item,submitted:true,provider:"github",receipt_url:receiptUrl,customer_accepted:false,payment_verified:false});
+     }
+     if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/actionable"){
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,external_account_id,acceptance_evidence_url,delivery_evidence_url,payment_txid,updated_at FROM jarvis_paid_workflow WHERE status IN ('accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 100");
        return json({items:rows.map((r:any)=>({...r,next_action:r.status==='accepted'?'submit_to_customer_via_authorized_platform_and_record_receipt':r.status==='delivered'?'obtain_customer_acceptance_and_payment':'independently_verify_payment'})),notice:"Internal task completion is not customer delivery. An authorized external submission channel and receipt are required."});
      }
