@@ -566,6 +566,9 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_bank_invoice_events (
  event TEXT NOT NULL, detail JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )`;
 
+// Persistent payment-to-invoice evidence; independent settlement confirmation remains separate.
+await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_invoice_payment_links (id BIGSERIAL PRIMARY KEY, invoice_id UUID NOT NULL REFERENCES jarvis_bank_invoices(id), method TEXT NOT NULL CHECK(method IN ('bank','bitcoin')), external_reference TEXT NOT NULL, amount_minor BIGINT NOT NULL CHECK(amount_minor>0), currency TEXT NOT NULL, reported_by TEXT NOT NULL DEFAULT 'owner', verification_status TEXT NOT NULL DEFAULT 'owner_reported', evidence JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(method,external_reference,invoice_id))");
+
 const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
@@ -580,6 +583,19 @@ const server = Bun.serve({
       if(!/^[A-Z]{2}$/.test(billingCountry))return json({error:"billingCountry ISO country code required"},400);
       const pdf=await renderBankInvoicePdf(invoice,billingCountry);
       return new Response(pdf,{headers:{"Content-Type":"application/pdf","Content-Disposition":'attachment; filename="'+String(invoice.invoice_number).replace(/[^A-Z0-9-]/gi,"")+'.pdf"',"Cache-Control":"no-store"}});
+    }
+    if (url.pathname === "/v1/bank/invoices/payment-links" && req.method === "POST") {
+      if (!ownerAuthorized(req)) return json({error:"Owner authorization required"},401);
+      const b=await req.json().catch(()=>({}));
+      const invoiceId=String(b.invoiceId||""),method=String(b.method||""),reference=String(b.reference||"").trim(),amount=Number(b.amountMinor),currency=String(b.currency||"").toUpperCase();
+      if(!/^[0-9a-f-]{36}$/i.test(invoiceId)||!["bank","bitcoin"].includes(method)||reference.length<3||reference.length>200||!Number.isSafeInteger(amount)||amount<=0||!/^[A-Z]{3}$/.test(currency))return json({error:"Invalid payment evidence"},400);
+      if(method==="bitcoin"&&!/^[0-9a-f]{64}$/i.test(reference))return json({error:"Bitcoin txid required"},400);
+      const [invoice]=await sql.unsafe("SELECT id,currency FROM jarvis_bank_invoices WHERE id=$1",[invoiceId]);
+      if(!invoice)return json({error:"Invoice not found"},404);
+      if(method==="bank"&&currency!==invoice.currency)return json({error:"Bank payment currency must match invoice"},400);
+      const [link]=await sql.unsafe("INSERT INTO jarvis_invoice_payment_links(invoice_id,method,external_reference,amount_minor,currency,evidence) VALUES($1,$2,$3,$4,$5,$6::jsonb) ON CONFLICT(method,external_reference,invoice_id) DO UPDATE SET external_reference=EXCLUDED.external_reference RETURNING id,invoice_id,method,external_reference,amount_minor,currency,verification_status,created_at",[invoiceId,method,reference,amount,currency,JSON.stringify({owner_reported:true,not_bank_verified:true,not_blockchain_verified:true})]);
+      await sql.unsafe("INSERT INTO jarvis_bank_invoice_events(invoice_id,event,detail) VALUES($1,'owner_payment_link_reported',$2::jsonb)",[invoiceId,JSON.stringify({payment_link_id:link.id,method,reference,amountMinor:amount,currency})]);
+      return json({link,invoice_status_unchanged:true,notice:"Evidence linked, not independently verified; invoice not marked paid."},201);
     }
     if (url.pathname === "/v1/bank/invoices/reconciliation" && req.method === "GET") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
