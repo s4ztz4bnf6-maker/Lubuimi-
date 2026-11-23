@@ -764,6 +764,24 @@ const server = Bun.serve({
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submitted_to_github",JSON.stringify({id,receiptUrl,artifactUrl:proof})]);
        return json({item:updated||item,submitted:true,provider:"github",receipt_url:receiptUrl,customer_accepted:false,payment_verified:false});
      }
+     // Direct customer delivery by email using a configured verified Resend sender.
+     if(req.method==="POST"&&/^\/v1\/paid-workflows\/\d+\/submit-email$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]),b=await req.json();
+       const [item]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       if(item.status!=="accepted"||!item.acceptance_evidence_url||item.delivery_evidence_url)return json({error:"Accepted, undelivered paid work with acceptance evidence required"},409);
+       const to=String(b.customer_email||"").trim(),body=String(b.delivery_text||"").trim(),artifact=String(b.artifact_url||"").trim();
+       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)||to.length>254||body.length<40||body.length>12000||!/^https:\/\//.test(artifact)||artifact.length>2000)return json({error:"Valid customer email, delivery text and HTTPS deliverable URL required"},400);
+       if(b.authorized_submission!==true)return json({error:"Authorized submission confirmation required"},403);
+       if(!env.RESEND_API_KEY||!env.JARVIS_MAIL_FROM)return json({error:"Verified email sender and RESEND_API_KEY not configured"},503);
+       const emailResponse=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"jarvis-delivery-"+id},body:JSON.stringify({from:env.JARVIS_MAIL_FROM,to:[to],subject:"Completed deliverable: "+String(item.title).slice(0,150),text:body+"\n\nDeliverable: "+artifact+"\n\nPlease confirm receipt, acceptance and payment under the agreed terms."}),signal:AbortSignal.timeout(15000)});
+       if(!emailResponse.ok){await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_email_delivery_failed",JSON.stringify({id,status:emailResponse.status})]);return json({error:"Email provider rejected submission",provider_status:emailResponse.status},502)}
+       const receipt=await emailResponse.json();if(!/^[a-zA-Z0-9-]{8,100}$/.test(String(receipt.id||"")))return json({error:"Email provider did not return a valid message receipt"},502);
+       const evidence="https://resend.com/emails/"+receipt.id;
+       const [updated]=await sql.unsafe("UPDATE jarvis_paid_workflow SET status='delivered',delivery_evidence_url=$2,updated_at=NOW() WHERE id=$1 AND status='accepted' AND delivery_evidence_url IS NULL RETURNING *",[id,evidence]);
+       await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_email_submitted",JSON.stringify({id,providerMessageId:receipt.id,artifactUrl:artifact})]);
+       return json({item:updated||item,submitted:true,provider:"resend",message_id:receipt.id,recipient:to,customer_accepted:false,payment_verified:false});
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/actionable"){
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,external_account_id,acceptance_evidence_url,delivery_evidence_url,payment_txid,updated_at FROM jarvis_paid_workflow WHERE status IN ('accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 100");
        return json({items:rows.map((r:any)=>({...r,next_action:r.status==='accepted'?'submit_to_customer_via_authorized_platform_and_record_receipt':r.status==='delivered'?'obtain_customer_acceptance_and_payment':'independently_verify_payment'})),notice:"Internal task completion is not customer delivery. An authorized external submission channel and receipt are required."});
