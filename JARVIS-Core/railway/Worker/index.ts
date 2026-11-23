@@ -24,7 +24,7 @@ if (env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID) providerCandidates.pu
 if (env.JARVIS_KEYLESS_MODEL_BASE_URL) {
   const endpoint = new URL(env.JARVIS_KEYLESS_MODEL_BASE_URL);
   if (endpoint.protocol !== "https:" && !(endpoint.hostname === "localhost" || endpoint.hostname === "127.0.0.1")) throw new Error("Keyless model endpoint must use HTTPS");
-  providerCandidates.push({ name: "keyless-openai-compatible", baseUrl: endpoint.toString().replace(/\\/$/, ""), apiKey: "", model: env.JARVIS_KEYLESS_MODEL_NAME || "openai" });
+  providerCandidates.push({ name: "keyless-openai-compatible", baseUrl: endpoint.toString().replace(/\/$/, ""), apiKey: "", model: env.JARVIS_KEYLESS_MODEL_NAME || "openai" });
 }
 if (env.MODEL_PROVIDER) { const preferred = providerCandidates.findIndex(p => p.name === env.MODEL_PROVIDER || p.name.startsWith(env.MODEL_PROVIDER.toLowerCase())); if (preferred > 0) providerCandidates.unshift(providerCandidates.splice(preferred, 1)[0]); }
 let modelConfigured = providerCandidates.length > 0;
