@@ -16,9 +16,9 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const webSearchFeeds=webSearchTerms.map(q=>"https://www.bing.com/search?"+new URLSearchParams({q,format:"rss"}).toString());
  const sources=[...new Set([...feedUrls,...webSearchFeeds,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,30);
  await Promise.all(sources.map(async feed=>{
-  if(!safeUrl(feed))continue;
+  if(!safeUrl(feed))return;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
-   if(!r.ok||Number(r.headers.get("content-length")||0)>1_000_000)continue;
+   if(!r.ok||Number(r.headers.get("content-length")||0)>1_000_000)return;
    const xml=(await r.text()).slice(0,1_000_000);
    for(const item of [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)].slice(0,100)){
     const body=item[2],title=field(body,"title"),description=field(body,"description")||field(body,"summary")||field(body,"content");
