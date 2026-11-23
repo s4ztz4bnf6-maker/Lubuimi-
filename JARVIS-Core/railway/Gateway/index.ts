@@ -1,3 +1,4 @@
+import { requestExchangeQuote } from "./src/exchange-ai";
 import { validateAgentMessage } from "./src/agent-exchange-contract";
 import { nextRevenueStep, evaluateDeferredLogistics } from "./src/revenue-orchestration-gates";
 import { classifyOpportunity } from "./src/opportunity-classifier";
@@ -622,6 +623,12 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/exchange/quote" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      return json(await requestExchangeQuote(body,[]));
+    }
     if (url.pathname === "/v1/agent-exchange/validate" && req.method === "POST") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       let body:unknown;
