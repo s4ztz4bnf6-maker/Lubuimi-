@@ -18,13 +18,16 @@ export async function runAcrossModels(capability:string,input:string,endpoints:M
 
 /** Configured OpenAI-compatible endpoints, including self-hosted open-source model servers. */
 export function configuredChatModels(env:Record<string,string|undefined>):ModelEndpoint[]{
- const legacyConfigured=!!(env.MODEL_BASE_URL&&env.MODEL_NAME);\n const ids=(env.JARVIS_MODEL_ENDPOINTS||'').split(',').map(x=>x.trim()).filter(Boolean);\n if(legacyConfigured&&!ids.includes('LEGACY'))ids.push('LEGACY');
+ const legacyConfigured=!!(env.MODEL_BASE_URL&&env.MODEL_NAME);
+ const ids=(env.JARVIS_MODEL_ENDPOINTS||'').split(',').map(x=>x.trim()).filter(Boolean);
+ if(legacyConfigured&&!ids.includes('LEGACY'))ids.push('LEGACY');
  return ids.flatMap(id=>{
   if(!/^[A-Z][A-Z0-9_]{0,39}$/.test(id))return [];
   const base=id==='LEGACY'?env.MODEL_BASE_URL:env['JARVIS_MODEL_'+id+'_URL'],model=id==='LEGACY'?env.MODEL_NAME:env['JARVIS_MODEL_'+id+'_NAME'],key=id==='LEGACY'?env.MODEL_API_KEY:env['JARVIS_MODEL_'+id+'_KEY'];
   if(!base||!model)return [];
   let url:URL;try{url=new URL(base)}catch{return []}
-  if(url.pathname==='/'||url.pathname==='')url.pathname='/v1/chat/completions';\n  if(url.protocol!=='https:'&&!(['localhost','127.0.0.1','::1'].includes(url.hostname)&&url.protocol==='http:'))return [];
+  if(url.pathname==='/'||url.pathname==='')url.pathname='/v1/chat/completions';
+  if(url.protocol!=='https:'&&!(['localhost','127.0.0.1','::1'].includes(url.hostname)&&url.protocol==='http:'))return [];
   const capabilities=(env['JARVIS_MODEL_'+id+'_CAPABILITIES']||'text').split(',').map(x=>x.trim()).filter(Boolean);
   return [{id,kind:(env['JARVIS_MODEL_'+id+'_KIND']==='open_source'?'open_source':'hosted') as ModelEndpoint['kind'],capabilities,enabled:true,costPerAttempt:Number(env['JARVIS_MODEL_'+id+'_COST']||0),invoke:async(request:{capability:string;input:string},signal:AbortSignal)=>{
    try{const response=await fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:request.input}],stream:false})});
