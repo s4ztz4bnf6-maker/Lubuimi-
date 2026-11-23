@@ -27,6 +27,25 @@ if (env.JARVIS_KEYLESS_MODEL_BASE_URL) {
   providerCandidates.push({ name: "keyless-openai-compatible", baseUrl: endpoint.toString().replace(/\/$/, ""), apiKey: "", model: env.JARVIS_KEYLESS_MODEL_NAME || "openai" });
 }
 if (env.MODEL_PROVIDER) { const preferred = providerCandidates.findIndex(p => p.name === env.MODEL_PROVIDER || p.name.startsWith(env.MODEL_PROVIDER.toLowerCase())); if (preferred > 0) providerCandidates.unshift(providerCandidates.splice(preferred, 1)[0]); }
+
+// Startup smoke test: no credentials, customer data, or tool schemas leave this process.
+if (env.JARVIS_KEYLESS_MODEL_BASE_URL) {
+  try {
+    const base = env.JARVIS_KEYLESS_MODEL_BASE_URL.replace(/\/$/, "");
+    const response = await fetch(base + "/chat/completions", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ model: env.JARVIS_KEYLESS_MODEL_NAME || "kilo-auto/free", messages: [{ role: "user", content: "Reply with exactly PONG." }], max_tokens: 16 }),
+      signal: AbortSignal.timeout(15000)
+    });
+    const raw = await response.text();
+    let parsed = {}; try { parsed = JSON.parse(raw); } catch {}
+    const answer = String(parsed?.choices?.[0]?.message?.content || "").trim();
+    console.log("JARVIS KEYLESS SMOKE TEST: " + JSON.stringify({ httpStatus: response.status, success: response.ok && Boolean(answer), answerPreview: answer.slice(0,50), errorPreview: response.ok ? "" : raw.slice(0,240) }));
+  } catch (error) {
+    console.error("JARVIS KEYLESS SMOKE TEST FAILED: " + String(error?.message || error));
+  }
+}
+
 let modelConfigured = providerCandidates.length > 0;
 console.log("JARVIS provider probe: geminiKeyPresent="+Boolean(env.GEMINI_API_KEY)+"; providers="+providerCandidates.map(p=>p.name).join(","));
 async function freeInference(prompt,maxTokens=256){
