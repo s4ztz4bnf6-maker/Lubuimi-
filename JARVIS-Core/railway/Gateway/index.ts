@@ -1,3 +1,5 @@
+import { validateAgentMessage } from "./src/agent-exchange-contract";
+import { nextRevenueStep, evaluateDeferredLogistics } from "./src/revenue-orchestration-gates";
 import { classifyOpportunity } from "./src/opportunity-classifier";
 import { renderBankInvoicePdf } from "./src/invoice-pdf";
 import { invoiceFooter } from "./src/invoice-footer";
@@ -620,6 +622,26 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/agent-exchange/validate" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      return json({valid:validateAgentMessage(body)});
+    }
+    if (url.pathname === "/v1/revenue/next-step" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:any;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || typeof body!=="object" || Array.isArray(body)) return json({error:"Invalid payload"},400);
+      return json({nextStep:nextRevenueStep(body)});
+    }
+    if (url.pathname === "/v1/freegoods/logistics/assess" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:any;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || !body.quote || !Number.isSafeInteger(body.salePriceCents)) return json({error:"Invalid payload"},400);
+      return json(evaluateDeferredLogistics(body.salePriceCents,body.quote));
+    }
     if (url.pathname === "/v1/opportunity-classify" && req.method === "POST") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       let body: any;
