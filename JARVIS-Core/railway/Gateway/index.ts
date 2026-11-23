@@ -1478,6 +1478,13 @@ const server = Bun.serve({
         const models=configuredChatModels(env);
         return json({configured:models.length,models:models.map(m=>({id:m.id,kind:m.kind,capabilities:m.capabilities}))});
       }
+      if (url.pathname === "/v1/agent/models/selftest" && req.method === "POST") {
+        if (!apiKey || req.headers.get("x-agent-api-key") !== apiKey) return json({error:"Unauthorized"},401);
+        const models=configuredChatModels(env);
+        const result=await runAcrossModels("text","Reply with exactly: JARVIS_MODEL_OK",models,{maxAttempts:Math.min(3,models.length||1),timeoutMs:12000,budget:1});
+        await sql`INSERT INTO agent_audit(event,detail) VALUES ('model_selftest',${sql.json({ok:result.ok,attempted:result.attempted,reason:result.reason})})`;
+        return json({configured:models.length,ok:result.ok,modelId:result.modelId||null,attempted:result.attempted,reason:result.reason,outputMatches:result.output?.includes("JARVIS_MODEL_OK")||false},result.ok?200:503);
+      }
       if (url.pathname === "/v1/agent/models/execute" && req.method === "POST") {
         if (!apiKey || req.headers.get("x-agent-api-key") !== apiKey) return json({error:"Unauthorized"},401);
         const body=await req.json() as {capability?:string;input?:string};
