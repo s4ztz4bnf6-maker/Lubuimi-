@@ -6,7 +6,7 @@ function safeUrl(u:string){try{const x=new URL(u);return x.protocol==="https:"&&
 /** No hidden service or Tor support unless an independently audited, approved connector is configured. */
 export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetcher:typeof fetch=fetch):Promise<PublicLead[]>{
  const result:PublicLead[]=[];const q=query.toLowerCase().trim();if(!q||q.length<2)return result;
- const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`];
+ const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`, `"zu verschenken"`, `"kostenlos abzugeben"`, `"gratis abholen"`, `"free stuff"`, `"freecycle"`];
  const publicSearchFeeds=discoveryQueries.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"en",gl:"US",ceid:"US:en"}).toString());
  const publicSourceSearches=["site:kostenlos.de/gratisartikel-uebersicht gratisproben","site:mein-deal.com/gratisproben kostenlose produktproben","site:proben-kostenlos.de gratisproben","site:gratiswunder.de gratisproben"];const curatedFeeds=publicSourceSearches.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"de",gl:"DE",ceid:"DE:de"}).toString());
  const regions=[["US","en","free samples giveaway free products"],["CN","zh-CN","免费试用 免费样品"],["DE","de","gratisproben kostenlose produkte"],["GB","en","free samples giveaway"],["FR","fr","échantillons gratuits cadeaux"],["CA","en","free samples Canada"],["IT","it","campioni omaggio gratis"],["JP","ja","無料サンプル プレゼント"],["AU","en","free samples Australia"],["BR","pt-419","amostras grátis produtos"],["IN","en","free samples products India"],["ES","es","muestras gratis productos"]];
@@ -21,7 +21,7 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
     const body=item[2],title=field(body,"title"),description=field(body,"description")||field(body,"summary")||field(body,"content");
     const atomLink=body.match(/<link\s+[^>]*href=["']([^"']+)["']/i)?.[1];
     const link=field(body,"link")||atomLink||"";
-    const words=q.split(/\s+/).filter(w=>w.length>=4);const haystack=(title+" "+description).toLowerCase();const relevant=haystack.includes(q)||words.some(w=>haystack.includes(w))&&/gratis|kostenlos|free|sample|giveaway|gift|probe|product|gewinnspiel/i.test(haystack);if(!safeUrl(link)||!relevant)continue;
+    const words=q.split(/\s+/).filter(w=>w.length>=4);const haystack=(title+" "+description).toLowerCase();const giftSignal=/gratis|kostenlos|zu verschenken|verschenke|free|sample|giveaway|gift|probe|product|gewinnspiel|abzugeben|freecycle/i.test(haystack);const relevant=giftSignal&&(haystack.includes(q)||words.some(w=>haystack.includes(w))||/zu verschenken|kostenlos abzugeben|gratis abholen|free stuff|freecycle/i.test(haystack));if(!safeUrl(link)||!relevant)continue;
     result.push({kind:"gift",sourceUrl:link,title,description,publishedAt:field(body,"pubDate")||field(body,"updated")||null,productKey:null,source:"rss",verified:false});
    }
   }catch{/* one feed must not interrupt other feeds */}
