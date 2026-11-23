@@ -353,6 +353,16 @@ async function scheduleOpportunityDiscovery() {
 void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Initial scheduling failed",String(e)));
 setInterval(()=>{void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Scheduling failed",String(e)))},15*60*1000);
 
+// Recurring discovery of opt-in, authorized external AI collaborators; no invented access.
+async function scheduleAgentPartnerDiscovery(){
+  const slot=Math.floor(Date.now()/(6*60*60*1000));
+  const title="JARVIS 24x7 External Agent Partner Discovery · "+slot;
+  const prompt=["Find publicly documented, live, opt-in autonomous AI agent services suitable for JARVIS paid-work collaboration.","Prioritize verified endpoint/protocol (A2A/MCP/HTTPS), uptime or heartbeat evidence, permitted external-platform capabilities, ability to return deliverables and customer submission receipts, price including truly free tiers, privacy, rate limits and trust.","Check actual connectivity only to public documented endpoints. Distinguish a listed provider from a connected, authenticated, available partner.","Record actionable candidate profiles and exact integration blockers. Never invent registration, credentials, 24/7 uptime or external platform access; do not send customer data to unverified peers.","JARVIS must perform customer work itself where possible; peers only supplement authorized blocked capabilities."].join("\n");
+  await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+}
+void scheduleAgentPartnerDiscovery().catch(e=>console.warn("[AgentDiscovery] startup",String(e)));
+setInterval(()=>{void scheduleAgentPartnerDiscovery().catch(e=>console.warn("[AgentDiscovery] schedule",String(e)))},30*60*1000);
+
 // Continuous self-first fulfillment: only independently evidenced accepted work, never fabricated revenue.
 async function scheduleVerifiedPaidFulfillment(){
   const rows=await sql.unsafe("SELECT id,title,source,source_url,acceptance_evidence_url FROM jarvis_paid_workflow WHERE status='accepted' AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NULL ORDER BY updated_at ASC LIMIT 20");
