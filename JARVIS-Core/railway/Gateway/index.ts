@@ -1,3 +1,4 @@
+import {exchangePartners,preparePartnerInquiry} from "./src/exchange-partner-outreach";
 import { requestExchangeQuote } from "./src/exchange-ai";
 import { validateAgentMessage } from "./src/agent-exchange-contract";
 import { nextRevenueStep, evaluateDeferredLogistics } from "./src/revenue-orchestration-gates";
@@ -623,6 +624,19 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/exchange/providers" && req.method === "GET") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      return json({providers:exchangePartners,connectedProviders:0,customerTradingEnabled:false});
+    }
+    if (url.pathname === "/v1/exchange/provider-inquiry" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || typeof body!=="object" || Array.isArray(body)) return json({error:"Invalid payload"},400);
+      const partnerId=(body as {partnerId?:unknown}).partnerId;
+      const inquiry=typeof partnerId==="string"?preparePartnerInquiry(partnerId):null;
+      return inquiry?json(inquiry):json({error:"Unknown provider"},404);
+    }
     if (url.pathname === "/v1/exchange/quote" && req.method === "POST") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       let body:unknown;
