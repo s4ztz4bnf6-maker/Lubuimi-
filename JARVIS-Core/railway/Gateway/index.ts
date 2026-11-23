@@ -353,6 +353,19 @@ async function scheduleOpportunityDiscovery() {
 void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Initial scheduling failed",String(e)));
 setInterval(()=>{void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Scheduling failed",String(e)))},15*60*1000);
 
+// Continuous self-first fulfillment: only independently evidenced accepted work, never fabricated revenue.
+async function scheduleVerifiedPaidFulfillment(){
+  const rows=await sql.unsafe("SELECT id,title,source,source_url,acceptance_evidence_url FROM jarvis_paid_workflow WHERE status='accepted' AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NULL ORDER BY updated_at ASC LIMIT 20");
+  for(const item of rows){
+    const title="JARVIS SELF-FIRST PAID DELIVERY · "+item.id;
+    const direct=item.source==="github"&&/^https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+$/.test(item.source_url);
+    const prompt=["Complete independently accepted customer work. Prefer JARVIS own capabilities; use opted-in external peers only for a genuine blocked step.","Workflow "+item.id+": "+item.title,"Customer source: "+item.source_url,"Acceptance evidence: "+item.acceptance_evidence_url,"Direct delivery channel: "+(direct?"GitHub issue; requires configured authorized GITHUB_TOKEN":"not verified"),"Produce real deliverable, test and document it. Submit only through authorized access and collect external receipt. If blocked, record exact blocker and draft authorized handoff. Payment destination must remain configured JARVIS wallet or bank IBAN. Never fabricate delivery, acceptance or payment."].join("\n");
+    await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+  }
+}
+void scheduleVerifiedPaidFulfillment().catch(e=>console.warn("[PaidFulfillment] startup",String(e)));
+setInterval(()=>{void scheduleVerifiedPaidFulfillment().catch(e=>console.warn("[PaidFulfillment] scheduling",String(e)))},5*60*1000);
+
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_signing_identity (id TEXT PRIMARY KEY, identity_label TEXT NOT NULL, key_algorithm TEXT NOT NULL, public_key TEXT, key_backend TEXT NOT NULL, certificate_status TEXT NOT NULL DEFAULT 'NOT_ISSUED', eidas_level TEXT NOT NULL DEFAULT 'NONE', authority_status TEXT NOT NULL DEFAULT 'UNVERIFIED', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), notes TEXT NOT NULL DEFAULT '')");
 await sql.unsafe("INSERT INTO jarvis_signing_identity(id,identity_label,key_algorithm,key_backend,certificate_status,eidas_level,authority_status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(id) DO NOTHING",["jarvis-entity-signing-v1","JARVIS organizational signing identity (proposed)","Ed25519","NOT_CONFIGURED","NOT_ISSUED","NONE","UNVERIFIED","No private key generated or stored. This is a proposed technical identity only, not an eIDAS electronic signature certificate, not proof of legal personality, and not authority to sign contracts."]);
 await sql.unsafe("INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES($1,$2,$3,'owner_directive','owner-authorized-design') ON CONFLICT(memory_key) DO UPDATE SET title=EXCLUDED.title,content=EXCLUDED.content,source_type=EXCLUDED.source_type,confidence=EXCLUDED.confidence,updated_at=NOW()",[
