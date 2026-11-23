@@ -35,3 +35,9 @@
 6. Record deployment ID, UTC time, SHA, endpoint health and outstanding restrictions.
 
 Do not record an unverified transaction as revenue or a candidate provider as licensed.
+
+## Customer wishes (2026-11-23)
+- Opt-in wish data model and private create/list/delete API added. Tokens are client-generated, 64 hexadecimal characters, and only SHA-256 hashes are persisted.
+- **Security limitations:** device tokens are not full customer accounts; possession of the token grants access, recovery is not available, and rate limiting is process-local. Do not market as enterprise-grade identity. Use verified identity and persistent rate limits before broad release.
+- Notification preference is stored but no notification delivery is activated. No product procurement, fulfillment, purchasing, or payments are triggered.
+- New API tests and deployment verification pending.
