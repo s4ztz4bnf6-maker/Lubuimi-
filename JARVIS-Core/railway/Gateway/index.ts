@@ -1,3 +1,4 @@
+import {validateWish} from "./src/customer-wishlist";
 import {suggestCustomerIntent} from "./src/customer-intent";
 import {validateCustomerInquiry} from "./src/customer-inquiries";
 import {renderCustomerApp,selectCustomerLocale} from "./src/customer-app";
@@ -624,12 +625,44 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_bank_invoice_events (
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_invoice_payment_links (id BIGSERIAL PRIMARY KEY, invoice_id UUID NOT NULL REFERENCES jarvis_bank_invoices(id), method TEXT NOT NULL CHECK(method IN ('bank','bitcoin')), external_reference TEXT NOT NULL, amount_minor BIGINT NOT NULL CHECK(amount_minor>0), currency TEXT NOT NULL, reported_by TEXT NOT NULL DEFAULT 'owner', verification_status TEXT NOT NULL DEFAULT 'owner_reported', evidence JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(method,external_reference,invoice_id))");
 
 await sql`CREATE TABLE IF NOT EXISTS jarvis_customer_inquiries (id BIGSERIAL PRIMARY KEY, kind TEXT NOT NULL CHECK (kind IN ('product_search','service_request')), customer_type TEXT NOT NULL CHECK (customer_type IN ('individual','business')), description TEXT NOT NULL, email TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+await sql`CREATE TABLE IF NOT EXISTS jarvis_customer_wishes (id BIGSERIAL PRIMARY KEY, access_token_hash TEXT NOT NULL, description TEXT NOT NULL, category TEXT NOT NULL CHECK (category IN ('product_search','service_request')), notify BOOLEAN NOT NULL DEFAULT FALSE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 const inquiryRate=new Map<string,{count:number;until:number}>();
 const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/customer/wishes" && req.method === "POST") {
+      const token=req.headers.get("x-customer-wish-token")||"";
+      if(!/^[a-f0-9]{64}$/.test(token))return json({error:"customer_token_required"},401);
+      const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-real-ip")||"unknown";
+      const key="wish:"+ip,now=Date.now(),entry=inquiryRate.get(key);
+      if(entry&&entry.until>now&&entry.count>=10)return json({error:"rate_limited"},429);
+      if(!entry||entry.until<=now)inquiryRate.set(key,{count:1,until:now+3600000});else entry.count++;
+      if(Number(req.headers.get("content-length")||0)>4096)return json({error:"request_too_large"},413);
+      let body:unknown;try{body=await req.json()}catch{return json({error:"invalid_json"},400)}
+      const wish=validateWish(body);if(!wish.ok)return json({error:wish.error},400);
+      const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token))),b=>b.toString(16).padStart(2,"0")).join("");
+      const x=wish.value;
+      const [saved]=await sql`INSERT INTO jarvis_customer_wishes(access_token_hash,description,category,notify) VALUES (${hash},${x.description},${x.category},${x.notify}) RETURNING id,created_at`;
+      return json({id:String(saved.id),createdAt:saved.created_at,status:"saved",notificationsActive:false},201);
+    }
+    if (url.pathname === "/v1/customer/wishes" && req.method === "GET") {
+      const token=req.headers.get("x-customer-wish-token")||"";
+      if(!/^[a-f0-9]{64}$/.test(token))return json({error:"customer_token_required"},401);
+      const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token))),b=>b.toString(16).padStart(2,"0")).join("");
+      const wishes=await sql`SELECT id,description,category,notify,created_at FROM jarvis_customer_wishes WHERE access_token_hash=${hash} ORDER BY created_at DESC LIMIT 100`;
+      return json({wishes});
+    }
+    if (url.pathname.startsWith("/v1/customer/wishes/") && req.method === "DELETE") {
+      const token=req.headers.get("x-customer-wish-token")||"";
+      if(!/^[a-f0-9]{64}$/.test(token))return json({error:"customer_token_required"},401);
+      const id=url.pathname.split("/").pop()||"";
+      if(!/^\\d+$/.test(id))return json({error:"invalid_id"},400);
+      const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token))),b=>b.toString(16).padStart(2,"0")).join("");
+      const deleted=await sql`DELETE FROM jarvis_customer_wishes WHERE id=${id}::bigint AND access_token_hash=${hash} RETURNING id`;
+      return json({deleted:deleted.length===1});
+    }
     if (url.pathname === "/v1/customer/inquiries" && req.method === "POST") {
       const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-real-ip")||"unknown";
       const now=Date.now();const entry=inquiryRate.get(ip);
