@@ -1,0 +1,19 @@
+name: JARVIS fallback smoke
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Companion/index.ts'
+      - 'services/jarvis-bounty-discovery/test/smoke.mjs'
+      - '.github/workflows/jarvis-fallback-smoke.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate fallback classification
+        run: node services/jarvis-bounty-discovery/test/smoke.mjs
