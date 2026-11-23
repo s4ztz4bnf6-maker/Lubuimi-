@@ -48,3 +48,15 @@ export function expandedSearchTerms(max=3000,extraBrands:string[]=[],extraCatego
  }
  return normalizedTerms([...base,...combos],Math.max(100,Math.min(max,100000)));
 }
+
+/** Brand-value proxies from public 2026 global brand rankings; not product resale prices. */
+export const globalBrandPriority2026=["Apple","Microsoft","Google","Amazon","Samsung","NVIDIA","Toyota","Sony","Nike","LEGO","Rolex","Hermès","Louis Vuitton","Nintendo","Dyson","DJI","Bose","Canon","Lenovo","Dell"] as const;
+export const globalGiftKeywords=["free product","free sample","giveaway","free stuff","zu verschenken","kostenlos abzugeben","gratis","échantillon gratuit","muestra gratis","無料サンプル","免费试用","campione gratuito","amostra grátis"] as const;
+export type FreeGoodsCandidate={title:string;estimatedRetailEur:number|null;shippingEur:number;brand:string|null;isFree:boolean;verified:boolean};
+export function scoreFreeGoodsCandidate(item:FreeGoodsCandidate):number{
+ if(!item.isFree||!item.verified||item.shippingEur<0)return -1;
+ const value=item.estimatedRetailEur;
+ if(value===null||!Number.isFinite(value)||value<10)return -1;
+ const brandBonus=item.brand&&globalBrandPriority2026.some(b=>b.toLowerCase()===item.brand?.toLowerCase())?20:0;
+ return Math.round(Math.max(0,value-item.shippingEur)*100)/100+brandBonus;
+}
