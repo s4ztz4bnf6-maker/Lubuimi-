@@ -353,6 +353,17 @@ async function scheduleOpportunityDiscovery() {
 void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Initial scheduling failed",String(e)));
 setInterval(()=>{void scheduleOpportunityDiscovery().catch(e=>console.warn("[Discovery] Scheduling failed",String(e)))},15*60*1000);
 
+// Daily evidence-based improvement review, stored as a durable agent task.
+async function scheduleSuccessLearningReview(){
+  const day=new Date().toISOString().slice(0,10);
+  const title="JARVIS SUCCESS-LOOP DAILY REVIEW · "+day;
+  const rows=await sql.unsafe("SELECT source,COUNT(*)::int AS opportunities,COUNT(*) FILTER (WHERE acceptance_evidence_url IS NOT NULL)::int AS accepted,COUNT(*) FILTER (WHERE delivery_evidence_url IS NOT NULL)::int AS delivered,COUNT(*) FILTER (WHERE payment_txid IS NOT NULL)::int AS payment_claims FROM jarvis_paid_workflow GROUP BY source");
+  const prompt=["Analyze persisted paid-work evidence and recommend ONE concrete, testable improvement to JARVIS sourcing, fulfillment or authorized peer collaboration.","Daily aggregate evidence: "+JSON.stringify(rows).slice(0,8000),"Prioritize independently verifiable paid outcomes, minimize task cost and external submission blockers. Distinguish payment claims from confirmed blockchain/bank settlement. No autonomous code edits, financial transfers or unverifiable success claims.","Record baseline, proposed change, measurable hypothesis, safe validation steps and rollback criterion. Do not optimize on unverified payment claims."].join("\n");
+  await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+}
+void scheduleSuccessLearningReview().catch(e=>console.warn("[SuccessLearning] startup",String(e)));
+setInterval(()=>{void scheduleSuccessLearningReview().catch(e=>console.warn("[SuccessLearning] daily review",String(e)))},60*60*1000);
+
 // Recurring discovery of opt-in, authorized external AI collaborators; no invented access.
 async function scheduleAgentPartnerDiscovery(){
   const slot=Math.floor(Date.now()/(6*60*60*1000));
