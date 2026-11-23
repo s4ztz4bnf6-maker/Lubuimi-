@@ -1,3 +1,4 @@
+import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
 import {validateWish} from "./src/customer-wishlist";
 import {suggestCustomerIntent} from "./src/customer-intent";
@@ -1467,6 +1468,11 @@ const server = Bun.serve({
         const result=await runAcrossModels(body.capability,body.input,configuredChatModels(env),{maxAttempts:5,timeoutMs:30000,budget:1});
         await sql`INSERT INTO agent_audit(event,detail) VALUES ('external_model_execution',${sql.json({capability:body.capability,ok:result.ok,attempted:result.attempted,reason:result.reason})})`;
         return json(result,result.ok?200:503);
+      }
+      if(url.pathname==="/v1/agent/opportunities/public"&&req.method==="GET"){
+        if(!apiKey||req.headers.get("x-agent-api-key")!==apiKey)return json({error:"Unauthorized"},401);
+        const candidates=await discoverPublicBounties("https://raw.githubusercontent.com/krishi-shah/dailybugbounties/main/data/bounties.json",AbortSignal.timeout(12000));
+        return json({count:candidates.length,candidates,warning:"Unverified public candidates; not contracts or guaranteed payouts."});
       }
       return json({ error: "Not found" }, 404);
     } catch (e) {
