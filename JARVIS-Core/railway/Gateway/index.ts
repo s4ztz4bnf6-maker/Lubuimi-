@@ -829,6 +829,24 @@ const server = Bun.serve({
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_peer_delegation_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id})]);
        return json({task,peer:{id:peer.id,name:peer.name},delegation_queued:true,peer_contacted:false,notice:"Queueing does not contact the peer. Worker needs an authenticated supported peer protocol for actual delegation."},202);
      }
+     if(req.method==="POST"&&/^\/v1\/paid-workflows\/\d+\/submission-handoff$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]),b=await req.json();
+       const [item]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       if(item.status!=="accepted"||!item.acceptance_evidence_url||item.delivery_evidence_url)return json({error:"Accepted and not yet delivered work with acceptance evidence required"},409);
+       const [peer]=await sql.unsafe("SELECT id,name,endpoint,capabilities,last_contact_at FROM agent_peers WHERE id=$1 AND collaboration_opt_in=TRUE AND status='active'",[Number(b.peer_id)]);
+       if(!peer)return json({error:"No active opted-in peer"},409);
+       const caps=Array.isArray(peer.capabilities)?peer.capabilities:[];
+       if(!caps.includes("authorized_external_submission"))return json({error:"Peer lacks verified authorized_external_submission capability"},409);
+       const artifact=String(b.deliverable_url||""),invoice=String(b.invoice_url||""),instructions=String(b.instructions||"");
+       if(!/^https:\/\//.test(artifact)||!/^https:\/\//.test(invoice)||artifact.length>2000||invoice.length>2000||instructions.length>4000)return json({error:"HTTPS deliverable and invoice URLs required"},400);
+       const wallet=String(env.BTC_RECEIVE_ADDRESS||"").trim();
+       if(!wallet||!item.payout_address||item.payout_address!==wallet)return json({error:"Payment address does not match configured JARVIS watch-only wallet; handoff blocked"},409);
+       const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,payout_address:wallet,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
+       const [task]=await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,status",[("JARVIS customer submission handoff · "+id).slice(0,300),"Prepare controlled external-agent submission for peer "+peer.name+" ("+peer.endpoint+"). Handoff JSON: "+JSON.stringify(payload)+". Do not claim delivery without independent platform receipt. No account impersonation or unauthorized access. Do not change payment details. Confirm protocol, authorization and live endpoint before any transmission."]);
+       await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submission_handoff_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id,invoiceUrl:invoice,deliverableUrl:artifact})]);
+       return json({handoff:payload,peer:{id:peer.id,name:peer.name},task,peer_contacted:false,submission_confirmed:false,notice:"Prepared for authorized external submission; actual peer transmission and customer receipt still require verification."},202);
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/peer-readiness"){
        const peers=await sql.unsafe("SELECT id,name,endpoint,capabilities,status,collaboration_opt_in,last_contact_at FROM agent_peers ORDER BY last_contact_at DESC NULLS LAST LIMIT 200");
        const rows=peers.map((p:any)=>{const caps=Array.isArray(p.capabilities)?p.capabilities:[];const fresh=Boolean(p.last_contact_at&&Date.now()-new Date(p.last_contact_at).getTime()<15*60*1000);return {id:p.id,name:p.name,endpoint:p.endpoint,status:p.status,opted_in:p.collaboration_opt_in,capabilities:caps,recent_contact:fresh,ready_for_routing:p.status==="active"&&p.collaboration_opt_in&&fresh,external_platform_access_verified:false}});
