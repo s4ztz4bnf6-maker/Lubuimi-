@@ -11,7 +11,10 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const publicSourceSearches=["site:kostenlos.de/gratisartikel-uebersicht gratisproben","site:mein-deal.com/gratisproben kostenlose produktproben","site:proben-kostenlos.de gratisproben","site:gratiswunder.de gratisproben"];const curatedFeeds=publicSourceSearches.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"de",gl:"DE",ceid:"DE:de"}).toString());
  const regions=[["US","en","free samples giveaway free products"],["CN","zh-CN","免费试用 免费样品"],["DE","de","gratisproben kostenlose produkte"],["GB","en","free samples giveaway"],["FR","fr","échantillons gratuits cadeaux"],["CA","en","free samples Canada"],["IT","it","campioni omaggio gratis"],["JP","ja","無料サンプル プレゼント"],["AU","en","free samples Australia"],["BR","pt-419","amostras grátis produtos"],["IN","en","free samples products India"],["ES","es","muestras gratis productos"]];
  const globalFeeds=regions.map(([gl,hl,term])=>"https://news.google.com/rss/search?"+new URLSearchParams({q:`${query} ${term}`,hl,gl,ceid:`${gl}:${hl}`}).toString());
- const sources=[...new Set([...feedUrls,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,24);
+ // Bing's public RSS search endpoint returns general web search results, not news-only results.
+ const webSearchTerms=[`"${query}" "zu verschenken"`,`"${query}" "kostenlos abzugeben"`,`"${query}" "gratis"`,`site:kleinanzeigen.de/s-zu-verschenken/ "${query}"`,`site:nebenan.de "zu verschenken" "${query}"`,`"${query}" "free stuff"`];
+ const webSearchFeeds=webSearchTerms.map(q=>"https://www.bing.com/search?"+new URLSearchParams({q,format:"rss"}).toString());
+ const sources=[...new Set([...feedUrls,...webSearchFeeds,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,30);
  for(const feed of sources){
   if(!safeUrl(feed))continue;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
