@@ -516,10 +516,70 @@ async function microService(req,url) {
   }
   return json({error:"Not found"},404);
 }
+
+await sql`CREATE TABLE IF NOT EXISTS jarvis_bank_invoices (
+ id UUID PRIMARY KEY, invoice_number TEXT NOT NULL UNIQUE, customer_name TEXT NOT NULL,
+ description TEXT NOT NULL, amount_minor BIGINT NOT NULL CHECK(amount_minor>0),
+ currency TEXT NOT NULL, iban TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'issued',
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), reported_at TIMESTAMPTZ,
+ confirmed_at TIMESTAMPTZ, confirmed_amount_minor BIGINT, confirmed_by TEXT,
+ payment_reference TEXT, CHECK(status IN ('issued','payment_reported','paid','disputed'))
+)`;
+await sql`CREATE TABLE IF NOT EXISTS jarvis_bank_invoice_events (
+ id BIGSERIAL PRIMARY KEY, invoice_id UUID NOT NULL REFERENCES jarvis_bank_invoices(id),
+ event TEXT NOT NULL, detail JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)`;
+
 const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+
+    if (url.pathname === "/v1/bank/invoices" && req.method === "GET") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      const rows=await sql`SELECT id,invoice_number,customer_name,description,amount_minor,currency,status,created_at,reported_at,confirmed_at,confirmed_amount_minor,payment_reference FROM jarvis_bank_invoices ORDER BY created_at DESC LIMIT 100`;
+      return json({invoices:rows});
+    }
+    if (url.pathname === "/v1/bank/invoices" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      const b=await req.json();
+      const customer=String(b.customerName||"").trim(),description=String(b.description||"").trim();
+      const currency=String(b.currency||"EUR").toUpperCase(),amount=Number(b.amountMinor);
+      const iban=String(env.JARVIS_INVOICE_IBAN||"").replace(/\\s/g,"").toUpperCase();
+      if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)) return json({error:"JARVIS_INVOICE_IBAN is not configured"},503);
+      if (!/^[A-Z]{3}$/.test(currency)||!Number.isSafeInteger(amount)||amount<=0||amount>100000000000||customer.length<2||customer.length>200||description.length<3||description.length>2000) return json({error:"Invalid invoice fields"},400);
+      const id=crypto.randomUUID(),number="JARVIS-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+id.slice(0,8).toUpperCase();
+      const [invoice]=await sql`INSERT INTO jarvis_bank_invoices(id,invoice_number,customer_name,description,amount_minor,currency,iban) VALUES(${id},${number},${customer},${description},${amount},${currency},${iban}) RETURNING *`;
+      await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event,detail) VALUES(${id},'invoice_issued',${sql.json({amountMinor:amount,currency})})`;
+      return json({invoice},201);
+    }
+    const bankMatch=url.pathname.match(/^\\/v1\\/bank\\/invoices\\/([0-9a-f-]{36})\\/(report|confirm|dispute)$/i);
+    if (bankMatch && req.method === "POST") {
+      const id=bankMatch[1],action=bankMatch[2];
+      if (action==="confirm" ? !ownerAuthorized(req) : (!authorized(req)&&!ownerAuthorized(req))) return json({error:"Unauthorized"},401);
+      const b=await req.json();
+      const [existing]=await sql`SELECT * FROM jarvis_bank_invoices WHERE id=${id} FOR UPDATE`;
+      if (!existing) return json({error:"Invoice not found"},404);
+      if (existing.status==="paid") return json({error:"Already paid; no duplicate confirmation"},409);
+      if (action==="report") {
+        if(existing.status!=="issued")return json({error:"Invoice not awaiting payment report"},409);
+        const [updated]=await sql`UPDATE jarvis_bank_invoices SET status='payment_reported',reported_at=NOW() WHERE id=${id} RETURNING id,invoice_number,status`;
+        await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event) VALUES(${id},'customer_payment_reported')`;
+        return json({invoice:updated,bankVerified:false});
+      }
+      if (action==="confirm") {
+        if(!b.bankCreditChecked||b.confirmedBy!=="owner")return json({error:"Owner must explicitly confirm bank credit"},403);
+        const amount=Number(b.amountMinor),reference=String(b.paymentReference||"").trim();
+        if(!Number.isSafeInteger(amount)||amount!==Number(existing.amount_minor)||reference.length<3||reference.length>200)return json({error:"Amount must match invoice and payment reference is required"},400);
+        const [updated]=await sql`UPDATE jarvis_bank_invoices SET status='paid',confirmed_at=NOW(),confirmed_amount_minor=${amount},confirmed_by='owner',payment_reference=${reference} WHERE id=${id} RETURNING id,invoice_number,status,currency,amount_minor,confirmed_at`;
+        await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event,detail) VALUES(${id},'owner_confirmed_bank_credit',${sql.json({amountMinor:amount,reference})})`;
+        return json({invoice:updated,verification:"owner_manual_confirmation"});
+      }
+      if(!ownerAuthorized(req))return json({error:"Owner authorization required"},401);
+      const [updated]=await sql`UPDATE jarvis_bank_invoices SET status='disputed' WHERE id=${id} RETURNING id,invoice_number,status`;
+      await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event) VALUES(${id},'payment_disputed')`;
+      return json({invoice:updated});
+    }
     if (req.method === "GET" && url.pathname === "/v1/freegoods/leads") {
       if (!authorized(req)) return json({error:"Unauthorized"},401);
       const leads=await sql`SELECT kind,source_url,title,description,query,score,flags,last_seen_at FROM jarvis_freegoods_public_leads ORDER BY score DESC,last_seen_at DESC LIMIT 100`;
