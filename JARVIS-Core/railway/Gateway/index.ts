@@ -843,11 +843,11 @@ const server = Bun.serve({
        const currency=String(b.currency||"").trim().toUpperCase();
        if(!/^[A-Z]{3}$/.test(currency))return json({error:"Explicit ISO currency required (BTC or fiat)"},400);
        const wallet=String(env.BTC_RECEIVE_ADDRESS||"").trim();
-       const iban=String(env.JARVIS_INVOICE_IBAN||"").replace(/\\s/g,"").toUpperCase();
+       const iban=String(env.JARVIS_INVOICE_IBAN||"").replaceAll(" ","").toUpperCase();
        const isBtc=currency==="BTC";
        const paymentDestination=isBtc?wallet:iban;
        if(isBtc&&(!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(wallet)||item.payout_address!==wallet))return json({error:"BTC payout must match configured JARVIS watch-only wallet"},409);
-       if(!isBtc&&(!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)||String(b.invoice_iban||"").replace(/\\s/g,"").toUpperCase()!==iban))return json({error:"Fiat invoice IBAN must match configured JARVIS bank account"},409);
+       if(!isBtc&&(!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)||String(b.invoice_iban||"").replaceAll(" ","").toUpperCase()!==iban))return json({error:"Fiat invoice IBAN must match configured JARVIS bank account"},409);
        const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,currency,payment_method:isBtc?"bitcoin_onchain":"bank_transfer",payment_destination:paymentDestination,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
        const [task]=await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,status",[("JARVIS customer submission handoff · "+id).slice(0,300),"Prepare controlled external-agent submission for peer "+peer.name+" ("+peer.endpoint+"). Handoff JSON: "+JSON.stringify(payload)+". Do not claim delivery without independent platform receipt. No account impersonation or unauthorized access. Do not change payment details. Confirm protocol, authorization and live endpoint before any transmission."]);
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submission_handoff_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id,invoiceUrl:invoice,deliverableUrl:artifact})]);
