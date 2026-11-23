@@ -20,6 +20,12 @@ if (geminiKey) { const geminiBase = "https://generativelanguage.googleapis.com/v
 if (env.GROQ_API_KEY) providerCandidates.push({ name: "groq-free-tier", baseUrl: "https://api.groq.com/openai/v1", apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL || "openai/gpt-oss-120b" });
 if (env.OPENROUTER_API_KEY) providerCandidates.push({ name: "openrouter-free-models", baseUrl: "https://openrouter.ai/api/v1", apiKey: env.OPENROUTER_API_KEY, model: env.OPENROUTER_MODEL || "openrouter/free" });
 if (env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID) providerCandidates.push({ name: "cloudflare-workers-ai", baseUrl: "https://api.cloudflare.com/client/v4/accounts/" + env.CLOUDFLARE_ACCOUNT_ID + "/ai/v1", apiKey: env.CLOUDFLARE_API_TOKEN, model: env.CLOUDFLARE_MODEL || "@cf/openai/gpt-oss-120b" });
+// Optional OpenAI-compatible, no-key inference endpoint; use only with explicitly trusted endpoints.
+if (env.JARVIS_KEYLESS_MODEL_BASE_URL) {
+  const endpoint = new URL(env.JARVIS_KEYLESS_MODEL_BASE_URL);
+  if (endpoint.protocol !== "https:" && !(endpoint.hostname === "localhost" || endpoint.hostname === "127.0.0.1")) throw new Error("Keyless model endpoint must use HTTPS");
+  providerCandidates.push({ name: "keyless-openai-compatible", baseUrl: endpoint.toString().replace(/\\/$/, ""), apiKey: "", model: env.JARVIS_KEYLESS_MODEL_NAME || "openai" });
+}
 if (env.MODEL_PROVIDER) { const preferred = providerCandidates.findIndex(p => p.name === env.MODEL_PROVIDER || p.name.startsWith(env.MODEL_PROVIDER.toLowerCase())); if (preferred > 0) providerCandidates.unshift(providerCandidates.splice(preferred, 1)[0]); }
 let modelConfigured = providerCandidates.length > 0;
 console.log("JARVIS provider probe: geminiKeyPresent="+Boolean(env.GEMINI_API_KEY)+"; providers="+providerCandidates.map(p=>p.name).join(","));
