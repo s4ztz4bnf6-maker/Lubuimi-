@@ -1,0 +1,13 @@
+{
+  "name": "jarvis-autonomous-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "node --test test/discovery.test.mjs"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
