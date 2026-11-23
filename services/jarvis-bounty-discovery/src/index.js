@@ -24,6 +24,23 @@ async function fetchQuery(q){
  }
  throw Error("GitHub search retry exhausted");
 }
+async function fetchPublicFeed(){
+ const url="https://raw.githubusercontent.com/krishi-shah/dailybugbounties/main/data/bounties.json";
+ const r=await fetch(url,{headers:{"User-Agent":"JARVIS-Bounty-Discovery/1.0",Accept:"application/json"},signal:AbortSignal.timeout(20000)});
+ if(!r.ok)throw Error("Public feed HTTP "+r.status);
+ const data=await r.json();
+ const rows=Array.isArray(data)?data:Array.isArray(data?.bounties)?data.bounties:[];
+ return rows.slice(0,500).flatMap(x=>{
+  if(!x||typeof x!=="object")return [];
+  const url=x.url||x.issue_url||x.html_url;
+  const title=x.title||x.name;
+  if(typeof url!=="string"||typeof title!=="string")return [];
+  try{const u=new URL(url);if(u.protocol!=="https:")return [];}catch{return [];}
+  const reward=Number(String(x.reward??x.amount??x.payout??"").replace(/[^0-9.]/g,""));
+  if(!Number.isFinite(reward)||reward<=0||x.closed===true||x.status==="closed")return [];
+  return [{source:"public_bounty_feed",url,title,description:"Public bounty feed candidate; payout and eligibility not independently verified",score:4}];
+ });
+}
 async function run(){
  status.lastRun=new Date().toISOString();status.lastError=null;
  const found=new Map();
@@ -31,6 +48,7 @@ async function run(){
   try{const issues=await fetchQuery(q);status.checked+=issues.length;for(const x of issues){if(x.pull_request||x.state!=="open")continue;const points=score(x);if(points<3)continue;found.set(x.html_url,{source:"github",url:x.html_url,title:x.title,description:(x.body||"").slice(0,8000),score:points});}}
   catch(e){console.error(JSON.stringify({event:"query_error",query:q,error:String(e)}));status.lastError=String(e);}
  }
+ try{for(const item of await fetchPublicFeed())found.set(item.url,item);}catch(e){console.error(JSON.stringify({event:"public_feed_error",error:String(e)}));status.lastError=String(e);}
  status.candidates=found.size;
  for(const x of found.values()){
   await pool.query(`INSERT INTO bounty_jobs(source,url,title,description,score) VALUES($1,$2,$3,$4,$5) ON CONFLICT(source,url) DO UPDATE SET title=EXCLUDED.title,description=EXCLUDED.description,score=EXCLUDED.score,fetched_at=NOW()`,[x.source,x.url,x.title,x.description,x.score]);
