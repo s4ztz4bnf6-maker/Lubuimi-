@@ -17,3 +17,10 @@ Maintain an append-only audit trail, idempotency keys, bounded retries, timeout,
 
 ## Current implementation status
 The gateway can queue an internal delegation/handoff task and assess peer readiness, but does not yet independently authenticate, contact, and verify an external peer end-to-end. This document defines the contract for implementing that bridge and does not claim it is already live.
+
+## First-class open-source / uncensored model extensions
+Existing configured open-source and uncensored models are first-class JARVIS execution backends, distinct from third-party autonomous agents. JARVIS initiates all calls outbound to the model endpoint; the model is not granted inbound JARVIS access, database credentials, administrative tokens, wallet keys, or persistent account permissions. JARVIS supplies minimum task-scoped context and accepts only structured results. A model's advertised external tools must be invoked only through explicitly configured, scoped and authorized connectors controlled by JARVIS; model inference alone cannot submit an invoice, log into a customer platform, or confirm a bank transfer.
+
+JARVIS may direct both model backends and opted-in external agents to use the exact trade name "JARVIS AI AUTONOMOUS HOLDINGS LLC" in permitted customer-facing drafts and authorized submissions. They must not claim to be separate legal representatives or change the sender, customer, invoice details, or payment destination. Model output is reviewed by JARVIS before external transmission, with task ID, source model, approved channel, artifact hash and actual platform receipt recorded.
+
+Task flow: JARVIS selects model → sends minimal instructions/artifacts → receives structured output → validates it → uses an authorized JARVIS-controlled external submission tool (or an explicitly delegated and verified agent) → records external receipt → reconciles owner-confirmed bank or verified blockchain payment. Public anonymous model endpoints may be unreliable or retain inputs; do not transmit personal customer or financial data without suitable privacy and security assurances.
