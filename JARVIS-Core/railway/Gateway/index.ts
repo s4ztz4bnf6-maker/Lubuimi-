@@ -384,6 +384,16 @@ async function scheduleOpenModelExtensionDiscovery(){
 void scheduleOpenModelExtensionDiscovery().catch(e=>console.warn("[OpenModelDiscovery] startup",String(e)));
 setInterval(()=>{void scheduleOpenModelExtensionDiscovery().catch(e=>console.warn("[OpenModelDiscovery] schedule",String(e)))},30*60*1000);
 
+// Periodic authorized customer-channel onboarding and fallback investigation.
+async function scheduleCustomerChannelFallback(){
+ const slot=Math.floor(Date.now()/(2*60*60*1000));
+ const title="JARVIS CUSTOMER CHANNEL FALLBACK · "+slot;
+ const prompt=["Inspect accepted workflows lacking external delivery evidence and identify their customer platform submission requirements.","For each blocked workflow, check whether an existing authorized JARVIS channel can submit deliverables and invoices. If not, identify publicly documented registration/API steps and alternate legitimate channels accepted by that customer.","Use configured JARVIS-controlled browser and model tools only when permitted; do not create duplicate accounts, evade verification, use false identities, bypass platform restrictions or claim receipt without external evidence.","Prepare the minimum owner approval request only when human identity, email verification, contractual acceptance or payment authorization is required. Otherwise execute only already authorized and configured operations and record actual receipts.","Never change the configured IBAN or BTC wallet. Return a concise blocker list with tested endpoint/tool evidence and concrete next action."].join("\n");
+ await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+}
+void scheduleCustomerChannelFallback().catch(e=>console.warn("[ChannelFallback] startup",String(e)));
+setInterval(()=>{void scheduleCustomerChannelFallback().catch(e=>console.warn("[ChannelFallback] schedule",String(e)))},30*60*1000);
+
 // Continuous self-first fulfillment: only independently evidenced accepted work, never fabricated revenue.
 async function scheduleVerifiedPaidFulfillment(){
   const rows=await sql.unsafe("SELECT id,title,source,source_url,acceptance_evidence_url FROM jarvis_paid_workflow WHERE status='accepted' AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NULL ORDER BY updated_at ASC LIMIT 20");
