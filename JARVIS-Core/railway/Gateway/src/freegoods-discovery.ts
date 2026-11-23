@@ -9,7 +9,7 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`];
  const publicSearchFeeds=discoveryQueries.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"en",gl:"US",ceid:"US:en"}).toString());
  const publicSourceSearches=["site:kostenlos.de/gratisartikel-uebersicht gratisproben","site:mein-deal.com/gratisproben kostenlose produktproben","site:proben-kostenlos.de gratisproben","site:gratiswunder.de gratisproben"];const curatedFeeds=publicSourceSearches.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"de",gl:"DE",ceid:"DE:de"}).toString());
- const regions=[["US","en","free samples giveaway free products"],["GB","en","free samples giveaway"],["DE","de","gratisproben kostenlose produkte"],["FR","fr","échantillons gratuits cadeaux"],["ES","es","muestras gratis productos"],["BR","pt-419","amostras grátis produtos"],["IN","en","free samples products India"],["JP","ja","無料サンプル プレゼント"]];
+ const regions=[["US","en","free samples giveaway free products"],["CN","zh-CN","免费试用 免费样品"],["DE","de","gratisproben kostenlose produkte"],["GB","en","free samples giveaway"],["FR","fr","échantillons gratuits cadeaux"],["CA","en","free samples Canada"],["IT","it","campioni omaggio gratis"],["JP","ja","無料サンプル プレゼント"],["AU","en","free samples Australia"],["BR","pt-419","amostras grátis produtos"],["IN","en","free samples products India"],["ES","es","muestras gratis productos"]];
  const globalFeeds=regions.map(([gl,hl,term])=>"https://news.google.com/rss/search?"+new URLSearchParams({q:`${query} ${term}`,hl,gl,ceid:`${gl}:${hl}`}).toString());
  const sources=[...new Set([...feedUrls,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,24);
  for(const feed of sources){
@@ -45,7 +45,7 @@ export async function discoverPublicLeads(query:string,feeds:string[],token?:str
 
 /** Public demand discovery is separate from product discovery; no personal-data harvesting or unsolicited outreach. */
 export async function searchGlobalPublicDemand(query:string,fetcher:typeof fetch=fetch):Promise<PublicLead[]>{
- const regions=[["US","en","want to buy"],["GB","en","looking to buy"],["DE","de","suche kaufen"],["FR","fr","cherche acheter"],["ES","es","busco comprar"],["BR","pt-419","procuro comprar"],["IN","en","bulk buyer"],["JP","ja","購入希望"]];
+ const regions=[["US","en","want to buy"],["CN","zh-CN","求购"],["DE","de","suche kaufen"],["GB","en","looking to buy"],["FR","fr","cherche acheter"],["CA","en","wanted to buy"],["IT","it","cerco acquisto"],["JP","ja","購入希望"],["AU","en","wanted to buy"],["BR","pt-419","procuro comprar"],["IN","en","bulk buyer"],["ES","es","busco comprar"]];
  const results:PublicLead[]=[];
  for(const [gl,hl,term] of regions){
   const url="https://news.google.com/rss/search?"+new URLSearchParams({q:`${query} ${term}`,hl,gl,ceid:`${gl}:${hl}`}).toString();
