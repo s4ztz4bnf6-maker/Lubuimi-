@@ -327,7 +327,8 @@ async function scanFreegoods(){
  if(freegoodsRunning)return;freegoodsRunning=true;
  try{
   const feeds=(env.JARVIS_FREEGOODS_RSS_FEEDS||"").split(",").map(x=>x.trim()).filter(Boolean);
-  const freegoodsQueries=queryBatch(freegoodsCatalog,Math.floor(Date.now()/(60*60*1000)),freegoodsBatchSize);
+  const priorityQueries=["Apple","Samsung","Sony","Nintendo","LEGO","Nike","Dyson","Bose","Rolex","laptop","smartphone","camera","gaming console","free products","zu verschenken"];
+  const freegoodsQueries=[...new Set([...priorityQueries,...queryBatch(freegoodsCatalog,Math.floor(Date.now()/(60*60*1000)),freegoodsBatchSize)])];
   for(const query of freegoodsQueries){
    const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
    for(const lead of rankLeads([...leads.gifts,...leads.demands],100)){
