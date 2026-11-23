@@ -65,7 +65,7 @@ if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.n
   console.log("JARVIS Gemini quota cooldown active until "+new Date(geminiCooldown.cooldown_until).toISOString()+"; alternative providers="+providerCandidates.length+"; deterministic research fallback="+(!modelConfigured));
 }
 
-const ownerReceiveAddresses=String(env.JARVIS_BTC_RECEIVE_ADDRESSES || "").split(",").map(x=>x.trim()).filter(Boolean); // Private Railway runtime configuration; never hardcode wallet addresses.
+const ownerReceiveAddresses=String(env.JARVIS_BTC_RECEIVE_ADDRESSES || env.BTC_RECEIVE_ADDRESS || "").split(",").map(x=>x.trim()).filter(Boolean); // Private Railway runtime configuration; never hardcode wallet addresses.
 const btcAddressPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 await sql.unsafe("DELETE FROM jarvis_wallet_watch_addresses WHERE address=ANY($1::text[])",[["REDACTED_BTC_RECEIVE_ADDRESS","REDACTED_BTC_RECEIVE_ADDRESS"]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_watch (id integer PRIMARY KEY DEFAULT 1 CHECK (id=1),receive_address text NOT NULL,updated_at timestamptz NOT NULL DEFAULT now())");
