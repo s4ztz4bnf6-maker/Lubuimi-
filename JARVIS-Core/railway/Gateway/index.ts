@@ -786,6 +786,19 @@ const server = Bun.serve({
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,external_account_id,acceptance_evidence_url,delivery_evidence_url,payment_txid,updated_at FROM jarvis_paid_workflow WHERE status IN ('accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 100");
        return json({items:rows.map((r:any)=>({...r,next_action:r.status==='accepted'?'submit_to_customer_via_authorized_platform_and_record_receipt':r.status==='delivered'?'obtain_customer_acceptance_and_payment':'independently_verify_payment'})),notice:"Internal task completion is not customer delivery. An authorized external submission channel and receipt are required."});
      }
+     if(req.method==="GET"&&/^\/v1\/paid-workflows\/\d+\/customer-channel$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]);
+       const [item]=await sql.unsafe("SELECT id,source,source_url,title,status FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       const m=/^https:\/\/github\.com\/([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)\/issues\/([1-9][0-9]*)$/.exec(item.source_url);
+       if(!m)return json({id,channel:"unresolved",can_submit:false,reason:"No supported, verified provider destination; do not guess customer email"});
+       const endpoint="https://api.github.com/repos/"+encodeURIComponent(m[1])+"/"+encodeURIComponent(m[2])+"/issues/"+m[3];
+       const response=await fetch(endpoint,{headers:{"Accept":"application/vnd.github+json","User-Agent":"JARVIS-AI-Delivery"},signal:AbortSignal.timeout(12000)});
+       if(!response.ok)return json({id,channel:"github_issue",can_submit:false,provider_status:response.status,reason:"Could not verify issue and recipient"},502);
+       const issue=await response.json();
+       const valid=issue.state==="open"&&!issue.pull_request&&issue.html_url===item.source_url;
+       return json({id,channel:"github_issue",recipient:{platform:"github",repository:m[1]+"/"+m[2],issue_number:Number(m[3]),issue_author:issue.user?.login||null,issue_url:issue.html_url},can_submit:valid&&item.status==="accepted"&&Boolean(env.GITHUB_TOKEN),accepted_contract_evidence_required:true,configured_credential:Boolean(env.GITHUB_TOKEN),issue_open:issue.state==="open",submission_endpoint:"/v1/paid-workflows/"+id+"/submit-github",notice:"Issue author is not necessarily payer; verify bounty terms and customer acceptance before submission."});
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/fulfillment-queue"){
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,acceptance_evidence_url,delivery_evidence_url,payment_txid FROM jarvis_paid_workflow WHERE status IN ('discovered','account_ready','accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 250");
        return json({items:rows.map((x:any)=>({id:x.id,title:x.title,source:x.source,source_url:x.source_url,stage:x.status,delivery_channel:x.source==="github"&&/^https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+$/.test(x.source_url)?"github_issue":"unresolved",next_action:!x.acceptance_evidence_url?"verify_contract_and_acceptance":!x.delivery_evidence_url?"prepare_deliverable_and_submit_to_verified_customer":!x.payment_txid?"verify_customer_receipt_and_request_payment":"verify_onchain_transaction",billable_now:Boolean(x.acceptance_evidence_url&&x.delivery_evidence_url),paid_verified:false})),notice:"Only external workflows. Billable flag is an evidence triage indicator, not a legal conclusion or proof of accepted work. No autonomous external submission without valid account authorization."});
