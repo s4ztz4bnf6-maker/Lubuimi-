@@ -46,3 +46,8 @@ The following are **verification statuses**, not legal conclusions or license gr
 - Customer modes: individual and business; locally calculated non-binding estimates only. No user accounts, order submission, payment or native app-store release yet.
 - Brand/logo licensing status: **original in-repository SVG design**, not a registered trademark or proof of exclusive rights. Trademark clearance and any registration remain **not verified**; copyright and dependency licenses must be checked before external distribution. No license grant or trademark registration is asserted.
 - The portal and tests were committed; **CI and production HTTP availability not yet verified for this release**. Any external API provider permissions remain subject to the separate verification registry above.
+
+## Global customer portal localization (2026-11-23)
+- Customer interface expanded to 16 locales: de, en, fr, es, ar, zh, ja, ko, hi, pt, ru, tr, id, vi, th, sw. Arabic uses RTL layout. Browser preference or explicit language selector; this is not proof of a user's country or eligibility.
+- Service category labels not yet fully translated outside the original four languages (English fallback). Local legal disclosures, invoices, tax, currency and provider eligibility require jurisdiction-specific verification. Market availability and licensing remain **not verified**.
+- CI and live HTTP verification for this update pending.
