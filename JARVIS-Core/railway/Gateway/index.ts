@@ -391,7 +391,14 @@ async function scheduleVerifiedPaidFulfillment(){
     const title="JARVIS SELF-FIRST PAID DELIVERY · "+item.id;
     const direct=item.source==="github"&&/^https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+$/.test(item.source_url);
     const prompt=["Complete independently accepted customer work. Prefer JARVIS own capabilities; use opted-in external peers only for a genuine blocked step.","Workflow "+item.id+": "+item.title,"Customer source: "+item.source_url,"Acceptance evidence: "+item.acceptance_evidence_url,"Direct delivery channel: "+(direct?"GitHub issue; requires configured authorized GITHUB_TOKEN":"not verified"),"Produce real deliverable, test and document it. Submit only through authorized access and collect external receipt. If blocked, record exact blocker and draft authorized handoff. Payment destination must remain configured JARVIS wallet or bank IBAN. Never fabricate delivery, acceptance or payment."].join("\n");
-    await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) SELECT $1,$2,'queued' WHERE NOT EXISTS (SELECT 1 FROM agent_tasks WHERE title=$1)",[title,prompt]);
+    // Requeue only when the prior run ended and external delivery remains unverified.
+    // Bounded to three workflow attempts; never duplicate a queued/running task.
+    const previous=await sql.unsafe("SELECT id,status,created_at FROM agent_tasks WHERE title LIKE $1 ORDER BY id DESC LIMIT 3",["JARVIS SELF-FIRST PAID DELIVERY · "+item.id+" · attempt %"]);
+    if(previous.length>=3)continue;
+    if(previous.some((t:any)=>["queued","running","processing","pending","retrying"].includes(t.status)))continue;
+    if(previous.length&&Date.now()-new Date(previous[0].created_at).getTime()<60*60*1000)continue;
+    const attempt=previous.length+1;
+    await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued')",[title+" · attempt "+attempt,prompt+"\\nAttempt "+attempt+"/3. Check existing external receipt before submitting to avoid duplicate delivery."]);
   }
 }
 void scheduleVerifiedPaidFulfillment().catch(e=>console.warn("[PaidFulfillment] startup",String(e)));
