@@ -1,6 +1,6 @@
 import { discoverCandidates } from "./discovery.mjs";
-import { ProviderGuard } from "../../tools/provider-guard.mjs";
-import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";
+import { ProviderGuard } from "./tools/provider-guard.mjs";
+import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "./tools/agent-autonomy.mjs";
 import postgres from "postgres";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
