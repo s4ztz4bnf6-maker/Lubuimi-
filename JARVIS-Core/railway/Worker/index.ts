@@ -1,3 +1,4 @@
+import { discoverCandidates } from "./discovery.mjs";
 import { ProviderGuard } from "../../tools/provider-guard.mjs";
 import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "../../tools/agent-autonomy.mjs";
 import postgres from "postgres";
@@ -836,6 +837,7 @@ if (modelConfigured) {
   await sql`UPDATE agent_tasks SET status='queued', error=NULL, completed_at=NULL, next_retry_at=NULL
     WHERE status='blocked_configuration' AND (title ILIKE '%bitcoin%' OR title ILIKE '%bounty%' OR title ILIKE '%software%qa%' OR title ILIKE 'CLAIM ACTION%' OR prompt ILIKE '%paid task%' OR prompt ILIKE '%microjob%' OR prompt ILIKE '%BTC%' OR prompt ILIKE '%sats%')`;
 }
+try { await discoverCandidates(sql); } catch(e) { console.error(JSON.stringify({event:"discovery_run_failed",error:String(e)})); }
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
     WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
