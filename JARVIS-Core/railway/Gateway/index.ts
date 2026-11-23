@@ -1,3 +1,4 @@
+import {renderCustomerApp,selectCustomerLocale} from "./src/customer-app";
 import {quoteService} from "./src/service-quoting";
 import {exchangePartners,preparePartnerInquiry} from "./src/exchange-partner-outreach";
 import { requestExchangeQuote } from "./src/exchange-ai";
@@ -625,6 +626,10 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if ((url.pathname === "/app" || url.pathname === "/customer") && req.method === "GET") {
+      const locale=selectCustomerLocale(req.headers.get("accept-language")||"",url.searchParams.get("lang")||undefined);
+      return new Response(renderCustomerApp(locale),{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public, max-age=300","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'none'; base-uri 'none'; frame-ancestors 'none'"}});
+    }
     if (url.pathname === "/v1/services/quote" && req.method === "POST") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       let body:unknown;
