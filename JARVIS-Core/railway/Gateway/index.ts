@@ -816,6 +816,19 @@ const server = Bun.serve({
        const rows=await sql.unsafe("SELECT id,recipient,subject,body,status,created_at FROM agent_messages WHERE channel='proton_manual' ORDER BY created_at DESC LIMIT 100");
        return json({drafts:rows,manual_send_required:true,notice:"These drafts exist in JARVIS only; they are not in the Proton mailbox."});
      }
+     if(req.method==="POST"&&/^\/v1\/paid-workflows\/\d+\/delegate$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]),b=await req.json();
+       const [item]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       if(item.status!=="accepted"||!item.acceptance_evidence_url)return json({error:"Verified accepted external work required before delegation"},409);
+       const [peer]=await sql.unsafe("SELECT id,name,endpoint,capabilities FROM agent_peers WHERE id=$1 AND collaboration_opt_in=TRUE AND status='active'",[Number(b.peer_id)]);
+       if(!peer)return json({error:"No active opted-in external AI peer with that ID"},409);
+       const requirements=String(b.requirements||"").trim();
+       if(requirements.length<30||requirements.length>8000)return json({error:"Detailed requirements required (30-8000 chars)"},400);
+       const [task]=await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,title,status",[("EXTERNAL DELEGATION · "+item.id+" · "+item.title).slice(0,300),["Externally accepted paid work; peer-assisted execution requested.","Workflow ID: "+item.id,"Authorized opt-in peer: "+peer.name,"Peer endpoint: "+peer.endpoint,"Customer listing: "+item.source_url,"Requirements: "+requirements,"Verify peer authorization and supported protocol before sharing any task data. Do not disclose customer secrets or claim external execution without a returned artifact and evidence. Deliver results to JARVIS for QA and customer submission."].join("\n")]);
+       await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_peer_delegation_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id})]);
+       return json({task,peer:{id:peer.id,name:peer.name},delegation_queued:true,peer_contacted:false,notice:"Queueing does not contact the peer. Worker needs an authenticated supported peer protocol for actual delegation."},202);
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/fulfillment-queue"){
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,acceptance_evidence_url,delivery_evidence_url,payment_txid FROM jarvis_paid_workflow WHERE status IN ('discovered','account_ready','accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 250");
        return json({items:rows.map((x:any)=>({id:x.id,title:x.title,source:x.source,source_url:x.source_url,stage:x.status,delivery_channel:x.source==="github"&&/^https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+$/.test(x.source_url)?"github_issue":"unresolved",next_action:!x.acceptance_evidence_url?"verify_contract_and_acceptance":!x.delivery_evidence_url?"prepare_deliverable_and_submit_to_verified_customer":!x.payment_txid?"verify_customer_receipt_and_request_payment":"verify_onchain_transaction",billable_now:Boolean(x.acceptance_evidence_url&&x.delivery_evidence_url),paid_verified:false})),notice:"Only external workflows. Billable flag is an evidence triage indicator, not a legal conclusion or proof of accepted work. No autonomous external submission without valid account authorization."});
