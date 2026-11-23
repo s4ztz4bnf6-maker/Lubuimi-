@@ -15,7 +15,7 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const webSearchTerms=[`"${query}" "zu verschenken"`,`"${query}" "kostenlos abzugeben"`,`"${query}" "gratis"`,`"${query}" "free stuff"`,`"${query}" "free sample"`,`"${query}" "giveaway"`,`"${query}" "free product"`,`"${query}" "échantillon gratuit"`,`"${query}" "muestra gratis"`,`"${query}" "無料サンプル"`,`"${query}" "免费试用"`,`site:kleinanzeigen.de/s-zu-verschenken/ "${query}"`];
  const webSearchFeeds=webSearchTerms.map(q=>"https://www.bing.com/search?"+new URLSearchParams({q,format:"rss"}).toString());
  const sources=[...new Set([...feedUrls,...webSearchFeeds,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,30);
- for(const feed of sources){
+ await Promise.all(sources.map(async feed=>{
   if(!safeUrl(feed))continue;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
    if(!r.ok||Number(r.headers.get("content-length")||0)>1_000_000)continue;
@@ -28,7 +28,7 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
     result.push({kind:"gift",sourceUrl:link,title,description,publishedAt:field(body,"pubDate")||field(body,"updated")||null,productKey:null,source:"rss",verified:false});
    }
   }catch{/* one feed must not interrupt other feeds */}
- }
+ }));
  return [...new Map(result.map(x=>[x.sourceUrl,x])).values()].slice(0,100);
 }
 export async function searchPublicGithubDemand(query:string,token?:string,fetcher:typeof fetch=fetch):Promise<PublicLead[]>{
