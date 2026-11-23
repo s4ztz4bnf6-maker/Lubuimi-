@@ -39,3 +39,10 @@ The following are **verification statuses**, not legal conclusions or license gr
 - `POST /v1/services/quote` added: authenticated B2C/B2B estimates for software, automation, translation, security review and data analysis, EUR/USD pricing in minor units. Estimates are **not** accepted orders, invoices or settled revenue; scope and tax treatment require confirmation.
 - Test cases added to Gateway test suite. CI and production rollout **not yet verified** for this update.
 - Commercial license/permission registry: software dependencies and third-party model/provider commercial terms **not independently verified**; cybersecurity services must be authorized by the client; no jurisdiction-specific professional accreditation is claimed. The exchange licensing statuses above remain unchanged.
+
+## Customer-facing app and branding (2026-11-23)
+- Public responsive browser portal added at `GET /app` and `GET /customer`; built-in SVG mark and distinctive navy/mint/lavender visual system; company display name `JARVIS AI AUTONOMOUS HOLDINGS LLC`.
+- Language preference: explicit `?lang=de|en|fr|es` overrides browser `Accept-Language`. No IP geolocation, residency inference or jurisdictional eligibility claim.
+- Customer modes: individual and business; locally calculated non-binding estimates only. No user accounts, order submission, payment or native app-store release yet.
+- Brand/logo licensing status: **original in-repository SVG design**, not a registered trademark or proof of exclusive rights. Trademark clearance and any registration remain **not verified**; copyright and dependency licenses must be checked before external distribution. No license grant or trademark registration is asserted.
+- The portal and tests were committed; **CI and production HTTP availability not yet verified for this release**. Any external API provider permissions remain subject to the separate verification registry above.
