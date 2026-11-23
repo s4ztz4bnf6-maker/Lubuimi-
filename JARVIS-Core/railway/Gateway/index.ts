@@ -1,3 +1,4 @@
+import { invoiceFooter } from "./src/invoice-footer";
 import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
 import { discoverPublicLeads } from "./src/freegoods-discovery";
@@ -545,13 +546,16 @@ const server = Bun.serve({
       const b=await req.json();
       const customer=String(b.customerName||"").trim(),description=String(b.description||"").trim();
       const currency=String(b.currency||"EUR").toUpperCase(),amount=Number(b.amountMinor);
+      const billingCountry=String(b.billingCountry||"").trim().toUpperCase();
+      if(!/^[A-Z]{2}$/.test(billingCountry))return json({error:"billingCountry ISO 3166-1 alpha-2 required for localized footer"},400);
+      const footer=invoiceFooter(billingCountry);
       const iban=String(env.JARVIS_INVOICE_IBAN||"").replace(/\\s/g,"").toUpperCase();
       if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)) return json({error:"JARVIS_INVOICE_IBAN is not configured"},503);
       if (!/^[A-Z]{3}$/.test(currency)||!Number.isSafeInteger(amount)||amount<=0||amount>100000000000||customer.length<2||customer.length>200||description.length<3||description.length>2000) return json({error:"Invalid invoice fields"},400);
       const id=crypto.randomUUID(),number="JARVIS-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+id.slice(0,8).toUpperCase();
       const [invoice]=await sql`INSERT INTO jarvis_bank_invoices(id,invoice_number,customer_name,description,amount_minor,currency,iban) VALUES(${id},${number},${customer},${description},${amount},${currency},${iban}) RETURNING *`;
       await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event,detail) VALUES(${id},'invoice_issued',${sql.json({amountMinor:amount,currency})})`;
-      return json({invoice},201);
+      return json({invoice,billingCountry,invoiceFooter:footer},201);
     }
     const bankMatch=url.pathname.match(new RegExp("^/v1/bank/invoices/([0-9a-f-]{36})/(report|confirm|dispute)$","i"));
     if (bankMatch && req.method === "POST") {
