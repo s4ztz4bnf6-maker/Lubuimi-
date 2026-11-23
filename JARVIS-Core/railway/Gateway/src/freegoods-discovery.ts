@@ -8,7 +8,8 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const result:PublicLead[]=[];const q=query.toLowerCase().trim();if(!q||q.length<2)return result;
  const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`];
  const publicSearchFeeds=discoveryQueries.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"en",gl:"US",ceid:"US:en"}).toString());
- const sources=[...new Set([...feedUrls,...publicSearchFeeds])].slice(0,12);
+ const publicSourceSearches=["site:kostenlos.de/gratisartikel-uebersicht gratisproben","site:mein-deal.com/gratisproben kostenlose produktproben","site:proben-kostenlos.de gratisproben","site:gratiswunder.de gratisproben"];const curatedFeeds=publicSourceSearches.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"de",gl:"DE",ceid:"DE:de"}).toString());
+ const sources=[...new Set([...feedUrls,...publicSearchFeeds,...curatedFeeds])].slice(0,12);
  for(const feed of sources){
   if(!safeUrl(feed))continue;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
