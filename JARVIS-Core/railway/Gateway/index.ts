@@ -1,3 +1,7 @@
+import {exchangePartners,preparePartnerInquiry} from "./src/exchange-partner-outreach";
+import { requestExchangeQuote } from "./src/exchange-ai";
+import { validateAgentMessage } from "./src/agent-exchange-contract";
+import { nextRevenueStep, evaluateDeferredLogistics } from "./src/revenue-orchestration-gates";
 import { classifyOpportunity } from "./src/opportunity-classifier";
 import { renderBankInvoicePdf } from "./src/invoice-pdf";
 import { invoiceFooter } from "./src/invoice-footer";
@@ -620,6 +624,45 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/exchange/providers" && req.method === "GET") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      return json({providers:exchangePartners,connectedProviders:0,customerTradingEnabled:false});
+    }
+    if (url.pathname === "/v1/exchange/provider-inquiry" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || typeof body!=="object" || Array.isArray(body)) return json({error:"Invalid payload"},400);
+      const partnerId=(body as {partnerId?:unknown}).partnerId;
+      const inquiry=typeof partnerId==="string"?preparePartnerInquiry(partnerId):null;
+      return inquiry?json(inquiry):json({error:"Unknown provider"},404);
+    }
+    if (url.pathname === "/v1/exchange/quote" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      return json(await requestExchangeQuote(body,[]));
+    }
+    if (url.pathname === "/v1/agent-exchange/validate" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:unknown;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      return json({valid:validateAgentMessage(body)});
+    }
+    if (url.pathname === "/v1/revenue/next-step" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:any;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || typeof body!=="object" || Array.isArray(body)) return json({error:"Invalid payload"},400);
+      return json({nextStep:nextRevenueStep(body)});
+    }
+    if (url.pathname === "/v1/freegoods/logistics/assess" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body:any;
+      try { body=await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      if (!body || !body.quote || !Number.isSafeInteger(body.salePriceCents)) return json({error:"Invalid payload"},400);
+      return json(evaluateDeferredLogistics(body.salePriceCents,body.quote));
+    }
     if (url.pathname === "/v1/opportunity-classify" && req.method === "POST") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       let body: any;
