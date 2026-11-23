@@ -1,0 +1,22 @@
+name: JARVIS zero-spend guard tests
+on:
+  pull_request:
+    paths:
+      - "JARVIS-Core/railway/Gateway/src/zero-spend-guard*"
+      - ".github/workflows/jarvis-zero-spend-guard.yml"
+  push:
+    branches: [jarvis-core]
+    paths:
+      - "JARVIS-Core/railway/Gateway/src/zero-spend-guard*"
+      - ".github/workflows/jarvis-zero-spend-guard.yml"
+permissions:
+  contents: read
+jobs:
+  zero-spend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Run zero-spend unit tests
+        working-directory: JARVIS-Core/railway/Gateway
+        run: bun test src/zero-spend-guard.test.ts
