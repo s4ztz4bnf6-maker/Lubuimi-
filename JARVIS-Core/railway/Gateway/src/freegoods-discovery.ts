@@ -18,7 +18,7 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
     const body=item[2],title=field(body,"title"),description=field(body,"description")||field(body,"summary")||field(body,"content");
     const atomLink=body.match(/<link\s+[^>]*href=["']([^"']+)["']/i)?.[1];
     const link=field(body,"link")||atomLink||"";
-    if(!safeUrl(link)||!(title+" "+description).toLowerCase().includes(q))continue;
+    const words=q.split(/\s+/).filter(w=>w.length>=4);const haystack=(title+" "+description).toLowerCase();const relevant=haystack.includes(q)||words.some(w=>haystack.includes(w))&&/gratis|kostenlos|free|sample|giveaway|gift|probe|product|gewinnspiel/i.test(haystack);if(!safeUrl(link)||!relevant)continue;
     result.push({kind:"gift",sourceUrl:link,title,description,publishedAt:field(body,"pubDate")||field(body,"updated")||null,productKey:null,source:"rss",verified:false});
    }
   }catch{/* one feed must not interrupt other feeds */}
