@@ -788,10 +788,8 @@ const server = Bun.serve({
      }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/external-audit"){
        const external=await sql.unsafe("SELECT id,source,source_url,title,status,acceptance_evidence_url,delivery_evidence_url,payment_txid,updated_at FROM jarvis_paid_workflow ORDER BY updated_at DESC LIMIT 500");
-       const tasks=await sql.unsafe("SELECT id,title,status FROM agent_tasks WHERE status='completed' ORDER BY id DESC LIMIT 500");
-       const externalUrls=new Set(external.map((x:any)=>String(x.source_url||"")));
        const records=external.map((x:any)=>({...x,classification:"external_opportunity",revenue_claim_supported:Boolean(x.acceptance_evidence_url&&x.delivery_evidence_url),payment_verified:false,next_action:!x.acceptance_evidence_url?"verify_customer_acceptance_and_compensation":!x.delivery_evidence_url?"submit_completed_work_to_customer":!x.payment_txid?"follow_up_on_payment":"independently_verify_payment"}));
-       return json({external_opportunities:records,internal_completed_count_sample:tasks.filter((x:any)=>!externalUrls.has(String(x.title||""))).length,completed_task_sample_size:tasks.length,notice:"Completed agent_tasks are not assumed to be customer contracts. External opportunities without acceptance and delivery evidence are not invoices or enforceable claims. Matching by task title is not proof of linkage."});
+       return json({external_opportunities:records,notice:"Completed agent_tasks are not assumed to be customer contracts. External opportunities without acceptance and delivery evidence are not invoices or enforceable claims. No automatic linkage to completed internal tasks is assumed."});
      }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/revenue-audit"){
        const rows=await sql.unsafe("SELECT status,COUNT(*)::int AS count FROM jarvis_paid_workflow GROUP BY status");
