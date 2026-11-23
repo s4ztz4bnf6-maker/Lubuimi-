@@ -12,8 +12,8 @@ export function normalizeBountyFeed(payload:unknown,now=new Date()):PublicBounty
   let url:URL;try{url=new URL(rawUrl)}catch{continue}
   if(url.protocol!=='https:'||url.username||url.password||seen.has(url.toString()))continue;
   seen.add(url.toString());
-  const amount=typeof r.reward==='number'?r.reward:typeof r.amount==='number'?r.amount:null;
-  result.push({url:url.toString(),title,reward:amount!==null&&Number.isFinite(amount)&&amount>0?amount:null,currency:typeof r.currency==='string'?r.currency.slice(0,12):'USD',source:typeof r.source==='string'?r.source.slice(0,80):'public_feed',status:'candidate',checkedAt:now.toISOString()});
+  const rawAmount=r.reward??r.amount??r.payout;\n  const amount=typeof rawAmount==='number'?rawAmount:typeof rawAmount==='string'?Number(rawAmount.replace(/[^0-9.]/g,'')):null;
+  if(amount===null||!Number.isFinite(amount)||amount<=0)continue;\n  if(r.state==='closed'||r.status==='closed'||r.is_open===false||r.closed===true)continue;\n  result.push({url:url.toString(),title,reward:amount,currency:typeof r.currency==='string'?r.currency.slice(0,12):'USD',source:typeof r.source==='string'?r.source.slice(0,80):'public_feed',status:'candidate',checkedAt:now.toISOString()});
  }
  return result;
 }
