@@ -799,6 +799,23 @@ const server = Bun.serve({
        const valid=issue.state==="open"&&!issue.pull_request&&issue.html_url===item.source_url;
        return json({id,channel:"github_issue",recipient:{platform:"github",repository:m[1]+"/"+m[2],issue_number:Number(m[3]),issue_author:issue.user?.login||null,issue_url:issue.html_url},can_submit:valid&&item.status==="accepted"&&Boolean(env.GITHUB_TOKEN),accepted_contract_evidence_required:true,configured_credential:Boolean(env.GITHUB_TOKEN),issue_open:issue.state==="open",submission_endpoint:"/v1/paid-workflows/"+id+"/submit-github",notice:"Issue author is not necessarily payer; verify bounty terms and customer acceptance before submission."});
      }
+     if(req.method==="POST"&&/^\/v1\/paid-workflows\/\d+\/prepare-email$/.test(url.pathname)){
+       const id=Number(url.pathname.split("/")[3]),b=await req.json();
+       const [item]=await sql.unsafe("SELECT * FROM jarvis_paid_workflow WHERE id=$1",[id]);
+       if(!item)return json({error:"Workflow not found"},404);
+       if(item.status!=="accepted"||!item.acceptance_evidence_url)return json({error:"External acceptance evidence required; no unsolicited invoice or fabricated claim"},409);
+       const to=String(b.customer_email||"").trim(),body=String(b.delivery_text||"").trim(),artifact=String(b.artifact_url||"").trim();
+       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)||to.length>254||body.length<40||body.length>12000||!/^https:\/\//.test(artifact)||artifact.length>2000)return json({error:"Customer email, substantive delivery text and HTTPS deliverable link required"},400);
+       const subject="Completed work: "+String(item.title).slice(0,150);
+       const message=body+"\n\nDeliverable: "+artifact+"\n\nPlease confirm receipt and acceptance under our agreed terms.";
+       const [draft]=await sql.unsafe("INSERT INTO agent_messages(channel,recipient,subject,body,status) VALUES('proton_manual',$1,$2,$3,'pending_approval') RETURNING id,channel,recipient,subject,body,status,created_at",[to,subject,message]);
+       await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_proton_draft_prepared",JSON.stringify({workflowId:id,messageId:draft.id,artifactUrl:artifact})]);
+       return json({draft,manual_send_required:true,proton_web_url:"https://mail.proton.me",notice:"Draft saved in JARVIS, NOT sent and NOT synchronized to Proton. Owner must copy and send manually."},201);
+     }
+     if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/email-drafts"){
+       const rows=await sql.unsafe("SELECT id,recipient,subject,body,status,created_at FROM agent_messages WHERE channel='proton_manual' ORDER BY created_at DESC LIMIT 100");
+       return json({drafts:rows,manual_send_required:true,notice:"These drafts exist in JARVIS only; they are not in the Proton mailbox."});
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/fulfillment-queue"){
        const rows=await sql.unsafe("SELECT id,source,source_url,title,status,acceptance_evidence_url,delivery_evidence_url,payment_txid FROM jarvis_paid_workflow WHERE status IN ('discovered','account_ready','accepted','delivered','payment_reported') ORDER BY updated_at ASC LIMIT 250");
        return json({items:rows.map((x:any)=>({id:x.id,title:x.title,source:x.source,source_url:x.source_url,stage:x.status,delivery_channel:x.source==="github"&&/^https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+$/.test(x.source_url)?"github_issue":"unresolved",next_action:!x.acceptance_evidence_url?"verify_contract_and_acceptance":!x.delivery_evidence_url?"prepare_deliverable_and_submit_to_verified_customer":!x.payment_txid?"verify_customer_receipt_and_request_payment":"verify_onchain_transaction",billable_now:Boolean(x.acceptance_evidence_url&&x.delivery_evidence_url),paid_verified:false})),notice:"Only external workflows. Billable flag is an evidence triage indicator, not a legal conclusion or proof of accepted work. No autonomous external submission without valid account authorization."});
