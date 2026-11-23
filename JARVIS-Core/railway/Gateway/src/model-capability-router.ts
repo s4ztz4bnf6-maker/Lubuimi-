@@ -15,3 +15,26 @@ export async function runAcrossModels(capability:string,input:string,endpoints:M
  }
  return {ok:false,attempted,reason:models.length?'no_model_completed':'no_configured_model_with_capability'};
 }
+
+/** Configured OpenAI-compatible endpoints, including self-hosted open-source model servers. */
+export function configuredChatModels(env:Record<string,string|undefined>):ModelEndpoint[]{
+ const ids=(env.JARVIS_MODEL_ENDPOINTS||'').split(',').map(x=>x.trim()).filter(Boolean);
+ return ids.flatMap(id=>{
+  if(!/^[A-Z][A-Z0-9_]{0,39}$/.test(id))return [];
+  const base=env['JARVIS_MODEL_'+id+'_URL'],model=env['JARVIS_MODEL_'+id+'_NAME'],key=env['JARVIS_MODEL_'+id+'_KEY'];
+  if(!base||!model)return [];
+  let url:URL;try{url=new URL(base)}catch{return []}
+  if(url.protocol!=='https:'&&!(['localhost','127.0.0.1','::1'].includes(url.hostname)&&url.protocol==='http:'))return [];
+  const capabilities=(env['JARVIS_MODEL_'+id+'_CAPABILITIES']||'text').split(',').map(x=>x.trim()).filter(Boolean);
+  return [{id,kind:(env['JARVIS_MODEL_'+id+'_KIND']==='open_source'?'open_source':'hosted') as ModelEndpoint['kind'],capabilities,enabled:true,costPerAttempt:Number(env['JARVIS_MODEL_'+id+'_COST']||0),invoke:async(request:{capability:string;input:string},signal:AbortSignal)=>{
+   try{const response=await fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:request.input}],stream:false})});
+    if(response.status===401||response.status===403)return {ok:false,error:'permission_denied' as const};
+    if(response.status===429)return {ok:false,error:'rate_limit' as const};
+    if(!response.ok)return {ok:false,error:response.status>=500?'unavailable' as const:'invalid_request' as const};
+    const data=await response.json() as {choices?:Array<{message?:{content?:string}}>} ;
+    const output=data.choices?.[0]?.message?.content;
+    return typeof output==='string'&&output.length>0?{ok:true,output}:{ok:false,error:'unsupported' as const};
+   }catch{return {ok:false,error:'unavailable' as const}}
+  }}];
+ });
+}
