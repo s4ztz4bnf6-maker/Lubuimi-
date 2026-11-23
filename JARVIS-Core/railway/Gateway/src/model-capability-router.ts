@@ -17,6 +17,7 @@ export async function runAcrossModels(capability:string,input:string,endpoints:M
   spent+=m.costPerAttempt;attempted.push(m.id);const c=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
   try{const res=await Promise.race([m.invoke({capability,input},c.signal),new Promise<{ok:boolean;error:'timeout'}>(resolve=>{timer=setTimeout(()=>{c.abort();resolve({ok:false,error:'timeout'})},Math.max(1000,Math.min(120000,opts.timeoutMs??30000)))})]);
    if(res.ok&&typeof res.output==='string'){health.set(m.id,{failures:0,retryAt:0,lastSuccess:Date.now()});return {ok:true,output:res.output,modelId:m.id,attempted,reason:'completed'};}
+   if(res.error==='permission_denied'||res.error==='invalid_request')return {ok:false,attempted,reason:res.error};
    const old=health.get(m.id);const failures=(old?.failures??0)+1;
    const delay=res.error==='rate_limit'?60000:res.error==='permission_denied'?300000:Math.min(120000,2000*Math.pow(2,Math.min(6,failures)));
    health.set(m.id,{failures,retryAt:Date.now()+delay,lastSuccess:old?.lastSuccess??0});
