@@ -50,3 +50,7 @@ Validation: GitHub Actions JARVIS-Core tests succeeded for commit `79ae5ecdedca6
 **Production status: NOT DEPLOYED.** The Worker source snapshot in this branch is intentionally scrubbed of private wallet receive addresses and is documented as not deployable as-is. Existing production services were left unchanged to preserve wallet monitoring and existing revenue paths.
 
 - `economy-scheduler/`: separate cron-service package that can enqueue the five new agent-economy tasks into the existing `agent_tasks` queue without replacing the live Worker. It is tested but not deployed; no production database writes have been made.
+
+## License
+
+Original JARVIS-Core code in this directory is distributed under the [Apache License, Version 2.0](LICENSE); see [NOTICE](NOTICE) for attribution and limitations. This applies only to material the project contributors are entitled to license. Third-party libraries, bundled assets, external services, and imported code retain their own applicable licenses and terms. This does not license the separate mathematical research or other files outside `JARVIS-Core/`.
