@@ -34,3 +34,8 @@ The following are **verification statuses**, not legal conclusions or license gr
 - Update statuses only with source evidence, timestamp and relevant provider/jurisdiction.
 - No live customer conversion, custody or payment should be marked active until a verified provider, applicable authorizations, settlement rails and end-to-end evidence exist.
 - Free or zero-upfront-cost integrations may still incur network, trade, withdrawal and bank charges.
+
+## Commercial service quoting — code update (2026-11-23)
+- `POST /v1/services/quote` added: authenticated B2C/B2B estimates for software, automation, translation, security review and data analysis, EUR/USD pricing in minor units. Estimates are **not** accepted orders, invoices or settled revenue; scope and tax treatment require confirmation.
+- Test cases added to Gateway test suite. CI and production rollout **not yet verified** for this update.
+- Commercial license/permission registry: software dependencies and third-party model/provider commercial terms **not independently verified**; cybersecurity services must be authorized by the client; no jurisdiction-specific professional accreditation is claimed. The exchange licensing statuses above remain unchanged.
