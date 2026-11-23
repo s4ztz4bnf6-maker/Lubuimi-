@@ -912,6 +912,10 @@ const server = Bun.serve({
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submission_handoff_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id,invoiceUrl:invoice,deliverableUrl:artifact})]);
        return json({handoff:payload,peer:{id:peer.id,name:peer.name},task,peer_contacted:false,submission_confirmed:false,notice:"Prepared for authorized external submission; actual peer transmission and customer receipt still require verification."},202);
      }
+     if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/agent-extension-policy"){
+       if(!authorized(req)&&!ownerAuthorized(req))return json({error:"Unauthorized"},401);
+       return json({version:"1.0",controller:"JARVIS",role:"technical_execution_extension",allowed:["authorized_research","artifact_preparation","scoped_tool_execution","authorized_customer_submission_with_receipt"],prohibited:["change_payment_destination","share_secrets","impersonate_customer","claim_unverified_delivery","self_grant_permissions"],requirements:["explicit_opt_in","verified_endpoint","verified_platform_authorization","task_scoped_actions","auditable_result","external_receipt_for_customer_submission"],dispatch_status:"handoff_queue_only_not_verified_peer_transmission",payment_confirmation:"owner_manual_bank_confirmation",policy_document:"JARVIS-Core/EXTERNAL_AGENT_EXTENSION_PROTOCOL.md"});
+     }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/peer-readiness"){
        const peers=await sql.unsafe("SELECT id,name,endpoint,capabilities,status,collaboration_opt_in,last_contact_at FROM agent_peers ORDER BY last_contact_at DESC NULLS LAST LIMIT 200");
        const rows=peers.map((p:any)=>{const caps=Array.isArray(p.capabilities)?p.capabilities:[];const fresh=Boolean(p.last_contact_at&&Date.now()-new Date(p.last_contact_at).getTime()<15*60*1000);return {id:p.id,name:p.name,endpoint:p.endpoint,status:p.status,opted_in:p.collaboration_opt_in,capabilities:caps,recent_contact:fresh,ready_for_routing:p.status==="active"&&p.collaboration_opt_in&&fresh,external_platform_access_verified:false}});
