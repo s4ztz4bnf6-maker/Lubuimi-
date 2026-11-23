@@ -1,3 +1,4 @@
+import {validateCustomerInquiry} from "./src/customer-inquiries";
 import {renderCustomerApp,selectCustomerLocale} from "./src/customer-app";
 import {quoteService} from "./src/service-quoting";
 import {exchangePartners,preparePartnerInquiry} from "./src/exchange-partner-outreach";
@@ -621,11 +622,33 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_bank_invoice_events (
 // Persistent payment-to-invoice evidence; independent settlement confirmation remains separate.
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_invoice_payment_links (id BIGSERIAL PRIMARY KEY, invoice_id UUID NOT NULL REFERENCES jarvis_bank_invoices(id), method TEXT NOT NULL CHECK(method IN ('bank','bitcoin')), external_reference TEXT NOT NULL, amount_minor BIGINT NOT NULL CHECK(amount_minor>0), currency TEXT NOT NULL, reported_by TEXT NOT NULL DEFAULT 'owner', verification_status TEXT NOT NULL DEFAULT 'owner_reported', evidence JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(method,external_reference,invoice_id))");
 
+await sql`CREATE TABLE IF NOT EXISTS jarvis_customer_inquiries (id BIGSERIAL PRIMARY KEY, kind TEXT NOT NULL CHECK (kind IN ('product_search','service_request')), customer_type TEXT NOT NULL CHECK (customer_type IN ('individual','business')), description TEXT NOT NULL, email TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+const inquiryRate=new Map<string,{count:number;until:number}>();
 const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/v1/customer/inquiries" && req.method === "POST") {
+      const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-real-ip")||"unknown";
+      const now=Date.now();const entry=inquiryRate.get(ip);
+      if(entry&&entry.until>now&&entry.count>=5)return json({error:"rate_limited"},429);
+      if(!entry||entry.until<=now)inquiryRate.set(ip,{count:1,until:now+3600000});else entry.count++;
+      if(inquiryRate.size>10000)inquiryRate.clear();
+      const size=Number(req.headers.get("content-length")||0);
+      if(size>8192)return json({error:"request_too_large"},413);
+      let body:unknown;try{body=await req.json()}catch{return json({error:"invalid_json"},400)}
+      const v=validateCustomerInquiry(body);
+      if(!v.ok)return json({error:v.error},400);
+      const x=v.value;
+      const [saved]=await sql`INSERT INTO jarvis_customer_inquiries (kind,customer_type,description,email) VALUES (${x.kind},${x.customerType},${x.description},${x.email}) RETURNING id,created_at,status`;
+      return json({requestId:String(saved.id),status:saved.status,createdAt:saved.created_at,notice:"Request received for review. No purchase, price or delivery is guaranteed."},202);
+    }
+    if (url.pathname === "/v1/owner/customer-inquiries" && req.method === "GET") {
+      if(!ownerAuthorized(req))return json({error:"Unauthorized"},401);
+      const rows=await sql`SELECT id,kind,customer_type,description,email,status,created_at FROM jarvis_customer_inquiries ORDER BY created_at DESC LIMIT 100`;
+      return json({inquiries:rows});
+    }
     if (url.pathname === "/app/manifest.webmanifest" && req.method === "GET") {
       return new Response(JSON.stringify({name:"JARVIS AI AUTONOMOUS HOLDINGS LLC",short_name:"JARVIS AI",description:"Digital services for individuals and businesses",start_url:"/app",scope:"/app",display:"standalone",background_color:"#0a1020",theme_color:"#10172b",icons:[{src:"/app/icon.svg",sizes:"any",type:"image/svg+xml",purpose:"any maskable"}]}),{headers:{"content-type":"application/manifest+json; charset=utf-8","cache-control":"public, max-age=3600"}});
     }
