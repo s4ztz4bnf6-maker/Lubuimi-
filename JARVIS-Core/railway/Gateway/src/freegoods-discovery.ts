@@ -66,3 +66,37 @@ export function matchPublicLeads(gifts:PublicLead[],demands:PublicLead[]){
  const tokens=(s:string)=>new Set((s.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu)||[]).filter(x=>!stop.has(x)));
  return gifts.flatMap(g=>demands.flatMap(d=>{const a=tokens(g.title),b=tokens(d.title);const overlap=[...a].filter(x=>b.has(x));return overlap.length>=2?[{gift:g,demand:d,matchingTerms:overlap.slice(0,8),verified:false as const,requires:["resale rights","availability","buyer intent","pricing","delivery capability"]}]:[]})).slice(0,100);
 }
+
+/** Evidence-based participant and resale triage. Unknown terms never imply permission. */
+export type FreeGoodsAudience="business"|"private"|"women"|"men"|"all"|"unknown";
+export type ResaleStatus="allowed"|"prohibited"|"unregulated"|"review";
+export type Participant="llc"|"owner"|"mother";
+export type OfferAssessment={
+ audience:FreeGoodsAudience;resale:ResaleStatus;participants:Participant[];
+ decision:"excluded"|"review"|"eligible_for_further_checks";
+ reasons:string[];
+};
+export function assessFreeGoodsOffer(input:{
+ title:string;description?:string;terms?:string;audience?:FreeGoodsAudience;
+ ownerEligible?:boolean;motherEligible?:boolean;llcEligible?:boolean;
+}):OfferAssessment{
+ const terms=(input.terms||"").normalize("NFKC").toLowerCase();
+ const audience=input.audience||"unknown";
+ const prohibited=/\b(?:not for resale|no resale|resale prohibited|not for commercial (?:use|purposes)|personal use only|non-commercial use only|may not (?:resell|sell)|nicht zum weiterverkauf|weiterverkauf (?:untersagt|verboten)|nur für den privaten gebrauch|revente interdite|interdit à la revente|prohibida su reventa|proibida a revenda)\b/i.test(terms);
+ const allowed=/\b(?:resale permitted|resale allowed|commercial use permitted|commercial use allowed|weiterverkauf erlaubt|gewerbliche nutzung erlaubt|revente autorisée)\b/i.test(terms);
+ const conflicting=prohibited&&allowed;
+ const resale:ResaleStatus=conflicting?"review":prohibited?"prohibited":allowed?"allowed":terms?"unregulated":"review";
+ const participants:Participant[]=[];
+ if((audience==="business"||audience==="all"||audience==="unknown")&&input.llcEligible!==false)participants.push("llc");
+ if((audience==="private"||audience==="men"||audience==="all"||audience==="unknown")&&input.ownerEligible!==false)participants.push("owner");
+ if((audience==="private"||audience==="women"||audience==="all"||audience==="unknown")&&input.motherEligible!==false)participants.push("mother");
+ const reasons:string[]=[];
+ if(!input.terms)reasons.push("Full promotion terms not provided");
+ if(audience==="unknown")reasons.push("Audience must be verified from original offer");
+ if(resale==="unregulated")reasons.push("No explicit resale clause detected; this is not proof of permission");
+ if(conflicting)reasons.push("Conflicting resale terms require review");
+ if(!participants.length)reasons.push("No eligible participant");
+ reasons.push("Verify actual eligibility, household limits, transferable ownership and delivery before acquisition");
+ const decision=prohibited&&!conflicting||!participants.length?"excluded":resale!=="allowed"||audience==="unknown"?"review":"eligible_for_further_checks";
+ return {audience,resale,participants,decision,reasons};
+}
