@@ -553,7 +553,7 @@ const server = Bun.serve({
       await sql`INSERT INTO jarvis_bank_invoice_events(invoice_id,event,detail) VALUES(${id},'invoice_issued',${sql.json({amountMinor:amount,currency})})`;
       return json({invoice},201);
     }
-    const bankMatch=url.pathname.match(/^\\/v1\\/bank\\/invoices\\/([0-9a-f-]{36})\\/(report|confirm|dispute)$/i);
+    const bankMatch=url.pathname.match(new RegExp("^/v1/bank/invoices/([0-9a-f-]{36})/(report|confirm|dispute)$","i"));
     if (bankMatch && req.method === "POST") {
       const id=bankMatch[1],action=bankMatch[2];
       if (action==="confirm" ? !ownerAuthorized(req) : (!authorized(req)&&!ownerAuthorized(req))) return json({error:"Unauthorized"},401);
