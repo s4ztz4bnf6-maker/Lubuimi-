@@ -1,3 +1,4 @@
+import { classifyOpportunity } from "./src/opportunity-classifier";
 import { renderBankInvoicePdf } from "./src/invoice-pdf";
 import { invoiceFooter } from "./src/invoice-footer";
 import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
@@ -618,6 +619,16 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+
+    if (url.pathname === "/v1/opportunity-classify" && req.method === "POST") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      let body: any;
+      try { body = await req.json(); } catch { return json({error:"Invalid JSON"},400); }
+      const allowed = ["internal_user","internal_system","internal_agent","external_candidate","external_contract","unknown"];
+      if (!allowed.includes(body?.origin)) return json({error:"Invalid origin"},400);
+      const evidence = body?.evidence && typeof body.evidence === "object" && !Array.isArray(body.evidence) ? body.evidence : {};
+      return json(classifyOpportunity(body.origin, evidence));
+    }
 
     const pdfInvoiceMatch = /^\/v1\/bank\/invoices\/([0-9a-f-]{36})\/pdf$/i.exec(url.pathname);
     if(pdfInvoiceMatch && req.method==="GET"){
