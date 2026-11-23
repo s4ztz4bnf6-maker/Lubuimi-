@@ -9,7 +9,9 @@ export async function searchPublicGiftFeeds(feedUrls:string[],query:string,fetch
  const discoveryQueries=[`(${query} OR gratis OR kostenlos OR freebie OR giveaway)`, `("${query}" "free sample")`];
  const publicSearchFeeds=discoveryQueries.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"en",gl:"US",ceid:"US:en"}).toString());
  const publicSourceSearches=["site:kostenlos.de/gratisartikel-uebersicht gratisproben","site:mein-deal.com/gratisproben kostenlose produktproben","site:proben-kostenlos.de gratisproben","site:gratiswunder.de gratisproben"];const curatedFeeds=publicSourceSearches.map(q=>"https://news.google.com/rss/search?"+new URLSearchParams({q,hl:"de",gl:"DE",ceid:"DE:de"}).toString());
- const sources=[...new Set([...feedUrls,...publicSearchFeeds,...curatedFeeds])].slice(0,12);
+ const regions=[["US","en","free samples giveaway free products"],["GB","en","free samples giveaway"],["DE","de","gratisproben kostenlose produkte"],["FR","fr","échantillons gratuits cadeaux"],["ES","es","muestras gratis productos"],["BR","pt-419","amostras grátis produtos"],["IN","en","free samples products India"],["JP","ja","無料サンプル プレゼント"]];
+ const globalFeeds=regions.map(([gl,hl,term])=>"https://news.google.com/rss/search?"+new URLSearchParams({q:`${query} ${term}`,hl,gl,ceid:`${gl}:${hl}`}).toString());
+ const sources=[...new Set([...feedUrls,...publicSearchFeeds,...curatedFeeds,...globalFeeds])].slice(0,24);
  for(const feed of sources){
   if(!safeUrl(feed))continue;
   try{const r=await fetcher(feed,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});
@@ -39,4 +41,28 @@ export async function searchPublicGithubDemand(query:string,token?:string,fetche
 export async function discoverPublicLeads(query:string,feeds:string[],token?:string,fetcher:typeof fetch=fetch){
  const [gifts,demands]=await Promise.all([searchPublicGiftFeeds(feeds,query,fetcher),searchPublicGithubDemand(query,token,fetcher)]);
  return {gifts,demands,discoveredAt:new Date().toISOString(),warning:"Unverified public leads only. No ownership, buyer consent, resale rights or purchase intent verified."};
+}
+
+/** Public demand discovery is separate from product discovery; no personal-data harvesting or unsolicited outreach. */
+export async function searchGlobalPublicDemand(query:string,fetcher:typeof fetch=fetch):Promise<PublicLead[]>{
+ const regions=[["US","en","want to buy"],["GB","en","looking to buy"],["DE","de","suche kaufen"],["FR","fr","cherche acheter"],["ES","es","busco comprar"],["BR","pt-419","procuro comprar"],["IN","en","bulk buyer"],["JP","ja","購入希望"]];
+ const results:PublicLead[]=[];
+ for(const [gl,hl,term] of regions){
+  const url="https://news.google.com/rss/search?"+new URLSearchParams({q:`${query} ${term}`,hl,gl,ceid:`${gl}:${hl}`}).toString();
+  try{const response=await fetcher(url,{headers:{accept:"application/rss+xml, application/atom+xml, application/xml, text/xml"},signal:AbortSignal.timeout(9000),redirect:"error"});if(!response.ok||Number(response.headers.get("content-length")||0)>1_000_000)continue;
+   const xml=(await response.text()).slice(0,1_000_000);
+   for(const item of [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)].slice(0,60)){
+    const body=item[2],title=field(body,"title"),description=field(body,"description")||field(body,"summary"),link=field(body,"link")||body.match(/<link\s+[^>]*href=["\x27]([^"\x27]+)["\x27]/i)?.[1]||"";
+    if(!safeUrl(link)||!(title+" "+description).toLowerCase().includes(query.toLowerCase()))continue;
+    results.push({kind:"demand",sourceUrl:link,title,description,publishedAt:field(body,"pubDate")||null,productKey:null,source:"rss",verified:false});
+   }
+  }catch{/* keep other regions operational */}
+ }
+ return [...new Map(results.map(x=>[x.sourceUrl,x])).values()].slice(0,100);
+}
+/** Conservative matching: lead overlap is not proof of buyer intent, resale rights or profit. */
+export function matchPublicLeads(gifts:PublicLead[],demands:PublicLead[]){
+ const stop=new Set(["free","gratis","sample","product","products","kostenlos","geschenk","gift","giveaway","buy","want","looking","suche","kaufen"]);
+ const tokens=(s:string)=>new Set((s.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu)||[]).filter(x=>!stop.has(x)));
+ return gifts.flatMap(g=>demands.flatMap(d=>{const a=tokens(g.title),b=tokens(d.title);const overlap=[...a].filter(x=>b.has(x));return overlap.length>=2?[{gift:g,demand:d,matchingTerms:overlap.slice(0,8),verified:false as const,requires:["resale rights","availability","buyer intent","pricing","delivery capability"]}]:[]})).slice(0,100);
 }
