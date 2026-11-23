@@ -626,6 +626,15 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    if (url.pathname === "/app/manifest.webmanifest" && req.method === "GET") {
+      return new Response(JSON.stringify({name:"JARVIS AI AUTONOMOUS HOLDINGS LLC",short_name:"JARVIS AI",description:"Digital services for individuals and businesses",start_url:"/app",scope:"/app",display:"standalone",background_color:"#0a1020",theme_color:"#10172b",icons:[{src:"/app/icon.svg",sizes:"any",type:"image/svg+xml",purpose:"any maskable"}]}),{headers:{"content-type":"application/manifest+json; charset=utf-8","cache-control":"public, max-age=3600"}});
+    }
+    if (url.pathname === "/app/icon.svg" && req.method === "GET") {
+      return new Response('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="42" fill="#10172b"/><path d="M96 21 159 57v78l-63 36-63-36V57Z" fill="none" stroke="#6ee7d2" stroke-width="10"/><path d="M65 74h62v49l-31 19-31-19" fill="none" stroke="#8ba5ff" stroke-width="10"/></svg>',{headers:{"content-type":"image/svg+xml","cache-control":"public, max-age=86400","x-content-type-options":"nosniff"}});
+    }
+    if (url.pathname === "/app/sw.js" && req.method === "GET") {
+      return new Response('self.addEventListener("install",e=>{self.skipWaiting()});self.addEventListener("activate",e=>{e.waitUntil(self.clients.claim())});',{headers:{"content-type":"text/javascript; charset=utf-8","cache-control":"no-store","service-worker-allowed":"/app"}});
+    }
     if ((url.pathname === "/app" || url.pathname === "/customer") && req.method === "GET") {
       const locale=selectCustomerLocale(req.headers.get("accept-language")||"",url.searchParams.get("lang")||undefined);
       return new Response(renderCustomerApp(locale),{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public, max-age=300","x-content-type-options":"nosniff","content-security-policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; form-action 'none'; base-uri 'none'; frame-ancestors 'none'"}});
