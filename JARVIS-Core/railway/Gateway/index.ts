@@ -1,3 +1,4 @@
+import {suggestCustomerIntent} from "./src/customer-intent";
 import {validateCustomerInquiry} from "./src/customer-inquiries";
 import {renderCustomerApp,selectCustomerLocale} from "./src/customer-app";
 import {quoteService} from "./src/service-quoting";
@@ -642,12 +643,14 @@ const server = Bun.serve({
       if(!v.ok)return json({error:v.error},400);
       const x=v.value;
       const [saved]=await sql`INSERT INTO jarvis_customer_inquiries (kind,customer_type,description,email) VALUES (${x.kind},${x.customerType},${x.description},${x.email}) RETURNING id,created_at,status`;
+      const suggestions=suggestCustomerIntent(x.description,x.kind,true);
+      await sql`INSERT INTO agent_audit(event,detail) VALUES ('customer_intent_draft',${sql.json({requestId:String(saved.id),suggestions})})`;
       return json({requestId:String(saved.id),status:saved.status,createdAt:saved.created_at,notice:"Request received for review. No purchase, price or delivery is guaranteed."},202);
     }
     if (url.pathname === "/v1/owner/customer-inquiries" && req.method === "GET") {
       if(!ownerAuthorized(req))return json({error:"Unauthorized"},401);
       const rows=await sql`SELECT id,kind,customer_type,description,email,status,created_at FROM jarvis_customer_inquiries ORDER BY created_at DESC LIMIT 100`;
-      return json({inquiries:rows});
+      return json({inquiries:rows.map(row=>({...row,suggestedServices:suggestCustomerIntent(row.description,row.kind,true)}))});
     }
     if (url.pathname === "/app/manifest.webmanifest" && req.method === "GET") {
       return new Response(JSON.stringify({name:"JARVIS AI AUTONOMOUS HOLDINGS LLC",short_name:"JARVIS AI",description:"Digital services for individuals and businesses",start_url:"/app",scope:"/app",display:"standalone",background_color:"#0a1020",theme_color:"#10172b",icons:[{src:"/app/icon.svg",sizes:"any",type:"image/svg+xml",purpose:"any maskable"}]}),{headers:{"content-type":"application/manifest+json; charset=utf-8","cache-control":"public, max-age=3600"}});
