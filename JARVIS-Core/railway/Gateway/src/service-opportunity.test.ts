@@ -1,0 +1,13 @@
+import {test,expect} from "bun:test";
+import {screenOpportunity,rankServiceOpportunities,transitionOrder} from "./service-opportunity";
+const base={id:"1",sourceUrl:"https://example.org/jobs/1",title:"Translate product manual",description:"Immediate payout after accepted delivery",budgetSats:10000,paymentMethods:["Bitcoin Lightning"],clientVerified:true,permissionToContact:true,requiresHumanApproval:true};
+test("BTC and immediate payout score higher",()=>{const a=screenOpportunity(base),b=screenOpportunity({...base,paymentMethods:["bank"],description:"Translate manual"});expect(a.eligible).toBe(true);expect(a.score).toBeGreaterThan(b.score)});
+test("unverified buyer is not eligible",()=>{expect(screenOpportunity({...base,clientVerified:false}).eligible).toBe(false)});
+test("unauthorized outreach is not eligible",()=>{expect(screenOpportunity({...base,permissionToContact:false}).eligible).toBe(false)});
+test("unsafe jobs are rejected",()=>{expect(screenOpportunity({...base,title:"Write fake reviews"}).eligible).toBe(false)});
+test("rank only eligible opportunities",()=>{expect(rankServiceOpportunities([base,{...base,id:"2",clientVerified:false}]).length).toBe(1)});
+test("owner approval required",()=>{expect(()=>transitionOrder("verified","approved",{})).toThrow();expect(transitionOrder("verified","approved",{approvedByOwner:true})).toBe("approved")});
+test("client acceptance required",()=>{expect(()=>transitionOrder("approved","accepted",{})).toThrow()});
+test("delivery and invoice evidence required",()=>{expect(()=>transitionOrder("accepted","delivered",{})).toThrow();expect(()=>transitionOrder("delivered","invoiced",{})).toThrow()});
+test("paid status needs verified proof and amount",()=>{expect(()=>transitionOrder("payment_pending","paid",{amountSats:1000})).toThrow();expect(transitionOrder("payment_pending","paid",{amountSats:1000,paymentProof:"btc tx verified"})).toBe("paid")});
+test("invalid status jump rejected",()=>{expect(()=>transitionOrder("lead","paid",{amountSats:1000,paymentProof:"tx"})).toThrow()});
