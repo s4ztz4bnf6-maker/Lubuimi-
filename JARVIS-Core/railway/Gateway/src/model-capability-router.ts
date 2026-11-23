@@ -11,7 +11,7 @@ export async function probeConfiguredModels(endpoints:ModelEndpoint[],opts:{time
 export async function runAcrossModels(capability:string,input:string,endpoints:ModelEndpoint[],opts:{maxAttempts?:number;budget?:number;timeoutMs?:number}={}):Promise<ModelRun>{
  const attempted:string[]=[];let spent=0;const max=Math.min(20,Math.max(1,opts.maxAttempts??endpoints.length));const budget=opts.budget??Number.POSITIVE_INFINITY;
  const now=Date.now();
- const models=endpoints.filter(e=>e.enabled&&e.capabilities.includes(capability)&&Number.isFinite(e.costPerAttempt)&&e.costPerAttempt>=0&&now>=(health.get(e.id)?.retryAt??0)).sort((a,b)=>a.costPerAttempt-b.costPerAttempt);
+ const models=endpoints.filter(e=>e.enabled&&e.capabilities.includes(capability)&&Number.isFinite(e.costPerAttempt)&&e.costPerAttempt>=0&&((health.get(e.id)?.failures??0)<2||now>=(health.get(e.id)?.retryAt??0))).sort((a,b)=>a.costPerAttempt-b.costPerAttempt);
  for(const m of models.slice(0,max)){
   if(spent+m.costPerAttempt>budget)return {ok:false,attempted,reason:'budget_exceeded'};
   spent+=m.costPerAttempt;attempted.push(m.id);const c=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
