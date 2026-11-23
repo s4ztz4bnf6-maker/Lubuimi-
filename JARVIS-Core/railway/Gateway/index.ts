@@ -581,6 +581,15 @@ const server = Bun.serve({
       const pdf=await renderBankInvoicePdf(invoice,billingCountry);
       return new Response(pdf,{headers:{"Content-Type":"application/pdf","Content-Disposition":'attachment; filename="'+String(invoice.invoice_number).replace(/[^A-Z0-9-]/gi,"")+'.pdf"',"Cache-Control":"no-store"}});
     }
+    if (url.pathname === "/v1/bank/invoices/reconciliation" && req.method === "GET") {
+      if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
+      const invoices=await sql.unsafe("SELECT id,invoice_number,customer_name,amount_minor,currency,status,created_at,reported_at,confirmed_at,confirmed_amount_minor,confirmed_by,payment_reference FROM jarvis_bank_invoices ORDER BY created_at DESC LIMIT 500");
+      const events=await sql.unsafe("SELECT invoice_id,event,detail,created_at FROM jarvis_bank_invoice_events WHERE invoice_id IN (SELECT id FROM jarvis_bank_invoices ORDER BY created_at DESC LIMIT 500) ORDER BY created_at ASC");
+      const grouped=new Map<string,any[]>();
+      for(const e of events){const k=String(e.invoice_id);grouped.set(k,[...(grouped.get(k)||[]),{event:e.event,detail:e.detail,at:e.created_at}]);}
+      const ledger=invoices.map((x:any)=>{const confirmed=BigInt(x.confirmed_amount_minor||0),due=BigInt(x.amount_minor);const paid=x.status==="paid"&&Boolean(x.confirmed_at)&&Boolean(x.confirmed_by)&&confirmed>=due;return {invoice_id:x.id,invoice_number:x.invoice_number,customer_name:x.customer_name,currency:x.currency,amount_minor:String(x.amount_minor),status:x.status,payment_reference:x.payment_reference||null,confirmed_amount_minor:String(x.confirmed_amount_minor||0),confirmed_at:x.confirmed_at||null,confirmed_by:x.confirmed_by||null,reconciliation:paid?"recorded_confirmed":x.status==="payment_reported"?"reported_unverified":x.status==="paid"?"incomplete_confirmation":"outstanding",external_bank_settlement_independently_verified:false,events:grouped.get(String(x.id))||[]};});
+      return json({ledger,counts:{total:ledger.length,recorded_confirmed:ledger.filter((x:any)=>x.reconciliation==="recorded_confirmed").length,reported_unverified:ledger.filter((x:any)=>x.reconciliation==="reported_unverified").length,outstanding:ledger.filter((x:any)=>x.reconciliation==="outstanding").length},note:"Read-only accounting reconciliation. Recorded confirmation is not independent bank verification. Bitcoin address aggregate balances or unlinked txids cannot prove payment of an individual invoice. No automatic paid status mutation."});
+    }
     if (url.pathname === "/v1/bank/invoices" && req.method === "GET") {
       if (!authorized(req) && !ownerAuthorized(req)) return json({error:"Unauthorized"},401);
       const rows=await sql`SELECT id,invoice_number,customer_name,description,amount_minor,currency,status,created_at,reported_at,confirmed_at,confirmed_amount_minor,payment_reference FROM jarvis_bank_invoices ORDER BY created_at DESC LIMIT 100`;
