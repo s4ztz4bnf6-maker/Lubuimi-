@@ -29,6 +29,7 @@ await sql.unsafe("CREATE INDEX IF NOT EXISTS jarvis_claim_verifications_checked_
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_library_items (id BIGSERIAL PRIMARY KEY,title TEXT NOT NULL,kind TEXT NOT NULL CHECK(kind IN ('image','file','note')),mime_type TEXT,file_name TEXT,content_base64 TEXT,source_url TEXT,size_bytes BIGINT NOT NULL DEFAULT 0,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await sql.unsafe("CREATE INDEX IF NOT EXISTS jarvis_library_items_created_idx ON jarvis_library_items(created_at DESC)");
 
+await sql.unsafe("CREATE TABLE IF NOT EXISTS djo2_owner_memory (id BIGSERIAL PRIMARY KEY, content TEXT NOT NULL, content_hash TEXT UNIQUE NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 function json(data,status=200,headers={}){return new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff","referrer-policy":"strict-origin-when-cross-origin","x-frame-options":"DENY",...headers}})}
 async function hash(value){const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));return Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,"0")).join("")}
 function cookie(req){const m=(req.headers.get("cookie")||"").match(/(?:^|;\s*)jarvis_session=([^;]+)/);return m?m[1]:""}
@@ -416,6 +417,23 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
    const direct=turns[turns.length-1].content.trim().match(/^\/(capabilities|health|tasks|probe|models)(?:\s+([a-z_]+))?$/);
    if(direct){const names={models:"listConfiguredModels",capabilities:"getToolCapabilities",health:"getServiceHealth",tasks:"listWorkerTasks",probe:"testModelConnectivity"};const result=await operationalTool(names[direct[1]],{status:direct[2]});return json({reply:JSON.stringify(result,null,2),provider:"JARVIS server tools",model:"deterministic",toolResult:result});}
    const lastInput=turns[turns.length-1].content.trim();
+   if(lastInput.startsWith("/merken ")){
+     const content=lastInput.slice(8).trim();
+     if(!content||content.length>100000)return json({error:"Memory content must contain 1–100000 characters"},400);
+     const digest=await hash(content);
+     const [record]=await sql.unsafe("INSERT INTO djo2_owner_memory(content,content_hash) VALUES ($1,$2) ON CONFLICT(content_hash) DO UPDATE SET content_hash=EXCLUDED.content_hash RETURNING id,content_hash,created_at",[content,digest]);
+     const evidence={ok:true,source:"djo2_owner_memory",id:String(record.id),sha256:record.content_hash,created_at:record.created_at};
+     return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
+   }
+   if(lastInput==="/gedaechtnis"){
+     const records=await sql.unsafe("SELECT id::text,content_hash,created_at,LEFT(content,500) AS preview FROM djo2_owner_memory ORDER BY id DESC LIMIT 20");
+     const evidence={ok:true,source:"djo2_owner_memory",records};
+     return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
+   }
+   if(lastInput==="/bridgecheck"){
+     const evidence={ok:Boolean(env.JARVIS_BRIDGE_REPOSITORY&&env.JARVIS_BRIDGE_TOKEN),repository_configured:Boolean(env.JARVIS_BRIDGE_REPOSITORY),credential_configured:Boolean(env.JARVIS_BRIDGE_TOKEN),delivery_verified:false};
+     return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
+   }
    if(lastInput==="/auftragscheck")return json({reply:await orderCheck(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput==="/einnahmen")return json({reply:await revenueStatus(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput.startsWith("/tool ")){
