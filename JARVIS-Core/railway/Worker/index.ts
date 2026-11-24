@@ -875,6 +875,28 @@ if (modelConfigured) {
     WHERE status='blocked_configuration' AND (title ILIKE '%bitcoin%' OR title ILIKE '%bounty%' OR title ILIKE '%software%qa%' OR title ILIKE 'CLAIM ACTION%' OR prompt ILIKE '%paid task%' OR prompt ILIKE '%microjob%' OR prompt ILIKE '%BTC%' OR prompt ILIKE '%sats%')`;
 }
 try { await discoverCandidates(sql); } catch(e) { console.error(JSON.stringify({event:"discovery_run_failed",error:String(e)})); }
+
+// Second Good Life: read-only public discovery, unverified leads only.
+try {
+  await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_leads (url TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, category TEXT NOT NULL, seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(url,kind))`;
+  await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_runs (id BIGSERIAL PRIMARY KEY, created_at TIMESTAMPTZ DEFAULT NOW(), leads INTEGER NOT NULL, errors INTEGER NOT NULL)`;
+  let sglLeads=0, sglErrors=0;
+  for (const category of ["Fahrrad","Schreibtisch","Regal"]) {
+    for (const kind of ["offer","wanted"]) {
+      try {
+        const q=category+" Mannheim "+(kind==="offer"?"zu verschenken":"gesucht kaufen");
+        const found=await webSearch(q);
+        for (const lead of found.results) {
+          await sql`INSERT INTO sgl_discovery_leads(url,kind,title,category) VALUES (${lead.url},${kind},${lead.title},${category}) ON CONFLICT(url,kind) DO UPDATE SET title=EXCLUDED.title,seen_at=NOW()`;
+          sglLeads++;
+        }
+      } catch(e) { sglErrors++; console.warn("SGL discovery source failed",String(e)); }
+    }
+  }
+  await sql`INSERT INTO sgl_discovery_runs(leads,errors) VALUES (${sglLeads},${sglErrors})`;
+  console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
+} catch(e) { console.error("SGL discovery failed",String(e)); }
+
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
     WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
