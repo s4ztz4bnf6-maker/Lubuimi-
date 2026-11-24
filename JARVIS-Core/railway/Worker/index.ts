@@ -811,12 +811,22 @@ async function searchMemory(query) {
 }
 const providerGuard = new ProviderGuard();
 let geminiQuotaBlocked = false;
+// Forward only portable chat fields; provider-specific response metadata stays local.
+function portableMessages(messages:any[]) {
+  return messages.map(m=>{
+    const out:any={role:m.role,content:m.content??null};
+    if(typeof m.name==="string")out.name=m.name;
+    if(m.role==="tool"&&typeof m.tool_call_id==="string")out.tool_call_id=m.tool_call_id;
+    if(m.role==="assistant"&&Array.isArray(m.tool_calls))out.tool_calls=m.tool_calls.map(c=>({id:c.id,type:"function",function:{name:c.function.name,arguments:c.function.arguments}}));
+    return out;
+  });
+}
 async function ask(messages, tools) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
   for(const provider of providerCandidates){if(geminiQuotaBlocked&&provider.name.startsWith("google-gemini"))continue;try{
     const data=await providerGuard.run(provider.name,async()=>{
-      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages,tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(90000)});
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(90000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
       const result=JSON.parse(responseText);if(!result.choices?.[0]?.message)throw new Error("Provider returned no chat completion");
