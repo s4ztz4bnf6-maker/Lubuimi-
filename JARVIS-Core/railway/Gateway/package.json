@@ -1,6 +1,7 @@
 {
   "name": "jarvis-gateway",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "start": "bun run index.ts",
