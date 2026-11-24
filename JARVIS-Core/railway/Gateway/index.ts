@@ -1,3 +1,26 @@
+function explicitUsdReward(title, body){
+ const amount=String.raw`(?:USD\s+|\$\s*)((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?)(?:\s+USD)?`;
+ const label=String.raw`(?:bounty(?:\s+(?:reward|amount))?|reward(?:\s+amount)?|honorar|prämie|compensation)`;
+ const declaration=new RegExp("^"+label+"\\s*(?::|=|–|-)\\s*"+amount+"[.!]?$","i");
+ const titleTag=new RegExp("^\\[\\s*"+label+"\\s*(?::|=|–|-)\\s*"+amount+"\\s*\\]","i");
+ const matches=[];
+ const tag=titleTag.exec(title.trim());
+ if(tag)matches.push(tag);
+ let fenced=false;
+ for(const line of body.split(/\r?\n/)){
+   if(/^\s*(?:`{3,}|~{3,})/.test(line)){fenced=!fenced;continue}
+   if(fenced||/^\s*>/.test(line))continue;
+   const plain=line.trim().replace(/^[-*]\s+/,"").replace(/^#{1,6}\s+/,"").replace(/\*\*|__/g,"");
+   const match=declaration.exec(plain);
+   if(match)matches.push(match);
+ }
+ const unique=new Set(matches.map(match=>Number(match[1].replace(/,/g,""))));
+ if(unique.size!==1)return null;
+ const usd=unique.values().next().value;
+ if(!Number.isFinite(usd)||usd<=0)return null;
+ return {usd,evidence:matches[0][0],text:"USD "+usd.toFixed(2)};
+}
+
 import {publicAgentCard,probePublicAgent,exchangeWithPeer} from "./src/agent-public-bridge";
 import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
@@ -288,9 +311,10 @@ async function scanPublicBounties(){
   const body=String(issue.body||"").slice(0,4000),title=String(issue.title||"").slice(0,400);
   const assessment=assessLead({id:String(issue.id),title,body,url:String(issue.html_url),labels:(issue.labels||[]).map(x=>String(x.name||"")),isOpen:issue.state==="open",isPullRequest:!!issue.pull_request,isPrivate:!!issue.repository?.private});
   if(assessment.status!=="review")continue;
-  const match=(title+" "+body).match(/(?:USD\s*|\$\s*)([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i);
-  const reward=match?match[0]:null;
-  const rewardUsd=match?Number(match[1].replace(/,/g,"")):null;
+  const offer=explicitUsdReward(title,body);
+  if(!offer)continue;
+  const reward=offer.text;
+  const rewardUsd=offer.usd;
   const estimatedHours=2,estimatedHourlyUsd=15,estimatedApiUsd=5,estimatedFeesUsd=5;
   const estimatedCostUsd=estimatedHours*estimatedHourlyUsd+estimatedApiUsd+estimatedFeesUsd;
   const estimatedNetUsd=rewardUsd===null?null:rewardUsd-estimatedCostUsd;
@@ -299,7 +323,7 @@ async function scanPublicBounties(){
   if(!eligibleForReview)continue;
   const profitAssessment={reward_usd_unverified:rewardUsd,estimated_cost_usd:estimatedCostUsd,estimated_net_usd:estimatedNetUsd,estimated_hours:estimatedHours,estimated_hourly_usd:estimatedHourlyUsd,estimated_api_usd:estimatedApiUsd,estimated_fees_usd:estimatedFeesUsd,profit_verified:false,payout_verified:false,needs_manual_scope_estimate:true};
 
-  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,triage_assessment:assessment,profit_assessment:profitAssessment,acceptance_confirmed:false,btc_payout_confirmed:false})]);
+  await sql.unsafe("INSERT INTO jarvis_external_opportunities(source,external_id,title,source_url,reward_text,status,metadata) VALUES('github',$1,$2,$3,$4,'unverified',$5::jsonb) ON CONFLICT(source,external_id) DO UPDATE SET title=EXCLUDED.title,source_url=EXCLUDED.source_url,reward_text=EXCLUDED.reward_text,last_seen_at=NOW(),metadata=EXCLUDED.metadata",[String(issue.id),title,String(issue.html_url),reward,JSON.stringify({repo:issue.repository_url,updated_at:issue.updated_at,labels:(issue.labels||[]).map(x=>x.name),scanned_at:now,triage_assessment:assessment,profit_assessment:profitAssessment,reward_evidence:{kind:"explicit_usd_offer_v1",quote:offer.evidence},acceptance_confirmed:false,btc_payout_confirmed:false})]);
   // Record qualifying leads in the evidence-gated workflow without claiming acceptance or payment.
   await sql.unsafe("INSERT INTO jarvis_paid_workflow(source,source_url,title,payout_address,status) SELECT 'github',$1,$2,$3,'discovered' WHERE NOT EXISTS (SELECT 1 FROM jarvis_paid_workflow WHERE source='github' AND source_url=$1)",[String(issue.html_url),title,"bc1qdmzr4m78ulj2saa97vg9kmpzuxu3477gvc2rct"]);
   // Autonomous activation: queue a bounded agent task for each qualifying lead.
