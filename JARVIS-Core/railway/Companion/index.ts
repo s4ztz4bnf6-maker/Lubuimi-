@@ -51,13 +51,15 @@ async function checkViaTor(){
   let directory;
   let tor;
   let timer;
+  let torLog;
   try{
     directory=await mkdtemp(join(tmpdir(),"jarvis-tor-"));
     const socket=join(directory,"socks");
     // The private Unix socket is accessible only within this check's temporary directory.
     tor=Bun.spawn(["tor","-f","/dev/null","--DataDirectory",directory,"--ClientOnly","1","--SocksPort","unix:"+socket],{
-      env:{PATH:"/usr/bin:/bin"},stdout:"ignore",stderr:"ignore"
+      env:{PATH:"/usr/bin:/bin"},stdout:"pipe",stderr:"ignore"
     });
+    torLog=new Response(tor.stdout).text();
     timer=setTimeout(()=>tor.kill("SIGKILL"),65000);
     const socketDeadline=Date.now()+8000;
     while(!(await stat(socket).catch(()=>null))?.isSocket()){
@@ -90,6 +92,10 @@ async function checkViaTor(){
     if(tor){
       tor.kill("SIGKILL");
       await tor.exited;
+      if(networkCheck.state==="failed"){
+        const output=await torLog.catch(()=>"");
+        console.log("JARVIS_TOR_START "+JSON.stringify({exit:tor.exitCode,details:output.split("\n").filter(line=>/warn|err/i.test(line)).slice(-4)}));
+      }
     }
     if(directory)await rm(directory,{recursive:true,force:true}).catch(()=>{});
     networkCheckFinishedAt=Date.now();
