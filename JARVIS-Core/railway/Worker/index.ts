@@ -59,7 +59,7 @@ const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_time
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
 if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
-  for (let i=providerCandidates.length-1;i>=0;i--) if(["google-gemini-free-tier","google-gemini-fallback-free-tier"].includes(providerCandidates[i].name)) providerCandidates.splice(i,1);
+  // Keep providers registered so they can recover after cooldown.
   modelConfigured = providerCandidates.length > 0;
   await sql`UPDATE agent_tasks SET status='queued',error=NULL,completed_at=NULL,next_retry_at=NULL WHERE status='retry_wait' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
   console.log("JARVIS Gemini quota cooldown active until "+new Date(geminiCooldown.cooldown_until).toISOString()+"; alternative providers="+providerCandidates.length+"; deterministic research fallback="+(!modelConfigured));
@@ -824,9 +824,10 @@ function portableMessages(messages:any[]) {
 async function ask(messages, tools) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
-  for(const provider of providerCandidates){if(geminiQuotaBlocked&&provider.name.startsWith("google-gemini"))continue;try{
+  const orderedProviders=[...providerCandidates].sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
+  for(const provider of orderedProviders){try{
     const data=await providerGuard.run(provider.name,async()=>{
-      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(90000)});
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
       const result=JSON.parse(responseText);if(!result.choices?.[0]?.message)throw new Error("Provider returned no chat completion");
