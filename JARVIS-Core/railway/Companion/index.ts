@@ -241,6 +241,12 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      });
      return json({reply:"Auftrag #"+task.id+" dauerhaft gespeichert. Status: "+task.status+(task.duplicate?" (bereits vorhanden).":". Noch nicht ausgeführt."),task,provider:"JARVIS server tools",model:"deterministic",mode:"durable_intake"});
    }
+   if(b.preferredModel!==undefined){
+     const requested=b.preferredModel;
+     const selected=providers.find(p=>p.name===requested?.provider&&p.model===requested?.model);
+     if(!selected)return json({error:"Das gewählte Modell ist nicht konfiguriert."},422);
+     providers.splice(0,providers.length,selected);
+   }
    if(!providers.length)return json({error:"Kein Modellanbieter konfiguriert."},503);
    const failures=[];
    const baseMessages=messages.slice();
