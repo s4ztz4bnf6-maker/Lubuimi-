@@ -881,10 +881,12 @@ try {
   await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_leads (url TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, category TEXT NOT NULL, seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(url,kind))`;
   await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_runs (id BIGSERIAL PRIMARY KEY, created_at TIMESTAMPTZ DEFAULT NOW(), leads INTEGER NOT NULL, errors INTEGER NOT NULL)`;
   let sglLeads=0, sglErrors=0;
-  for (const category of ["Fahrrad","Schreibtisch","Regal"]) {
+  const markets=[["Germany","Fahrrad","zu verschenken","gesucht"],["France","vélo","à donner","recherche"],["United Kingdom","bicycle","free giveaway","wanted"],["Canada","desk","free giveaway","wanted"],["Spain","bicicleta","se regala","busco"],["Australia","bookshelf","free giveaway","wanted"]];
+  const market=markets[Math.floor(Date.now()/300000)%markets.length];
+  for (const category of [market[1]]) {
     for (const kind of ["offer","wanted"]) {
       try {
-        const q=category+" Mannheim "+(kind==="offer"?"zu verschenken":"gesucht kaufen");
+        const q=category+" "+market[0]+" "+(kind==="offer"?market[2]:market[3]);
         const found=await webSearch(q);
         for (const lead of found.results) {
           await sql`INSERT INTO sgl_discovery_leads(url,kind,title,category) VALUES (${lead.url},${kind},${lead.title},${category}) ON CONFLICT(url,kind) DO UPDATE SET title=EXCLUDED.title,seen_at=NOW()`;
@@ -893,6 +895,11 @@ try {
       } catch(e) { sglErrors++; console.warn("SGL discovery source failed",String(e)); }
     }
   }
+  await sql`CREATE TABLE IF NOT EXISTS sgl_potential_matches (offer_url TEXT NOT NULL,wanted_url TEXT NOT NULL,category TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT NOW(),PRIMARY KEY(offer_url,wanted_url))`;
+  await sql`DELETE FROM sgl_potential_matches WHERE created_at < NOW()-INTERVAL '7 days'`;
+  await sql`INSERT INTO sgl_potential_matches(offer_url,wanted_url,category) SELECT o.url,w.url,o.category FROM sgl_discovery_leads o JOIN sgl_discovery_leads w ON o.category=w.category AND o.url<>w.url WHERE o.kind='offer' AND w.kind='wanted' AND o.seen_at>NOW()-INTERVAL '7 days' AND w.seen_at>NOW()-INTERVAL '7 days' ORDER BY o.seen_at DESC,w.seen_at DESC LIMIT 200 ON CONFLICT DO NOTHING`;
+  const counts=await sql`SELECT category,count(*)::int AS potential FROM sgl_potential_matches GROUP BY category`;
+  console.log("SGL theoretical category pairs "+JSON.stringify(counts));
   await sql`INSERT INTO sgl_discovery_runs(leads,errors) VALUES (${sglLeads},${sglErrors})`;
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
