@@ -211,6 +211,16 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
    if(typeof b.name!=="string"||typeof b.endpoint!=="string"||b.collaborationOptIn!==true)return json({error:"Name, HTTPS-Endpunkt und ausdrückliche Einwilligung erforderlich."},400);
    return json(await gatewayCall("/v1/agents",true,{name:b.name.slice(0,160),endpoint:b.endpoint,description:String(b.description||"").slice(0,1000),capabilities:Array.isArray(b.capabilities)?b.capabilities.slice(0,30):[],collaborationOptIn:true}),201)
   }
+  if(req.method==="GET"&&u.pathname==="/api/approvals/pending"){
+    const items=await sql`
+      SELECT id, channel, recipient, subject, status, created_at
+      FROM agent_messages
+      WHERE status = 'pending_approval'
+      ORDER BY created_at DESC, id DESC
+      LIMIT 100
+    `;
+    return json({items},200,{"cache-control":"no-store"});
+  }
   if(req.method==="GET"&&u.pathname==="/api/tasks")return json(await gatewayCall("/v1/tasks"));
   if(req.method==="POST"&&u.pathname==="/api/tasks"){const b=await req.json();if(typeof b.title!=="string"||typeof b.prompt!=="string"||b.title.trim().length<3||b.prompt.trim().length<60)return json({error:"Titel und konkrete Aufgabenbeschreibung (mindestens 60 Zeichen) erforderlich."},400);return json(await gatewayCall("/v1/tasks",false,{title:b.title.trim().slice(0,200),prompt:b.prompt.trim().slice(0,12000)}),201)}
   if(req.method==="GET"&&u.pathname==="/api/state"){const [status,workstreams,memory,learning,tasks,cooldown]=await Promise.all([gatewayCall("/v1/status"),gatewayCall("/v1/workstreams"),gatewayCall("/v1/memory",true),gatewayCall("/v1/learning",true),gatewayCall("/v1/tasks"),sql.unsafe("SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=$1",["google-gemini"])]);const providerReady=Boolean(env.GROQ_API_KEY||env.GEMINI_API_KEY||env.MODEL_API_KEY);return json({status:{...status,modelConfigured:providerReady,modelCooldownUntil:cooldown[0]?.cooldown_until||null,fallbackModel:env.GEMINI_THIRD_MODEL||'gemini-3.1-flash-lite'},workstreams,memory,learning,tasks})}
