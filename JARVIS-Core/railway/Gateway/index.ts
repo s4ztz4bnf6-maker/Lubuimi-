@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 function explicitUsdReward(title, body){
  const amount=String.raw`(?:USD\s+|\$\s*)((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?)(?:\s+USD)?`;
  const label=String.raw`(?:bounty(?:\s+(?:reward|amount))?|reward(?:\s+amount)?|honorar|prämie|compensation)`;
