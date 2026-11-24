@@ -881,7 +881,7 @@ try {
   await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_leads (url TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, category TEXT NOT NULL, seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), PRIMARY KEY(url,kind))`;
   await sql`CREATE TABLE IF NOT EXISTS sgl_discovery_runs (id BIGSERIAL PRIMARY KEY, created_at TIMESTAMPTZ DEFAULT NOW(), leads INTEGER NOT NULL, errors INTEGER NOT NULL)`;
   let sglLeads=0, sglErrors=0;
-  const markets=[["Germany","Fahrrad","zu verschenken","gesucht"],["France","vélo","à donner","recherche"],["United Kingdom","bicycle","free giveaway","wanted"],["Canada","desk","free giveaway","wanted"],["Spain","bicicleta","se regala","busco"],["Australia","bookshelf","free giveaway","wanted"]];
+  const markets=[["Germany","Fahrrad","zu verschenken","gesucht"],["France","vélo","à donner","recherche"],["United Kingdom","bicycle","free giveaway","wanted"],["Canada","desk","free giveaway","wanted"],["Spain","bicicleta","se regala","busco"],["Australia","bookshelf","free giveaway","wanted"],["Brazil","bicicleta","doação","procuro"],["Mexico","bicicleta","se regala","busco"],["Japan","自転車","譲ります","探しています"],["India","bicycle","free giveaway","wanted"],["South Africa","bicycle","free giveaway","wanted"],["United Arab Emirates","دراجة","مجانا","مطلوب"],["Italy","bicicletta","regalo","cerco"],["Netherlands","fiets","gratis afhalen","gezocht"],["Kenya","bicycle","free giveaway","wanted"],["Singapore","bicycle","free giveaway","wanted"]];
   const market=markets[Math.floor(Date.now()/300000)%markets.length];
   for (const category of [market[1]]) {
     for (const kind of ["offer","wanted"]) {
