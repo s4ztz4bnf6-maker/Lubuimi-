@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: Apache-2.0
+name: JARVIS iOS build
+on:
+  push:
+    branches: [feat/jarvis-private-ios]
+    paths:
+      - 'JARVIS-Core/iOS/**'
+      - '.github/workflows/jarvis-ios-build.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: JARVIS-Core/iOS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Compile for iOS Simulator
+        run: xcodebuild -project Jarvis.xcodeproj -scheme Jarvis -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
