@@ -1,0 +1,4 @@
+# JARVIS Exchange — global fiat-to-crypto
+SPDX-License-Identifier: Apache-2.0
+Separate public customer product; Cashflow remains internal accounting.
+Architecture: licensed provider hosted checkout, quote with currency/asset/network, fees and expiry, beneficiary confirmation, provider-side identity and sanctions checks, signed webhook verification, idempotent settlement reconciliation, immutable audit, refunds and support. No custody or live transfers until provider onboarding, legal scope, verified accounts and operational controls are confirmed. Never reuse owner BTC watch-only address as customer beneficiary. Supported corridors depend on provider and jurisdiction; no universal coverage claim. Zero-Spend: no paid subscriptions or prefunding without approval. Revenue: disclosed referral or service fee, net of provider costs. Initial mode: simulation only.
