@@ -466,7 +466,7 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
    baseMessages[0]={...baseMessages[0],content:baseMessages[0].content+"\n"+registryInstruction};
 
    // Deterministic read-only operational snapshot, independent of model tool support.
-   if(/\b(statusbericht|gateway|bridge|werkzeugzugriff|connectoren|auftragswarteschlange|registry|zahlungseingang|bounties|tools)\b/i.test(lastInput)&&/\b(prüf\w*|überprüf\w*|status\w*|zeig\w*|check|verifizier\w*)\b/i.test(lastInput)){
+   if(/^\/(systemstatus|betriebsstatus)$/i.test(lastInput)){
      const health=await operationalTool("getServiceHealth",{});
      return json({reply:JSON.stringify({health,registry:JSON.parse(operationalContext.startsWith("{")?operationalContext:"null"),commercial:JSON.parse(commercialContext.startsWith("{")?commercialContext:"null"),limitations:["Registry is not independent payment evidence","GitHub write access and external acceptance not verified"]},null,2),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    }
