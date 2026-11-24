@@ -33,6 +33,40 @@ async function hash(value){const digest=await crypto.subtle.digest("SHA-256",new
 function cookie(req){const m=(req.headers.get("cookie")||"").match(/(?:^|;\s*)jarvis_session=([^;]+)/);return m?m[1]:""}
 async function authenticated(req){const token=cookie(req);if(!token)return false;const h=await hash(token);const rows=await sql.unsafe("SELECT 1 FROM jarvis_sessions WHERE token_hash=$1 AND (expires_at IS NULL OR expires_at>NOW()) LIMIT 1",[h]);return rows.length>0}
 async function gatewayCall(path,owner=false,body=null){if(!gateway)throw new Error("Gateway URL fehlt");const key=owner?env.OWNER_API_KEY:env.AGENT_API_KEY;if(!key)throw new Error(owner?"Owner API credential fehlt":"Agent API credential fehlt");const r=await fetch(gateway+path,{method:body?"POST":"GET",headers:{authorization:"Bearer "+key,...(body?{"content-type":"application/json"}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(30000)});const raw=await r.text();let data;try{data=JSON.parse(raw)}catch{data={error:raw.slice(0,500)}}if(!r.ok)throw new Error(data.error||"Gateway HTTP "+r.status);return data}
+async function orderCheck(){
+ const [orders,candidates,messages]=await Promise.allSettled([
+  sql.unsafe("SELECT id,title,source,source_url,status,acceptance_evidence_url,delivery_evidence_url,payment_txid FROM jarvis_paid_workflow WHERE acceptance_evidence_url IS NOT NULL ORDER BY updated_at DESC LIMIT 1"),
+  sql.unsafe("SELECT title,source,source_url,reward_text FROM jarvis_external_opportunities WHERE NULLIF(BTRIM(reward_text),'') IS NOT NULL ORDER BY last_seen_at DESC, source, external_id LIMIT 1"),
+  sql.unsafe("SELECT id,recipient,subject,channel FROM agent_messages WHERE status='pending_approval' ORDER BY created_at DESC,id DESC LIMIT 5")
+ ]);
+ const order=orders.status==="fulfilled"?orders.value[0]:null;
+ const candidate=candidates.status==="fulfilled"?candidates.value[0]:null;
+ const pending=messages.status==="fulfilled"?messages.value:null;
+ const report=["JARVIS · Auftragscheck"];
+ if(order){
+  report.push("Auftrag #"+order.id+" · "+order.title+" ("+order.status+")",
+   "Plattform und Quelle: "+order.source+" · "+order.source_url,
+   "Annahmebeleg: "+order.acceptance_evidence_url,
+   "Zustellbeleg: "+(order.delivery_evidence_url||"fehlt"),
+   "Gemeldete TXID: "+(order.payment_txid||"keine"),
+   "Vergütung und Einreichungsregeln anhand der Originalquelle bestätigen. Ein Zahlungseingang ist hier nicht abgeglichen.");
+ }else if(orders.status==="rejected"){
+  report.push("Externe Aufträge konnten nicht gelesen werden.");
+ }else{
+  report.push("Kein externer Auftrag mit gespeichertem Annahmebeleg gefunden.");
+  if(candidate)report.push("Zuletzt gesehener Kandidat mit Vergütungsangabe: "+candidate.title,
+   "Originalquelle: "+candidate.source_url,"Gespeicherte Vergütungsangabe: "+candidate.reward_text,
+   "Teilnahme, Einreichung und Auszahlung sind anhand der Originalquelle zu prüfen.");
+  else report.push(candidates.status==="rejected"?"Kandidatenliste derzeit nicht abrufbar.":"Kein Kandidat mit gespeicherter Vergütungsangabe gefunden.");
+ }
+ report.push("Offene Nachrichtenfreigaben:");
+ if(pending)report.push(...(pending.length?pending.map(m=>"#"+m.id+" · "+m.channel+" · Empfänger: "+(m.recipient||"offen")+" · Betreff: "+m.subject):["Keine."]));
+ else report.push("Derzeit nicht abrufbar.");
+ report.push("Auftragszuordnung der Nachrichten: nicht strukturiert gespeichert.");
+ report.push("Nächster Schritt: "+(order?"Betreiber prüft Annahmebeleg und den nächsten fehlenden Nachweis.":orders.status==="rejected"?"Betreiber prüft den Zugriff auf die externe Auftragsliste.":candidate?"Betreiber prüft die Teilnahme- und Einreichungsregeln beim Originalangebot.":"Betreiber prüft die Kandidatenliste auf ein Angebot mit belegbarer Vergütung."));
+ return report.join("\n");
+}
+
 async function revenueStatus(){
  const results=await Promise.allSettled([
   gatewayCall("/v1/paid-workflows/revenue-chain-readiness",true),
@@ -243,6 +277,7 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
    const direct=turns[turns.length-1].content.trim().match(/^\/(capabilities|health|tasks|probe|models)(?:\s+([a-z_]+))?$/);
    if(direct){const names={models:"listConfiguredModels",capabilities:"getToolCapabilities",health:"getServiceHealth",tasks:"listWorkerTasks",probe:"testModelConnectivity"};const result=await operationalTool(names[direct[1]],{status:direct[2]});return json({reply:JSON.stringify(result,null,2),provider:"JARVIS server tools",model:"deterministic",toolResult:result});}
    const lastInput=turns[turns.length-1].content.trim();
+   if(lastInput==="/auftragscheck")return json({reply:await orderCheck(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput==="/einnahmen")return json({reply:await revenueStatus(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput.startsWith("/tool ")){
      let value;try{value=JSON.parse(lastInput.slice(6))}catch{return json({error:"Invalid tool JSON"},400)}
