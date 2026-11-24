@@ -59,7 +59,10 @@ async function freeInference(prompt,maxTokens=256){
   return answer.slice(0, Math.max(256, Math.min(16000, Number(maxTokens)*40 || 10000)));
 }
 
-const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
+// Bound per-replica database connections independently of task concurrency.
+const requestedPoolSize = Number(env.JARVIS_DB_POOL_SIZE || 10);
+const dbPoolSize = Number.isFinite(requestedPoolSize) ? Math.max(2, Math.min(30, Math.floor(requestedPoolSize))) : 10;
+const sql = postgres(env.DATABASE_URL, { max: dbPoolSize, idle_timeout: 15, connect_timeout: 15 });
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
 if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
