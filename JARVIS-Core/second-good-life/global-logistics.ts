@@ -13,6 +13,6 @@ export function optimize(legs:Leg[],origin:string,destination:string,currency:st
  visit(origin,now,0,[],new Set([origin]));
  const result=best as {legs:Leg[];cost:number}|null;
  if(!result)return null;
- const fee=Math.round(result.cost/10);
+ const fee=Math.max(currency === "EUR" ? 249 : 0, Math.round(result.cost*0.30));
  return {...result,fee,total:result.cost+fee,currency,bookable:false};
 }
