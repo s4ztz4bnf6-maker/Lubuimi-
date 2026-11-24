@@ -23,7 +23,7 @@ Nativer SwiftUI-Client für iOS/iPadOS 17 oder neuer. Der bestehende Companion, 
 | --- | --- | --- |
 | FreeGood | App → Companion → bestehende Auftragswarteschlange → Recherche | Fundstellen als strukturierte Kandidaten speichern, Originalquelle und strikte 0-EUR-Gesamtkosten belegen, Dubletten per Angebots-ID vermeiden. Einreichung benötigt eine getrennte Freigabe und einen anbieterspezifischen Anschluss. |
 | Marktbeobachtung | App → Companion → Tor-Check → fest hinterlegter öffentlicher Coinbase-Status | Ausschließlich öffentliche Endpunkte für Markt- und Verbindungsbeobachtung zulassen. Regionalen VPN-Endpunkt nach Freigabe anbinden und Antwortzeit, Fehlerquote und Region messen. |
-| Trading | Direkter Verbindungsmodus für Konto und Zahlungsoperationen | Separater Paper-Trading-Adapter mit Simulationssaldo, Limits, Order-Deduplizierung und nachvollziehbarem Journal. Live-Orders und Auszahlungen erfordern eigene Zugangsdaten und ausdrückliche Freigabe. |
+| Trading | Direkter Verbindungsmodus für Konto und Zahlungsoperationen | Lokaler Paper-Trading-Bildschirm mit Spielsaldo, simuliertem Bestand, Preis- und Größenlimits und Verlauf ist eingerichtet. Der nächste Anschluss ist ein separater Kursdaten-Adapter mit Zeitstempeln und ein serverseitiges, idempotentes Simulationsjournal. Live-Orders und Auszahlungen erfordern eigene Zugangsdaten und ausdrückliche Freigabe. |
 | Programmierung | Entwurf im nativen Editor; Repository im Browser | Repository-Verbindung über bestehende GitHub-App oder Browser, mit Branch, Diff und PR-Überprüfung. Keine Shell oder fremde Ausführung durch den mobilen Client. |
 
 ## Offene Geräteprüfung
