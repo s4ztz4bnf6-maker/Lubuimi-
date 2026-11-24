@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import postgres from "postgres";
@@ -59,12 +59,17 @@ async function checkViaTor(){
       env:{PATH:"/usr/bin:/bin"},stdout:"ignore",stderr:"ignore"
     });
     timer=setTimeout(()=>tor.kill("SIGKILL"),65000);
+    const socketDeadline=Date.now()+8000;
+    while(!(await stat(socket).catch(()=>null))?.isSocket()){
+      if(tor.exitCode!==null || Date.now()>=socketDeadline)throw new Error("tor_socket_unavailable");
+      await Bun.sleep(150);
+    }
     const request=async url=>{
       const curl=Bun.spawn(["curl","-q","--silent","--show-error","--fail","--proto","=https","--proxy","socks5h://localhost"+socket,"--noproxy","","--retry","3","--retry-connrefused","--retry-delay","1","--retry-max-time","8","--connect-timeout","25","--max-time","45","--max-filesize","65536",url],{
         env:{PATH:"/usr/bin:/bin"},stdout:"pipe",stderr:"ignore"
       });
       const [body,exit]=await Promise.all([new Response(curl.stdout).text(),curl.exited]);
-      if(exit!==0)throw new Error("request_failed");
+      if(exit!==0)throw new Error("curl_exit_"+exit);
       return JSON.parse(body);
     };
     const check=await request("https://check.torproject.org/api/ip");
@@ -77,8 +82,9 @@ async function checkViaTor(){
         networkCheck={state:"verified",tor:true,exchangeStatus:indicator};
       }
     }catch{}
-  }catch{
-    networkCheck={state:"failed",tor:false};
+  }catch(error){
+    const reason=error instanceof Error&&/^(tor_socket_unavailable|tor_not_confirmed|curl_exit_\d+)$/.test(error.message)?error.message:"runtime_error";
+    networkCheck={state:"failed",tor:false,reason};
   }finally{
     clearTimeout(timer);
     if(tor){
