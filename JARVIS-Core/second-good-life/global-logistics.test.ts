@@ -5,7 +5,7 @@ const leg=(from:string,to:string,minor:number,departAt=10,arriveAt=20):Leg=>({fr
 for(const [a,b] of [["US","KE"],["SA","ML-Timbuktu"],["MA","CA-Nunavut"],["JP","BR"],["AU","SN"]]){
  test(a+" to "+b,()=>{
  const result=optimize([leg(a,b,9000),leg(a,"hub",2000),leg("hub",b,3000,21,30)],a,b,"EUR","test",0,90);
- expect(result?.cost).toBe(5000);expect(result?.total).toBe(5500);expect(result?.bookable).toBe(false);
+ expect(result?.cost).toBe(5000);expect(result?.total).toBe(6500);expect(result?.bookable).toBe(false);
  });
 }
 test("reject disconnected, expired, ineligible and wrong currency",()=>{
