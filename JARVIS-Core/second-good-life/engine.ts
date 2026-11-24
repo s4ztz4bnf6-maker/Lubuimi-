@@ -12,7 +12,7 @@ export function match(offers:Listing[], wants:Wanted[]) {
 export function cheapest(quotes:Quote[],currency:string,now=Date.now()){
  const q=quotes.filter(q=>q.verified&&q.suitable&&q.currency===currency&&q.expiresAt>now&&Number.isSafeInteger(q.cents)&&q.cents>=0).sort((a,b)=>a.cents-b.cents)[0];
  if(!q)return null;
- const fee=Math.round(q.cents/10);
+ const fee=Math.max(currency === "EUR" ? 249 : 0, Math.round(q.cents*0.30));
  return {...q,itemCents:0,feeCents:fee,totalCents:q.cents+fee};
 }
 export function mayBook(totalCents:number,settledCents:number,ownerApproved:boolean){
