@@ -1,0 +1,3 @@
+# DJODJO IA — brand migration
+SPDX-License-Identifier: Apache-2.0
+Owner-selected brand: DJODJO IA (D J O D J O), Intelligent Artificial. Former brand: JARVIS AI. Proposed future legal name: DJODJO IA AUTONOMOUS HOLDINGS LLC; registry amendment and availability not verified. Retain existing accurate legal identity in formal records until amendment. Preserve historical copyright notices, license rights, audit records, service identifiers, database names, secrets and compatibility aliases. Public products: Second Good Life — by DJODJO IA; DJODJO Exchange. Internal departments: DJODJO Trading, Cashflow, Cybersecurity, Algorithmus. No paid filings without owner approval.
