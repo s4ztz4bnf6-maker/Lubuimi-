@@ -150,7 +150,12 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      const bankConfigured=Object.entries(env).some(([k,v])=>/^(JARVIS_)?(BANK_|PAYMENT_)?IBAN$/.test(k)&&Boolean(String(v||"").trim()));
      operationalContext=JSON.stringify({btc:{registered_routes:wallet.routes,primary_routes:wallet.primary_routes,watch_only:true,recorded_transactions:ledger.transactions,confirmed_transactions:ledger.confirmed,send_enabled:false},bank:{iban_environment_configured:bankConfigured,other_storage:"not checked",ownership_verified:false},grid:{status:"not verified"}});
    } catch { console.log("JARVIS operational context unavailable"); }
-   const registryInstruction="Current read-only registry facts: "+operationalContext+". Distinguish configured from independently verified. Do not request private Bitcoin keys for receipt. Do not infer missing infrastructure from unknown status.";
+   let commercialContext="Commercial evidence unavailable.";
+   try {
+     const claims=await sql.unsafe("SELECT status,COUNT(*)::int AS count,COUNT(*) FILTER (WHERE external_claim_id IS NOT NULL AND claim_url IS NOT NULL)::int AS externally_referenced FROM jarvis_claims GROUP BY status ORDER BY status");
+     commercialContext=JSON.stringify({claims,warning:"External references are not independent proof of acceptance or payment. Internal task completion is not revenue."});
+   } catch { console.log("JARVIS commercial context unavailable"); }
+   const registryInstruction="Commercial workflow facts: "+commercialContext+". For paid work distinguish discovery, eligibility, authorized submission, external acceptance, delivery, invoice, and independently reconciled payment. Never invent completion or revenue. Current read-only registry facts: "+operationalContext+". Distinguish configured from independently verified. Do not request private Bitcoin keys for receipt. Do not infer missing infrastructure from unknown status.";
    baseMessages[0]={...baseMessages[0],content:baseMessages[0].content+"\n"+registryInstruction};
 
    // Early text-only fallback for ordinary questions; operational requests retain tools.
