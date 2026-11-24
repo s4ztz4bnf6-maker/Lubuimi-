@@ -178,15 +178,35 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      const health=await operationalTool("getServiceHealth",{});
      return json({reply:JSON.stringify({health,registry:JSON.parse(operationalContext.startsWith("{")?operationalContext:"null"),commercial:JSON.parse(commercialContext.startsWith("{")?commercialContext:"null"),limitations:["Registry is not independent payment evidence","GitHub write access and external acceptance not verified"]},null,2),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    }
-   // Early text-only fallback for ordinary questions; operational requests retain tools.
+   // Ordinary chat can use the configured free model without tool schemas.
    if(!/\b(ausführ\w*|installieren|deploy|überprüf\w*|verifizier\w*|statusbericht|gateway|bridge|werkzeug\w*|connector\w*|bounties|recherchier\w*|erstelle\w*|prüfe\w*|überweis\w*|execute|create|search|check|send)\b/i.test(lastInput)){
-   const free=providers.find(p=>p.name==="Keyless model fallback"&&p.model==="kilo-auto/free");
-   if(free&&Date.now()<routeDeadline){try{
-     const response=await fetch(free.base.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:free.model,messages:[{role:"system",content:"Answer the user accurately. No tools are available in this fallback. Never claim external actions or verified results. "+registryInstruction},...turns.slice(-4)],max_tokens:768}),signal:AbortSignal.timeout(Math.max(1,Math.min(12000,routeDeadline-Date.now()))),redirect:"error"});
-     const data=await response.json().catch(()=>null);const reply=String(data?.choices?.[0]?.message?.content||"").trim();
-     console.log("JARVIS CHAT TEXT FALLBACK "+JSON.stringify({http_status:response.status,ok:response.ok&&!!reply,model:free.model}));
-     if(response.ok&&reply)return json({reply,provider:free.name,model:free.model,mode:"text_only",tools_available:false});
-   }catch{console.log("JARVIS CHAT TEXT FALLBACK failed");}}
+     const free=providers.find(p=>p.name==="Keyless model fallback"&&p.model==="kilo-auto/free");
+     if(free){
+       const textDeadline=Math.min(routeDeadline,Date.now()+12000);
+       for(let attempt=1;attempt<=2&&Date.now()<textDeadline;attempt++){
+         const recentTurns=attempt===1?turns.slice(-4):turns.slice(-1);
+         try{
+           const response=await fetch(free.base.replace(/\/$/,"")+"/chat/completions",{
+             method:"POST",
+             headers:{"content-type":"application/json"},
+             body:JSON.stringify({
+               model:free.model,
+               messages:[{role:"system",content:"Answer the user accurately. No tools are available in this fallback. Never claim external actions or verified results. "+registryInstruction},...recentTurns],
+               max_tokens:768
+             }),
+             signal:AbortSignal.timeout(Math.max(1,Math.min(6500,textDeadline-Date.now()))),
+             redirect:"error"
+           });
+           const data=await response.json().catch(()=>null);
+           const reply=String(data?.choices?.[0]?.message?.content||"").trim();
+           console.log("JARVIS CHAT TEXT FALLBACK "+JSON.stringify({attempt,http_status:response.status,ok:response.ok&&!!reply,model:free.model}));
+           if(response.ok&&reply)return json({reply,provider:free.name,model:free.model,mode:"text_only",tools_available:false});
+           if(!response.ok&&response.status!==413&&response.status!==429&&response.status<500)break;
+         }catch(error){
+           console.log("JARVIS CHAT TEXT FALLBACK "+JSON.stringify({attempt,error_category:error instanceof Error&&error.name==="TimeoutError"?"timeout":"network",model:free.model}));
+         }
+       }
+     }
    }
 
    for(const p of providers){if(Date.now()>=routeDeadline)break;const routeKey="chat:"+p.name+":"+p.model;const [cooldown]=await sql.unsafe("SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=$1",[routeKey]);if(cooldown&&new Date(cooldown.cooldown_until).getTime()>Date.now())continue;messages=baseMessages.slice();try{const r=await fetch(p.base.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(p.key?{authorization:"Bearer "+p.key}:{}),"content-type":"application/json"},body:JSON.stringify({model:p.model,messages,tools:functionTools,tool_choice:"auto",max_tokens:Math.max(512,Math.min(1536,Number(env.JARVIS_CHAT_MAX_OUTPUT_TOKENS||1024))),temperature:p.name==="Google Gemini"?1:.35}),signal:AbortSignal.timeout(Math.max(1,Math.min(15000,routeDeadline-Date.now())))});const raw=await r.text();if(!r.ok){await sql.unsafe("INSERT INTO jarvis_provider_cooldowns(provider,cooldown_until,reason) VALUES($1,NOW()+($2::int * INTERVAL '1 second'),$3) ON CONFLICT(provider) DO UPDATE SET cooldown_until=EXCLUDED.cooldown_until,reason=EXCLUDED.reason,updated_at=NOW()",[routeKey,r.status===429?120:60,"HTTP "+r.status]);console.log("JARVIS PROVIDER ERROR "+JSON.stringify({provider:p.name,model:p.model,http_status:r.status,error_category:"upstream_http",timestamp:new Date().toISOString()}));let detail=raw.slice(0,300);try{const d=JSON.parse(raw);detail=d.error?.message||d.message||detail}catch{}failures.push(p.name+" "+p.model+" HTTP "+r.status+": "+detail);continue}const d=JSON.parse(raw),msg=d.choices?.[0]?.message;if(msg?.tool_calls?.length){messages.push(msg);for(const call of msg.tool_calls){let args={};try{args=JSON.parse(call.function.arguments||"{}")}catch{}let result;if(call.function?.name==="consultChatGPT")result=await consultChatGPT(args);else if(call.function?.name==="checkChatGPTReply")result=await checkChatGPTReply(args);else result=await operationalTool(call.function?.name,args);messages.push({role:"tool",tool_call_id:call.id,content:JSON.stringify(result)});}const follow=await fetch(p.base.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(p.key?{authorization:"Bearer "+p.key}:{}),"content-type":"application/json"},body:JSON.stringify({model:p.model,messages,max_tokens:Math.max(512,Math.min(1536,Number(env.JARVIS_CHAT_MAX_OUTPUT_TOKENS||1024))),temperature:.35}),signal:AbortSignal.timeout(Math.max(1,Math.min(15000,routeDeadline-Date.now())))});const fr=await follow.text();if(!follow.ok)throw new Error("Tool follow-up HTTP "+follow.status);const fd=JSON.parse(fr),followReply=String(fd.choices?.[0]?.message?.content||"").trim();if(followReply)return json({reply:followReply,provider:p.name,model:p.model,contextBytes:encoder.encode(JSON.stringify(messages)).length});failures.push(p.name+": empty tool follow-up");continue;}const reply=String(msg?.content||"").trim();if(reply)return json({reply,provider:p.name,model:p.model,contextBytes:encoder.encode(JSON.stringify(messages)).length});failures.push(p.name+": empty response")}catch(e){failures.push(p.name+": "+(e instanceof Error?e.message:"request failed"))}}
