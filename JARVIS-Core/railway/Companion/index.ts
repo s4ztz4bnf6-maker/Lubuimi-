@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { mkdtemp, rm, stat } from "node:fs/promises";
+import { mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import postgres from "postgres";
@@ -55,8 +55,10 @@ async function checkViaTor(){
   try{
     directory=await mkdtemp(join(tmpdir(),"jarvis-tor-"));
     const socket=join(directory,"socks");
+    const config=join(directory,"torrc");
+    await writeFile(config,"# JARVIS isolated Tor check\n",{mode:0o600});
     // The private Unix socket is accessible only within this check's temporary directory.
-    tor=Bun.spawn(["tor","-f","/dev/null","--DataDirectory",directory,"--ClientOnly","1","--SocksPort","unix:"+socket],{
+    tor=Bun.spawn(["tor","-f",config,"--DataDirectory",directory,"--ClientOnly","1","--SocksPort","unix:"+socket],{
       env:{PATH:"/usr/bin:/bin"},stdout:"pipe",stderr:"ignore"
     });
     torLog=new Response(tor.stdout).text();
