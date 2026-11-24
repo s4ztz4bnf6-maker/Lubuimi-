@@ -93,7 +93,9 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
          const rows=await sql.unsafe("SELECT status::text AS status, count(*)::int AS count FROM (SELECT status FROM agent_tasks ORDER BY created_at DESC LIMIT 1000) recent GROUP BY status ORDER BY status");
          const total=rows.reduce((n,r)=>n+Number(r.count),0);
          const failed=rows.filter(r=>["failed","error"].includes(r.status)).reduce((n,r)=>n+Number(r.count),0);
-         return {ok:true,source:"agent_tasks",sample_limit:1000,total,counts:rows,recorded_failure_rate:total?failed/total:null,recommendations:failed?["Review failed task records and reproduce failures in isolated tests"]:["Collect independently verified outcome evidence before changing behavior"],limitations:["Recorded status is not verified execution, quality or revenue","No automatic code or permission changes"],checked_at:new Date().toISOString()};
+         const documented=rows.filter(r=>["success","completed"].includes(r.status)).reduce((n,r)=>n+Number(r.count),0);
+         const evaluated=failed+documented;
+         return {ok:true,source:"agent_tasks",sample_limit:1000,total,counts:rows,evaluated,excluded:total-evaluated,documented_completion:documented,externally_verified_success:null,verification_status:"not_checked",recorded_failure_rate:evaluated?failed/evaluated:0,rate_defined:evaluated>0,recommendations:failed?["Review failed task records and reproduce failures in isolated tests"]:documented?["Collect independently verified outcome evidence before changing behavior"]:[],limitations:["Recorded status is not verified execution, quality or revenue","No automatic code or permission changes"],checked_at:new Date().toISOString()};
        }
        if(name==="listWorkerTasks"){
          const status=typeof args.status==="string"?args.status.slice(0,64):null;
