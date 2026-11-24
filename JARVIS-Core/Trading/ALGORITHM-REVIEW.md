@@ -1,0 +1,21 @@
+# Owner adaptive multi-strategy framework — review and upgrade specification
+
+Status: reserved, disabled, paper-only. No runtime, paid data, live orders or new services authorized. Owner supplied Python/pandas design: 20/100-day trend, 20-day mean reversion, 60-day cross-sectional momentum, 60-day trailing strategy Sharpe threshold 0.02, probability-weighted scenario tilt 0.2, 20-day volatility, 60-day correlation, crisis thresholds 0.75 correlation and 1.5x baseline volatility, crisis scale 0.3. Original settings: risk per position 1%, volatility stop multiplier 2, position cap 25%, region gross cap 40%, gross cap 100%, daily loss 5%, drawdown 15%, halts 2/20 days, stop cooldown 5 days, turnover cost 0.1%, warmup 120. These are unvalidated research parameters, not approved live limits.
+
+## Defects and corrections
+- Signal at close t must execute at a later observable quote, not assume same-close fills. Use point-in-time data, exchange calendars and UTC availability timestamps.
+- Strategy score must use independently simulated net returns with turnover, financing and execution costs; shrink noisy estimates and evaluate out of sample. Keep shadow evaluation of disabled strategies, hysteresis and minimum samples.
+- Static scenario tilt across historical dates is invalid for retrospective event research. Use versioned as-of scenarios, calibrated probabilities, evidence provenance and release timestamps. Validate finite probabilities summing to one. Model market surprise relative to expectations, not just event direction.
+- Long-only spot default; negative signals reduce exposure rather than open shorts. Separate future short model with borrow, collateral and funding. Gross exposure alone does not prove no leverage.
+- Track holdings and cash, drifted weights, actual turnover, fees, FX, corporate actions and gaps. Daily close stops are not guaranteed loss bounds; use next executable quote and stress gaps.
+- Preserve lifetime high-water mark independently of halt/restart reference; include costs in loss limits; explicit manual reset for hard kill switch. Use valid off-diagonal correlations only; handle one asset, missing prices and zero variance.
+- Reject nonpositive prices, unsorted/duplicate timestamps, missing region mappings and stale quotes. Do not forward-fill indefinitely. Metrics include initial equity and actual elapsed time; handle empty and constant returns. Synthetic data has positive drift and is not evidence of alpha.
+
+## Proposed quantitative objective
+Maximize estimated net portfolio return minus covariance risk, turnover cost and tail-risk penalty, subject to long-only, cash, region, position, liquidity and risk constraints. Include cash/no-trade as a valid solution. Use shrinkage covariance and conservative uncertainty estimates. Validate with nested walk-forward, embargo where labels overlap, untouched holdout, multiple-testing controls and benchmarks. Report CAGR, net Sharpe, Sortino, drawdown, CVaR, turnover, cost sensitivity and confidence intervals.
+
+## Global event research
+Ingest public timestamped economic releases, central-bank statements, company disclosures and geopolitical news. Separate facts, hypotheses and market-implied expectations. Bayesian posterior updates with calibrated likelihoods, scenario dependence and uncertainty; no invented probabilities presented as measured. Estimate conditional asset returns and event horizons using historical event studies and out-of-sample validation. Evaluate probability forecasts with Brier/log loss and reliability curves. Treat LLM output as untrusted research input, never executable instructions or direct orders. No political targeting or manipulation; only aggregate market research.
+
+## Acceptance gates
+Unit tests for causality, probability normalization, no shorts, caps, fees, gaps, cash reconciliation, missing data, single asset, stop cooldown, drawdown and no live order interface. Future data perturbation must not change earlier decisions. Paper trading and continuous research require separate owner approval and verified zero incremental spend. No automatic promotion to live trading. Existing operations remain priority. Companion ingestion not verified.
