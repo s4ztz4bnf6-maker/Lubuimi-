@@ -243,7 +243,7 @@ struct JarvisView: View {
         case .network: NetworkView(jarvis: jarvis)
         case .studio: StudioView()
         case .free: FreeView(jarvis: jarvis)
-        case .trading: NetworkView(jarvis: jarvis)
+        case .trading: TradingView(jarvis: jarvis)
         case .approvals: OperationsView(jarvis: jarvis, page: page, paths: ["/api/approvals/pending"])
         case .contact: OperationsView(jarvis: jarvis, page: page, paths: ["/api/contact"])
         }
@@ -538,5 +538,54 @@ struct StudioView: View {
                     Label("Quellcode öffnen", systemImage: "arrow.up.right.square")
                 }
             }
+    }
+}
+
+struct TradingView: View {
+    @ObservedObject var jarvis: Jarvis
+    @AppStorage("jarvis.paper.cashCents") private var cash = 1_000_000
+    @AppStorage("jarvis.paper.units") private var units = 0
+    @AppStorage("jarvis.paper.journal") private var journal = ""
+    @State private var priceCents = ""
+    @State private var quantity = ""
+    @State private var status = ""
+
+    var body: some View {
+        Form {
+            Section("Marktverbindung") {
+                NavigationLink("Tor und Coinbase-Status") { NetworkView(jarvis: jarvis).navigationTitle("Marktverbindung") }
+            }
+            Section("Paper Trading · Simulation") {
+                Text("Spielsaldo: \(Decimal(cash) / 100, format: .currency(code: "EUR"))")
+                Text("Simulierter Bestand: \(units) Einheiten")
+                TextField("Testpreis in Cent je Einheit", text: $priceCents).keyboardType(.numberPad)
+                TextField("Anzahl", text: $quantity).keyboardType(.numberPad)
+                Button("Kauf simulieren") { apply(buy: true) }
+                Button("Verkauf simulieren") { apply(buy: false) }
+                if !status.isEmpty { Text(status) }
+            }
+            Section("Lokales Journal") { Text(journal.isEmpty ? "Noch keine Simulationen" : journal).textSelection(.enabled) }
+        }
+    }
+
+    private func apply(buy: Bool) {
+        guard let price = Int(priceCents), (1...100_000_000).contains(price),
+              let count = Int(quantity), (1...10_000).contains(count) else {
+            status = "Gültigen Preis und gültige Anzahl eingeben."
+            return
+        }
+        let total = price * count
+        if buy {
+            guard cash >= total else { status = "Der Spielsaldo ist zu niedrig."; return }
+            cash -= total
+            units += count
+        } else {
+            guard units >= count else { status = "Der simulierte Bestand ist zu niedrig."; return }
+            cash += total
+            units -= count
+        }
+        let line = "\(Date().formatted()) · \(buy ? "Kauf" : "Verkauf") · \(count) × \(price) ct"
+        journal = String((line + "\n" + journal).prefix(12_000))
+        status = "Simulation gespeichert."
     }
 }
