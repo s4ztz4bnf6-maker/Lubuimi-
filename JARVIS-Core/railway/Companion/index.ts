@@ -142,11 +142,22 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
    const baseMessages=messages.slice();
    providers.sort((a,b)=>Number(b.name==="Keyless model fallback"&&b.model==="kilo-auto/free")-Number(a.name==="Keyless model fallback"&&a.model==="kilo-auto/free"));
    const routeDeadline=Date.now()+40000;
+   // Read only aggregate operational facts; never forward account identifiers or secrets.
+   let operationalContext="Operational registry not verified for this request.";
+   try {
+     const [wallet]=await sql.unsafe("SELECT COUNT(*)::int AS routes, COUNT(*) FILTER (WHERE is_primary)::int AS primary_routes FROM jarvis_wallet_routes");
+     const [ledger]=await sql.unsafe("SELECT COUNT(*)::int AS transactions, COUNT(*) FILTER (WHERE confirmed)::int AS confirmed FROM jarvis_wallet_transactions");
+     const bankConfigured=Object.entries(env).some(([k,v])=>/^(JARVIS_)?(BANK_|PAYMENT_)?IBAN$/.test(k)&&Boolean(String(v||"").trim()));
+     operationalContext=JSON.stringify({btc:{registered_routes:wallet.routes,primary_routes:wallet.primary_routes,watch_only:true,recorded_transactions:ledger.transactions,confirmed_transactions:ledger.confirmed,send_enabled:false},bank:{iban_environment_configured:bankConfigured,other_storage:"not checked",ownership_verified:false},grid:{status:"not verified"}});
+   } catch { console.log("JARVIS operational context unavailable"); }
+   const registryInstruction="Current read-only registry facts: "+operationalContext+". Distinguish configured from independently verified. Do not request private Bitcoin keys for receipt. Do not infer missing infrastructure from unknown status.";
+   baseMessages[0]={...baseMessages[0],content:baseMessages[0].content+"\n"+registryInstruction};
+
    // Early text-only fallback for ordinary questions; operational requests retain tools.
    if(!/\b(ausführen|installieren|deploy|recherchier\w*|erstelle\w*|prüfe\w*|überweis\w*|execute|create|search|check|send)\b/i.test(lastInput)){
    const free=providers.find(p=>p.name==="Keyless model fallback"&&p.model==="kilo-auto/free");
    if(free&&Date.now()<routeDeadline){try{
-     const response=await fetch(free.base.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:free.model,messages:[{role:"system",content:"Answer the user accurately. No tools are available in this fallback. Never claim external actions or verified results."},...turns.slice(-4)],max_tokens:768}),signal:AbortSignal.timeout(Math.max(1,Math.min(12000,routeDeadline-Date.now()))),redirect:"error"});
+     const response=await fetch(free.base.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({model:free.model,messages:[{role:"system",content:"Answer the user accurately. No tools are available in this fallback. Never claim external actions or verified results. "+registryInstruction},...turns.slice(-4)],max_tokens:768}),signal:AbortSignal.timeout(Math.max(1,Math.min(12000,routeDeadline-Date.now()))),redirect:"error"});
      const data=await response.json().catch(()=>null);const reply=String(data?.choices?.[0]?.message?.content||"").trim();
      console.log("JARVIS CHAT TEXT FALLBACK "+JSON.stringify({http_status:response.status,ok:response.ok&&!!reply,model:free.model}));
      if(response.ok&&reply)return json({reply,provider:free.name,model:free.model,mode:"text_only",tools_available:false});
