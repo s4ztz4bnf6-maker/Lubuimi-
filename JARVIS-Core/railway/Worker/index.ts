@@ -143,6 +143,13 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_claims (
  submitted_at TIMESTAMPTZ, accepted_at TIMESTAMPTZ, paid_at TIMESTAMPTZ
 )`;
 await sql`CREATE INDEX IF NOT EXISTS jarvis_claims_status_idx ON jarvis_claims(status,updated_at DESC)`;
+// Preserve historical result and record the previous status before reclassification.
+await sql`WITH corrected AS (
+  UPDATE agent_tasks SET status='failed', error='max_tool_steps_exceeded', next_retry_at=NULL
+  WHERE status='completed' AND result='Task reached the maximum number of tool steps. Review the research trace and resubmit with a narrower prompt.'
+  RETURNING id
+) INSERT INTO agent_audit(event,detail)
+SELECT 'task_needs_review',jsonb_build_object('id',id,'previousStatus','completed','reason','max_tool_steps_exceeded') FROM corrected`;
 await sql.unsafe("INSERT INTO jarvis_claims(task_id,title,source_url,payout_address,status,evidence) SELECT t.id,LEFT(t.title,300),substring(COALESCE(t.prompt,'')||' '||COALESCE(t.result,'') from 'https?://[^[:space:]<>]+'),$1,'claim_ready',jsonb_build_object('backfilled',true,'task_result',LEFT(COALESCE(t.result,''),9000),'note','Historical internal completion; verify external eligibility, submission and payout before claiming.') FROM agent_tasks t WHERE t.status='completed' AND t.title NOT ILIKE 'CLAIM ACTION%' AND (COALESCE(t.title,'')||' '||COALESCE(t.prompt,'')) ~* '(bitcoin|btc|sats?|bounty|paid task|microjob|earnings|income|bug.?fix|software.?qa)' AND NOT EXISTS(SELECT 1 FROM jarvis_claims c WHERE c.task_id=t.id) ON CONFLICT(task_id) DO NOTHING",[ownerReceiveAddresses[0] ?? null]);
 console.log("JARVIS historical income-task claim backfill checked.");
 await sql`CREATE TABLE IF NOT EXISTS jarvis_shipping_profiles (
@@ -154,7 +161,7 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_shipping_profiles (
 await sql`INSERT INTO jarvis_shipping_profiles(profile_key,recipient,street,address_line2,postal_code,city,country,max_total_eur,enabled,consent_note)
  VALUES('free-gifts-de','Max Mostert','B7 17','Apartment/Appartement 208','68159','Mannheim','Germany',0,TRUE,'Recipient explicitly authorized use for free gifts, samples and promotional shipments; total item and shipping cost must be EUR 0; no subscription, purchase, payment details or hidden fees.')
  ON CONFLICT(profile_key) DO UPDATE SET recipient=EXCLUDED.recipient,street=EXCLUDED.street,address_line2=EXCLUDED.address_line2,postal_code=EXCLUDED.postal_code,city=EXCLUDED.city,country=EXCLUDED.country,max_total_eur=0,enabled=TRUE,consent_note=EXCLUDED.consent_note,updated_at=NOW()`;
-const claimsNeedingAction=await sql`SELECT c.id,c.task_id,c.title,c.platform,c.source_url,c.claim_url,c.external_claim_id,c.payout_amount::text AS payout_amount,c.payout_currency,c.payout_address,c.status,t.prompt,t.result FROM jarvis_claims c LEFT JOIN agent_tasks t ON t.id=c.task_id WHERE c.status IN ('claim_ready','submitted','accepted','payable') AND t.id IS NOT NULL AND t.title NOT ILIKE 'CLAIM ACTION%' AND c.title NOT ILIKE 'CLAIM ACTION%' AND NOT EXISTS(SELECT 1 FROM agent_tasks a WHERE a.title LIKE ('CLAIM ACTION · #'||c.id||' ·%') AND (a.status IN ('queued','running','retry_wait') OR a.created_at>NOW()-INTERVAL '60 minutes')) ORDER BY CASE WHEN c.status IN ('accepted','payable') THEN 0 ELSE 1 END,c.updated_at ASC LIMIT 10`;
+const claimsNeedingAction=await sql`SELECT c.id,c.task_id,c.title,c.platform,c.source_url,c.claim_url,c.external_claim_id,c.payout_amount::text AS payout_amount,c.payout_currency,c.payout_address,c.status,t.prompt,t.result FROM jarvis_claims c LEFT JOIN agent_tasks t ON t.id=c.task_id WHERE c.status IN ('claim_ready','submitted','accepted','payable') AND t.id IS NOT NULL AND t.status='completed' AND t.title NOT ILIKE 'CLAIM ACTION%' AND c.title NOT ILIKE 'CLAIM ACTION%' AND NOT EXISTS(SELECT 1 FROM agent_tasks a WHERE a.title LIKE ('CLAIM ACTION · #'||c.id||' ·%') AND (a.status IN ('queued','running','retry_wait') OR a.created_at>NOW()-INTERVAL '60 minutes')) ORDER BY CASE WHEN c.status IN ('accepted','payable') THEN 0 ELSE 1 END,c.updated_at ASC LIMIT 10`;
 for(const claim of claimsNeedingAction){const actionTitle="CLAIM ACTION · #"+claim.id+" · "+String(claim.title).slice(0,90);const payout=["accepted","payable","submitted"].includes(claim.status);const prompt="Execute external claim/payout action for existing claim ID "+claim.id+". Original task ID: "+claim.task_id+". Current claim status: "+claim.status+". Platform: "+String(claim.platform||"unknown")+". Source URL: "+String(claim.source_url||"")+". Claim URL: "+String(claim.claim_url||"")+". External claim ID: "+String(claim.external_claim_id||"")+". Reward: "+String(claim.payout_amount||"unknown")+" "+String(claim.payout_currency||"")+". BTC payout address: "+String(claim.payout_address||ownerReceiveAddresses[0])+". Original instructions: "+String(claim.prompt||"").slice(0,4500)+". Work result: "+String(claim.result||"").slice(0,8500)+". "+(payout?"Check the official platform for acceptance and request payout immediately if due.":"Verify the official opportunity, AI eligibility and deliverable; submit the work and request the reward through the platform. If BTC/SATS is supported, request payment to the configured address.")+" Use the existing authenticated browser session. Record the external receipt and exact status with record_claim(task_id equal to CURRENT ACTIVE WORKER TASK ID, claim_id="+claim.id+") only after confirmation. If no valid claim exists or session is unavailable, report the exact blocker without changing the claim status. Never pay fees, subscribe, sign contracts or send BTC.";await sql`INSERT INTO agent_tasks(title,prompt,status,max_attempts) VALUES(${actionTitle},${prompt},'queued',3)`;await sql`INSERT INTO agent_audit(event,detail) VALUES('claim_action_backfilled',${sql.json({claimId:claim.id,originalTaskId:claim.task_id})})`;}
 if(claimsNeedingAction.length)console.log("JARVIS existing claims queued for external action: "+claimsNeedingAction.length);
 await sql`CREATE TABLE IF NOT EXISTS agent_workstreams (
@@ -976,7 +983,17 @@ try {
       }catch(e){messages.push({role:"tool",tool_call_id:call.id,content:JSON.stringify({error:e instanceof Error?e.message:"Tool execution failed"})});}
     }
   }
-  if (!finalText) finalText = "Task reached the maximum number of tool steps. Review the research trace and resubmit with a narrower prompt.";
+  if (!finalText.trim()) {
+    const reason = "max_tool_steps_exceeded";
+    const result = "Task reached the maximum number of tool steps. Review the research trace and resubmit with a narrower prompt.";
+    await sql.begin(async tx => {
+      await tx`UPDATE agent_tasks SET status='failed', result=${result}, error=${reason}, completed_at=NOW(), next_retry_at=NULL WHERE id=${task.id}`;
+      await tx`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error) VALUES (${task.id},${Number(task.attempt_count||0)+1},'failed',${reason}) ON CONFLICT(task_id,attempt_number) DO UPDATE SET outcome='failed',error=EXCLUDED.error,finished_at=NOW()`;
+      await tx`INSERT INTO agent_audit(event,detail) VALUES ('task_needs_review',${sql.json({id:task.id,reason})})`;
+    });
+    console.log("JARVIS Worker task needs review: " + task.id + " — " + reason);
+    return;
+  }
   await sql`UPDATE agent_tasks SET status='completed', result=${finalText}, completed_at=NOW(), error=NULL, next_retry_at=NULL WHERE id=${task.id}`;
   await sql`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error)
     VALUES (${task.id},${Number(task.attempt_count||0)+1},'completed',NULL)
