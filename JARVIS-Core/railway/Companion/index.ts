@@ -137,6 +137,20 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      const call=validateReadTool(value);if(!call)return json({error:"Tool or parameters not allowed"},400);
      return await readToolResponse(call);
    }
+   // Explicit owner work orders bypass inference and are deduplicated transactionally.
+   if(/^\/auftrag\s+/i.test(lastInput)||(/\b(jetzt ausführen|sofort ausführen|zur umsetzung freigegeben)\b/i.test(lastInput)&&/\b(implementier\w*|scraper|phasen|auftrag|bearbeit\w*)\b/i.test(lastInput))){
+     const prompt=lastInput.replace(/^\/auftrag\s+/i,"").trim();
+     if(!prompt)return json({error:"Auftrag fehlt."},400);
+     const key=await hash("owner-work-order:"+prompt);
+     const task=await sql.begin(async tx=>{
+       await tx.unsafe("SELECT pg_advisory_xact_lock(hashtext($1)::bigint)",[key]);
+       const [existing]=await tx.unsafe("SELECT id,status FROM agent_tasks WHERE title=$1 AND prompt=$2 ORDER BY id DESC LIMIT 1",["OWNER WORK ORDER "+key,prompt]);
+       if(existing)return {...existing,duplicate:true};
+       const [created]=await tx.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,status",["OWNER WORK ORDER "+key,prompt]);
+       return {...created,duplicate:false};
+     });
+     return json({reply:"Auftrag #"+task.id+" dauerhaft gespeichert. Status: "+task.status+(task.duplicate?" (bereits vorhanden).":". Noch nicht ausgeführt."),task,provider:"JARVIS server tools",model:"deterministic",mode:"durable_intake"});
+   }
    if(!providers.length)return json({error:"Kein Modellanbieter konfiguriert."},503);
    const failures=[];
    const baseMessages=messages.slice();
