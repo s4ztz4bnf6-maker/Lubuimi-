@@ -8,7 +8,11 @@ import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
 const env = Bun.env;
-const maxParallelTasks = Math.max(1, Math.min(4, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
+// Opt-in concurrency expansion; preserve the existing default and reject invalid settings.
+const requestedParallelTasks = Number(env.JARVIS_MAX_PARALLEL_TASKS || 1);
+const maxParallelTasks = Number.isFinite(requestedParallelTasks)
+  ? Math.max(1, Math.min(10, Math.floor(requestedParallelTasks)))
+  : 1;
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const geminiKey = String(env.GEMINI_API_KEY || "").replace(/^\s*API\s+/i, "").trim();
 console.log("JARVIS Gemini key diagnostic: format=" + (geminiKey.startsWith("AQ.") ? "AQ" : geminiKey.startsWith("AIza") ? "AIza" : "other") + "; length=" + geminiKey.length + "; whitespace=" + /\s/.test(geminiKey) + "; wrapped=" + (/^["']/.test(geminiKey) || /["']$/.test(geminiKey)));
