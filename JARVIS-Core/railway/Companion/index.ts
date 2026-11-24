@@ -434,6 +434,14 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      const evidence={ok:true,memory:{configured:true,records:String((await sql.unsafe("SELECT COUNT(*)::text AS count FROM djo2_owner_memory"))[0].count)},bridge:{repository_configured:Boolean(env.JARVIS_BRIDGE_REPOSITORY),credential_configured:Boolean(env.JARVIS_BRIDGE_TOKEN),delivery_verified:false},github:{app_id_configured:Boolean(env.GITHUB_APP_ID),private_key_configured:Boolean(env.GITHUB_PRIVATE_KEY),write_verified:false},railway:{credential_configured:Boolean(env.RAILWAY_API_TOKEN),write_verified:false},financial_actions:false,checked_at:new Date().toISOString()};
      return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
    }
+   if(lastInput==="/bridgetest"){
+     const result=await consultChatGPT({type:"question",subject:"DJO2 bridge connectivity test",message:"Connectivity test only. Please acknowledge this message ID. No credentials or owner data included."});
+     return json({reply:JSON.stringify(result,null,2),toolResult:result,provider:"DJO² IA server",model:"deterministic"});
+   }
+   if(/^\/bridgeantwort\s+[1-9][0-9]*$/.test(lastInput)){
+     const result=await checkChatGPTReply({issue_number:Number(lastInput.split(/\s+/)[1])});
+     return json({reply:JSON.stringify(result,null,2),toolResult:result,provider:"DJO² IA server",model:"deterministic"});
+   }
    if(lastInput==="/bridgecheck"){
      const evidence={ok:Boolean(env.JARVIS_BRIDGE_REPOSITORY&&env.JARVIS_BRIDGE_TOKEN),repository_configured:Boolean(env.JARVIS_BRIDGE_REPOSITORY),credential_configured:Boolean(env.JARVIS_BRIDGE_TOKEN),delivery_verified:false};
      return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
