@@ -1,6 +1,6 @@
 # DJO² IA – Core
 
-Official product name: **DJO² IA (Joehoch2)**. New original project contributions: **proprietary commercial licensing; all rights reserved**. Commercial rights require a separate written license. Existing Apache-2.0 grants and third-party rights remain unaffected; see `LICENSE` for historical Apache terms. Third-party notices and licenses remain unchanged. Legacy paths, environment keys, database identifiers and service endpoints remain compatibility identifiers until migrated and tested.
+Official product name: **DJO² IA (Joehoch2)**. New original project contributions: **proprietary commercial licensing; all rights reserved**. Commercial rights require a separate written license. Existing Apache-2.0 grants and third-party rights remain unaffected; see `LICENSE-HISTORICAL-APACHE-2.0` for historical Apache terms. Third-party notices and licenses remain unchanged. Legacy paths, environment keys, database identifiers and service endpoints remain compatibility identifiers until migrated and tested.
 
 Development and production source workspace for DJO² IA (Joehoch2), maintained on the legacy-compatible `jarvis-core` branch.
 
@@ -55,7 +55,7 @@ Validation: GitHub Actions JARVIS-Core tests succeeded for commit `79ae5ecdedca6
 
 ## License
 
-Original JARVIS-Core code in this directory is distributed under the [Apache License, Version 2.0](LICENSE); see [NOTICE](NOTICE) for attribution and limitations. This applies only to material the project contributors are entitled to license. Third-party libraries, bundled assets, external services, and imported code retain their own applicable licenses and terms. This does not license the separate mathematical research or other files outside `JARVIS-Core/`.
+Future releases of rights-holder-owned original DJO² IA code are governed by the [proprietary license](LICENSE); see [NOTICE](NOTICE) for attribution and limitations. This applies only to material the project contributors are entitled to license. Third-party libraries, bundled assets, external services, and imported code retain their own applicable licenses and terms. This does not license the separate mathematical research or other files outside `JARVIS-Core/`.
 
 ## Licensing clarification (2026-11-25)
 
