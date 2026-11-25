@@ -268,6 +268,17 @@ console.log("JARVIS workstream registry: " + workstreamStats.enabled + "/" + wor
 
 await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, memory_key TEXT NOT NULL UNIQUE, title TEXT NOT NULL, content TEXT NOT NULL, source_type TEXT NOT NULL DEFAULT 'task_result', source_task_id BIGINT, confidence TEXT NOT NULL DEFAULT 'unverified', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
+await sql`CREATE TABLE IF NOT EXISTS djo2_account_jobs (
+ id BIGSERIAL PRIMARY KEY, platform TEXT NOT NULL UNIQUE, registration_url TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'queued' CHECK(status IN ('queued','checking','awaiting_adapter','awaiting_verification','active','blocked')),
+ attempts INTEGER NOT NULL DEFAULT 0, detail TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)`;
+await sql`CREATE TABLE IF NOT EXISTS djo2_account_vault (
+ platform TEXT PRIMARY KEY, encrypted_credentials BYTEA NOT NULL, nonce BYTEA NOT NULL, auth_tag BYTEA NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)`;
+const accountReadiness = {queue:true,vaultSchema:true,emailConfigured:Boolean(env.DJO2_MAIL_HOST && env.DJO2_MAIL_USER && env.DJO2_MAIL_PASSWORD),vaultKeyConfigured:Boolean(env.DJO2_ACCOUNT_VAULT_KEY),registrationAdapterConfigured:false};
+console.log("DJO2 account infrastructure "+JSON.stringify(accountReadiness));
+
 const accountMandate="Owner authorizes autonomous free account discovery and registration in parallel with paid work, where platform rules permit automated registration and representation. Reuse existing authorized accounts; use truthful verified identity and authorized contact channels. No spending, no invented identity, no bypass of CAPTCHA or identity checks, no secrets in model prompts or agent memory. Record registration status and blockers; continue other eligible work when blocked. Human-only verification remains pending.";
 await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES ('owner:account-manager-v1','Autonomous free account registration mandate',${accountMandate},'owner_instruction','owner_directive') ON CONFLICT(memory_key) DO UPDATE SET content=EXCLUDED.content,updated_at=NOW() WHERE agent_memory.content IS DISTINCT FROM EXCLUDED.content`;
 
