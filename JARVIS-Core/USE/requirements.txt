@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+trafilatura
+playwright
+crawl4ai
+scrapy
+imap-tools
