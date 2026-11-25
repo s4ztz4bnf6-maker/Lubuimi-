@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 import {canResumeJob} from "./uara-policy.mjs";
 export async function initUara(sql) {
  await sql`CREATE TABLE IF NOT EXISTS djo2_uara_jobs (
