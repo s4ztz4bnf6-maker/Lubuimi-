@@ -1,5 +1,5 @@
 {
-  "name": "jarvis-autonomous-worker",
+  "name": "djo2-autonomous-worker",
   "private": true,
   "type": "module",
   "scripts": {
