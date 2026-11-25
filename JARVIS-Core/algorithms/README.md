@@ -1,5 +1,5 @@
 # JARVIS Algorithmus — architecture and governance
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 Owner project: JARVIS. Trading baseline supplied by Ta-Yoshua Lubuimi; preserve attribution.
 Modules: second-good-life, trading, sales, chat, bounty, exchange, finance, cybersecurity.
 Each module must expose version, source export, metrics, inputs, evaluation history, rollback and license.
