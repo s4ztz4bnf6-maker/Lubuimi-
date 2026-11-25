@@ -32,5 +32,22 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/ErdosSelfridge_v17_fixed.olean ErdosSelfridge_v17_fixed.lean
+      - name: Compile MeasureTransition module
+        run: lake env lean -o .lake/build/lib/lean/MeasureTransition.olean MeasureTransition.lean
       - name: Run focused degenerate-witness tests
         run: lake env lean AuditCheck.lean
+
+      - name: Compile validated finite parameter interface
+        run: lake env lean -o .lake/build/lib/lean/ValidatedParameters.olean ValidatedParameters.lean
+
+      - name: Compile parameter integrity regression tests
+        run: |
+          set -o pipefail
+          lake env lean -o .lake/build/lib/lean/ParameterIntegrityTests.olean ParameterIntegrityTests.lean 2>&1 | tee /tmp/parameter-integrity-tests.log
+          ! grep -q 'sorryAx' /tmp/parameter-integrity-tests.log
+
+      - name: Compile finite coordinate geometry incidence tests
+        run: |
+          set -o pipefail
+          lake env lean BBMSTGeometryTest.lean 2>&1 | tee /tmp/bbmst-geometry-tests.log
+          ! grep -q 'sorryAx' /tmp/bbmst-geometry-tests.log
