@@ -1,10 +1,11 @@
 // DJO² commercial selection policy — owner instruction 2026-11-25.
-export type Offer = { reward:number; hours:number; probability:number; active:boolean; payerVerified:boolean; aiAllowed:boolean; payoutReady:boolean; acceptanceCriteria:boolean; licenseCompatible:boolean; assigned:boolean; escrowFunded:boolean; prepaid:boolean; competingPR:boolean; authorizedScope:boolean; upfrontCost:number };
+export type Offer = { reward:number; hours:number; probability:number; active:boolean; payerVerified:boolean; aiProhibited:boolean; aiRulesReviewed:boolean; payoutReady:boolean; acceptanceCriteria:boolean; licenseCompatible:boolean; assigned:boolean; escrowFunded:boolean; prepaid:boolean; competingPR:boolean; authorizedScope:boolean; upfrontCost:number };
 export function evaluateOffer(o:Offer) {
  const blockers:string[]=[];
  if(!o.active) blockers.push("inactive");
  if(!o.payerVerified) blockers.push("payer unverified");
- if(!o.aiAllowed) blockers.push("AI permission unverified");
+ if(o.aiRulesReviewed!==true) blockers.push("AI rules not reviewed");
+ if(o.aiProhibited!==false) blockers.push("AI use prohibited or prohibition status unknown");
  if(!o.payoutReady) blockers.push("payout unavailable");
  if(!o.acceptanceCriteria) blockers.push("acceptance unclear");
  if(!o.licenseCompatible) blockers.push("license conflict");
@@ -18,6 +19,6 @@ export function evaluateOffer(o:Offer) {
  return {eligible,blockers,tier,expectedHourly:eligible?o.reward*o.probability/o.hours:0};
 }
 export function rankOffers(offers:Offer[]) {return offers.map(offer=>({offer,...evaluateOffer(offer)})).filter(x=>x.eligible).sort((a,b)=>b.tier-a.tier||b.expectedHourly-a.expectedHourly);}
- // Unknown evidence must be false. Reward must be normalized to a common currency.
+ // AI need not be expressly permitted: reviewed applicable rules must not prohibit the intended AI-assisted work. Honor disclosure, human review and other conditions. Unknown prohibition status blocks execution; other unknown positive evidence must be false. Reward must be normalized to a common currency.
  // Estimates are not observed probabilities. No payout is guaranteed.
  // Paid status requires independently reconciled receipt; never count leads as income.
