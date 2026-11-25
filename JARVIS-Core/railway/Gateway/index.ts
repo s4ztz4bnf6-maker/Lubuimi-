@@ -875,6 +875,16 @@ const server = Bun.serve({
       const leads=await discoverPublicLeads(query,feeds,env.GITHUB_TOKEN);
       return json({...leads,rankedGifts:rankLeads(leads.gifts),rankedDemands:rankLeads(leads.demands),configuredGiftFeeds:feeds.length,execution:"read_only",darknet:"not_configured",tradeActions:"disabled"});
     }
+    if (req.method === "GET" && url.pathname === "/v1/payments/readiness") {
+      if (!ownerAuthorized(req)) return json({error:"Owner authorization required"},401);
+      const iban=String(env.JARVIS_INVOICE_IBAN||"").replace(/\\s/g,"").toUpperCase();
+      const btc=String(env.BTC_RECEIVE_ADDRESS||"").trim();
+      const bankConfigured=/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban);
+      const btcConfigured=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(btc);
+      const [bank]=await sql.unsafe("SELECT count(*)::int AS total, count(*) FILTER (WHERE status='paid')::int AS paid FROM jarvis_bank_invoices");
+      const [links]=await sql.unsafe("SELECT method,verification_status,count(*)::int AS total FROM jarvis_invoice_payment_links GROUP BY method,verification_status");
+      return json({bank:{configured:bankConfigured,invoice_creation_available:bankConfigured,settlement_mode:"owner_confirmed",invoices:Number(bank.total),paid_invoices:Number(bank.paid)},bitcoin:{configured:btcConfigured,watch_only_endpoint:"/v1/payments/bitcoin/status",invoice_auto_matching:false,independent_settlement_confirmation:false},payment_links:links,notes:["Configuration and invoice counts do not prove funds received.","No automatic bank feed or per-invoice BTC matching is claimed."]});
+    }
     if (req.method === "GET" && url.pathname === "/v1/payments/bitcoin/status") {
       const address = env.BTC_RECEIVE_ADDRESS || "";
       if (!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(address)) return json({error:"Bitcoin watch-only address not configured"},503);
