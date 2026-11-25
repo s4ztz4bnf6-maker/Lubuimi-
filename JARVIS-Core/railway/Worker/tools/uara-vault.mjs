@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 import {createCipheriv,createDecipheriv,randomBytes} from "node:crypto";
 function validate(key,scope) {
  if (!Buffer.isBuffer(key)||key.length!==32) throw new Error("AES-256 key required");
