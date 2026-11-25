@@ -464,7 +464,8 @@ theorem qFibreModulus_pos
     (hdiv : q ^ a ∣ N) :
     0 < qFibreModulus N q a := by
   have hle : q ^ a ≤ N := Nat.le_of_dvd hN hdiv
-  exact Nat.div_pos hle
+  have hpow : 0 < q ^ a := by positivity
+  simpa [qFibreModulus] using Nat.div_pos hle hpow
 
 /-- The actual quotient homomorphism for B_q=N/q^a. -/
 def qFibreProjection
