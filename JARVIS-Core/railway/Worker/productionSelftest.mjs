@@ -6,6 +6,7 @@ export async function productionSelftest(root,runId,schema='djo2_selftest'){
  if(!/^djo2_selftest(?:_[a-z0-9]{1,32})?$/.test(schema))throw Error('invalid isolated schema');
  if(!/^[a-zA-Z0-9_-]{8,80}$/.test(runId))throw Error("invalid selftest ID");
  const session=await root.reserve();
+ const transaction=async fn=>{await session`BEGIN`;try{const result=await fn(session);await session`COMMIT`;return result;}catch(error){try{await session`ROLLBACK`;}catch{}throw error;}};
  let locked=false;
  const log=(phase,extra={})=>console.log(JSON.stringify({event:"DJO2_SELFTEST",runId,phase,...extra}));
  try {
@@ -25,7 +26,7 @@ export async function productionSelftest(root,runId,schema='djo2_selftest'){
  assert.equal(changed.length,1);log("unknown",{state:"UNKNOWN"});return "unknown";
  }
  if(row?.state==='WRITTEN'){
- const result=await session.begin(async sql=>{
+ const result=await transaction(async sql=>{
  const [marker]=await sql`SELECT 1 AS present FROM ${sql(schema+'.djo2_provider_exclusions')} WHERE task_id=${'selftest:'+runId} AND tag='selftest:marker'`;
  assert.ok(marker);
  await clearExcluded(sql,'selftest:'+runId,schema);
@@ -37,7 +38,7 @@ export async function productionSelftest(root,runId,schema='djo2_selftest'){
  }
  assert.equal(row,undefined);
  await session`INSERT INTO ${state}(run_id,state) VALUES(${runId},'IN_PROGRESS')`;
- const result=await session.begin(async sql=>{
+ const result=await transaction(async sql=>{
  await sql`SET LOCAL search_path TO ${sql(schema)}, pg_catalog`;
  await initRotation(sql,schema);
  const result=await probe(sql,runId,schema);
