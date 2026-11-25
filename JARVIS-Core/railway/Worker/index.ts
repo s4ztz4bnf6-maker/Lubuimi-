@@ -1,4 +1,4 @@
-import { identityMessages } from "../identity.mjs";
+import { identityMessages } from "./identity.mjs";
 import { githubDelivery, checkDeliveryReady } from "./githubDelivery.mjs";
 import { providerTag, filterProviders, shouldRotate, ALL_EXCLUDED } from "./providerRotation.mjs";
 import { initRotation, loadExcludedProviders, excludeProvider, clearExcluded, runToolOnce, isKilled } from "./providerRotationDb.mjs";
