@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 umask 077
+export XDG_DATA_HOME=/tmp/caddy-data XDG_CONFIG_HOME=/tmp/caddy-config
 mountpoint -q /data || { echo "Persistent volume required"; exit 1; }
 mkdir -p /data/proton-profil
 chmod 700 /data/proton-profil
