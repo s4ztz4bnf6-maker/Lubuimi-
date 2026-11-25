@@ -28,6 +28,8 @@ jobs:
         with:
           build: false
           use-mathlib-cache: true
+      - name: Compile Syracuse affine recurrence and print its axiom dependencies
+        run: lake env lean SyracuseAffineRecurrence.lean
       - name: Compile audited upstream source
         run: |
           mkdir -p .lake/build/lib/lean
