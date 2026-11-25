@@ -1058,21 +1058,35 @@ function budgetInference(messages,tools,model){
  const output=Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024));
  const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
  const limit=6500-output;
- const fits=m=>estimate({model,messages:m,tools})<=limit;
- if(fits(messages))return {messages,output};
+ const fits=(m,t)=>estimate({model,messages:m,tools:t})<=limit;
+ if(fits(messages,tools))return {messages,tools,output};
  const fixed=messages.filter(m=>m.role==="system");
  const rest=messages.filter(m=>m.role!=="system");
  const groups=[];for(const m of rest){if(m.role==="tool"&&groups.length)groups[groups.length-1].push(m);else groups.push([m]);}
  const first=groups.findIndex(g=>g[0].role==="user");
  const mandatory=first>=0?groups[first]:[];
+ const task=String(mandatory[0]?.content||"").toLowerCase();
+ const recent=new Set(rest.slice(-8).flatMap(m=>(m.tool_calls||[]).map(c=>c.function?.name)));
+ const score=t=>{const n=t.function?.name||"";let v=recent.has(n)?100:0;
+ if(n==="web_search"||n==="web_research")v+=40;
+ if(/github|repository|bounty|pull request/.test(task)&&/github/.test(n))v+=80;
+ if(/claim|payout|reward|bitcoin|btc/.test(task)&&n==="record_claim")v+=80;
+ if(/gift|sample|freebie|goodie/.test(task)&&n==="get_shipping_profile")v+=80;
+ if(/browser|login|register|submit|claim|payout|website/.test(task)&&/browser/.test(n))v+=55;
+ if(/calculate|math|rechnung/.test(task)&&n==="calculator")v+=70;
+ if(/memory|prior|previous/.test(task)&&n==="memory_search")v+=70;
+ return v;};
+ const ranked=[...tools].sort((a,b)=>score(b)-score(a));
  let selected=groups.slice(Math.max(first+1,0));
- while(selected.length>1&&!fits([...fixed,...mandatory,...selected.flat()]))selected.shift();
- const compact=[...fixed,...mandatory,...selected.flat()];
- if(!fits(compact)){
+ let compact=[...fixed,...mandatory,...selected.flat()];
+ while(selected.length>1&&!fits(compact,ranked.slice(0,1))){selected.shift();compact=[...fixed,...mandatory,...selected.flat()];}
+ const chosen=[];for(const t of ranked){if(fits(compact,[...chosen,t]))chosen.push(t);}
+ if(!chosen.length&&tools.length || !fits(compact,chosen)){
  console.warn("DJO2_CONTEXT_BUDGET",JSON.stringify({model,limit,output,systemEstimate:estimate(fixed),instructionEstimate:estimate(mandatory),historyEstimate:estimate(selected.flat()),toolEstimate:estimate(tools),toolCount:tools.length,totalEstimate:estimate({model,messages:compact,tools})}));
  throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
  }
- return {messages:compact,output};
+ console.log("DJO2_CONTEXT_ADAPTED",JSON.stringify({model,limit,before:estimate({model,messages,tools}),after:estimate({model,messages:compact,tools:chosen}),toolsBefore:tools.length,toolsAfter:chosen.length}));
+ return {messages:compact,tools:chosen,output};
 }
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
@@ -1084,7 +1098,7 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
       const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
-      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
       const result=JSON.parse(responseText);
@@ -1094,7 +1108,7 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
       if(!Array.isArray(calls))throw new Error("INVALID_TOOL_CALLS");
       if(typeof message.content==="string" && /<tool_call\b|<function\s*=/i.test(message.content))throw new Error("UNEXECUTED_XML_TOOL_CALL");
       if(!calls.length && (typeof message.content!=="string" || !message.content.trim()))throw new Error("EMPTY_MODEL_RESPONSE");
-      const allowed=new Set(tools.map(t=>t.function?.name));
+      const allowed=new Set(bounded.tools.map(t=>t.function?.name));
       const ids=new Set();
       for(const call of calls){
         if(call.type!=="function" || typeof call.id!=="string" || !call.id || ids.has(call.id) || !allowed.has(call.function?.name))throw new Error("INVALID_OR_UNKNOWN_TOOL");
