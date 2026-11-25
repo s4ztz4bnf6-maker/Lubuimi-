@@ -446,6 +446,20 @@ const server=Bun.serve({port:Number(env.PORT||3000),async fetch(req){
      const evidence={name:"DJO² Bridge",ok:Boolean(env.JARVIS_BRIDGE_REPOSITORY&&env.JARVIS_BRIDGE_TOKEN),repository_configured:Boolean(env.JARVIS_BRIDGE_REPOSITORY),credential_configured:Boolean(env.JARVIS_BRIDGE_TOKEN),delivery_verified:false};
      return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
    }
+   if(lastInput==="/wirtschaftsaudit"||/^\/taskbeleg\s+[1-9][0-9]*$/.test(lastInput)){
+     const id=lastInput.startsWith("/taskbeleg ")?Number(lastInput.split(/\s+/)[1]):null;
+     const queries=id!==null?[
+       ["internal_task", "SELECT id,title,status,created_at FROM agent_tasks WHERE id=$1",[id]],
+       ["external_workflow", "SELECT id,title,source,source_url,status,acceptance_evidence_url,delivery_evidence_url,payment_txid FROM jarvis_paid_workflow WHERE id=$1",[id]]
+     ]:[
+       ["internal_tasks","SELECT status::text AS status,COUNT(*)::text AS count FROM agent_tasks GROUP BY status",[]],
+       ["external_workflows","SELECT status::text AS status,COUNT(*)::text AS count,COUNT(NULLIF(BTRIM(acceptance_evidence_url),''))::text AS acceptance_refs,COUNT(NULLIF(BTRIM(delivery_evidence_url),''))::text AS delivery_refs,COUNT(NULLIF(BTRIM(payment_txid),''))::text AS payment_refs FROM jarvis_paid_workflow GROUP BY status",[]],
+       ["pending_messages","SELECT id,channel,subject FROM agent_messages WHERE status='pending_approval' ORDER BY id DESC LIMIT 20",[]]
+     ];
+     const checks=await Promise.all(queries.map(async ([name,query,params])=>{try{return {name,ok:true,rows:await sql.unsafe(query,params)}}catch{return {name,ok:false,error:"Database query unavailable"}}}));
+     const evidence={checked_at:new Date().toISOString(),source:"PostgreSQL",checks,limitations:["Internal task and external workflow IDs are separate namespaces.","Stored references are not independent external verification.","No payment reconciliation performed."],next_action:"Verify original offer, acceptance, delivery and payment separately; resolve pending message approvals."};
+     return json({reply:JSON.stringify(evidence,null,2),toolResult:evidence,provider:"DJO² IA server",model:"deterministic"});
+   }
    if(lastInput==="/auftragscheck")return json({reply:await orderCheck(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput==="/einnahmen")return json({reply:await revenueStatus(),provider:"JARVIS server tools",model:"deterministic",mode:"read_only_tool"});
    if(lastInput.startsWith("/tool ")){
