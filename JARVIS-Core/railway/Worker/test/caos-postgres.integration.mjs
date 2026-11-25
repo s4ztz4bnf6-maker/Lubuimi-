@@ -47,3 +47,31 @@ test("real PostgreSQL: persistence, fencing, recovery review and spending reject
  assert.equal(count.n,1);
  }finally{await sql.end();}
 });
+
+test("active owner policy migration and fail-closed dispatch",async()=>{
+ const url=process.env.CAOS_TEST_DATABASE_URL;
+ const u=new URL(url);assert.equal(u.hostname,"127.0.0.1");assert.equal(u.pathname,"/caos_test");
+ const sql=postgres(url);
+ try{
+ const {initializeProjectMemory,readProjectMemory}=await import("../tools/project-memory.mjs");
+ const {CentralSupervisor}=await import("../supervisor/central-supervisor.mjs");
+ await initializeOrchestration(sql);await initializeProjectMemory(sql);
+ const supervisor=new CentralSupervisor({sql,handlers:{finance:async()=>({})}});
+ const task={id:"policy-regression",department:"finance",action:"evaluate"};
+ assert.equal(Number((await readProjectMemory(sql,"continuity-policy")).revision),2);
+ await assert.rejects(sql`UPDATE djo2_project_memory SET active=true WHERE memory_key='continuity-policy' AND revision=1`);
+ await sql`UPDATE djo2_project_memory SET active=false WHERE memory_key='continuity-policy'`;
+ assert.equal((await supervisor.dispatch(task)).allowed,false);
+ await sql`UPDATE djo2_project_memory SET active=true WHERE memory_key='continuity-policy' AND revision=1`;
+ assert.equal((await supervisor.dispatch(task)).allowed,false);
+ const [empty]=await sql`SELECT count(*)::int AS n FROM djo2_events WHERE event_key='caos:policy-regression'`;
+ assert.equal(empty.n,0);
+ await sql.begin(async tx=>{
+ await tx`UPDATE djo2_project_memory SET active=false WHERE memory_key='continuity-policy'`;
+ await tx`UPDATE djo2_project_memory SET active=true WHERE memory_key='continuity-policy' AND revision=2`;
+ });
+ assert.equal((await supervisor.dispatch(task)).allowed,true);
+ const [event]=await sql`SELECT payload FROM djo2_events WHERE event_key='caos:policy-regression'`;
+ assert.equal(event.payload.policyRevision,2);
+ }finally{await sql.end();}
+});
