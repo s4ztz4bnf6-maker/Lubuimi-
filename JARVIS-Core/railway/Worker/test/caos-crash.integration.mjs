@@ -11,10 +11,12 @@ test("SIGKILL recovery: read retry and write quarantine",async()=>{
  const sql=postgres(url);
  try{
  await initializeOrchestration(sql);await initializeCaos(sql);
- for(const action of ["evaluate","submit"]){
- const key="test-crash-"+action;
+ await sql`CREATE TABLE IF NOT EXISTS synthetic_external_receipts (event_key TEXT PRIMARY KEY)`;
+ for(const scenario of ["evaluate","submit","submit-after"]){
+ const action=scenario==="submit-after"?"submit":scenario;
+ const key="test-crash-"+scenario;
  await publishEvent(sql,{key,correlationId:key,department:"finance",kind:"caos-task",payload:{action}});
- const child=spawn(process.execPath,["--input-type=module","-e",`import postgres from "postgres";import {claimEvent} from "./tools/orchestration.mjs";const sql=postgres(process.env.CAOS_TEST_DATABASE_URL);const [e]=await claimEvent(sql,"finance");console.log(JSON.stringify({id:e.id,fence:e.fence}));setInterval(()=>{},1000);`],{stdio:["ignore","pipe","inherit"]});
+ const child=spawn(process.execPath,["--input-type=module","-e",`import postgres from "postgres";import {claimEvent} from "./tools/orchestration.mjs";const sql=postgres(process.env.CAOS_TEST_DATABASE_URL);const [e]=await claimEvent(sql,"finance");if(process.env.CAOS_SYNTHETIC_AFTER==="yes")await sql\`INSERT INTO synthetic_external_receipts(event_key) VALUES (\${e.event_key})\`;console.log(JSON.stringify({id:e.id,fence:e.fence}));setInterval(()=>{},1000);`],{env:{...process.env,CAOS_SYNTHETIC_AFTER:scenario==="submit-after"?"yes":"no"},stdio:["ignore","pipe","inherit"]});
  let old;
  try{const [chunk]=await once(child.stdout,"data");old=JSON.parse(chunk.toString());}finally{child.kill("SIGKILL");await once(child,"exit");}
  await sql`UPDATE djo2_events SET lease_until=now()-interval '1 second' WHERE id=${old.id}`;
@@ -24,6 +26,13 @@ test("SIGKILL recovery: read retry and write quarantine",async()=>{
  assert.equal(calls,action==="evaluate"?1:0);
  if(action==="evaluate")assert.equal(Number(row.fence),Number(old.fence)+1);
  assert.equal((await finishEvent(sql,old.id,old.fence)).length,0);
+ if(scenario==="submit-after"){
+ const {reconcileSubmission}=await import("../supervisor/reconcile.mjs");
+ const adapter={verifySubmission:async eventKey=>{const [receipt]=await sql`SELECT event_key FROM synthetic_external_receipts WHERE event_key=${eventKey}`;return receipt?{verified:true,eventKey,externalRef:"synthetic:"+eventKey}:null;}};
+ assert.equal((await reconcileSubmission(sql,old.id,adapter)).state,"done");
+ assert.equal((await reconcileSubmission(sql,old.id,adapter)).state,"unavailable");
+ const [count]=await sql`SELECT count(*)::int AS n FROM synthetic_external_receipts WHERE event_key=${key}`;assert.equal(count.n,1);
+ }
  }
  }finally{await sql.end();}
 });
