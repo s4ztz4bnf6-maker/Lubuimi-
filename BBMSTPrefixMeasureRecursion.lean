@@ -366,12 +366,6 @@ theorem prefixFibre_updatedWeight_eq_PAt
   change BBMSTFiniteFibreUpdate.updatedWeight F
       (δ (stageCoordinate hk)) (y (Fin.last k)) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
-  simp only [F, prefixFibreData, prefixUniformFibre,
-    BBMSTUniformFibreInstantiation.toFibreData,
-    BBMSTUniformFibreInstantiation.uniformWeight,
-    BBMSTUniformFibreInstantiation.coveredProportion,
-    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
-    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   -- Give the recursive PAt unfolding named proof witnesses and
   -- transport the whole prefix fibre, not only one membership proposition.
   have hk' : k + 1 ≤ n := by
@@ -383,15 +377,30 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
   cases hhk
   cases hhp
-  dsimp [k] at *
+  -- The two proofs of the stage bound are propositionally equal, but the
+  -- coordinate family still carries their dependent Fin index. Normalize
+  -- that index explicitly before forming the covered/uncovered split.
+  have hstage : stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) := by
+    apply Fin.ext
+    rfl
+  cases hstage
+  -- First eliminate all dependent proof witnesses, then unfold PAt and
+  -- updatedWeight. Otherwise the two syntactically similar fibre tests
+  -- retain different dependent transports and do not reduce together.
+  simp only [F, prefixFibreData, prefixUniformFibre,
+    BBMSTUniformFibreInstantiation.toFibreData,
+    BBMSTUniformFibreInstantiation.uniformWeight,
+    BBMSTUniformFibreInstantiation.coveredProportion,
+    BBMSTFiniteFibreUpdate.updatedWeight, PAt,
+    Finset.mem_univ, Finset.card_univ, ite_true, k, xprev]
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring_nf
-  · simp [hcov, xprev, Finset.mem_univ]
-    ring_nf
+  · intro hnot
+    exact (hnot hcov).elim
+  · split_ifs <;> simp_all [Finset.mem_univ]
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
 
