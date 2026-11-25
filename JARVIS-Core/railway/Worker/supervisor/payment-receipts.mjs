@@ -1,4 +1,5 @@
 // No new license grant.
+import {randomUUID} from "node:crypto";
 import {validateIncomingReceipt} from "./payment-policy.mjs";
 export async function initializePaymentReceipts(sql){
  await sql`CREATE TABLE IF NOT EXISTS djo2_verified_receipts (
@@ -11,6 +12,7 @@ export async function initializePaymentReceipts(sql){
  CHECK(state IN ('pending_processing','completed','review')),
  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
  UNIQUE(provider,external_ref,expected))`;
+ await sql`ALTER TABLE djo2_processing_intents ADD COLUMN IF NOT EXISTS lease_owner TEXT, ADD COLUMN IF NOT EXISTS lease_expires_at TIMESTAMPTZ, ADD COLUMN IF NOT EXISTS fence BIGINT NOT NULL DEFAULT 0`;
  await sql`CREATE TABLE IF NOT EXISTS djo2_payment_review_queue (
  intent_id BIGINT PRIMARY KEY REFERENCES djo2_processing_intents(id),
  reason TEXT NOT NULL, evidence JSONB, status TEXT NOT NULL DEFAULT 'pending_review',
@@ -28,9 +30,16 @@ export async function processPaymentIntent(sql,id,adapter){
  if(!intent||adapter?.provider!==intent.provider||typeof adapter.verifyIncoming!=="function")return {state:"review"};
  if(intent.state==="completed")return {state:"duplicate"};
  if(intent.state==="review")return {state:"review"};
+ const owner=randomUUID();
+ const [claim]=await sql`UPDATE djo2_processing_intents SET lease_owner=${owner},lease_expires_at=now()+interval '60 seconds',fence=fence+1 WHERE id=(SELECT id FROM djo2_processing_intents WHERE id=${id} AND state='pending_processing' AND (lease_expires_at IS NULL OR lease_expires_at<=now()) FOR UPDATE SKIP LOCKED) RETURNING fence`;
+ if(!claim){const [current]=await sql`SELECT state FROM djo2_processing_intents WHERE id=${id}`;return {state:current?.state==="completed"?"duplicate":current?.state==="review"?"review":"pending_processing"};}
+ const heartbeat=setInterval(()=>{void sql`UPDATE djo2_processing_intents SET lease_expires_at=now()+interval '60 seconds' WHERE id=${id} AND lease_owner=${owner} AND fence=${claim.fence} AND state='pending_processing' AND lease_expires_at>now()`.catch(()=>{});},20000);
+ heartbeat.unref?.();
+ try{
  const receipt=await adapter.verifyIncoming(intent.external_ref);
- return sql.begin(async tx=>{
- const [locked]=await tx`SELECT * FROM djo2_processing_intents WHERE id=${id} FOR UPDATE`;
+ return await sql.begin(async tx=>{
+ const [locked]=await tx`SELECT * FROM djo2_processing_intents WHERE id=${id} AND lease_owner=${owner} AND fence=${claim.fence} AND lease_expires_at>now() FOR UPDATE`;
+ if(!locked)return {state:"pending_processing"};
  if(locked.state==="completed")return {state:"duplicate"};
  if(locked.state==="review")return {state:"review"};
  const expected=locked.expected, externalRef=locked.external_ref;
@@ -41,18 +50,19 @@ export async function processPaymentIntent(sql,id,adapter){
  ON CONFLICT DO NOTHING RETURNING invoice_ref`;
  const [existing]=await tx`SELECT invoice_ref,evidence FROM djo2_verified_receipts WHERE provider=${locked.provider} AND external_ref=${externalRef}`;
  if(rows.length||(existing&&existing.invoice_ref===expected.invoiceRef&&validateIncomingReceipt(expected,existing.evidence))){
- await tx`UPDATE djo2_processing_intents SET state='completed' WHERE id=${id}`;
+ await tx`UPDATE djo2_processing_intents SET state='completed',lease_owner=NULL,lease_expires_at=NULL WHERE id=${id}`;
  return {state:rows.length?"recorded":"duplicate"};
  }
  reason=existing?"conflicting_payment_reference":"duplicate_invoice_different_reference";
  }
  await tx`INSERT INTO djo2_payment_review_queue(intent_id,reason,evidence) VALUES (${id},${reason},${tx.json(receipt??null)}) ON CONFLICT DO NOTHING`;
- await tx`UPDATE djo2_processing_intents SET state='review' WHERE id=${id}`;
+ await tx`UPDATE djo2_processing_intents SET state='review',lease_owner=NULL,lease_expires_at=NULL WHERE id=${id}`;
  return {state:"review"};
  });
+ }finally{clearInterval(heartbeat);await sql`UPDATE djo2_processing_intents SET lease_owner=NULL,lease_expires_at=NULL WHERE id=${id} AND lease_owner=${owner} AND fence=${claim.fence}`;}
 }
 export async function resumePaymentIntents(sql,adapters){
- const pending=await sql`SELECT id,provider FROM djo2_processing_intents WHERE state='pending_processing' ORDER BY id LIMIT 100`;
+ const pending=await sql`SELECT id,provider FROM djo2_processing_intents WHERE state='pending_processing' AND (lease_expires_at IS NULL OR lease_expires_at<=now()) ORDER BY id LIMIT 100`;
  const results=[];
  for(const row of pending){
  const adapter=adapters.get(row.provider);
