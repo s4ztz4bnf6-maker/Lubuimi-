@@ -287,6 +287,62 @@ theorem affine_events_disjoint_of_scaled_forms
 #print axioms affine_overlap_forces_offset_relation
 #print axioms affine_events_disjoint_of_scaled_forms
 
+
+/-!
+## Ratio-free finite-fiber mass conservation
+
+The partition identity is proved before introducing any normalized density.
+It therefore remains valid for zero-mass fibers and does not rely on the
+totalized behavior of rational division at denominator zero.
+-/
+
+/-- Finite fiber data before normalization by total mass. -/
+structure RatioFreeFiberMass (F : Type*) [Fintype F] [DecidableEq F] where
+  weight : F → ℚ
+  weight_nonneg : ∀ x, 0 ≤ weight x
+  removed : Finset F
+  surviving : Finset F
+  parts_disjoint : Disjoint removed surviving
+  parts_cover : removed ∪ surviving = Finset.univ
+
+/-- The total mass is exactly the sum of removed and surviving mass. -/
+theorem ratioFreeFiberMass_conservation
+    {F : Type*} [Fintype F] [DecidableEq F]
+    (M : RatioFreeFiberMass F) :
+    (∑ x : F, M.weight x) =
+      (∑ x ∈ M.removed, M.weight x) +
+        (∑ x ∈ M.surviving, M.weight x) := by
+  classical
+  calc
+    (∑ x : F, M.weight x) =
+        ∑ x ∈ (Finset.univ : Finset F), M.weight x := by simp
+    _ = ∑ x ∈ M.removed ∪ M.surviving, M.weight x := by
+          rw [M.parts_cover]
+    _ = (∑ x ∈ M.removed, M.weight x) +
+          (∑ x ∈ M.surviving, M.weight x) :=
+          Finset.sum_union M.parts_disjoint
+
+#print axioms ratioFreeFiberMass_conservation
+
+/-- If a finite fiber has total mass zero and nonnegative point weights,
+then every point weight is zero. This rules out hiding a positive point
+behind a zero denominator in any later normalized density. -/
+theorem ratioFreeFiberMass_zero_total_forces_zero_weights
+    {F : Type*} [Fintype F] [DecidableEq F]
+    (M : RatioFreeFiberMass F)
+    (htotal : (∑ x : F, M.weight x) = 0) :
+    ∀ x, M.weight x = 0 := by
+  classical
+  intro x
+  have hle : M.weight x ≤ ∑ y : F, M.weight y := by
+    exact Finset.single_le_sum
+      (fun y hy => M.weight_nonneg y) (Finset.mem_univ x)
+  have hnonneg : 0 ≤ M.weight x := M.weight_nonneg x
+  rw [htotal] at hle
+  linarith
+
+#print axioms ratioFreeFiberMass_zero_total_forces_zero_weights
+
 end BBMSTAudit
 
 
