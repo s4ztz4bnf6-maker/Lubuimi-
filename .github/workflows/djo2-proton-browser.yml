@@ -1,0 +1,29 @@
+name: DJO2 Proton browser smoke
+on:
+  pull_request:
+    paths:
+      - 'JARVIS-Core/UARA/proton-browser/**'
+      - '.github/workflows/djo2-proton-browser.yml'
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t proton-smoke JARVIS-Core/UARA/proton-browser
+      - name: Verify protected endpoint
+        shell: bash
+        run: |
+          set -eu
+          password=$(openssl rand -hex 24)
+          vnc=$(openssl rand -hex 4)
+          docker volume create proton-smoke-data
+          docker run -d --name proton-smoke -v proton-smoke-data:/data -p 127.0.0.1:18080:8080 -e MODE=login -e PORT=8080 -e ACCESS_USER=smoke -e ACCESS_PASSWORD="$password" -e VNC_PASSWORD="$vnc" proton-smoke
+          trap 'docker rm -f proton-smoke >/dev/null; docker volume rm proton-smoke-data >/dev/null' EXIT
+          for i in $(seq 1 60); do
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:18080/vnc.html || true)" = 401 ]; then break; fi
+            sleep 2
+          done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:18080/vnc.html)" = 401
+          curl --fail --retry 10 --retry-delay 2 -u "smoke:$password" http://127.0.0.1:18080/vnc.html >/dev/null
+          docker exec proton-smoke python -c 'import pathlib; rows=pathlib.Path("/proc/net/tcp").read_text().splitlines()[1:]; listeners=[r.split()[1] for r in rows if r.split()[3]=="0A"]; assert "0100007F:170C" in listeners; assert "0100007F:1710" not in listeners; assert "0100007F:17C0" in listeners; assert "00000000:170C" not in listeners and "00000000:17C0" not in listeners'
