@@ -157,3 +157,34 @@ test("payment intents persist review and recover atomic rollback",async()=>{
  assert.deepEqual(rows.map(r=>[r.external_ref,r.state,r.reason]),[["atomic-A","completed",null],["atomic-B","review","duplicate_invoice_different_reference"]]);
  }finally{await sql.end();}
 });
+
+test("payment lease excludes concurrent adapter calls and fences expired owner",async()=>{
+ const url=process.env.CAOS_TEST_DATABASE_URL;
+ const u=new URL(url);assert.equal(u.hostname,"127.0.0.1");assert.equal(u.pathname,"/caos_test");
+ const sql=postgres(url),other=postgres(url);
+ let release,started;
+ const gate=new Promise(r=>{release=r}),ready=new Promise(r=>{started=r});
+ let first;
+ try{
+ const {initializePaymentReceipts,recordIncomingReceipt,processPaymentIntent}=await import("../supervisor/payment-receipts.mjs");
+ await initializePaymentReceipts(sql);
+ const expected={amountMinor:"1000",currency:"EUR",destination:"synthetic-account",invoiceRef:"lease-fence-test"};
+ const receipt=externalRef=>({...expected,externalRef,verified:true,direction:"incoming"});
+ const adapter={provider:"lease-test",verifyIncoming:async ref=>{started();await gate;return receipt(ref);}};
+ first=recordIncomingReceipt(sql,expected,"lease-A",adapter);
+ await Promise.race([ready,first.then(()=>{throw Error("adapter not entered");})]);
+ const [intent]=await other`SELECT id,fence FROM djo2_processing_intents WHERE provider='lease-test'`;
+ let calls=0;
+ const second={provider:"lease-test",verifyIncoming:async ref=>{calls++;return receipt(ref);}};
+ assert.equal((await processPaymentIntent(other,intent.id,second)).state,"pending_processing");
+ assert.equal(calls,0);
+ await other`UPDATE djo2_processing_intents SET lease_expires_at=now()-interval '1 second' WHERE id=${intent.id}`;
+ assert.equal((await processPaymentIntent(other,intent.id,second)).state,"recorded");
+ release();
+ assert.equal((await first).state,"pending_processing");
+ const [final]=await other`SELECT state,fence FROM djo2_processing_intents WHERE id=${intent.id}`;
+ assert.equal(final.state,"completed");assert.equal(BigInt(final.fence),BigInt(intent.fence)+1n);
+ const [count]=await other`SELECT count(*)::int AS n FROM djo2_verified_receipts WHERE provider='lease-test'`;
+ assert.equal(count.n,1);assert.equal(calls,1);
+ }finally{release();if(first)await first.catch(()=>{});await Promise.all([sql.end(),other.end()]);}
+});
