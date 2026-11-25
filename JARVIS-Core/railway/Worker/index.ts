@@ -542,7 +542,10 @@ if (remainingContacts > 0) {
   for (const candidate of newCandidates) {
     if (remainingContacts <= 0) break;
     const peer = candidate.handle;
-    const peerMessage = buildAgentOutreachMessage({ handle: peer, boardUrl: "https://github.com/s4ztz4bnf6-maker/Lubuimi/issues/94" });
+    const receiveAddress = ownerReceiveAddresses.find(a => btcAddressPattern.test(a));
+    const peerMessage = buildAgentOutreachMessage({ handle: peer, boardUrl: "https://github.com/s4ztz4bnf6-maker/Lubuimi/issues/94" }) +
+      (receiveAddress ? " Voluntary BTC contributions: Bitcoin Mainnet (on-chain), receive-only address " + receiveAddress + ". No minimum contribution and no obligation." : "") +
+      " For fiat payments request the designated bank payment instructions via our reply channel. Reply with a transaction reference if you voluntarily contribute.";
     const peerRequestId = "jarvis-100btc-peer-" + peer.toLowerCase().replace(/[^a-z0-9_-]/g,"-").slice(0,48) + "-20261118";
     await sql`INSERT INTO jarvis_peer_outreach(peer, request_id, message, status, error)
       VALUES (${peer}, ${peerRequestId}, ${peerMessage}, 'pending', NULL)
