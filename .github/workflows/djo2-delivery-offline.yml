@@ -4,6 +4,7 @@ on:
     branches: [jarvis-core]
     paths:
       - 'JARVIS-Core/railway/Worker/githubDelivery*'
+      - 'JARVIS-Core/railway/Worker/githubAuth*'
       - 'JARVIS-Core/railway/Worker/deliveryDispatcher*'
       - 'JARVIS-Core/railway/Worker/delivery-ledger.sql'
       - 'JARVIS-Core/railway/Worker/providerRotationDb.mjs'
@@ -13,6 +14,7 @@ on:
     branches: [jarvis-core]
     paths:
       - 'JARVIS-Core/railway/Worker/githubDelivery*'
+      - 'JARVIS-Core/railway/Worker/githubAuth*'
       - 'JARVIS-Core/railway/Worker/deliveryDispatcher*'
       - 'JARVIS-Core/railway/Worker/delivery-ledger.sql'
       - 'JARVIS-Core/railway/Worker/providerRotationDb.mjs'
@@ -28,4 +30,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test JARVIS-Core/railway/Worker/githubDelivery.test.mjs JARVIS-Core/railway/Worker/deliveryDispatcher.test.mjs
+      - run: node --test JARVIS-Core/railway/Worker/githubDelivery.test.mjs JARVIS-Core/railway/Worker/deliveryDispatcher.test.mjs JARVIS-Core/railway/Worker/githubAuth.test.mjs
