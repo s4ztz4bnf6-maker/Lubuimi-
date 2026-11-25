@@ -171,4 +171,31 @@ theorem weighted_moment_gap_lower_bound_on_subset
           exact mul_nonneg (hp i)
             (mul_nonneg (ha0 i) (sub_nonneg.mpr (ha1 i)))
 
+
+/--
+Strict positivity of the moment gap follows once the source-specific
+geometry supplies a positive-mass subset of uniformly interior shares.
+This theorem closes only the final algebraic implication; it does not
+construct the subset or prove the geometric hypotheses.
+-/
+theorem weighted_moment_gap_positive_on_subset
+    {n : ℕ} (p alpha : Fin n → ℚ) (eps : ℚ) (S : Finset (Fin n))
+    (hp : ∀ i, 0 ≤ p i)
+    (ha0 : ∀ i, 0 ≤ alpha i)
+    (ha1 : ∀ i, alpha i ≤ 1)
+    (heps0 : 0 < eps)
+    (heps1 : eps < 1)
+    (hmass : 0 < ∑ i ∈ S, p i)
+    (hinterior : ∀ i ∈ S, eps ≤ alpha i ∧ alpha i ≤ 1 - eps) :
+    0 <
+      (∑ i : Fin n, p i * alpha i) -
+        (∑ i : Fin n, p i * (alpha i) ^ 2) := by
+  have hgap := weighted_moment_gap_lower_bound_on_subset
+    p alpha eps S hp ha0 ha1 hinterior
+  have hcoef : 0 < eps * (1 - eps) * (∑ i ∈ S, p i) := by
+    exact mul_pos (mul_pos heps0 (sub_pos.mpr heps1)) hmass
+  linarith
+
+#print axioms weighted_moment_gap_positive_on_subset
+
 end BBMSTAudit
