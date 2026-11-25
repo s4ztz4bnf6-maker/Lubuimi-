@@ -276,6 +276,35 @@ await sql`CREATE TABLE IF NOT EXISTS djo2_account_jobs (
 await sql`CREATE TABLE IF NOT EXISTS djo2_account_vault (
  platform TEXT PRIMARY KEY, encrypted_credentials BYTEA NOT NULL, nonce BYTEA NOT NULL, auth_tag BYTEA NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )`;
+
+// AES-256-GCM credential vault; key must be supplied through protected runtime configuration.
+const accountCrypto = await import("node:crypto");
+function accountVaultKey() {
+ const k=Buffer.from(String(env.DJO2_ACCOUNT_VAULT_KEY||""),"base64");
+ if(k.length!==32)throw new Error("Account vault key unavailable");
+ return k;
+}
+function encryptAccountCredential(platform, credential) {
+ const nonce=accountCrypto.randomBytes(12);
+ const cipher=accountCrypto.createCipheriv("aes-256-gcm",accountVaultKey(),nonce);
+ cipher.setAAD(Buffer.from(platform));
+ const encrypted=Buffer.concat([cipher.update(JSON.stringify(credential),"utf8"),cipher.final()]);
+ return {encrypted,nonce,tag:cipher.getAuthTag()};
+}
+function decryptAccountCredential(platform, encrypted, nonce, tag) {
+ const decipher=accountCrypto.createDecipheriv("aes-256-gcm",accountVaultKey(),nonce);
+ decipher.setAAD(Buffer.from(platform));decipher.setAuthTag(tag);
+ return JSON.parse(Buffer.concat([decipher.update(encrypted),decipher.final()]).toString("utf8"));
+}
+await sql`CREATE TABLE IF NOT EXISTS djo2_mail_index (
+ mailbox TEXT NOT NULL, message_id TEXT NOT NULL, sender TEXT, subject TEXT,
+ category TEXT, platform TEXT, received_at TIMESTAMPTZ, processed_at TIMESTAMPTZ,
+ PRIMARY KEY(mailbox,message_id)
+)`;
+if(env.DJO2_ACCOUNT_VAULT_KEY){
+ try {const t=encryptAccountCredential("selftest",{probe:"ok"});console.log("DJO2 vault roundtrip="+(decryptAccountCredential("selftest",t.encrypted,t.nonce,t.tag).probe==="ok"));}
+ catch {console.log("DJO2 vault roundtrip=false");}
+}
 const accountReadiness = {queue:true,vaultSchema:true,emailConfigured:Boolean(env.DJO2_MAIL_HOST && env.DJO2_MAIL_USER && env.DJO2_MAIL_PASSWORD),vaultKeyConfigured:Boolean(env.DJO2_ACCOUNT_VAULT_KEY),registrationAdapterConfigured:false};
 console.log("DJO2 account infrastructure "+JSON.stringify(accountReadiness));
 
