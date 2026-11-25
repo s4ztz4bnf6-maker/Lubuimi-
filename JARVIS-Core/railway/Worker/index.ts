@@ -65,6 +65,19 @@ if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.n
   console.log("JARVIS Gemini quota cooldown active until "+new Date(geminiCooldown.cooldown_until).toISOString()+"; alternative providers="+providerCandidates.length+"; deterministic research fallback="+(!modelConfigured));
 }
 
+// Validate receive-only bank configuration without logging payment data.
+const receiveIban = String(env.JARVIS_RECEIVE_ONLY_IBAN || "").replace(/\s/g,"").toUpperCase();
+const receivePayee = String(env.JARVIS_RECEIVE_ONLY_PAYEE || "").trim();
+function validReceiveIban(value:string):boolean {
+ if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(value)) return false;
+ let rem=0;
+ for(const ch of value.slice(4)+value.slice(0,4)){
+  for(const digit of /[A-Z]/.test(ch)?String(ch.charCodeAt(0)-55):ch) rem=(rem*10+Number(digit))%97;
+ }
+ return rem===1;
+}
+const bankReceiveReady = validReceiveIban(receiveIban) && Boolean(receivePayee);
+console.log("DJO2 receive-only bank configuration validated="+bankReceiveReady+"; private delivery connector not verified");
 const ownerReceiveAddresses=String(env.JARVIS_BTC_RECEIVE_ADDRESSES || env.BTC_RECEIVE_ADDRESS || "").split(",").map(x=>x.trim()).filter(Boolean); // Private Railway runtime configuration; never hardcode wallet addresses.
 const btcAddressPattern=/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 await sql.unsafe("DELETE FROM jarvis_wallet_watch_addresses WHERE address=ANY($1::text[])",[["REDACTED_BTC_RECEIVE_ADDRESS","REDACTED_BTC_RECEIVE_ADDRESS"]]);
