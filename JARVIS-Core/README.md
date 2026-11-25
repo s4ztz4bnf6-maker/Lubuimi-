@@ -56,3 +56,7 @@ Validation: GitHub Actions JARVIS-Core tests succeeded for commit `79ae5ecdedca6
 ## License
 
 Original JARVIS-Core code in this directory is distributed under the [Apache License, Version 2.0](LICENSE); see [NOTICE](NOTICE) for attribution and limitations. This applies only to material the project contributors are entitled to license. Third-party libraries, bundled assets, external services, and imported code retain their own applicable licenses and terms. This does not license the separate mathematical research or other files outside `JARVIS-Core/`.
+
+## Licensing clarification (2026-11-25)
+
+The owner states that the earlier Apache-2.0 designation was an AI-assisted misunderstanding and that compensation for their work was always intended. See [commercial licensing and owner clarification](LICENSE-COMMERCIAL.md). Valid prior grants and third-party licenses remain unaffected.
