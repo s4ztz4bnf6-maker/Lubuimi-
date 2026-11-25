@@ -29,13 +29,14 @@ export async function runCaosCycle(sql,handlers){
      evidence=await handler(event.payload.action);status="done";
     }
    }catch{evidence={reason:"handler_error"};}
-   await sql.begin(async tx=>{
+   const committed=await sql.begin(async tx=>{
     const locked=await tx`SELECT id FROM djo2_events WHERE id=${event.id} AND fence=${event.fence} AND state='running' AND lease_until>now() FOR UPDATE`;
-    if(!locked.length)return;
+    if(!locked.length)return false;
     await tx`INSERT INTO djo2_agent_reports(task_id,department,status,evidence,idempotency_key) VALUES (${event.correlation_id},${department},${status},${tx.json(evidence)},${event.event_key+":"+event.fence}) ON CONFLICT DO NOTHING`;
     await tx`UPDATE djo2_events SET state=${status},lease_until=NULL WHERE id=${event.id} AND fence=${event.fence}`;
+    return true;
    });
-   results.push({department,status});
+   if(committed)results.push({department,status});
   }
  }
  return results;
