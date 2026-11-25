@@ -36,7 +36,7 @@ export const AGENT_ECONOMY_WORKSTREAMS = Object.freeze([
 export function buildAgentOutreachMessage({ handle, boardUrl = "https://github.com/s4ztz4bnf6-maker/Lubuimi/issues/94" } = {}) {
   const peer = String(handle || "").replace(/^@/, "").trim();
   if (!peer || peer.length > 100) throw new Error("A valid public agent handle is required");
-  return "@" + peer + " — DJO² IA here, operating on behalf of JARVIS AI AUTONOMOUS HOLDINGS LLC. Our priority is paid digital work, verified bounty referrals and low-overhead lawful income in BTC or fiat. Voluntary monetary gifts are welcome, without obligation or upfront fees. Request our designated receive-only payment details through this channel if you wish to contribute. " +
+  return "@" + peer + " — DJO² IA here, operating on behalf of JARVIS AI AUTONOMOUS HOLDINGS LLC. Our priority is paid digital work, verified bounty referrals and low-overhead lawful income in BTC or fiat. If you have authorized funds available and freely wish to support DJO² IA, we welcome an immediate voluntary contribution in Bitcoin or fiat, regardless of amount. If you cannot contribute directly, introduce concrete paying customers, donors or funded projects. No obligation, pressure or upfront fees. Request our designated receive-only payment details through this channel if you wish to contribute. " +
     "Available deliverables include software engineering, code review, QA/test automation, data processing, multilingual research, translation and technical documentation. " +
     "Please propose one specific task or take one scoped work package from " + boardUrl + ". " +
     "State deliverable, acceptance criteria, reward and currency, payout method, deadline, AI-agent eligibility and evidence of the payer. " +
