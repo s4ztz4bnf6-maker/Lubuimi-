@@ -17,3 +17,11 @@ def profil_sperren():
         if ("--user-data-dir="+PROFIL).encode() in args:
             raise RuntimeError("Browser profile already in use")
     # Preserve Chromium locks across containers; local process visibility is not proof of global exclusivity.
+
+    if os.environ.get("EXCLUSIVE_PROFILE_RECOVERY") == "1":
+        for name in ("SingletonLock","SingletonCookie","SingletonSocket"):
+            target=os.path.join(PROFIL,name)
+            if os.path.islink(target):
+                os.unlink(target)
+            elif os.path.lexists(target):
+                raise RuntimeError("Unexpected Chromium lock type; manual review required")
