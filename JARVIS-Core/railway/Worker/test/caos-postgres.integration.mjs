@@ -88,3 +88,23 @@ test("active owner policy migration and fail-closed dispatch",async()=>{
  assert.equal((await sql`SELECT revision FROM djo2_project_memory WHERE memory_key='race-test' AND active`).length,1);
  }finally{await sql.end();}
 });
+
+test("verified receipts: parallel idempotency and conflicting invoice evidence",async()=>{
+ const url=process.env.CAOS_TEST_DATABASE_URL;
+ const u=new URL(url);assert.equal(u.hostname,"127.0.0.1");assert.equal(u.pathname,"/caos_test");
+ const sql=postgres(url),other=postgres(url);
+ try{
+ const {initializePaymentReceipts,recordIncomingReceipt}=await import("../supervisor/payment-receipts.mjs");
+ await initializePaymentReceipts(sql);
+ const expected={amountMinor:"1000",currency:"EUR",destination:"synthetic-account",invoiceRef:"receipt-test-invoice"};
+ const adapter={provider:"synthetic-test",verifyIncoming:async externalRef=>({...expected,externalRef,verified:true,direction:"incoming"})};
+ const results=await Promise.all([sql,other].map(db=>recordIncomingReceipt(db,expected,"receipt-1",adapter)));
+ assert.deepEqual(results.map(r=>r.state).sort(),["duplicate","recorded"]);
+ assert.equal((await recordIncomingReceipt(sql,expected,"receipt-1",adapter)).state,"duplicate");
+ assert.equal((await recordIncomingReceipt(sql,expected,"receipt-2",adapter)).state,"review");
+ assert.equal((await recordIncomingReceipt(sql,{...expected,amountMinor:"500"},"receipt-3",adapter)).state,"review");
+ assert.equal((await recordIncomingReceipt(sql,expected,"receipt-4",{...adapter,verifyIncoming:async()=>null})).state,"review");
+ const [count]=await sql`SELECT count(*)::int AS n FROM djo2_verified_receipts WHERE invoice_ref=${expected.invoiceRef}`;
+ assert.equal(count.n,1);
+ }finally{await Promise.all([sql.end(),other.end()]);}
+});
