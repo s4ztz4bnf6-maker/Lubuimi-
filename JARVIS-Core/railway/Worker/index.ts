@@ -16,6 +16,15 @@ import { isIP } from "node:net";
 const env = Bun.env;
 const maxParallelTasks = Math.max(1, Math.min(4, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
+const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
+// INVARIANT: selftest gate precedes all external calls and regular initialization; only isolated DB access is allowed before it.
+if (process.env.DJO2_SELFTEST_ID) {
+  try {
+    const { productionSelftest } = await import("./productionSelftest.mjs");
+    const phase = await productionSelftest(sql, process.env.DJO2_SELFTEST_ID, process.env.DJO2_SELFTEST_SCHEMA);
+    if (phase !== "completed") { await sql.end(); process.exit(0); }
+  } catch(error) { await sql.end(); throw error; }
+}
 const geminiKey = String(env.GEMINI_API_KEY || "").replace(/^\s*API\s+/i, "").trim();
 console.log("JARVIS Gemini key diagnostic: format=" + (geminiKey.startsWith("AQ.") ? "AQ" : geminiKey.startsWith("AIza") ? "AIza" : "other") + "; length=" + geminiKey.length + "; whitespace=" + /\s/.test(geminiKey) + "; wrapped=" + (/^["']/.test(geminiKey) || /["']$/.test(geminiKey)));
 const providerCandidates = [];
@@ -61,13 +70,6 @@ async function freeInference(prompt,maxTokens=256){
   return answer.slice(0, Math.max(256, Math.min(16000, Number(maxTokens)*40 || 10000)));
 }
 
-const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
-if (process.env.DJO2_SELFTEST_ID) {
-  console.log('DJO2_SELFTEST normal processing paused: autonomous worker only');
-  try { const { productionSelftest } = await import("./productionSelftest.mjs"); await productionSelftest(sql, process.env.DJO2_SELFTEST_ID, process.env.DJO2_SELFTEST_SCHEMA); }
-  finally { await sql.end(); }
-  process.exit(0);
-}
 await initializeProjectMemory(sql);
 await initializeOrchestration(sql);
 await initializeRegistration(sql);
