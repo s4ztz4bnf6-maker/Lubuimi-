@@ -2,7 +2,7 @@ import {runToolOnce} from "./providerRotationDb.mjs";
 const enc=encodeURIComponent;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function client(token){
- if(!token)throw Error("GITHUB_DELIVERY_TOKEN missing");
+ if(!token)throw Object.assign(Error("MissingDeliveryCredentials"),{code:"MissingDeliveryCredentials"});
  return async(path,method="GET",body)=>{
  for(let i=0;;i++){
  const r=await fetch("https://api.github.com"+path,{method,signal:AbortSignal.timeout(20000),headers:{authorization:"Bearer "+token,accept:"application/vnd.github+json","x-github-api-version":"2022-11-28","user-agent":"DJO2-IA","content-type":"application/json"},body:body===undefined?undefined:JSON.stringify(body)});
@@ -35,4 +35,12 @@ export async function githubDelivery(sql,taskId,action,args){
  const proof=await gh(up+"/pulls/"+pr.number);if(proof.head.sha!==pr.head.sha||!(proof.state==="open"||proof.merged))throw Error("PR not verified");
  return {number:proof.number,url:proof.html_url,headSha:proof.head.sha,verified:true};
  });
+}
+
+export async function checkDeliveryReady(repo,issueNumber){
+ const gh=client(process.env.GITHUB_DELIVERY_TOKEN);
+ if(!/^[-\w.]+\/[-\w.]+$/.test(repo)||!Number.isSafeInteger(issueNumber)||issueNumber<1)throw Error("Invalid issue");
+ const user=await gh("/user");const issue=await gh("/repos/"+repo+"/issues/"+issueNumber);
+ if(issue.state!=="open"||issue.locked||issue.pull_request)throw Error("Issue not eligible");
+ return {authenticated:true,githubUser:user.login,issueNumber:issue.number,issueState:issue.state,writeReady:false,note:"Bounty eligibility and test gate still required"};
 }
