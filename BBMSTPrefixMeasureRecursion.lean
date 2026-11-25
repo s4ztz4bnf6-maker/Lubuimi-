@@ -371,9 +371,10 @@ theorem prefixFibre_updatedWeight_eq_PAt
       prefixIndex hj (Fin.last k) := by
     apply Fin.ext
     rfl
-  -- Eliminate the equality before constructing the fibre. This makes the
-  -- stage coordinate and the dependent prefix endpoint definitionally equal.
-  cases hstage.symm
+  -- Rewrite every dependent occurrence in the forward direction before
+  -- constructing the fibre, so stageCoordinate hk is definitionally the
+  -- prefix endpoint index.
+  rw [hstage] at *
   let x := y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
