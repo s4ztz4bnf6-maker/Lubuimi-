@@ -268,6 +268,14 @@ console.log("JARVIS workstream registry: " + workstreamStats.enabled + "/" + wor
 
 await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, memory_key TEXT NOT NULL UNIQUE, title TEXT NOT NULL, content TEXT NOT NULL, source_type TEXT NOT NULL DEFAULT 'task_result', source_task_id BIGINT, confidence TEXT NOT NULL DEFAULT 'unverified', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
+const ownerPaymentPolicy = "Owner mandate 2026-11-25: prioritize lawful paid work, immediate voluntary contributions and concrete payer referrals worldwide through authorized agent channels and assistants. Share configured BTC receive-only address in permitted outreach. Share IBAN privately only for concrete payment or authorized forwarding to identified payer. No credentials, no spending without owner approval. Owner manually confirms bank receipts. Distinguish message sent, delivery verified and actual payment; never invent evidence.";
+await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence)
+ VALUES ('owner:djo2-payment-policy-v1','Owner payment and agent cooperation mandate',${ownerPaymentPolicy},'owner_instruction','owner_directive')
+ ON CONFLICT(memory_key) DO UPDATE SET content=EXCLUDED.content, title=EXCLUDED.title, source_type=EXCLUDED.source_type, confidence=EXCLUDED.confidence, updated_at=NOW()
+ WHERE agent_memory.content IS DISTINCT FROM EXCLUDED.content`;
+const [storedPaymentPolicy] = await sql`SELECT content FROM agent_memory WHERE memory_key='owner:djo2-payment-policy-v1'`;
+console.log("DJO2 owner payment policy PostgreSQL readback="+(storedPaymentPolicy?.content===ownerPaymentPolicy));
+
 await sql`CREATE TABLE IF NOT EXISTS djo2_task_checkpoints (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, attempt INTEGER NOT NULL, step INTEGER NOT NULL, phase TEXT NOT NULL, note TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS djo2_task_checkpoints_lookup ON djo2_task_checkpoints(task_id,id DESC)`;
 await sql`CREATE TABLE IF NOT EXISTS djo2_verified_task_priority (
