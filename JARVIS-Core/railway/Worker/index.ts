@@ -268,6 +268,21 @@ console.log("JARVIS workstream registry: " + workstreamStats.enabled + "/" + wor
 
 await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, memory_key TEXT NOT NULL UNIQUE, title TEXT NOT NULL, content TEXT NOT NULL, source_type TEXT NOT NULL DEFAULT 'task_result', source_task_id BIGINT, confidence TEXT NOT NULL DEFAULT 'unverified', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
+try {
+ const hordeBase="https://oai.aihorde.net/v1";
+ const headers={authorization:"Bearer 0000000000","content-type":"application/json"};
+ const listing=await fetch(hordeBase+"/models",{headers,signal:AbortSignal.timeout(10000)});
+ if(!listing.ok)throw new Error("Model listing HTTP "+listing.status);
+ const models=(await listing.json()).data;
+ const model=Array.isArray(models)?models.find(m=>typeof m.id==="string"&&m.id.length>0)?.id:null;
+ if(!model)throw new Error("No available model");
+ const response=await fetch(hordeBase+"/chat/completions",{method:"POST",headers,body:JSON.stringify({model,messages:[{role:"user",content:"Reply only PONG."}],max_tokens:16,temperature:0}),signal:AbortSignal.timeout(60000)});
+ const body=await response.json();
+ const passed=response.ok&&String(body.choices?.[0]?.message?.content||"").trim()==="PONG";
+ console.log("DJO2 AI Horde anonymous smoke test "+JSON.stringify({model,httpStatus:response.status,passed}));
+ await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES ('provider:ai-horde','AI Horde anonymous public research provider',${JSON.stringify({endpoint:hordeBase,model,passed,checkedAt:new Date().toISOString(),scope:"public nonconfidential tasks only"})},'provider_probe',${passed?"verified":"unverified"}) ON CONFLICT(memory_key) DO UPDATE SET content=EXCLUDED.content,confidence=EXCLUDED.confidence,updated_at=NOW()`;
+}catch(e){console.log("DJO2 AI Horde probe unavailable: "+String(e?.message||e).slice(0,180));}
+
 const ownerPaymentPolicy = "Owner mandate 2026-11-25: prioritize lawful paid work, immediate voluntary contributions and concrete payer referrals worldwide through authorized agent channels and assistants. Share configured BTC receive-only address in permitted outreach. Share IBAN privately only for concrete payment or authorized forwarding to identified payer. No credentials, no spending without owner approval. Owner manually confirms bank receipts. Distinguish message sent, delivery verified and actual payment; never invent evidence.";
 await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence)
  VALUES ('owner:djo2-payment-policy-v1','Owner payment and agent cooperation mandate',${ownerPaymentPolicy},'owner_instruction','owner_directive')
