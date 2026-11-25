@@ -1001,7 +1001,21 @@ async function ask(messages, tools) {
       const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
-      const result=JSON.parse(responseText);if(!result.choices?.[0]?.message)throw new Error("Provider returned no chat completion");
+      const result=JSON.parse(responseText);
+      const message=result.choices?.[0]?.message;
+      if(!message)throw new Error("Provider returned no chat completion");
+      const calls=message.tool_calls??[];
+      if(!Array.isArray(calls))throw new Error("INVALID_TOOL_CALLS");
+      if(typeof message.content==="string" && /<tool_call\b|<function\s*=/i.test(message.content))throw new Error("UNEXECUTED_XML_TOOL_CALL");
+      if(!calls.length && (typeof message.content!=="string" || !message.content.trim()))throw new Error("EMPTY_MODEL_RESPONSE");
+      const allowed=new Set(tools.map(t=>t.function?.name));
+      const ids=new Set();
+      for(const call of calls){
+        if(call.type!=="function" || typeof call.id!=="string" || !call.id || ids.has(call.id) || !allowed.has(call.function?.name))throw new Error("INVALID_OR_UNKNOWN_TOOL");
+        ids.add(call.id);
+        const args=JSON.parse(call.function.arguments||"{}");
+        if(!args || typeof args!=="object" || Array.isArray(args))throw new Error("INVALID_TOOL_ARGUMENTS");
+      }
       return result;
     });
     data._jarvisProvider=provider.name;console.log("JARVIS inference provider selected: "+provider.name+" / "+provider.model);return data;
@@ -1185,7 +1199,7 @@ try {
       }catch(e){messages.push({role:"tool",tool_call_id:call.id,content:JSON.stringify({error:e instanceof Error?e.message:"Tool execution failed"})});}
     }
   }
-  if (!finalText) finalText = "Task reached the maximum number of tool steps. Review the research trace and resubmit with a narrower prompt.";
+  if (!finalText.trim()) throw new Error("TASK_NOT_COMPLETED: tool step limit or empty response");
   await sql`UPDATE agent_tasks SET status='completed', result=${finalText}, completed_at=NOW(), error=NULL, next_retry_at=NULL WHERE id=${task.id}`;
   await sql`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error)
     VALUES (${task.id},${Number(task.attempt_count||0)+1},'completed',NULL)
