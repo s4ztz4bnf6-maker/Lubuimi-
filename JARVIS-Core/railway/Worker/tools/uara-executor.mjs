@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 import {evaluateRegistration} from "./uara-policy.mjs";
 import {recordVerifiedReceipt} from "./uara-store.mjs";
 // Inputs must come from trusted server-side configuration, not model assertions.
