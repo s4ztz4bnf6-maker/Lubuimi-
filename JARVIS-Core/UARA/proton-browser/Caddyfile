@@ -1,5 +1,9 @@
+{
+    admin off
+    auto_https off
+}
 http://:{$PORT} {
-    basicauth {
+    basic_auth {
         {$ACCESS_USER} {$ACCESS_HASH}
     }
     reverse_proxy 127.0.0.1:6080
