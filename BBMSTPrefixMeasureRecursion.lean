@@ -378,7 +378,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
   let F := prefixFibreData C (A := A) (k := k) hk xprev
     (PAt C (A := A) a ha P0 δ j hprev xprev) hbase'
   change BBMSTFiniteFibreUpdate.updatedWeight F
-      (δ (stageCoordinate hk)) (y (Fin.last k)) =
+      (δ (stageCoordinate hk)) (y (Fin.last (a + j))) =
     PAt C (A := A) a ha P0 δ (j + 1) hj y
   by_cases hcov :
       y (Fin.last (a + j)) ∈
