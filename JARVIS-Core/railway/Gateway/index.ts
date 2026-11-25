@@ -1,4 +1,4 @@
-import { identityMessages } from "../identity.mjs";
+import { identityMessages } from "./identity.mjs";
 import {publicAgentCard,probePublicAgent,exchangeWithPeer} from "./src/agent-public-bridge";
 import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
