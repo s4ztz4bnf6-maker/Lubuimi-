@@ -1064,7 +1064,10 @@ function budgetInference(messages,tools,model){
  let selected=groups.slice(Math.max(first+1,0));
  while(selected.length>1&&!fits([...fixed,...mandatory,...selected.flat()]))selected.shift();
  const compact=[...fixed,...mandatory,...selected.flat()];
- if(!fits(compact))throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
+ if(!fits(compact)){
+ console.warn("DJO2_CONTEXT_BUDGET",JSON.stringify({model,limit,output,systemEstimate:estimate(fixed),instructionEstimate:estimate(mandatory),historyEstimate:estimate(selected.flat()),toolEstimate:estimate(tools),toolCount:tools.length,totalEstimate:estimate({model,messages:compact,tools})}));
+ throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
+ }
  return {messages:compact,output};
 }
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
