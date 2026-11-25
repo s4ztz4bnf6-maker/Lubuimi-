@@ -24,3 +24,38 @@ import {productionSelftest} from "../productionSelftest.mjs";
 test("production probe across fresh database clients",async()=>{const id=crypto.randomUUID();let sql=postgres(process.env.DATABASE_URL);try{await productionSelftest(sql,id);assert.equal((await loadExcludedProviders(sql,"selftest:"+id)).size,0);await sql.end();sql=postgres(process.env.DATABASE_URL);const [row]=await sql`SELECT count(*)::int AS n FROM djo2_selftest.djo2_provider_exclusions WHERE task_id=${"selftest:"+id}`;assert.equal(row.n,1);await productionSelftest(sql,id);const [after]=await sql`SELECT count(*)::int AS n FROM djo2_selftest.djo2_provider_exclusions WHERE task_id=${"selftest:"+id}`;assert.equal(after.n,0);await assert.rejects(productionSelftest(sql,id,"public"),/invalid isolated schema/);}finally{await sql.end();}});
 
 test("isolated probe leaves public rows unchanged on success and failure",async()=>{const sql=postgres(process.env.DATABASE_URL);const id=crypto.randomUUID();const schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);const snapshot=async()=>{const out={};for(const name of ["djo2_provider_exclusions","djo2_task_effects","djo2_system_flags"]){const [r]=await sql`SELECT coalesce(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text),'[]'::jsonb) AS rows FROM ${sql("public."+name)} t`;out[name]=r.rows;}return out;};try{await initRotation(sql);const before=await snapshot();await productionSelftest(sql,id,schema);assert.deepEqual(await snapshot(),before);await productionSelftest(sql,id,schema);assert.deepEqual(await snapshot(),before);await assert.rejects(productionSelftest(sql,id,"public"),/invalid isolated schema/);assert.deepEqual(await snapshot(),before);await assert.rejects(productionSelftest(sql,"bad",schema),/invalid selftest ID/);assert.deepEqual(await snapshot(),before);}finally{await sql`DROP SCHEMA IF EXISTS ${sql(schema)} CASCADE`;await sql.end();}});
+
+import {spawn} from "node:child_process";
+import {once} from "node:events";
+const moduleUrl=new URL("../productionSelftest.mjs",import.meta.url).href;
+function childProbe(id,schema){
+ return spawn(process.execPath,["--input-type=module","-e",`import postgres from 'postgres';import {productionSelftest} from ${JSON.stringify(moduleUrl)};const sql=postgres(process.env.DATABASE_URL);try{console.log('PHASE='+await productionSelftest(sql,process.argv[1],process.argv[2]));}finally{await sql.end();}`,id,schema],{stdio:["ignore","pipe","pipe"]});
+}
+async function phase(id,schema){
+ const child=childProbe(id,schema);let output="",errors="";child.stdout.on("data",x=>output+=x);child.stderr.on("data",x=>errors+=x);
+ const [code]=await once(child,"close");assert.equal(code,0,errors);return output;
+}
+test("one-shot state survives three separate processes and new ID",async()=>{
+ const id=crypto.randomUUID(),schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);
+ const sql=postgres(process.env.DATABASE_URL);
+ try{
+ assert.match(await phase(id,schema),/PHASE=write/);
+ assert.match(await phase(id,schema),/PHASE=persist/);
+ assert.match(await phase(id,schema),/PHASE=completed/);
+ assert.match(await phase(crypto.randomUUID(),schema),/PHASE=write/);
+ const [row]=await sql`SELECT state FROM ${sql(schema+".selftest_runs")} WHERE run_id=${id}`;assert.equal(row.state,"COMPLETED");
+ }finally{await sql.end();}
+});
+test("live lock is busy; killed session leaves unknown, never retries",async()=>{
+ const id=crypto.randomUUID(),schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);
+ const sql=postgres(process.env.DATABASE_URL);
+ const child=spawn(process.execPath,["--input-type=module","-e",`import postgres from 'postgres';const sql=postgres(process.env.DATABASE_URL,{max:1});const [id,schema]=process.argv.slice(1);await sql\`SELECT pg_advisory_lock(hashtext('djo2-selftest'),hashtext(\${schema}))\`;await sql\`CREATE SCHEMA \${sql(schema)}\`;await sql\`CREATE TABLE \${sql(schema+'.selftest_runs')} (run_id text PRIMARY KEY,state text NOT NULL,updated_at timestamptz DEFAULT now())\`;await sql\`INSERT INTO \${sql(schema+'.selftest_runs')}(run_id,state) VALUES(\${id},'IN_PROGRESS')\`;console.log('READY');setInterval(()=>{},1000);`,id,schema],{stdio:["ignore","pipe","pipe"]});
+ const closed=once(child,"close");
+ try{
+ await new Promise((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error("child readiness timeout")),10000);child.stdout.on("data",x=>{out+=x;if(out.includes("READY")){clearTimeout(timer);resolve();}});child.once("exit",()=>{clearTimeout(timer);reject(Error("child exited"));});});
+ assert.match(await phase(id,schema),/PHASE=busy/);
+ child.kill("SIGKILL");await closed;
+ assert.match(await phase(id,schema),/PHASE=unknown/);
+ assert.match(await phase(id,schema),/PHASE=unknown/);
+ }finally{child.kill("SIGKILL");await sql.end();}
+});
