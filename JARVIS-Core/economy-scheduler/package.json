@@ -13,5 +13,6 @@
   },
   "dependencies": {
     "postgres": "^3.4.7"
-  }
+  },
+  "license": "UNLICENSED"
 }
