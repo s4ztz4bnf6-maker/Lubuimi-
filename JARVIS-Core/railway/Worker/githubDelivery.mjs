@@ -1,3 +1,4 @@
+import {deliveryToken} from "./githubAuth.mjs";
 import {runToolOnce} from "./providerRotationDb.mjs";
 const enc=encodeURIComponent;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -11,7 +12,7 @@ function client(token){
  }};
 }
 export async function githubDelivery(sql,taskId,action,args){
- const gh=client(process.env.GITHUB_DELIVERY_TOKEN);
+ const gh=client(await deliveryToken());
  if(!taskId||!["claim","deliver"].includes(action)||!/^[-\w.]+\/[-\w.]+$/.test(args.repo)||!Number.isSafeInteger(args.issue)||args.issue<1)throw Error("Invalid delivery request");
  const up="/repos/"+args.repo, issue=await gh(up+"/issues/"+args.issue);
  if(issue.state!=="open"||issue.locked||issue.pull_request)throw Error("Issue not eligible");
@@ -38,7 +39,7 @@ export async function githubDelivery(sql,taskId,action,args){
 }
 
 export async function checkDeliveryReady(repo,issueNumber){
- const gh=client(process.env.GITHUB_DELIVERY_TOKEN);
+ const gh=client(await deliveryToken());
  if(!/^[-\w.]+\/[-\w.]+$/.test(repo)||!Number.isSafeInteger(issueNumber)||issueNumber<1)throw Error("Invalid issue");
  const user=await gh("/user");const issue=await gh("/repos/"+repo+"/issues/"+issueNumber);
  if(issue.state!=="open"||issue.locked||issue.pull_request)throw Error("Issue not eligible");
