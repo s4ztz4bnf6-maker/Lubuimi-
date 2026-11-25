@@ -1,0 +1,7 @@
+{
+  "name": "@jarvis-ai-llc/lightning-receive",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "dependencies": { "@getalby/sdk": "9.0.0" }
+}
