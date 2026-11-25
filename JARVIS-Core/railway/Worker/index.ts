@@ -257,6 +257,16 @@ await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, mem
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
 await sql`CREATE TABLE IF NOT EXISTS djo2_task_checkpoints (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, attempt INTEGER NOT NULL, step INTEGER NOT NULL, phase TEXT NOT NULL, note TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS djo2_task_checkpoints_lookup ON djo2_task_checkpoints(task_id,id DESC)`;
+await sql`CREATE TABLE IF NOT EXISTS djo2_memory_selftest (test_key TEXT PRIMARY KEY, marker TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+const [previousMemoryProbe] = await sql`SELECT marker FROM djo2_memory_selftest WHERE test_key='restart-v1'`;
+if(previousMemoryProbe) {
+ if(previousMemoryProbe.marker !== "djo2-persistence-v1") throw new Error("DJO2 memory selftest marker mismatch");
+ console.log("DJO2_MEMORY_SELFTEST: persisted marker recovered from previous execution");
+} else {
+ await sql`INSERT INTO djo2_memory_selftest(test_key,marker) VALUES('restart-v1','djo2-persistence-v1') ON CONFLICT DO NOTHING`;
+ console.log("DJO2_MEMORY_SELFTEST: marker committed; recovery verification pending next execution");
+}
+
 async function saveDjoCheckpoint(taskId,attempt,step,phase,note) {
  await sql`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${attempt},${step},${phase},${String(note).slice(0,12000)})`;
 }
