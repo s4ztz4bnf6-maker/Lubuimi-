@@ -2,7 +2,7 @@
 import {randomUUID} from "node:crypto";
 import {excludeProvider,clearExcluded,runToolOnce,initRotation,setFlag} from "./providerRotationDb.mjs";
 import assert from "node:assert/strict";
-export async function productionSelftest(root,runId,schema='djo2_selftest'){
+export async function productionSelftest(root,runId,schema='djo2_selftest', {beforeWriteCommit}={}){
  if(!/^djo2_selftest(?:_[a-z0-9]{1,32})?$/.test(schema))throw Error('invalid isolated schema');
  if(!/^[a-zA-Z0-9_-]{8,80}$/.test(runId))throw Error("invalid selftest ID");
  const session=await root.reserve();
@@ -22,16 +22,14 @@ export async function productionSelftest(root,runId,schema='djo2_selftest'){
  if(row?.state==='COMPLETED'){log("skip",{state:"COMPLETED"});return "completed";}
  if(row?.state==='UNKNOWN'){log("skip",{state:"UNKNOWN"});return "unknown";}
  if(row?.state==='IN_PROGRESS'){
- const changed=await session`UPDATE ${state} SET state='UNKNOWN',updated_at=now() WHERE run_id=${runId} AND state='IN_PROGRESS' RETURNING run_id`;
- assert.equal(changed.length,1);log("unknown",{state:"UNKNOWN"});return "unknown";
+ await transitionSelftest(session,schema,runId,"IN_PROGRESS","UNKNOWN");log("unknown",{state:"UNKNOWN"});return "unknown";
  }
  if(row?.state==='WRITTEN'){
  const result=await transaction(async sql=>{
  const [marker]=await sql`SELECT 1 AS present FROM ${sql(schema+'.djo2_provider_exclusions')} WHERE task_id=${'selftest:'+runId} AND tag='selftest:marker'`;
  assert.ok(marker);
  await clearExcluded(sql,'selftest:'+runId,schema);
- const changed=await sql`UPDATE ${sql(schema+'.selftest_runs')} SET state='COMPLETED',updated_at=now() WHERE run_id=${runId} AND state='WRITTEN' RETURNING run_id`;
- assert.equal(changed.length,1);
+ await transitionSelftest(sql,schema,runId,"WRITTEN","COMPLETED");
  return {persist:"PASS",commit:"PASS"};
  });
  log("persist",result);return "persist";
@@ -42,8 +40,8 @@ export async function productionSelftest(root,runId,schema='djo2_selftest'){
  await sql`SET LOCAL search_path TO ${sql(schema)}, pg_catalog`;
  await initRotation(sql,schema);
  const result=await probe(sql,runId,schema);
- const changed=await sql`UPDATE ${sql(schema+'.selftest_runs')} SET state='WRITTEN',updated_at=now() WHERE run_id=${runId} AND state='IN_PROGRESS' RETURNING run_id`;
- assert.equal(changed.length,1);
+ if(beforeWriteCommit)await beforeWriteCommit();
+ await transitionSelftest(sql,schema,runId,"IN_PROGRESS","WRITTEN");
  return result;
  });
  console.log(JSON.stringify({...result,commit:"PASS"}));return "write";
@@ -71,4 +69,11 @@ async function probe(sql,runId,schema){
  await excludeProvider(sql,id,"selftest:marker","synthetic persistence probe",schema);
  return {event:"DJO2_SELFTEST",runId,phase:"write",connection:"PASS",db:db.db,server:db.server,tables:"PASS",concurrency:"PASS",reuse:"PASS",unknown:"PASS",killIsolated:"PASS",persist:"PENDING_NEXT_PROCESS"};
  }finally{await sql`DELETE FROM ${sql(schema+'.djo2_task_effects')} WHERE task_id=${tid}`;}
+}
+
+export async function transitionSelftest(sql,schema,runId,from,to){
+ if(!/^djo2_selftest(?:_[a-z0-9]{1,32})?$/.test(schema))throw Error("invalid isolated schema");
+ assert.ok(["IN_PROGRESS:UNKNOWN","IN_PROGRESS:WRITTEN","WRITTEN:COMPLETED"].includes(from+":"+to),"invalid transition");
+ const changed=await sql`UPDATE ${sql(schema+'.selftest_runs')} SET state=${to},updated_at=now() WHERE run_id=${runId} AND state=${from} RETURNING run_id`;
+ assert.equal(changed.length,1,"selftest transition must affect exactly one row");
 }
