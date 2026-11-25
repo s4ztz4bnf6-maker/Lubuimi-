@@ -6,7 +6,15 @@ export async function initializeCaos(sql){
  status TEXT NOT NULL, evidence JSONB NOT NULL DEFAULT '{}',
  idempotency_key TEXT UNIQUE NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`;
 }
+export async function recoverCaosEvents(sql){
+ return sql`UPDATE djo2_events SET state=CASE
+ WHEN payload->>'action' IN ('discover','evaluate','research') THEN 'queued'
+ ELSE 'review' END, lease_until=NULL
+ WHERE kind='caos-task' AND state='running' AND lease_until<=now()
+ RETURNING id,state,fence`;
+}
 export async function runCaosCycle(sql,handlers){
+ await recoverCaosEvents(sql);
  const results=[];
  for(const department of departments){
   const handler=handlers[department];
