@@ -1,3 +1,4 @@
+import { identityMessages } from "../identity.mjs";
 import {publicAgentCard,probePublicAgent,exchangeWithPeer} from "./src/agent-public-bridge";
 import {discoverPublicBounties} from "./src/public-bounty-feed";
 import {configuredChatModels,runAcrossModels} from "./src/model-capability-router";
@@ -932,7 +933,7 @@ const server = Bun.serve({
           upstream = await fetch(endpoint, {
             method: "POST",
             headers: { authorization: `Bearer ${env.MODEL_API_KEY}`, "content-type": "application/json" },
-            body: JSON.stringify({ model: env.MODEL_NAME || "gpt-4o-mini", messages: [{ role: "user", content }] }),
+            body: JSON.stringify({ model: env.MODEL_NAME || "gpt-4o-mini", messages: identityMessages([{ role: "user", content }]) }),
             signal: AbortSignal.timeout(60000)
           });
         } catch (error) {
@@ -1195,7 +1196,7 @@ const server = Bun.serve({
         const upstream = await fetch(base + "/chat/completions", {
           method: "POST",
           headers: { "authorization": `Bearer ${env.MODEL_API_KEY}`, "content-type": "application/json" },
-          body: JSON.stringify({ model: body.model || env.MODEL_NAME || "gpt-4o-mini", messages: body.messages, temperature: body.temperature ?? 0.2 }),
+          body: JSON.stringify({ model: body.model || env.MODEL_NAME || "gpt-4o-mini", messages: identityMessages(body.messages), temperature: body.temperature ?? 0.2 }),
           signal: AbortSignal.timeout(60000)
         });
         const payload = await upstream.text();
