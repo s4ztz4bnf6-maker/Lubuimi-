@@ -219,4 +219,85 @@ theorem sum_M_qr_le_Gamma_qr
 
 #print axioms sum_M_qr_le_Gamma_qr
 
+
+/-!
+The next namespace is a concrete finite realization of the recovered source
+formulas F_q(x) = {z : z mod B_q = x} and
+V_q = {z : z mod B_q ∈ U_q}. The modulus and the old-uncovered base set
+remain explicit parameters: this does not manufacture the historical
+definition of U_q or the block family C_h.
+-/
+namespace APW4CanonicalQFibreProjection
+
+/-- Reduction of a residue modulo N to its canonical residue modulo B. -/
+def residueProjection {N B : ℕ} (hB : 0 < B) (_hdiv : B ∣ N) (z : Fin N) : Fin B :=
+  ⟨z.val % B, Nat.mod_lt _ hB⟩
+
+/-- A canonical finite-model fibre over a base residue x modulo B. -/
+def qFibre {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) : Finset (Fin N) :=
+  Finset.univ.filter (fun z => residueProjection hB hdiv z = x)
+
+/-- The canonical lift of a base subset U modulo B to Fin N. -/
+def liftedUncoveredSet {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N)
+    (U : Finset (Fin B)) : Finset (Fin N) :=
+  Finset.univ.filter (fun z => residueProjection hB hdiv z ∈ U)
+
+theorem mem_qFibre_iff
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (x : Fin B) (z : Fin N) :
+    z ∈ qFibre hB hdiv x ↔ residueProjection hB hdiv z = x := by
+  constructor
+  · intro hz
+    exact (Finset.mem_filter.mp hz).2
+  · intro hz
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hz⟩
+
+theorem mem_liftedUncoveredSet_iff
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B)) (z : Fin N) :
+    z ∈ liftedUncoveredSet hB hdiv U ↔ residueProjection hB hdiv z ∈ U := by
+  constructor
+  · intro hz
+    exact (Finset.mem_filter.mp hz).2
+  · intro hz
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hz⟩
+
+/-- In the canonical model, a fibre over x ∈ U lies in the lift of U. This
+is a reusable set-theoretic lemma; it is not a proof that the historical
+APW4 fibre objects have these exact domains. -/
+theorem qFibre_subset_liftedUncoveredSet
+    {N B : ℕ} (hB : 0 < B) (hdiv : B ∣ N) (U : Finset (Fin B))
+    (x : Fin B) (hx : x ∈ U) :
+    qFibre hB hdiv x ⊆ liftedUncoveredSet hB hdiv U := by
+  intro z hz
+  rw [mem_qFibre_iff hB hdiv x z] at hz
+  rw [mem_liftedUncoveredSet_iff hB hdiv U z, hz]
+  exact hx
+
+/-- The canonical q/r model fibres instantiate the local M/Gamma bound.
+The result is conditional on a later source equivalence and on pairwise
+disjointness of the actual block family; it does not close the historical
+APW4 fibre or event-to-BIB reconstruction. -/
+theorem sum_M_qr_le_Gamma_of_projected_fibres
+    {N Bq Br : ℕ} (hBq : 0 < Bq) (hBqdiv : Bq ∣ N) (hBr : 0 < Br) (hBrdiv : Br ∣ N)
+    (Uq : Finset (Fin Bq)) (Ur : Finset (Fin Br))
+    (x : Fin Bq) (y : Fin Br) (hx : x ∈ Uq) (hy : y ∈ Ur)
+    {H : Type*} [Fintype H] [DecidableEq H]
+    (C : H → Finset (Fin N)) (g : H)
+    (hC : ∀ h₁ h₂, h₁ ≠ h₂ → Disjoint (C h₁) (C h₂)) :
+    (∑ h : H,
+      APW4HistoricalQFibre.M_qr
+        (qFibre hBq hBqdiv x) (qFibre hBr hBrdiv y) C g h)
+      ≤
+    APW4HistoricalQFibre.Gamma_qr
+      (liftedUncoveredSet hBq hBqdiv Uq)
+      (liftedUncoveredSet hBr hBrdiv Ur) C g := by
+  apply APW4HistoricalQFibre.sum_M_qr_le_Gamma_qr
+  · exact qFibre_subset_liftedUncoveredSet hBq hBqdiv Uq x hx
+  · exact qFibre_subset_liftedUncoveredSet hBr hBrdiv Ur y hy
+  · exact hC
+
+#print axioms qFibre_subset_liftedUncoveredSet
+#print axioms sum_M_qr_le_Gamma_of_projected_fibres
+
+end APW4CanonicalQFibreProjection
+
 end APW4HistoricalQFibre
