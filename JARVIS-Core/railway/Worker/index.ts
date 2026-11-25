@@ -320,7 +320,19 @@ if(env.DJO2_PROTON_BROWSER_PROBE==="true"){
  }catch(e){console.log("DJO2 Proton browser probe failed "+String(e?.message||e).slice(0,250));}
  finally{await browser?.close();}
 }
-const accountReadiness = {queue:true,vaultSchema:true,emailConfigured:Boolean(env.DJO2_MAIL_HOST && env.DJO2_MAIL_USER && env.DJO2_MAIL_PASSWORD),vaultKeyConfigured:Boolean(env.DJO2_ACCOUNT_VAULT_KEY),registrationAdapterConfigured:false};
+// UARA: fail-closed registration adapter registry. No external submission without a reviewed adapter.
+await sql`CREATE TABLE IF NOT EXISTS djo2_registration_adapters (
+ platform TEXT PRIMARY KEY, registration_url TEXT NOT NULL, policy_url TEXT NOT NULL,
+ automation_allowed BOOLEAN NOT NULL DEFAULT FALSE, zero_cost BOOLEAN NOT NULL DEFAULT FALSE,
+ reviewed_at TIMESTAMPTZ, enabled BOOLEAN NOT NULL DEFAULT FALSE
+)`;
+await sql`UPDATE djo2_account_jobs j SET status='awaiting_adapter', detail='No enabled, reviewed zero-cost registration adapter', updated_at=NOW()
+ WHERE j.status IN ('queued','checking') AND NOT EXISTS (
+ SELECT 1 FROM djo2_registration_adapters a WHERE a.platform=j.platform AND a.enabled AND a.automation_allowed AND a.zero_cost AND a.reviewed_at IS NOT NULL AND a.registration_url=j.registration_url
+ )`;
+const [uaraAdapterStats]=await sql`SELECT COUNT(*)::int AS enabled FROM djo2_registration_adapters WHERE enabled AND automation_allowed AND zero_cost AND reviewed_at IS NOT NULL`;
+console.log("DJO2 UARA registry "+JSON.stringify({enabledAdapters:uaraAdapterStats.enabled,externalRegistrationVerified:false}));
+const accountReadiness = {queue:true,vaultSchema:true,emailConfigured:Boolean(env.DJO2_MAIL_HOST && env.DJO2_MAIL_USER && env.DJO2_MAIL_PASSWORD),vaultKeyConfigured:Boolean(env.DJO2_ACCOUNT_VAULT_KEY),registrationAdapterConfigured:Number(uaraAdapterStats.enabled)>0};
 console.log("DJO2 account infrastructure "+JSON.stringify(accountReadiness));
 
 const accountMandate="Owner authorizes autonomous free account discovery and registration in parallel with paid work, where platform rules permit automated registration and representation. Reuse existing authorized accounts; use truthful verified identity and authorized contact channels. No spending, no invented identity, no bypass of CAPTCHA or identity checks, no secrets in model prompts or agent memory. Record registration status and blockers; continue other eligible work when blocked. Human-only verification remains pending.";
