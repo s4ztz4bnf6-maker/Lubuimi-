@@ -333,6 +333,16 @@ theorem sum_prefix_eq_sum_extensions
 #print axioms sum_prefix_eq_sum_extensions
 
 
+/-- The final coordinate obtained from the stage-bound proof agrees
+with the last coordinate of the dependent prefix. -/
+private theorem stageCoordinate_eq_lastPrefixIndex
+    {n a j : ℕ} (hk : a + j + 1 ≤ n)
+    (hj : a + (j + 1) ≤ n) :
+    stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) := by
+  apply Fin.ext
+  rfl
+
 /-- The pointwise update of the concrete geometric FibreData is exactly
 the recursively defined PAt value at the extended prefix. -/
 theorem prefixFibre_updatedWeight_eq_PAt
@@ -383,14 +393,20 @@ theorem prefixFibre_updatedWeight_eq_PAt
   -- finset: prefixCoveredValues has a type indexed by stageCoordinate.
   cases hhk
   cases hhp
-  dsimp [k] at *
+  -- The two proofs of the stage bound are propositionally equal, but the
+  -- coordinate family still carries their dependent Fin index. Normalize
+  -- that index explicitly before forming the covered/uncovered split.
+  have hstage : stageCoordinate (k := a + j) hk =
+      prefixIndex hj (Fin.last (a + j)) :=
+    stageCoordinate_eq_lastPrefixIndex hk hj
+  cases hstage
   by_cases hcov :
       y (Fin.last (a + j)) ∈
         prefixCoveredValues C (A := A) hk
           (restrictPrefix C hk y)
-  · simp [hcov, xprev, Finset.mem_univ]
+  · simp only [if_pos hcov, xprev]
     ring_nf
-  · simp [hcov, xprev, Finset.mem_univ]
+  · simp only [if_neg hcov, Finset.mem_univ, if_true, xprev]
     ring_nf
 #print axioms prefixFibre_updatedWeight_eq_PAt
 
