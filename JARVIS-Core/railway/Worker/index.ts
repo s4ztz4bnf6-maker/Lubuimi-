@@ -57,6 +57,17 @@ async function freeInference(prompt,maxTokens=256){
 
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
+  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
+  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,
+  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ
+)`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ`;
+await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
 if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
   // Keep providers registered so they can recover after cooldown.
@@ -116,17 +127,7 @@ for(const watchAddress of watchAddresses){
   console.log("JARVIS BTC watch sync OK; address="+watchAddress+"; recent_incoming="+savedCount+"; ledger_total="+totals[0].total+"; confirmed="+totals[0].confirmed+"; pending="+totals[0].pending+"; recorded_received_sats="+totals[0].received_sats+"; explorer_tx_count="+((addressStats.chain_stats?.tx_count||0)+(addressStats.mempool_stats?.tx_count||0))+"; watch_only=true; no_signing=true; no_spending=true");
  }catch(err){console.error("JARVIS BTC watch sync failed for "+watchAddress+": "+(err instanceof Error?err.message:"unknown error"));}
 }
-await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
-  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
-  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,
-  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ
-)`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ`;
-await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
+
 
 await sql`CREATE TABLE IF NOT EXISTS jarvis_opportunities (
   id BIGSERIAL PRIMARY KEY, platform TEXT NOT NULL, external_id TEXT NOT NULL,
