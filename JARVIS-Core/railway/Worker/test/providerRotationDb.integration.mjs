@@ -19,3 +19,6 @@ test("real PostgreSQL restart, concurrent effect, replay, ambiguous outcome and 
  await clearExcluded(sql,id);assert.equal((await loadExcludedProviders(sql,id)).size,0);
  }finally{await setFlag(sql,"kill","0");await sql.end();}
 });
+
+import {productionSelftest} from "../productionSelftest.mjs";
+test("production probe across fresh database clients",async()=>{const id=crypto.randomUUID();let sql=postgres(process.env.DATABASE_URL);try{await productionSelftest(sql,id);await sql.end();sql=postgres(process.env.DATABASE_URL);assert.ok((await loadExcludedProviders(sql,"selftest:"+id)).has("selftest:marker"));await productionSelftest(sql,id);assert.equal((await loadExcludedProviders(sql,"selftest:"+id)).size,0);}finally{await sql.end();}});

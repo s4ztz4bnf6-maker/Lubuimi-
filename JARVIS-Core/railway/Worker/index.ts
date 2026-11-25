@@ -67,6 +67,11 @@ await initializeOrchestration(sql);
 await initializeRegistration(sql);
 await initUara(sql);
 await initRotation(sql);
+if (process.env.DJO2_SELFTEST_ID) {
+  try { const { productionSelftest } = await import("./productionSelftest.mjs"); await productionSelftest(sql, process.env.DJO2_SELFTEST_ID); }
+  finally { await sql.end(); }
+  process.exit(0);
+}
 console.log("DJO2 UARA persistent storage initialized");
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
