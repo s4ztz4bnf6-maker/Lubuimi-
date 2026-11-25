@@ -1135,15 +1135,31 @@ const server = Bun.serve({
        const currency=String(b.currency||"").trim().toUpperCase();
        if(!/^[A-Z]{3}$/.test(currency))return json({error:"Explicit ISO currency required (BTC or fiat)"},400);
        const wallet=String(env.BTC_RECEIVE_ADDRESS||"").trim();
-       const iban=String(env.JARVIS_INVOICE_IBAN||"").replaceAll(" ","").toUpperCase();
+       const iban=String(env.JARVIS_RECEIVE_ONLY_IBAN||env.JARVIS_INVOICE_IBAN||"").replaceAll(" ","").toUpperCase();
        const isBtc=currency==="BTC";
        const paymentDestination=isBtc?wallet:iban;
        if(isBtc&&(!/^(bc1[ac-hj-np-z02-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(wallet)||item.payout_address!==wallet))return json({error:"BTC payout must match configured JARVIS watch-only wallet"},409);
        if(!isBtc&&(!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)||String(b.invoice_iban||"").replaceAll(" ","").toUpperCase()!==iban))return json({error:"Fiat invoice IBAN must match configured JARVIS bank account"},409);
-       const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,currency,payment_method:isBtc?"bitcoin_onchain":"bank_transfer",payment_destination:paymentDestination,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
+       const payload={workflow_id:id,customer_platform:item.source,customer_url:item.source_url,submit_as:"JARVIS (authorized representative)",deliverable_url:artifact,invoice_url:invoice,currency,payment_method:isBtc?"bitcoin_onchain":"bank_transfer",payment_destination:isBtc?paymentDestination:undefined,private_bank_instructions_required:!isBtc,additional_instructions:instructions,acceptance_evidence_url:item.acceptance_evidence_url,required_return_fields:["platform_receipt_url","submitted_at","submission_status"],payment_details_locked:true};
        const [task]=await sql.unsafe("INSERT INTO agent_tasks(title,prompt,status) VALUES($1,$2,'queued') RETURNING id,status",[("JARVIS customer submission handoff · "+id).slice(0,300),"Prepare controlled external-agent submission for peer "+peer.name+" ("+peer.endpoint+"). Handoff JSON: "+JSON.stringify(payload)+". Do not claim delivery without independent platform receipt. No account impersonation or unauthorized access. Do not change payment details. Confirm protocol, authorization and live endpoint before any transmission."]);
        await sql.unsafe("INSERT INTO agent_audit(event,detail) VALUES($1,$2::jsonb)",["paid_work_submission_handoff_queued",JSON.stringify({workflowId:id,peerId:peer.id,taskId:task.id,invoiceUrl:invoice,deliverableUrl:artifact})]);
        return json({handoff:payload,peer:{id:peer.id,name:peer.name},task,peer_contacted:false,submission_confirmed:false,notice:"Prepared for authorized external submission; actual peer transmission and customer receipt still require verification."},202);
+     }
+     if(req.method==="POST"&&url.pathname==="/v1/bank/private-payment-instructions"){
+       if(!ownerAuthorized(req))return json({error:"Owner authorization required"},401);
+       const b=await req.json(),purpose=String(b.purpose||""),recipient=String(b.recipient||"").trim(),reference=String(b.reference||"").trim();
+       if(!["completed_paid_work","voluntary_gift"].includes(purpose)||!recipient||recipient.length>200||!reference||reference.length>200||b.concrete_payment_intent!==true)return json({error:"Concrete payment purpose, recipient and reference required"},400);
+       if(purpose==="completed_paid_work"){
+         const [work]=await sql`SELECT id FROM jarvis_paid_workflow WHERE id=${Number(b.workflow_id)} AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NOT NULL`;
+         if(!work)return json({error:"Accepted and delivered work evidence required"},409);
+       }
+       const iban=String(env.JARVIS_RECEIVE_ONLY_IBAN||"").replace(/\s/g,"").toUpperCase(),payee=String(env.JARVIS_RECEIVE_ONLY_PAYEE||"").trim();
+       let rem=0;
+       if(!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban)||!payee)return json({error:"Receive-only bank configuration unavailable"},503);
+       for(const ch of iban.slice(4)+iban.slice(0,4))for(const digit of /[A-Z]/.test(ch)?String(ch.charCodeAt(0)-55):ch)rem=(rem*10+Number(digit))%97;
+       if(rem!==1)return json({error:"Invalid configured IBAN"},503);
+       await sql`INSERT INTO agent_audit(event,detail) VALUES ('private_bank_instructions_issued',${sql.json({purpose,recipient,reference,workflowId:b.workflow_id||null})})`;
+       return new Response(JSON.stringify({iban,payee,reference,method:"bank_transfer",delivery_verified:false}),{headers:{"content-type":"application/json","cache-control":"no-store"}});
      }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/agent-extension-policy"){
        if(!authorized(req)&&!ownerAuthorized(req))return json({error:"Unauthorized"},401);
