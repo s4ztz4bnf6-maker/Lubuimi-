@@ -268,6 +268,9 @@ console.log("JARVIS workstream registry: " + workstreamStats.enabled + "/" + wor
 
 await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, memory_key TEXT NOT NULL UNIQUE, title TEXT NOT NULL, content TEXT NOT NULL, source_type TEXT NOT NULL DEFAULT 'task_result', source_task_id BIGINT, confidence TEXT NOT NULL DEFAULT 'unverified', created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
+const payoutSelectionMandate="Rank eligible paid opportunities by expected realized EUR per hour: rewardEUR * P(funded) * P(assigned|funded) * P(delivered|assigned) * P(paid|delivered) / expectedHours. Use evidence-based conservative estimates; unknown is not guaranteed. Exclude upfront fees, explicit AI prohibitions, incompatible payout methods and unauthorized work. Prefer funded assigned jobs. Track acceptance, delivery, invoice when required, and actual payment separately.";
+await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES ('owner:payout-selection-v1','Expected realized payout per hour',${payoutSelectionMandate},'owner_instruction','owner_directive') ON CONFLICT(memory_key) DO UPDATE SET content=EXCLUDED.content,updated_at=NOW() WHERE agent_memory.content IS DISTINCT FROM EXCLUDED.content`;
+
 try {
  const hordeBase="https://oai.aihorde.net/v1";
  const headers={authorization:"Bearer 0000000000","content-type":"application/json"};
