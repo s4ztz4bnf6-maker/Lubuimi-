@@ -1,0 +1,14 @@
+{
+  "name": "@djo2/uara",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "exports": "./src/index.mjs"
+}

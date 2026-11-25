@@ -1,3 +1,4 @@
+import { initUara } from "./tools/uara-store.mjs";
 import { initializeRegistration } from "./tools/registration-state.mjs";
 import { initializeOrchestration } from "./tools/orchestration.mjs";
 import { initializeProjectMemory } from "./tools/project-memory.mjs";
@@ -62,6 +63,8 @@ const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_time
 await initializeProjectMemory(sql);
 await initializeOrchestration(sql);
 await initializeRegistration(sql);
+await initUara(sql);
+console.log("DJO2 UARA persistent storage initialized");
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
   id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',

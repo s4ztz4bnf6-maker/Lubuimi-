@@ -1,0 +1,2 @@
+# Proprietary UARA mail configuration
+Set MAIL_USER in the protected deployment environment to the owner-authorized mailbox. Do not commit credentials or mailbox addresses. Proton Mail requires a supported authenticated access method, such as an authorized Proton Mail Bridge instance where available; ordinary remote IMAP credentials are not assumed to work. Configure MAIL_HOST, MAIL_PORT, MAIL_PASS through secret storage only. Verify mailbox access before enabling confirmation workflows. No paid subscription or new service may be purchased without approval.
