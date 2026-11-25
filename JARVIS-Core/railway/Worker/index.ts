@@ -176,6 +176,8 @@ await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automa
 await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
 
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
+const [deliveryTables]=await sql`SELECT to_regclass('public.bounty_deliveries')::text AS ledger`;
+if(!deliveryTables?.ledger)throw Error("DELIVERY_LEDGER_MISSING");
 console.log("DJO2 delivery ledger initialized; GitHub delivery credential configured="+Boolean(env.GITHUB_DELIVERY_TOKEN));
 await sql`CREATE TABLE IF NOT EXISTS jarvis_claims (
  id BIGSERIAL PRIMARY KEY, task_id BIGINT UNIQUE, platform TEXT, title TEXT NOT NULL,
@@ -1045,6 +1047,24 @@ function portableMessages(messages:any[], providerName:string) {
   }
   return out;
 }
+// Preserve instructions and tool-call/result groups; omit only complete older turns.
+function budgetInference(messages,tools,model){
+ const output=Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024));
+ const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
+ const limit=6500-output;
+ const fits=m=>estimate({model,messages:m,tools})<=limit;
+ if(fits(messages))return {messages,output};
+ const fixed=messages.filter(m=>m.role==="system");
+ const rest=messages.filter(m=>m.role!=="system");
+ const groups=[];for(const m of rest){if(m.role==="tool"&&groups.length)groups[groups.length-1].push(m);else groups.push([m]);}
+ const first=groups.findIndex(g=>g[0].role==="user");
+ const mandatory=first>=0?groups[first]:[];
+ let selected=groups.slice(Math.max(first+1,0));
+ while(selected.length>1&&!fits([...fixed,...mandatory,...selected.flat()]))selected.shift();
+ const compact=[...fixed,...mandatory,...selected.flat()];
+ if(!fits(compact))throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
+ return {messages:compact,output};
+}
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
@@ -1054,7 +1074,8 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
-      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages,provider.name),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(25000)});
+      const bounded=budgetInference(portableMessages(messages,provider.name),tools,provider.model);
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
       const result=JSON.parse(responseText);
