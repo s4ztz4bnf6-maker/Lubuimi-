@@ -1,0 +1,27 @@
+name: Revenue Engine tests
+on:
+  pull_request:
+    paths:
+      - "src/revenue/**"
+      - "JARVIS-Core/agents/**"
+      - "JARVIS-Core/security/**"
+      - "JARVIS-Core/revenue/**"
+      - "tests/revenue-*.test.ts"
+      - ".github/workflows/revenue-engine.yml"
+  push:
+    branches:
+      - prod/revenue-engine
+    paths:
+      - "src/revenue/**"
+      - "tests/revenue-*.test.ts"
+      - ".github/workflows/revenue-engine.yml"
+permissions:
+  contents: read
+jobs:
+  revenue-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Execute revenue regression tests
+        run: bun test tests/revenue-scanner.test.ts tests/revenue-evidence.test.ts tests/revenue-worker-discovery.test.ts tests/jarvis-v3.test.ts
