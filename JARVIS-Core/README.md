@@ -1,6 +1,8 @@
-# JARVIS-Core
+# DJO² IA – Core
 
-Isolated development workspace for the JARVIS system, maintained on the `jarvis-core` branch.
+Official product name: **DJO² IA (Joehoch2)**. Original project software: **Apache-2.0**, see `LICENSE`. Third-party notices and licenses remain unchanged. Legacy paths, environment keys, database identifiers and service endpoints remain compatibility identifiers until migrated and tested.
+
+Development and production source workspace for DJO² IA (Joehoch2), maintained on the legacy-compatible `jarvis-core` branch.
 
 ## Scope and separation
 
@@ -33,7 +35,7 @@ Validation on 2026-11-19: `node --test JARVIS-Core/tests/*.test.mjs` — 8 passe
 
 ## Deployment status
 
-**NOT DEPLOYED — DEVELOPMENT BRANCH ONLY.** The provider guard has not been built into the live Railway start command, staged, or deployed. No production source, environment variable, database row, wallet setting, service, domain or replica count was changed by these development commits. The live Worker is still the Railway deployment identified in the current production inventory.
+**Historical status (2026-11-19; superseded by subsequent production deployments).** The provider guard has not been built into the live Railway start command, staged, or deployed. No production source, environment variable, database row, wallet setting, service, domain or replica count was changed by these development commits. The live Worker is still the Railway deployment identified in the current production inventory.
 
 ## Audit rule
 
