@@ -47,7 +47,7 @@ export function configuredChatModels(env:Record<string,string|undefined>):ModelE
     // This is a conservative character-based estimate, not an exact tokenizer.
     const maxInputChars=12000;
     const input=request.input.length>maxInputChars?request.input.slice(-maxInputChars):request.input;
-    const send=async(text:string)=>fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'user',content:text}],max_tokens:512,stream:false})});
+    const send=async(text:string)=>fetch(url.toString(),{method:'POST',signal,headers:{'content-type':'application/json',...(key?{authorization:'Bearer '+key}:{})},body:JSON.stringify({model,messages:[{role:'system',content:'You are the inference component of JARVIS, an AI assistant operated by its authorized owner. Maintain JARVIS application identity across provider changes. Only claim capabilities or completed actions supported by actual runtime evidence. Do not invent tool access, memory retrieval, payments or execution results.'},{role:'user',content:text}],max_tokens:512,stream:false})});
     let response=await send(input);
     if(response.status===413 && input.length>2000) response=await send(input.slice(-Math.min(4000,input.length)));
 
