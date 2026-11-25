@@ -1,6 +1,6 @@
 # DJO² IA – Core
 
-Official product name: **DJO² IA (Joehoch2)**. Original project software: **Apache-2.0**, see `LICENSE`. Third-party notices and licenses remain unchanged. Legacy paths, environment keys, database identifiers and service endpoints remain compatibility identifiers until migrated and tested.
+Official product name: **DJO² IA (Joehoch2)**. New original project contributions: **proprietary commercial licensing; all rights reserved**. Commercial rights require a separate written license. Existing Apache-2.0 grants and third-party rights remain unaffected; see `LICENSE` for historical Apache terms. Third-party notices and licenses remain unchanged. Legacy paths, environment keys, database identifiers and service endpoints remain compatibility identifiers until migrated and tested.
 
 Development and production source workspace for DJO² IA (Joehoch2), maintained on the legacy-compatible `jarvis-core` branch.
 
