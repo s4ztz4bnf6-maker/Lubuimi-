@@ -73,5 +73,18 @@ test("active owner policy migration and fail-closed dispatch",async()=>{
  assert.equal((await supervisor.dispatch(task)).allowed,true);
  const [event]=await sql`SELECT payload FROM djo2_events WHERE event_key='caos:policy-regression'`;
  assert.equal(event.payload.policyRevision,2);
+ const original=(await readProjectMemory(sql,"continuity-policy")).payload;
+ try{
+ for(const [i,payload] of [{...original,zeroSpend:false},{...original,applicationLicense:"Apache-2.0"},{...original,externalPaymentEvidenceRequired:false},{}].entries()){
+ await sql`UPDATE djo2_project_memory SET payload=${sql.json(payload)} WHERE memory_key='continuity-policy' AND revision=2`;
+ const id="invalid-policy-"+i;
+ assert.equal((await supervisor.dispatch({...task,id})).allowed,false);
+ assert.equal((await sql`SELECT id FROM djo2_events WHERE event_key=${"caos:"+id}`).length,0);
+ }
+ }finally{await sql`UPDATE djo2_project_memory SET payload=${sql.json(original)} WHERE memory_key='continuity-policy' AND revision=2`;}
+ await sql`INSERT INTO djo2_project_memory(memory_key,revision,payload) VALUES ('race-test',1,'{}'),('race-test',2,'{}')`;
+ const race=await Promise.allSettled([1,2].map(revision=>sql`UPDATE djo2_project_memory SET active=true WHERE memory_key='race-test' AND revision=${revision}`));
+ assert.equal(race.filter(x=>x.status==="fulfilled").length,1);
+ assert.equal((await sql`SELECT revision FROM djo2_project_memory WHERE memory_key='race-test' AND active`).length,1);
  }finally{await sql.end();}
 });
