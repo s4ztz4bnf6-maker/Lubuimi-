@@ -257,6 +257,13 @@ await sql`CREATE TABLE IF NOT EXISTS agent_memory (id BIGSERIAL PRIMARY KEY, mem
 await sql`CREATE INDEX IF NOT EXISTS agent_memory_updated_idx ON agent_memory(updated_at DESC)`;
 await sql`CREATE TABLE IF NOT EXISTS djo2_task_checkpoints (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, attempt INTEGER NOT NULL, step INTEGER NOT NULL, phase TEXT NOT NULL, note TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 await sql`CREATE INDEX IF NOT EXISTS djo2_task_checkpoints_lookup ON djo2_task_checkpoints(task_id,id DESC)`;
+await sql`CREATE TABLE IF NOT EXISTS djo2_verified_task_priority (
+ task_id BIGINT PRIMARY KEY, funding_tier INTEGER NOT NULL CHECK(funding_tier BETWEEN 1 AND 3),
+ expected_hourly NUMERIC NOT NULL CHECK(expected_hourly >= 0),
+ evidence_url TEXT NOT NULL CHECK(evidence_url LIKE 'https://%'),
+ verified_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), expires_at TIMESTAMPTZ NOT NULL
+)`;
+
 await sql`CREATE TABLE IF NOT EXISTS djo2_memory_selftest (test_key TEXT PRIMARY KEY, marker TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
 const [previousMemoryProbe] = await sql`SELECT marker FROM djo2_memory_selftest WHERE test_key='restart-v1'`;
 if(previousMemoryProbe) {
@@ -565,7 +572,9 @@ if (!modelConfigured) {
   const freeTasks = await sql.begin(async tx => {
     const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
       WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
-      ORDER BY created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
+      ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+      COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+      created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
     if (!rows.length) return [];
     for (const row of rows) {
       await tx`UPDATE agent_tasks SET status='running', started_at=NOW(), last_attempt_at=NOW(),
@@ -923,7 +932,9 @@ try {
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
     WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
-    ORDER BY created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
+    ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+      COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+      created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
   if (!rows.length) return [];
   for (const row of rows) {
     await tx`UPDATE agent_tasks SET status='running', started_at=NOW(), last_attempt_at=NOW(),
