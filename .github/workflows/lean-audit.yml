@@ -46,6 +46,18 @@ jobs:
         run: |
           mkdir -p .lake/build/lib/lean
           lake env lean -o .lake/build/lib/lean/BBMSTSieveStage.olean BBMSTSieveStage.lean
+      - name: Compile exact finite CRT fibre decomposition and audit axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTPrimeExtension.olean BBMSTPrimeExtension.lean
+      - name: Compile arithmetic ZMod CRT fibre theorem and audit axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTArithmeticCRT.olean BBMSTArithmeticCRT.lean
+      - name: Compile actual congruence-class CRT representation and audit axioms
+        run: |
+          mkdir -p .lake/build/lib/lean
+          lake env lean -o .lake/build/lib/lean/BBMSTCongruenceCRT.olean BBMSTCongruenceCRT.lean
 
   fiber-paranoid:
     runs-on: ubuntu-latest
