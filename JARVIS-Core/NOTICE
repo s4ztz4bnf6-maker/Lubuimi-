@@ -1,4 +1,4 @@
-JARVIS-Core
+DJO² IA (formerly JARVIS-Core)
 Copyright 2026 JARVIS-Core contributors
 
 The JARVIS-Core project's original code is made available under the Apache License, Version 2.0. See LICENSE in this directory.
@@ -6,3 +6,6 @@ The JARVIS-Core project's original code is made available under the Apache Licen
 The licensed original code includes Companion's department navigation and views, the FreeGood research interface, the Trading simulator, Bitcoin and Cashflow views, the programming editor, the settings interfaces, and the native JARVIS client. The license applies to the code and authored interface assets, including embedded HTML, CSS and JavaScript.
 
 This notice does not relicense third-party dependencies, imported code, trademarks, customer data, secrets, or other material for which the contributors do not hold the necessary rights. Preserve third-party notices and comply with their respective licenses. Contributions remain subject to their applicable ownership and contribution terms.
+
+2026-11-25 — DJO² IA licensing scope update
+The Apache-2.0 license also covers original contributions to the DJO² Bridge integration, persistent owner memory, deterministic commercial audit and task-evidence commands, and commercial evidence policies. Legacy JARVIS identifiers remain for compatibility. Future original commercial workflow modules are subject to the same license unless explicitly designated otherwise by their authorized rights holders. This notice does not assert ownership of third-party work or grant trademark rights in the DJO² name or logo. Separate research projects retain their own licenses. Apache-2.0 does not impose royalties on permitted use.
