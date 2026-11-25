@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 from playwright.sync_api import sync_playwright
 import time, subprocess
+from profil_lock import profil_sperren
+profil_sperren()
 for _ in range(30):
     if subprocess.run(["xdpyinfo","-display",":99"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode == 0:
         break
