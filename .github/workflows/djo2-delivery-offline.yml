@@ -1,0 +1,20 @@
+name: DJO2 Delivery Offline
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Worker/githubDelivery*'
+      - 'JARVIS-Core/railway/Worker/providerRotationDb.mjs'
+      - '.github/workflows/djo2-delivery-offline.yml'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test JARVIS-Core/railway/Worker/githubDelivery.test.mjs
