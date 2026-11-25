@@ -29,3 +29,16 @@ jobs:
           docker exec proton-smoke python /app/check_ports.py
           docker exec proton-smoke python /app/check_ports.py --self-test
           if docker logs proton-smoke 2>&1 | grep -F -e "$password" -e "$vnc"; then exit 1; fi
+
+      - name: Reject deliberately unsafe listener
+        shell: bash
+        run: |
+          set -eu
+          docker run -d --name proton-negative --network none --entrypoint python proton-smoke -c 'import socket,time; a=socket.socket(); a.bind(("0.0.0.0",5900)); a.listen(); b=socket.socket(); b.bind(("0.0.0.0",6080)); b.listen(); time.sleep(120)'
+          trap 'docker rm -f proton-negative >/dev/null' EXIT
+          sleep 3
+          if docker exec proton-negative python /app/check_ports.py > negative.log 2>&1; then
+            echo "FAIL: unsafe listener accepted"; exit 1
+          fi
+          grep -F "Non-loopback private listener" negative.log
+          echo "PASS: actual unsafe socket rejected"
