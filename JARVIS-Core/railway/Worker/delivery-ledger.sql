@@ -20,3 +20,11 @@ CREATE TABLE IF NOT EXISTS bounty_deliveries (
  CHECK(NOT claim_entitled OR entitlement_evidence IS NOT NULL),
  CHECK(payment_status <> 'paid' OR payment_evidence IS NOT NULL)
 );
+
+CREATE TABLE IF NOT EXISTS djo2_delivery_authorizations (
+ task_id BIGINT NOT NULL, repo TEXT NOT NULL, issue_number INTEGER NOT NULL,
+ action TEXT NOT NULL CHECK(action IN ('claim','deliver')),
+ payload_sha256 TEXT NOT NULL, eligibility_evidence JSONB NOT NULL,
+ test_evidence JSONB, expires_at TIMESTAMPTZ NOT NULL, revoked_at TIMESTAMPTZ,
+ PRIMARY KEY(task_id,repo,issue_number,action,payload_sha256)
+);
