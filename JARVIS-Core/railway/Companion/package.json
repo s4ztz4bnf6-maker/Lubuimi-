@@ -1,5 +1,5 @@
 {
-  "name": "jarvis-companion",
+  "name": "djo2-companion",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,5 +7,6 @@
   },
   "dependencies": {
     "postgres": "^3.4.7"
-  }
+  },
+  "license": "Apache-2.0"
 }
