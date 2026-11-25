@@ -373,7 +373,7 @@ theorem prefixFibre_updatedWeight_eq_PAt
     rfl
   -- Eliminate the equality before constructing the fibre. This makes the
   -- stage coordinate and the dependent prefix endpoint definitionally equal.
-  cases hstage
+  cases hstage.symm
   let x := y (Fin.last k)
   let xprev := restrictPrefix C hk y
   have hbase' : 0 ≤ PAt C (A := A) a ha P0 δ j hprev xprev := by
