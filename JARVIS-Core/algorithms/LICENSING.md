@@ -1,6 +1,6 @@
 # Licensing
 
-New JARVIS Algorithmus modules: Apache-2.0, subject to applicable third-party notices and rights.
+New DJO² IA Algorithmus modules: LicenseRef-DJO2-Proprietary, subject to applicable third-party notices and rights.
 
 Modules: Second Good Life, Trading, Sales, Chat, Bounty, Exchange, Finance, Cybersecurity.
 
