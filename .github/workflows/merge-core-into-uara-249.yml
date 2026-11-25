@@ -1,0 +1,65 @@
+name: merge-core-into-uara-249
+on:
+  push:
+    branches: [ci-merge-249]
+permissions:
+  contents: write
+concurrency: merge-249
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/djo2-uara-core-20261125
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Merge and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name djo2-merge-bot
+          git config user.email bot@users.noreply.github.com
+          git fetch origin jarvis-core
+          core=$(git rev-parse origin/jarvis-core)
+          head=$(git rev-parse HEAD)
+          base=$(git merge-base "$head" "$core")
+          f=JARVIS-Core/railway/Worker/index.ts
+          if ! git merge --no-ff --no-commit "$core"; then
+            test "$(git diff --name-only --diff-filter=U)" = "$f"
+            git show "$base:$f" > /tmp/base
+            git show "$head:$f" > /tmp/head
+            git show "$core:$f" > "$f"
+            python - <<'PY'
+          from pathlib import Path
+          p=Path("JARVIS-Core/railway/Worker/index.ts")
+          b=Path("/tmp/base").read_text()
+          h=Path("/tmp/head").read_text()
+          s=p.read_text()
+          imp='import { initUara } from "./tools/uara-store.mjs";\n'
+          old='await initUara(sql);\nconsole.log("DJO2 UARA persistent storage initialized");\n'
+          assert h.replace(imp,"",1).replace(old,"",1)==b, "Unexpected PR changes"
+          assert imp not in s and old not in s
+          anchor="await initializeRegistration(sql);\n"
+          assert s.count(anchor)==1
+          s=imp+s.replace(anchor,anchor+old,1)
+          for fn in ["initializeProjectMemory","initializeOrchestration","initializeRegistration","initUara"]:
+              assert s.count("await "+fn+"(sql);")==1
+          p.write_text(s)
+          PY
+            git add "$f"
+          fi
+          git diff --cached --check
+          git commit -m "Merge jarvis-core into UARA PR 249"
+          while IFS= read -r path; do
+            if ! git diff --name-only "$base" "$head" | grep -Fxq "$path"; then
+              git diff --quiet "$core" HEAD -- "$path"
+            fi
+          done < <(git diff --name-only "$base" "$core")
+          node --test JARVIS-Core/railway/Worker/tools/uara-policy.test.mjs
+          (cd JARVIS-Core/UARA && node --test)
+          (cd JARVIS-Core/railway/Worker && npm install --ignore-scripts --no-audit --no-fund && npm test)
+          git push origin HEAD:feat/djo2-uara-core-20261125
