@@ -102,8 +102,15 @@ const watchAddresses=[...new Set(walletRows.map((r:any)=>String(r.address)).filt
 if(!watchAddresses.length)throw new Error("No valid Bitcoin watch addresses configured");
 await sql.unsafe("INSERT INTO jarvis_wallet_watch(id,receive_address,updated_at) VALUES(1,$1,now()) ON CONFLICT(id) DO UPDATE SET receive_address=EXCLUDED.receive_address,updated_at=now()",[watchAddresses[0]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_transactions (txid text NOT NULL,receive_address text NOT NULL,received_sats numeric(20,0) NOT NULL,status text NOT NULL DEFAULT 'mempool',confirmed boolean NOT NULL DEFAULT false,block_height integer,block_time timestamptz,confirmations integer NOT NULL DEFAULT 0,first_seen_at timestamptz NOT NULL DEFAULT now(),last_seen_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())");
-await sql.unsafe("ALTER TABLE jarvis_wallet_transactions DROP CONSTRAINT IF EXISTS jarvis_wallet_transactions_pkey");
-await sql.unsafe("ALTER TABLE jarvis_wallet_transactions ADD PRIMARY KEY(txid,receive_address)");
+await sql.begin(async tx => {
+  await tx.unsafe("SELECT pg_advisory_xact_lock(724190251)");
+  await tx.unsafe("LOCK TABLE jarvis_wallet_transactions IN ACCESS EXCLUSIVE MODE");
+  const constraints = await tx.unsafe("SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint WHERE conrelid='jarvis_wallet_transactions'::regclass AND contype='p'");
+  if (!constraints.some(c => String(c.definition) === "PRIMARY KEY (txid, receive_address)")) {
+    await tx.unsafe("ALTER TABLE jarvis_wallet_transactions DROP CONSTRAINT IF EXISTS jarvis_wallet_transactions_pkey");
+    await tx.unsafe("ALTER TABLE jarvis_wallet_transactions ADD PRIMARY KEY(txid,receive_address)");
+  }
+});
 await sql.unsafe("CREATE INDEX IF NOT EXISTS jarvis_wallet_transactions_seen_idx ON jarvis_wallet_transactions(receive_address,first_seen_at DESC)");
 for(const watchAddress of watchAddresses){
  try{
