@@ -1,3 +1,4 @@
+import { githubDelivery } from "./githubDelivery.mjs";
 import { providerTag, filterProviders, shouldRotate, ALL_EXCLUDED } from "./providerRotation.mjs";
 import { initRotation, loadExcludedProviders, excludeProvider, clearExcluded, runToolOnce, isKilled } from "./providerRotationDb.mjs";
 import { initUara } from "./tools/uara-store.mjs";
@@ -174,6 +175,8 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_earnings_ledger (
 await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automatisch wieder aufgenommen: Worker-Lauf länger als 10 Minuten ohne Abschluss.', next_retry_at=NULL WHERE status='running' AND started_at < NOW()-INTERVAL '10 minutes'`;
 await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
 
+await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
+console.log("DJO2 delivery ledger initialized; GitHub delivery credential configured="+Boolean(env.GITHUB_DELIVERY_TOKEN));
 await sql`CREATE TABLE IF NOT EXISTS jarvis_claims (
  id BIGSERIAL PRIMARY KEY, task_id BIGINT UNIQUE, platform TEXT, title TEXT NOT NULL,
  source_url TEXT, claim_url TEXT, external_claim_id TEXT, payout_amount NUMERIC(20,8),
