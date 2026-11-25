@@ -3,7 +3,10 @@ const capabilities=Object.freeze({
  'public-research':{department:'research',write:false},
  'bounty-qualification':{department:'bounty-scout',write:false},
  'offer-matching':{department:'second-good-life',write:false},
- 'service-proposal':{department:'commercial-services',write:true}
+ 'service-proposal':{department:'commercial-services',write:true},
+ 'freegoods-research':{department:'freegoods',write:false},
+ 'agent-collaboration':{department:'ai-collaboration',write:false},
+ 'settlement-information':{department:'exchange',write:false}
 });
 export function authorizeAgentRequest(request,principal,now=Date.now()){
  if(!principal?.authenticated || !principal.id) throw Error('authentication required');
