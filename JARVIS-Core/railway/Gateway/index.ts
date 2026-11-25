@@ -1148,7 +1148,11 @@ const server = Bun.serve({
      if(req.method==="POST"&&url.pathname==="/v1/bank/private-payment-instructions"){
        if(!ownerAuthorized(req))return json({error:"Owner authorization required"},401);
        const b=await req.json(),purpose=String(b.purpose||""),recipient=String(b.recipient||"").trim(),reference=String(b.reference||"").trim();
-       if(!["completed_paid_work","voluntary_gift"].includes(purpose)||!recipient||recipient.length>200||!reference||reference.length>200||b.concrete_payment_intent!==true)return json({error:"Concrete payment purpose, recipient and reference required"},400);
+       if(!["completed_paid_work","voluntary_gift","concrete_payment_referral"].includes(purpose)||!recipient||recipient.length>200||!reference||reference.length>200||b.concrete_payment_intent!==true)return json({error:"Concrete payment purpose, recipient and reference required"},400);
+       if(purpose==="concrete_payment_referral"){
+         const payer=String(b.payer||"").trim(),evidence=String(b.payment_intent_evidence_url||"").trim();
+         if(!payer||payer.length>200||!/^https:\/\//.test(evidence)||evidence.length>2000||b.authorized_private_forwarding!==true)return json({error:"Identified payer, payment-intent evidence and authorized private forwarding required"},400);
+       }
        if(purpose==="completed_paid_work"){
          const [work]=await sql`SELECT id FROM jarvis_paid_workflow WHERE id=${Number(b.workflow_id)} AND acceptance_evidence_url IS NOT NULL AND delivery_evidence_url IS NOT NULL`;
          if(!work)return json({error:"Accepted and delivered work evidence required"},409);
@@ -1158,7 +1162,7 @@ const server = Bun.serve({
        if(!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban)||!payee)return json({error:"Receive-only bank configuration unavailable"},503);
        for(const ch of iban.slice(4)+iban.slice(0,4))for(const digit of /[A-Z]/.test(ch)?String(ch.charCodeAt(0)-55):ch)rem=(rem*10+Number(digit))%97;
        if(rem!==1)return json({error:"Invalid configured IBAN"},503);
-       await sql`INSERT INTO agent_audit(event,detail) VALUES ('private_bank_instructions_issued',${sql.json({purpose,recipient,reference,workflowId:b.workflow_id||null})})`;
+       await sql`INSERT INTO agent_audit(event,detail) VALUES ('private_bank_instructions_issued',${sql.json({purpose,recipient,reference,workflowId:b.workflow_id||null,payer:purpose==="concrete_payment_referral"?String(b.payer):null})})`;
        return new Response(JSON.stringify({iban,payee,reference,method:"bank_transfer",delivery_verified:false}),{headers:{"content-type":"application/json","cache-control":"no-store"}});
      }
      if(req.method==="GET"&&url.pathname==="/v1/paid-workflows/agent-extension-policy"){
