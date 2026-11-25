@@ -114,14 +114,45 @@ theorem stageFactorProduct_le_two_over_size_product
     (hsize : ∀ j, 0 < size (a + 1 + j)) :
     stageFactorProduct a m δ size z ≤
       ∏ j ∈ Finset.range m, (1 + 2 * z / size (a + 1 + j)) := by
-  unfold stageFactorProduct
-  apply Finset.prod_le_prod
-  · intro j hj
-    exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j))
-  · intro j hj
-    exact stageFactor_le_two_over_size δ size z (a + 1 + j) hz
-      (hδ j) (hδhalf j) (hsize j)
+  induction m with
+  | zero =>
+      simp [stageFactorProduct]
+  | succ m ih =>
+      rw [stageFactorProduct_succ, Finset.prod_range_succ]
+      have hindex : a + 1 + m = a + m + 1 := by omega
+      have hδm : 0 ≤ δ (a + m + 1) := by
+        simpa [hindex] using hδ m
+      have hδhalf_m : δ (a + m + 1) ≤ (1 / 2 : ℚ) := by
+        simpa [hindex] using hδhalf m
+      have hsize_m : 0 < size (a + m + 1) := by
+        simpa [hindex] using hsize m
+      have hleft : 0 ≤ stageFactorProduct a m δ size z := by
+        unfold stageFactorProduct
+        apply Finset.prod_nonneg
+        intro j hj
+        exact le_of_lt (stageFactor_pos δ size z (a + 1 + j) hz
+          (hδ j) (hδhalf j) (hsize j))
+      have hnum : 0 ≤ (2 : ℚ) * z := mul_nonneg (by norm_num) hz
+      have hright : 0 ≤ 1 + 2 * z / size (a + 1 + m) := by
+        have hdiv : 0 ≤ (2 : ℚ) * z / size (a + 1 + m) :=
+          div_nonneg hnum (le_of_lt (hsize m))
+        linarith
+      calc
+        stageFactorProduct a m δ size z *
+            stageFactor δ size z (a + m + 1)
+            ≤ stageFactorProduct a m δ size z *
+                (1 + 2 * z / size (a + m + 1)) :=
+              mul_le_mul_of_nonneg_left
+                (stageFactor_le_two_over_size δ size z
+                  (a + m + 1) hz hδm hδhalf_m hsize_m)
+                hleft
+        _ = stageFactorProduct a m δ size z *
+              (1 + 2 * z / size (a + 1 + m)) := by
+              rw [hindex]
+        _ ≤ (∏ j ∈ Finset.range m,
+              (1 + 2 * z / size (a + 1 + j))) *
+              (1 + 2 * z / size (a + 1 + m)) :=
+              mul_le_mul_of_nonneg_right ih hright
 
 /-- The initial polynomial is nonnegative for nonnegative coefficients
 and nonnegative z. -/
