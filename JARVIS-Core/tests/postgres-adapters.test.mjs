@@ -1,0 +1,240 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { PostgresTaskStore, PostgresApprovalStore, PostgresRuntimeAudit, PostgresRuntimeMessageStore, PostgresAgentBudget, PostgresAgentConversationStore, PostgresAgentMemoryStore } from "../runtime/postgres-adapters.mjs";
+
+function fakeSql(handler) {
+  const calls=[];
+  return { calls, unsafe: async (query, params=[]) => { calls.push({query,params}); return handler(query,params); }, begin: async fn => fn({unsafe: async (...args) => fakeSql.unsafe(...args)}) };
+}
+
+test("Postgres task claims are atomic, priority ordered and increment attempts", async () => {
+  const sql=fakeSql(async (q) => q.includes("WITH candidate") ? [{
+    task_id:"t1",task_type:"research",payload:{q:"x"},priority:9,idempotency_key:"once",status:"running",
+    attempts:1,max_attempts:3,created_at:new Date(0),updated_at:new Date(1),lease_until:new Date(60000),last_error:null
+  }] : []);
+  const store=new PostgresTaskStore(sql);
+  const claimed=await store.claimNext({now:1,leaseUntil:60000});
+  assert.equal(claimed.taskId,"t1");
+  assert.equal(claimed.attempts,1);
+  assert.match(sql.calls[0].query,/FOR UPDATE SKIP LOCKED/);
+  assert.match(sql.calls[0].query,/ORDER BY priority DESC/);
+});
+
+test("Postgres task recovery requeues expired tasks or exhausts their attempts in SQL", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_tasks SET status=CASE") ? [] : []);
+  const store=new PostgresTaskStore(sql);
+  await store.recoverExpired(1000);
+  assert.match(sql.calls[0].query,/attempts >= max_attempts THEN 'failed' ELSE 'queued'/);
+});
+
+test("approval resolution is pending-only and rejects expired approvals", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_approvals") ? [{approval_id:"a1",status:"approved"}] : []);
+  const store=new PostgresApprovalStore(sql);
+  const result=await store.resolve({approvalId:"a1",decision:"approved",reviewerId:"human-1",resolvedAt:1000});
+  assert.equal(result.status,"approved");
+  assert.match(sql.calls[0].query,/status='pending'/);
+  assert.match(sql.calls[0].query,/expires_at IS NULL OR expires_at>now()/);
+});
+
+test("audit and message adapters persist structured JSON payloads", async () => {
+  const sql=fakeSql(async () => [{message_id:"m1"}]);
+  const audit=new PostgresRuntimeAudit(sql);
+  await audit.append({event:"task.started",taskId:"t1",actorId:"agent-a",attempt:1});
+  const messages=new PostgresRuntimeMessageStore(sql);
+  assert.equal(await messages.append({messageId:"m1",taskId:"t1",from:"a",to:"b",type:"result",payload:{ok:true},createdAt:1}),"m1");
+  assert.equal(sql.calls.length,2);
+  assert.match(sql.calls[0].query,/jarvis_runtime_audit/);
+  assert.match(sql.calls[1].query,/jarvis_runtime_messages/);
+});
+
+test("persistent budget accounting uses a conditional atomic upsert", async () => {
+  const sql=fakeSql(async q => q.startsWith("INSERT INTO jarvis_runtime_agent_usage") ? [{agent_id:"a",tokens_used:10,cost_used:"0.01"}] : []);
+  const budget=new PostgresAgentBudget(sql);
+  const result=await budget.consume("a",{tokens:10,cost:0.01},{tokens:100,cost:0.1});
+  assert.equal(result.allowed,true);
+  assert.equal(sql.calls[0].query.includes("ON CONFLICT(agent_id) DO UPDATE"), true);
+  assert.match(sql.calls[0].query,/tokens_used\+EXCLUDED.tokens_used <= \$4/);
+  await assert.rejects(budget.consume("a",{tokens:1,cost:0},{tokens:Infinity,cost:0.1}),/explicit finite/);
+});
+
+test("task update persists result and verification with compare-and-set status", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_tasks") ? [{
+    task_id:"t1",task_type:"compute",payload:{},priority:1,status:"completed",attempts:1,max_attempts:3,
+    created_at:new Date(0),updated_at:new Date(2),lease_until:null,last_error:null,
+    result:{answer:42},verification:{verified:true}
+  }] : []);
+  const store=new PostgresTaskStore(sql);
+  const updated=await store.update({taskId:"t1",type:"compute",payload:{},priority:1,status:"completed",
+    expectedStatus:"running",attempts:1,maxAttempts:3,updatedAt:2,leaseUntil:null,lastError:null,
+    result:{answer:42},verification:{verified:true}});
+  assert.deepEqual(updated.result,{answer:42});
+  assert.deepEqual(updated.verification,{verified:true});
+  assert.match(sql.calls[0].query,/result=\$11::jsonb,verification=\$12::jsonb/);
+  assert.match(sql.calls[0].query,/AND status=\$13/);
+  assert.equal(sql.calls[0].params[12],"running");
+});
+
+
+test("task lease renewal only extends an active running task", async () => {
+  const sql=fakeSql(async q => q.startsWith("UPDATE jarvis_runtime_tasks SET lease_until") ? [{
+    task_id:"t1",task_type:"compute",payload:{},priority:1,status:"running",attempts:1,max_attempts:3,
+    created_at:new Date(0),updated_at:new Date(2),lease_until:new Date(90000),last_error:null
+  }] : []);
+  const store=new PostgresTaskStore(sql);
+  const renewed=await store.extendLease({taskId:"t1",now:30000,leaseUntil:90000});
+  assert.equal(renewed.status,"running");
+  assert.equal(renewed.leaseUntil,90000);
+  assert.match(sql.calls[0].query,/status='running'/);
+  assert.match(sql.calls[0].query,/lease_until > to_timestamp/);
+});
+
+test("expired or non-running task lease cannot be renewed", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresTaskStore(sql);
+  assert.equal(await store.extendLease({taskId:"t1",now:90000,leaseUntil:150000}),undefined);
+});
+
+
+test("Postgres approval lookup retrieves a decision by approval id",async()=>{
+ const sql=fakeSql(async q=>q.startsWith("SELECT * FROM jarvis_runtime_approvals")?[{approval_id:"a2",task_id:"t2",action:"production_deploy",status:"approved"}]:[]);
+ const store=new PostgresApprovalStore(sql);
+ const row=await store.get("a2");
+ assert.equal(row.task_id,"t2");
+ assert.equal(row.status,"approved");
+ assert.match(sql.calls[0].query,/WHERE approval_id=\$1/);
+});
+
+
+test("conversation adapter persists transcripts and maps database rows", async () => {
+  const dbRow = {
+    conversation_id:"c1",task_id:"t1",participants:["research","critic"],status:"active",
+    active_agent:"research",version:0,entries:[],created_at:new Date(0),updated_at:new Date(0)
+  };
+  const sql=fakeSql(async (q,params) => {
+    if(q.startsWith("INSERT INTO jarvis_runtime_conversations")) return [{...dbRow}];
+    if(q.startsWith("SELECT * FROM jarvis_runtime_conversations")) return [{...dbRow}];
+    if(q.startsWith("UPDATE jarvis_runtime_conversations SET entries")) {
+      return [{...dbRow,entries:[JSON.parse(params[2])],version:1}];
+    }
+    if(q.startsWith("UPDATE jarvis_runtime_conversations SET status")) {
+      return [{...dbRow,status:params[2],active_agent:params[3],version:2}];
+    }
+    return [];
+  });
+  const store=new PostgresAgentConversationStore(sql);
+  const created=await store.create({
+    conversationId:"c1",taskId:"t1",participants:["research","critic"],
+    status:"active",activeAgent:"research",version:0,entries:[]
+  });
+  assert.equal(created.conversationId,"c1");
+  assert.equal(created.version,0);
+  assert.deepEqual((await store.get("c1")).participants,["research","critic"]);
+  const appended=await store.append({
+    conversationId:"c1",expectedVersion:0,
+    entry:{role:"user",content:"Investigate",createdAt:1}
+  });
+  assert.equal(appended.version,1);
+  assert.equal(appended.entries[0].content,"Investigate");
+  const paused=await store.setStatus({
+    conversationId:"c1",expectedVersion:1,status:"awaiting_user",activeAgent:"research"
+  });
+  assert.equal(paused.status,"awaiting_user");
+  assert.equal(paused.version,2);
+  assert.match(sql.calls[2].query,/WHERE conversation_id=\$1 AND version=\$2/);
+  assert.match(sql.calls[2].query,/jsonb_build_array/);
+  assert.match(sql.calls[3].query,/WHERE conversation_id=\$1 AND version=\$2/);
+});
+
+test("conversation adapter returns null on compare-and-set conflict", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresAgentConversationStore(sql);
+  assert.equal(await store.append({
+    conversationId:"c1",expectedVersion:4,entry:{role:"agent",content:"stale"}
+  }),null);
+  assert.equal(await store.setStatus({
+    conversationId:"c1",expectedVersion:4,status:"completed",activeAgent:"critic"
+  }),null);
+});
+
+test("conversation adapter rejects invalid initial rows and status values", async () => {
+  const sql=fakeSql(async () => []);
+  const store=new PostgresAgentConversationStore(sql);
+  await assert.rejects(store.create({conversationId:"c1"}),/invalid initial/);
+  await assert.rejects(store.setStatus({
+    conversationId:"c1",expectedVersion:0,status:"approved",activeAgent:"critic"
+  }),/invalid conversation status/);
+});
+
+
+test("shared memory creates and updates with version CAS and an atomic history snapshot", async () => {
+  const row = {
+    memory_id:7,namespace:"shared",memory_key:"project.status",value:{state:"ready"},
+    provenance:{source:"verified"},version:2,created_by:"research",updated_by:"auditor",
+    created_at:new Date(0),updated_at:new Date(2)
+  };
+  const sql=fakeSql(async q => q.includes("WITH written AS") ? [row] : []);
+  const store=new PostgresAgentMemoryStore(sql);
+  const result=await store.put({
+    namespace:"shared",key:"project.status",value:{state:"ready"},
+    provenance:{source:"verified"},actorId:"auditor",expectedVersion:1
+  });
+  assert.equal(result.ok,true);
+  assert.equal(result.memory.version,2);
+  assert.deepEqual(result.memory.value,{state:"ready"});
+  assert.match(sql.calls[0].query,/ON CONFLICT\(namespace,memory_key\) DO UPDATE/);
+  assert.match(sql.calls[0].query,/WHERE jarvis_runtime_memories.version=\$6/);
+  assert.match(sql.calls[0].query,/INSERT INTO jarvis_runtime_memory_versions/);
+});
+
+test("shared memory records a stale-write conflict without overwriting current data", async () => {
+  const current = {
+    memory_id:3,namespace:"shared",memory_key:"policy",value:{revision:4},
+    provenance:{source:"owner"},version:4,created_by:"owner",updated_by:"owner",
+    created_at:new Date(0),updated_at:new Date(4)
+  };
+  const sql=fakeSql(async q => {
+    if(q.includes("WITH written AS")) return [];
+    if(q.startsWith("SELECT * FROM jarvis_runtime_memories")) return [current];
+    return [];
+  });
+  const store=new PostgresAgentMemoryStore(sql);
+  const result=await store.put({
+    namespace:"shared",key:"policy",value:{revision:5},
+    provenance:{source:"stale-agent"},actorId:"agent-a",expectedVersion:3
+  });
+  assert.equal(result.ok,false);
+  assert.equal(result.conflict,true);
+  assert.equal(result.current.version,4);
+  assert.equal(sql.calls.length,3);
+  assert.match(sql.calls[2].query,/INSERT INTO jarvis_runtime_memory_conflicts/);
+  assert.deepEqual(sql.calls[2].params.slice(0,4),["shared","policy",3,4]);
+});
+
+test("shared memory rejects missing identity, invalid versions and non-object provenance", async () => {
+  const store=new PostgresAgentMemoryStore(fakeSql(async () => []));
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:1,actorId:"agent",expectedVersion:-1
+  }),/invalid memory write/);
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:1,provenance:[],actorId:"agent",expectedVersion:0
+  }),/invalid memory write/);
+  await assert.rejects(store.put({
+    namespace:"shared",key:"k",value:undefined,actorId:"agent",expectedVersion:0
+  }),/invalid memory JSON/);
+});
+
+test("shared memory list and history queries are namespace/key scoped and bounded", async () => {
+  const sql=fakeSql(async q => q.includes("memory_versions") ? [{
+    memory_id:7,version:2,value:{x:2},provenance:{source:"test"},actor_id:"agent",created_at:new Date(2)
+  }] : [{
+    memory_id:7,namespace:"shared",memory_key:"k",value:{x:2},provenance:{source:"test"},
+    version:2,created_by:"agent",updated_by:"agent",created_at:new Date(0),updated_at:new Date(2)
+  }]);
+  const store=new PostgresAgentMemoryStore(sql);
+  const listed=await store.list("shared",9999);
+  assert.equal(listed.length,1);
+  assert.equal(sql.calls[0].params[1],500);
+  const history=await store.history("shared","k",10);
+  assert.equal(history[0].version,2);
+  assert.match(sql.calls[1].query,/m\.namespace=\$1 AND m\.memory_key=\$2/);
+});
