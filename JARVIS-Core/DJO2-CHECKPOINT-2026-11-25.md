@@ -1,0 +1,5 @@
+# DJO² IA – Eigentümerentscheidung und Arbeitsstand
+
+Keine Apache-2.0-Lizenzierung neuer eigener Beiträge. Keine neue Lizenzfreigabe ohne ausdrückliche Eigentümerentscheidung. Bestehende Rechte Dritter und bereits wirksame Lizenzvergaben bleiben unberührt. Ziel: sämtliche verfügbaren eigenen Rechte beim Eigentümer behalten; konkrete Ersatzlizenz noch nicht ausdrücklich festgelegt. Gilt projektweit für eigene Beiträge, Dokumentation, App, Module und zukünftige Änderungen.
+
+CI: 793adee PostgreSQL, Core und Discovery bestanden; Lean zuletzt laufend. 82238a3 Crash-Recovery bestanden (synthetisch). Offene Arbeiten: persistente Zahlungsprüfwarteschlange, parallele unterschiedliche Referenzen, Isolation, Rollback, Crash-Test, reale BTC/Fiat-Adapter, Buchhaltung, Gedächtnis, Lizenzinventar, CI, Merge, Deployment, App-Abnahme. Teilzahlungen vorläufig manuell prüfen. Zero-Spend; keine neuen kostenpflichtigen Dienste. Keine realen Zahlungen nachgewiesen. Bestehende Daten erhalten.
