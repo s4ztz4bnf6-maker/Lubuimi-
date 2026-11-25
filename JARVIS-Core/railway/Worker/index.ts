@@ -1,3 +1,5 @@
+import { initializeCaos, runCaosCycle } from "./supervisor/runtime.mjs";
+import { CentralSupervisor } from "./supervisor/central-supervisor.mjs";
 import { initializeRegistration } from "./tools/registration-state.mjs";
 import { initializeOrchestration } from "./tools/orchestration.mjs";
 import { initializeProjectMemory } from "./tools/project-memory.mjs";
@@ -1125,6 +1127,26 @@ try {
   await sql`INSERT INTO sgl_discovery_runs(leads,errors) VALUES (${sglLeads},${sglErrors})`;
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
+
+// CAOS: bounded read-only pilot, using existing production discovery data.
+try {
+  await initializeCaos(sql);
+  const handlers = {
+    "second-good-life": async () => ({potential:(await sql`SELECT count(*)::int AS n FROM sgl_potential_matches`)[0].n,verified:false}),
+    "bounty-scout": async () => ({opportunities:(await sql`SELECT count(*)::int AS n FROM jarvis_opportunities`)[0].n}),
+    "freegoods": async () => ({offers:(await sql`SELECT count(*)::int AS n FROM sgl_discovery_leads WHERE kind='offer'`)[0].n,verified:false}),
+    "commercial-services": async () => ({claims:(await sql`SELECT count(*)::int AS n FROM jarvis_claims`)[0].n,paidVerified:false}),
+    "ai-collaboration": async () => ({candidates:(await sql`SELECT count(*)::int AS n FROM jarvis_agent_candidates`)[0].n}),
+    "exchange": async () => ({observedTransactions:(await sql`SELECT count(*)::int AS n FROM jarvis_wallet_transactions`)[0].n,sendEnabled:false}),
+    "research-development": async () => ({memoryEntries:(await sql`SELECT count(*)::int AS n FROM agent_memory`)[0].n}),
+    "finance": async () => ({ledgerEntries:(await sql`SELECT count(*)::int AS n FROM jarvis_earnings_ledger`)[0].n,paidVerified:false})
+  };
+  const supervisor = new CentralSupervisor({sql,handlers});
+  for (const department of Object.keys(handlers)) {
+    await supervisor.dispatch({id:"review:"+department+":"+Math.floor(Date.now()/3600000),department,action:"evaluate"});
+  }
+  console.log("CAOS cycle",JSON.stringify(await runCaosCycle(sql,handlers)));
+} catch (error) { console.error("CAOS cycle failed",String(error)); }
 
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
