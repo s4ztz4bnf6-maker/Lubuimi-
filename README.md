@@ -1,3 +1,5 @@
+**Current licensing policy (2026-11-25):** All future authorized original research releases, code, algorithm implementations, artwork and documentation require a separate paid commercial agreement for commercial exploitation. See [LICENSE](LICENSE). Earlier valid grants and third-party rights remain intact.
+
 # APW4 — Mathematical and Formalization Record
 
 **Author and research lead:** Ta-Yoshua Lubuimi  
