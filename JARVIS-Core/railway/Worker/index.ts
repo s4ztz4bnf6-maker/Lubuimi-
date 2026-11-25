@@ -1,3 +1,5 @@
+import { initializeCaos, runCaosCycle } from "./supervisor/runtime.mjs";
+import { CentralSupervisor } from "./supervisor/central-supervisor.mjs";
 import { initializeRegistration } from "./tools/registration-state.mjs";
 import { initializeOrchestration } from "./tools/orchestration.mjs";
 import { initializeProjectMemory } from "./tools/project-memory.mjs";
@@ -1125,6 +1127,20 @@ try {
   await sql`INSERT INTO sgl_discovery_runs(leads,errors) VALUES (${sglLeads},${sglErrors})`;
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
+
+// CAOS: bounded read-only pilot, using existing production discovery data.
+try {
+  await initializeCaos(sql);
+  const handlers = {
+    "second-good-life": async () => {
+      const rows = await sql`SELECT count(*)::int AS potential FROM sgl_potential_matches`;
+      return { potential: rows[0].potential, verified: false };
+    }
+  };
+  const supervisor = new CentralSupervisor({sql,handlers});
+  await supervisor.dispatch({id:"sgl-review:"+Math.floor(Date.now()/3600000),department:"second-good-life",action:"evaluate"});
+  console.log("CAOS cycle",JSON.stringify(await runCaosCycle(sql,handlers)));
+} catch (error) { console.error("CAOS cycle failed",String(error)); }
 
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
