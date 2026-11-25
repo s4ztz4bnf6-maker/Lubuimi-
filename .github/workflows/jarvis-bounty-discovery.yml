@@ -1,0 +1,26 @@
+name: JARVIS Bounty Discovery
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: jarvis-core
+      - uses: oven-sh/setup-bun@v2
+      - name: Discover public bounty candidates
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BOUNTY_STATE_PATH: /tmp/jarvis-bounty-state.json
+        run: bun run JARVIS-Core/railway/Companion/bounty-discovery.ts | tee bounty-candidates.jsonl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bounty-candidates-${{ github.run_id }}
+          path: bounty-candidates.jsonl
+          retention-days: 7
