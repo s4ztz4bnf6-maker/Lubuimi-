@@ -59,3 +59,45 @@ test("live lock is busy; killed session leaves unknown, never retries",async()=>
  assert.match(await phase(id,schema),/PHASE=unknown/);
  }finally{child.kill("SIGKILL");await sql.end();}
 });
+
+import {transitionSelftest} from "../productionSelftest.mjs";
+test("actual probe SIGKILL before commit releases lock and preserves unknown",async()=>{
+ const id=crypto.randomUUID(),schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);
+ const sql=postgres(process.env.DATABASE_URL);
+ const child=spawn(process.execPath,["--input-type=module","-e",`import postgres from 'postgres';import {productionSelftest} from ${JSON.stringify(moduleUrl)};const sql=postgres(process.env.DATABASE_URL);await productionSelftest(sql,process.argv[1],process.argv[2],{beforeWriteCommit:async()=>{console.log('CRITICAL_READY');await new Promise(()=>{setInterval(()=>{},1000)});}});`,id,schema],{stdio:["ignore","pipe","pipe"]});
+ const closed=once(child,"close");
+ const read=async()=>{const [r]=await sql`SELECT state FROM ${sql(schema+".selftest_runs")} WHERE run_id=${id}`;return r.state;};
+ try{
+ await new Promise((resolve,reject)=>{let out="",err="";const timer=setTimeout(()=>reject(Error("critical window timeout: "+err)),15000);child.stderr.on("data",x=>err+=x);child.stdout.on("data",x=>{out+=x;if(out.includes("CRITICAL_READY")){clearTimeout(timer);resolve();}});child.once("exit",()=>{clearTimeout(timer);reject(Error("child exited: "+err));});});
+ assert.equal(await read(),"IN_PROGRESS");
+ assert.match(await phase(id,schema),/PHASE=busy/);
+ assert.equal(await read(),"IN_PROGRESS");
+ child.kill("SIGKILL");const [,signal]=await closed;assert.equal(signal,"SIGKILL");
+ const session=await sql.reserve();
+ try{
+ let acquired=false;
+ for(let i=0;i<100&&!acquired;i++){const [r]=await session`SELECT pg_try_advisory_lock(hashtext('djo2-selftest'),hashtext(${schema})) AS ok`;acquired=r.ok;if(!acquired)await new Promise(r=>setTimeout(r,50));}
+ assert.ok(acquired,"session lock must be released after SIGKILL");
+ assert.equal(await read(),"IN_PROGRESS");
+ await session`SELECT pg_advisory_unlock(hashtext('djo2-selftest'),hashtext(${schema}))`;
+ }finally{session.release();}
+ assert.match(await phase(id,schema),/PHASE=unknown/);
+ assert.equal(await read(),"UNKNOWN");
+ assert.match(await phase(id,schema),/PHASE=unknown/);
+ assert.equal(await read(),"UNKNOWN");
+ const [markerTable]=await sql`SELECT to_regclass(${schema+".djo2_provider_exclusions"}) AS name`;assert.equal(markerTable.name,null);
+ }finally{child.kill("SIGKILL");await sql.end();}
+});
+test("invalid state and missing ID cannot change durable state",async()=>{
+ const id=crypto.randomUUID(),schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);
+ const sql=postgres(process.env.DATABASE_URL);
+ try{
+ await productionSelftest(sql,id,schema);await productionSelftest(sql,id,schema);
+ const snapshot=()=>sql`SELECT * FROM ${sql(schema+".selftest_runs")} ORDER BY run_id`;
+ const before=await snapshot();
+ await assert.rejects(transitionSelftest(sql,schema,id,"IN_PROGRESS","WRITTEN"),/exactly one row/);
+ await assert.rejects(transitionSelftest(sql,schema,crypto.randomUUID(),"WRITTEN","COMPLETED"),/exactly one row/);
+ await assert.rejects(transitionSelftest(sql,schema,id,"COMPLETED","WRITTEN"),/invalid transition/);
+ assert.deepEqual(await snapshot(),before);
+ }finally{await sql.end();}
+});
