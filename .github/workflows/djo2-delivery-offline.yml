@@ -1,5 +1,12 @@
 name: DJO2 Delivery Offline
 on:
+  pull_request:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Worker/githubDelivery*'
+      - 'JARVIS-Core/railway/Worker/providerRotationDb.mjs'
+      - '.github/workflows/djo2-delivery-offline.yml'
+  workflow_dispatch:
   push:
     branches: [jarvis-core]
     paths:
