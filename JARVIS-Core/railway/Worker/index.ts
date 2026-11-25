@@ -108,7 +108,7 @@ for(const watchAddress of watchAddresses){
    const confirmations=confirmed&&blockHeight!==null&&Number.isFinite(tipHeight)?Math.max(1,tipHeight-blockHeight+1):0;
    const blockTime=confirmed&&Number.isFinite(Number(tx.status?.block_time))?new Date(Number(tx.status.block_time)*1000):null;
    await sql.unsafe("INSERT INTO jarvis_wallet_transactions(txid,receive_address,received_sats,status,confirmed,block_height,block_time,confirmations,first_seen_at,last_seen_at,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,now(),now(),now()) ON CONFLICT(txid,receive_address) DO UPDATE SET received_sats=EXCLUDED.received_sats,status=EXCLUDED.status,confirmed=EXCLUDED.confirmed,block_height=EXCLUDED.block_height,block_time=EXCLUDED.block_time,confirmations=EXCLUDED.confirmations,last_seen_at=now(),updated_at=now()",[String(tx.txid),watchAddress,String(receivedSats),confirmed?"confirmed":"mempool",confirmed,blockHeight,blockTime,confirmations]);
-   await sql.unsafe("UPDATE jarvis_earnings_ledger SET status='paid',currency='BTC',gross_amount=COALESCE(gross_amount,$1::numeric),received_at=COALESCE(received_at,now()),updated_at=now() WHERE payment_reference=$2 AND status IN ('submitted','accepted','payable')",[String(receivedSats/100000000),String(tx.txid)]).catch(()=>{});
+   if (confirmed && confirmations >= 3) await sql.unsafe("UPDATE jarvis_earnings_ledger SET status='paid',currency='BTC',gross_amount=COALESCE(gross_amount,$1::numeric),received_at=COALESCE(received_at,now()),updated_at=now() WHERE payment_reference=$2 AND status IN ('submitted','accepted','payable')",[String(receivedSats/100000000),String(tx.txid)]).catch(()=>{});
    savedCount++;
   }
   await sql.unsafe("UPDATE jarvis_wallet_watch_addresses SET updated_at=now() WHERE address=$1",[watchAddress]);
