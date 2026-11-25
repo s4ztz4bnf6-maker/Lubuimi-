@@ -4,7 +4,7 @@
   "modules": [
     {
       "id": "second-good-life",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -13,7 +13,7 @@
     },
     {
       "id": "trading",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -22,7 +22,7 @@
     },
     {
       "id": "sales",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -31,7 +31,7 @@
     },
     {
       "id": "chat",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -40,7 +40,7 @@
     },
     {
       "id": "bounty",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -49,7 +49,7 @@
     },
     {
       "id": "exchange",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -58,7 +58,7 @@
     },
     {
       "id": "finance",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
@@ -67,7 +67,7 @@
     },
     {
       "id": "cybersecurity",
-      "license": "Apache-2.0",
+      "license": "LicenseRef-DJO2-Proprietary",
       "status": "planned",
       "sourceExport": true,
       "versionHistory": true,
