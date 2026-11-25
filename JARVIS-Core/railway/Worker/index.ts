@@ -981,12 +981,12 @@ async function searchMemory(query) {
 const providerGuard = new ProviderGuard();
 let geminiQuotaBlocked = false;
 // Forward only portable chat fields; provider-specific response metadata stays local.
-function portableMessages(messages:any[]) {
+function portableMessages(messages:any[], providerName:string) {
   return messages.map(m=>{
     const out:any={role:m.role,content:m.content??null};
     if(typeof m.name==="string")out.name=m.name;
     if(m.role==="tool"&&typeof m.tool_call_id==="string")out.tool_call_id=m.tool_call_id;
-    if(m.role==="assistant"&&Array.isArray(m.tool_calls))out.tool_calls=m.tool_calls.map(c=>({id:c.id,type:"function",function:{name:c.function.name,arguments:c.function.arguments}}));
+    if(m.role==="assistant"&&Array.isArray(m.tool_calls))out.tool_calls=m.tool_calls.map(c=>({id:c.id,type:"function",function:{name:c.function.name,arguments:c.function.arguments},...(m._djoProvider===providerName&&c.extra_content?{extra_content:c.extra_content}:{})}));
     return out;
   });
 }
@@ -998,7 +998,7 @@ async function ask(messages, tools) {
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
-      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(25000)});
+      const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:portableMessages(messages,provider.name),tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:Math.max(1024,Math.min(8192,Number(env.JARVIS_MAX_OUTPUT_TOKENS||4096)))}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
       const result=JSON.parse(responseText);
@@ -1185,7 +1185,7 @@ try {
     const result = await ask(messages, tools);
     const message = result.choices?.[0]?.message;
     if (!message) throw new Error("Model returned no message");
-    messages.push(message);
+    messages.push({...message,_djoProvider:result._jarvisProvider});
     await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"model_step",JSON.stringify({tools:(message.tool_calls||[]).map(c=>c.function?.name),hasAnswer:Boolean(message.content)}));
     if(message.content && !incomeTask && !goodiesTask) await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"research_draft",String(message.content));
     if (!message.tool_calls?.length) {
