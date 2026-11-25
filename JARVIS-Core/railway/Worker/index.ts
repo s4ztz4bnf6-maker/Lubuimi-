@@ -17,6 +17,7 @@ const env = Bun.env;
 const maxParallelTasks = Math.max(1, Math.min(4, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
+// INVARIANT: selftest gate precedes all external calls and regular initialization; only isolated DB access is allowed before it.
 if (process.env.DJO2_SELFTEST_ID) {
   try {
     const { productionSelftest } = await import("./productionSelftest.mjs");
