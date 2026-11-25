@@ -400,8 +400,9 @@ theorem prefixFibre_updatedWeight_eq_PAt
   · simp [hcov, xprev, Finset.mem_univ] <;>
       (intro hnot; exact (hnot hcov).elim)
   · let z := y (Fin.last (a + j))
-    change z ∉ prefixCoveredValues C hk (restrictPrefix C hk y) at hcov
-    by_cases hmem : z ∈ prefixCoveredValues C hk (restrictPrefix C hk y)
+    change z ∉ prefixCoveredValues C (A := A) hk (restrictPrefix C hk y) at hcov
+    by_cases hmem :
+        z ∈ prefixCoveredValues C (A := A) hk (restrictPrefix C hk y)
     · exact (hcov hmem).elim
     · simp [hmem, z, xprev, Finset.mem_univ]
 #print axioms prefixFibre_updatedWeight_eq_PAt
