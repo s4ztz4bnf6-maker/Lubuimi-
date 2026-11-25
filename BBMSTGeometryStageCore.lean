@@ -101,7 +101,17 @@ theorem containsPrefix_iff_full
             x (prefixIndex hk j) =
               Eq.mpr (congrArg C.S hidx) s := by
           simpa [projectPrefix] using hj
-        simpa [hidx] using hj'
+        -- The index map is dependent in its codomain, so eliminate the
+        -- equality rather than applying congrArg to the dependent point.
+        have hpoint : x (prefixIndex hk j) = x i := by
+          cases hidx
+          rfl
+        have hvalue :
+            Eq.mpr (congrArg C.S hidx) s = s := by
+          cases hidx
+          rfl
+        rw [hpoint, hvalue] at hj'
+        exact hj'
   · intro hFull j
     cases hassign : H.assignment (prefixIndex hk j) with
     | none =>
