@@ -108,3 +108,23 @@ test("verified receipts: parallel idempotency and conflicting invoice evidence",
  assert.equal(count.n,1);
  }finally{await Promise.all([sql.end(),other.end()]);}
 });
+
+test("distinct receipts cannot settle one invoice twice under READ COMMITTED",async()=>{
+ const url=process.env.CAOS_TEST_DATABASE_URL;
+ const u=new URL(url);assert.equal(u.hostname,"127.0.0.1");assert.equal(u.pathname,"/caos_test");
+ const sql=postgres(url),other=postgres(url);
+ try{
+ const {initializePaymentReceipts,recordIncomingReceipt}=await import("../supervisor/payment-receipts.mjs");
+ await initializePaymentReceipts(sql);
+ for(const db of [sql,other]){
+ const [isolation]=await db`SHOW default_transaction_isolation`;
+ assert.equal(isolation.default_transaction_isolation,"read committed");
+ }
+ const expected={amountMinor:"1000",currency:"EUR",destination:"synthetic-account",invoiceRef:"distinct-receipt-test"};
+ const adapter={provider:"synthetic-test",verifyIncoming:async externalRef=>({...expected,externalRef,verified:true,direction:"incoming"})};
+ const results=await Promise.all([recordIncomingReceipt(sql,expected,"distinct-A",adapter),recordIncomingReceipt(other,expected,"distinct-B",adapter)]);
+ assert.deepEqual(results.map(r=>r.state).sort(),["recorded","review"]);
+ const [count]=await sql`SELECT count(*)::int AS n FROM djo2_verified_receipts WHERE invoice_ref=${expected.invoiceRef}`;
+ assert.equal(count.n,1);
+ }finally{await Promise.all([sql.end(),other.end()]);}
+});
