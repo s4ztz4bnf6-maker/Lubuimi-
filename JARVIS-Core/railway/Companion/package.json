@@ -8,5 +8,5 @@
   "dependencies": {
     "postgres": "^3.4.7"
   },
-  "license": "Apache-2.0"
+  "license": "UNLICENSED"
 }
