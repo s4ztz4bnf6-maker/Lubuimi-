@@ -1,3 +1,6 @@
+import { initializeRegistration } from "./tools/registration-state.mjs";
+import { initializeOrchestration } from "./tools/orchestration.mjs";
+import { initializeProjectMemory } from "./tools/project-memory.mjs";
 import { discoverCandidates } from "./discovery.mjs";
 import { ProviderGuard } from "./tools/provider-guard.mjs";
 import { AGENT_ECONOMY_WORKSTREAMS, buildAgentOutreachMessage, verifyAgentOutreachReadback, buildSelfDevelopmentPrompt, evaluateAutonomyAction } from "./tools/agent-autonomy.mjs";
@@ -56,7 +59,21 @@ async function freeInference(prompt,maxTokens=256){
 }
 
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
+await initializeProjectMemory(sql);
+await initializeOrchestration(sql);
+await initializeRegistration(sql);
 await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
+  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
+  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,
+  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ
+)`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ`;
+await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ`;
+await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
 if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
   // Keep providers registered so they can recover after cooldown.
@@ -91,8 +108,15 @@ const watchAddresses=[...new Set(walletRows.map((r:any)=>String(r.address)).filt
 if(!watchAddresses.length)throw new Error("No valid Bitcoin watch addresses configured");
 await sql.unsafe("INSERT INTO jarvis_wallet_watch(id,receive_address,updated_at) VALUES(1,$1,now()) ON CONFLICT(id) DO UPDATE SET receive_address=EXCLUDED.receive_address,updated_at=now()",[watchAddresses[0]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_transactions (txid text NOT NULL,receive_address text NOT NULL,received_sats numeric(20,0) NOT NULL,status text NOT NULL DEFAULT 'mempool',confirmed boolean NOT NULL DEFAULT false,block_height integer,block_time timestamptz,confirmations integer NOT NULL DEFAULT 0,first_seen_at timestamptz NOT NULL DEFAULT now(),last_seen_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())");
-await sql.unsafe("ALTER TABLE jarvis_wallet_transactions DROP CONSTRAINT IF EXISTS jarvis_wallet_transactions_pkey");
-await sql.unsafe("ALTER TABLE jarvis_wallet_transactions ADD PRIMARY KEY(txid,receive_address)");
+await sql.begin(async tx => {
+  await tx.unsafe("SELECT pg_advisory_xact_lock(724190251)");
+  await tx.unsafe("LOCK TABLE jarvis_wallet_transactions IN ACCESS EXCLUSIVE MODE");
+  const constraints = await tx.unsafe("SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint WHERE conrelid='jarvis_wallet_transactions'::regclass AND contype='p'");
+  if (!constraints.some(c => String(c.definition) === "PRIMARY KEY (txid, receive_address)")) {
+    await tx.unsafe("ALTER TABLE jarvis_wallet_transactions DROP CONSTRAINT IF EXISTS jarvis_wallet_transactions_pkey");
+    await tx.unsafe("ALTER TABLE jarvis_wallet_transactions ADD PRIMARY KEY(txid,receive_address)");
+  }
+});
 await sql.unsafe("CREATE INDEX IF NOT EXISTS jarvis_wallet_transactions_seen_idx ON jarvis_wallet_transactions(receive_address,first_seen_at DESC)");
 for(const watchAddress of watchAddresses){
  try{
@@ -108,7 +132,7 @@ for(const watchAddress of watchAddresses){
    const confirmations=confirmed&&blockHeight!==null&&Number.isFinite(tipHeight)?Math.max(1,tipHeight-blockHeight+1):0;
    const blockTime=confirmed&&Number.isFinite(Number(tx.status?.block_time))?new Date(Number(tx.status.block_time)*1000):null;
    await sql.unsafe("INSERT INTO jarvis_wallet_transactions(txid,receive_address,received_sats,status,confirmed,block_height,block_time,confirmations,first_seen_at,last_seen_at,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,now(),now(),now()) ON CONFLICT(txid,receive_address) DO UPDATE SET received_sats=EXCLUDED.received_sats,status=EXCLUDED.status,confirmed=EXCLUDED.confirmed,block_height=EXCLUDED.block_height,block_time=EXCLUDED.block_time,confirmations=EXCLUDED.confirmations,last_seen_at=now(),updated_at=now()",[String(tx.txid),watchAddress,String(receivedSats),confirmed?"confirmed":"mempool",confirmed,blockHeight,blockTime,confirmations]);
-   await sql.unsafe("UPDATE jarvis_earnings_ledger SET status='paid',currency='BTC',gross_amount=COALESCE(gross_amount,$1::numeric),received_at=COALESCE(received_at,now()),updated_at=now() WHERE payment_reference=$2 AND status IN ('submitted','accepted','payable')",[String(receivedSats/100000000),String(tx.txid)]).catch(()=>{});
+   if (confirmed && confirmations >= 3) await sql.unsafe("UPDATE jarvis_earnings_ledger SET status='paid',currency='BTC',gross_amount=COALESCE(gross_amount,$1::numeric),received_at=COALESCE(received_at,now()),updated_at=now() WHERE payment_reference=$2 AND status IN ('submitted','accepted','payable')",[String(receivedSats/100000000),String(tx.txid)]).catch(()=>{});
    savedCount++;
   }
   await sql.unsafe("UPDATE jarvis_wallet_watch_addresses SET updated_at=now() WHERE address=$1",[watchAddress]);
@@ -116,17 +140,7 @@ for(const watchAddress of watchAddresses){
   console.log("JARVIS BTC watch sync OK; address="+watchAddress+"; recent_incoming="+savedCount+"; ledger_total="+totals[0].total+"; confirmed="+totals[0].confirmed+"; pending="+totals[0].pending+"; recorded_received_sats="+totals[0].received_sats+"; explorer_tx_count="+((addressStats.chain_stats?.tx_count||0)+(addressStats.mempool_stats?.tx_count||0))+"; watch_only=true; no_signing=true; no_spending=true");
  }catch(err){console.error("JARVIS BTC watch sync failed for "+watchAddress+": "+(err instanceof Error?err.message:"unknown error"));}
 }
-await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
-  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
-  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,
-  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ
-)`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ`;
-await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
+
 
 await sql`CREATE TABLE IF NOT EXISTS jarvis_opportunities (
   id BIGSERIAL PRIMARY KEY, platform TEXT NOT NULL, external_id TEXT NOT NULL,

@@ -1,0 +1,5 @@
+# Optional DJO² research Tor sidecar
+
+Not a VPN. Deploy only after verifying existing plan capacity and explicit zero incremental cost. No public domain, TCP proxy, or exposed control port. Use private networking only; restrict which services can reach SOCKS port 9050. Do not send credentials, payment traffic, private customer data, registration or authenticated sessions through this service. Do not bypass platform blocks or rotate identities to evade limits.
+
+Build context: JARVIS-Core/railway/tor. The client must support SOCKS5 remote DNS, fail closed when Tor is requested but unavailable, and validate every redirect against SSRF and direct-only policy. A persistent owner-controlled setting and authenticated UI endpoint are required before enabling traffic. Verify with https://check.torproject.org/api/ip through the SOCKS client, not via ordinary fetch. Test direct-only destinations, private IP denial, redirect denial, timeout and restart persistence. No automatic deployment or enabling is performed by these files.
