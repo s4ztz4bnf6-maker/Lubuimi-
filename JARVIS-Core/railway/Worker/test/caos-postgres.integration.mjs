@@ -128,3 +128,32 @@ test("distinct receipts cannot settle one invoice twice under READ COMMITTED",as
  assert.equal(count.n,1);
  }finally{await Promise.all([sql.end(),other.end()]);}
 });
+
+test("payment intents persist review and recover atomic rollback",async()=>{
+ const url=process.env.CAOS_TEST_DATABASE_URL;
+ const u=new URL(url);assert.equal(u.hostname,"127.0.0.1");assert.equal(u.pathname,"/caos_test");
+ const sql=postgres(url);
+ try{
+ const {initializePaymentReceipts,recordIncomingReceipt,resumePaymentIntents}=await import("../supervisor/payment-receipts.mjs");
+ await initializePaymentReceipts(sql);
+ const expected={amountMinor:"1000",currency:"EUR",destination:"synthetic-account",invoiceRef:"atomic-payment-test"};
+ const adapter={provider:"atomic-test",verifyIncoming:async externalRef=>({...expected,externalRef,verified:true,direction:"incoming"})};
+ await sql`CREATE FUNCTION test_payment_abort() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.provider='atomic-test' AND NEW.state='completed' THEN RAISE EXCEPTION 'synthetic rollback'; END IF; RETURN NEW; END $$`;
+ await sql`CREATE TRIGGER test_payment_abort BEFORE UPDATE ON djo2_processing_intents FOR EACH ROW EXECUTE FUNCTION test_payment_abort()`;
+ try{
+ await assert.rejects(recordIncomingReceipt(sql,expected,"atomic-A",adapter),/synthetic rollback/);
+ const [receipt]=await sql`SELECT count(*)::int AS n FROM djo2_verified_receipts WHERE provider='atomic-test'`;
+ assert.equal(receipt.n,0);
+ const [intent]=await sql`SELECT state FROM djo2_processing_intents WHERE provider='atomic-test'`;
+ assert.equal(intent.state,"pending_processing");
+ }finally{
+ await sql`DROP TRIGGER test_payment_abort ON djo2_processing_intents`;
+ await sql`DROP FUNCTION test_payment_abort()`;
+ }
+ assert.deepEqual(await resumePaymentIntents(sql,new Map([[adapter.provider,adapter]])),[{state:"recorded"}]);
+ assert.equal((await recordIncomingReceipt(sql,expected,"atomic-A",adapter)).state,"duplicate");
+ assert.equal((await recordIncomingReceipt(sql,expected,"atomic-B",adapter)).state,"review");
+ const rows=await sql`SELECT i.external_ref,i.state,q.reason FROM djo2_processing_intents i LEFT JOIN djo2_payment_review_queue q ON q.intent_id=i.id WHERE i.provider='atomic-test' ORDER BY i.external_ref`;
+ assert.deepEqual(rows.map(r=>[r.external_ref,r.state,r.reason]),[["atomic-A","completed",null],["atomic-B","review","duplicate_invoice_different_reference"]]);
+ }finally{await sql.end();}
+});
