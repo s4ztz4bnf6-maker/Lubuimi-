@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run index.ts",
-    "test": "node --test test/discovery.test.mjs test/orchestration.test.mjs"
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "postgres": "^3.4.5",
