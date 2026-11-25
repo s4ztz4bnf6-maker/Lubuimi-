@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 // Pure policy: external adapters must independently verify platform evidence.
 export function evaluateRegistration({ platform, grant, account, now = Date.now() } = {}) {
   if (!platform?.id || platform.automationAllowed !== true || platform.termsReviewed !== true)
