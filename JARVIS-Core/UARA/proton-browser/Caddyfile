@@ -1,0 +1,6 @@
+http://:{$PORT} {
+    basicauth {
+        {$ACCESS_USER} {$ACCESS_HASH}
+    }
+    reverse_proxy 127.0.0.1:6080
+}
