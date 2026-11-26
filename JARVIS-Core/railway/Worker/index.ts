@@ -1116,7 +1116,12 @@ function portableMessages(messages:any[], providerName:string) {
 function budgetInference(messages,tools,model){
  const output=Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024));
  const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
- const limit=6500-output;
+ // Explicit per-model context windows; unknown models retain a conservative fallback.
+ let windows: Record<string, number> = {};
+ try { const parsed=JSON.parse(env.JARVIS_MODEL_CONTEXT_WINDOWS || "{}"); if(parsed && typeof parsed==="object" && !Array.isArray(parsed)) windows=parsed; } catch {}
+ const configured=Object.prototype.hasOwnProperty.call(windows,model)?Number(windows[model]):NaN;
+ const contextWindow=Number.isSafeInteger(configured)&&configured>=2048&&configured<=2000000?configured:6500;
+ const limit=Math.max(0,contextWindow-output-512);
  const fits=(m,t)=>estimate({model,messages:m,tools:t})<=limit;
  if(fits(messages,tools))return {messages,tools,output};
  const fixed=messages.filter(m=>m.role==="system");
