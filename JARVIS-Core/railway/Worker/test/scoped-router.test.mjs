@@ -22,7 +22,7 @@ test("router applies cap and normalizes usage",async()=>{
  const router=createScopedRouter({approvedRoutes,transport:async request=>{
  calls++;assert.equal(request.allowFallback,false);assert.equal(request.zeroSpend,true);
  assert.equal(request.max_tokens,outputCap(1200,Buffer.byteLength(JSON.stringify({model:route.model,messages:args.messages,tools:[]})),1024));
- return {choices:[{message:{content:"ok"}}],usage:{prompt_tokens:120,completion_tokens:40,total_tokens:160}};
+ return {costEur:0,choices:[{message:{content:"ok"}}],usage:{prompt_tokens:120,completion_tokens:40,total_tokens:160}};
  }});
  const response=await router(args);assert.equal(response.usage.totalTokens,160);assert.equal(calls,1);
 });
@@ -32,4 +32,13 @@ test("unknown usage and reported costs never trigger fallback",async()=>{
  await assert.rejects(router(args),/UNKNOWN_MODEL_USAGE/);assert.equal(calls,1);
  const paid=createScopedRouter({approvedRoutes,transport:async()=>{calls++;return {isPaid:true,usage:{total_tokens:12}};}});
  await assert.rejects(paid(args),e=>e.message==="ZERO_SPEND_VIOLATION"&&e.actualUsage===12);assert.equal(calls,2);
+});
+
+test("strict zero-spend rejects absent and nonzero cost metadata",async()=>{
+ for(const cost of [undefined,null,1,-1,"0",NaN,Infinity]){
+  let calls=0;
+  const router=createScopedRouter({approvedRoutes,transport:async()=>{calls++;return {costEur:cost,usage:{total_tokens:12}};}});
+  await assert.rejects(router(args),e=>e.message==="ZERO_SPEND_VIOLATION"&&e.actualUsage===12);
+  assert.equal(calls,1);
+ }
 });
