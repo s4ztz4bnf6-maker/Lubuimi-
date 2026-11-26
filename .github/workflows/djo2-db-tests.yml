@@ -30,3 +30,12 @@ jobs:
       - run: npm install --ignore-scripts --no-audit --no-fund
       - run: node --test test/*.test.mjs
       - run: node --test test/integration/*.test.mjs
+
+      - name: Execute read-only authorization audit against disposable PostgreSQL
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f delivery-ledger.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE TABLE IF NOT EXISTS public.djo2_task_effects (task_id text NOT NULL, effect_key text NOT NULL, PRIMARY KEY(task_id,effect_key))'
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f audit-delivery-readonly.sql
+      - name: Inventory authorization references in checked-out worker and server code
+        run: |
+          git grep -n -i 'djo2_delivery_authorizations' -- JARVIS-Core || test "$?" -eq 1
