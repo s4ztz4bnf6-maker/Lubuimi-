@@ -31,3 +31,24 @@ export async function persistDecomposition(taskId, taskHash, parts, contextLimit
     return {created:parts.length,...plan};
   });
 }
+
+/** Lossless source partition. UTF-8 byte count is a conservative text budget proxy;
+ * caller must reserve framing, tools and output separately. Not a semantic execution plan.
+ */
+export function partitionSource(source, contextLimit, totalLimit, consumed=0, overhead=0) {
+  if(typeof source!=="string" || !source.trim()) throw new Error("Missing source");
+  for(const n of [contextLimit,totalLimit,consumed,overhead]) if(!Number.isSafeInteger(n)||n<0) throw new RangeError("Invalid budget");
+  const capacity=contextLimit-overhead;
+  if(capacity<4 || consumed>totalLimit) throw new RangeError("Insufficient budget");
+  const chunks=[];
+  let chunk="", bytes=0;
+  for(const cp of source){
+    const size=Buffer.byteLength(cp,"utf8");
+    if(bytes+size>capacity){chunks.push(chunk);chunk="";bytes=0;}
+    chunk+=cp;bytes+=size;
+  }
+  if(chunk) chunks.push(chunk);
+  const reserved=chunks.reduce((sum,p)=>sum+Buffer.byteLength(p,"utf8")+overhead,0);
+  if(!Number.isSafeInteger(reserved)||reserved>totalLimit-consumed) throw new RangeError("Total budget exceeded");
+  return {sourceHash:createHash("sha256").update(source).digest("hex"),chunks,reserved};
+}
