@@ -17,7 +17,7 @@ export function decideRetry(message, task, classifyFailure, nextAction) {
 }
 
 /** Schedule a running task; persisted checkpoints remain the source of resume position. */
-export async function planeFortsetzung(taskId, step, grund, delayMs, { sql }) {
+export async function planeFortsetzung(taskId, step, grund, delayMs, { sql, taskHash }) {
   const delay = delayMs ?? 30000;
   if (!Number.isSafeInteger(delay) || delay < 0) throw new RangeError("Invalid retry delay");
   if (step != null && (!Number.isSafeInteger(step) || step < 0)) throw new RangeError("Invalid resume step");
@@ -27,7 +27,10 @@ export async function planeFortsetzung(taskId, step, grund, delayMs, { sql }) {
       ORDER BY id DESC LIMIT 1`;
     if (!checkpoint) return { taskId, step: null, grund, delayMs: delay, scheduled: false };
     if (checkpoint) {
-      const state = JSON.parse(checkpoint.note);
+      let state;
+      try { state = JSON.parse(checkpoint.note); } catch { state = null; }
+      if (typeof taskHash !== 'string' || !taskHash || state?.taskHash !== taskHash)
+        return { taskId, step: null, grund, delayMs: delay, scheduled: false };
       if (!Number.isSafeInteger(state?.nextStep) || state.nextStep < 0)
         throw new Error("Invalid checkpoint resume step");
       step = state.nextStep;
