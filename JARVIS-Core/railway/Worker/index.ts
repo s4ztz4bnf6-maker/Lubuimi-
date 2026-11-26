@@ -1,4 +1,4 @@
-import { selectResearchHistory, decideRetry } from "./research-resume.mjs";
+import { selectResearchHistory, decideRetry, persistiereFortsetzungAtomar } from "./research-resume.mjs";
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 // DJO² IA – All rights reserved / Alle Rechte vorbehalten. See ../../LICENSE.
 function classifyFailure(err){
@@ -1396,7 +1396,11 @@ try {
     if(resumable) await sql`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${task.id},${Number(task.attempt_count||0)+1},${step},'research_context_v1',${JSON.stringify({taskHash,nextStep:step+1,history:messages.slice(historyOffset)})})`;
   }
   if (!finalText.trim() && resumable) {
-    await sql`UPDATE agent_tasks SET status='retry_wait',next_retry_at=NOW()+INTERVAL '30 seconds',error=NULL,completed_at=NULL,attempt_count=GREATEST(0,attempt_count-1) WHERE id=${task.id} AND status='running'`;
+    const [saved] = await sql`SELECT note FROM djo2_task_checkpoints WHERE task_id=${task.id} AND phase='research_context_v1' ORDER BY id DESC LIMIT 1`;
+    const state = selectResearchHistory(saved?.note, taskHash);
+    if (!state) throw new Error("RESEARCH_RESUME_CHECKPOINT_MISSING");
+    const continuation = await persistiereFortsetzungAtomar(task.id, taskHash, state.nextStep, state.history, 30000, {sql});
+    if (!continuation.scheduled) throw new Error("RESEARCH_RESUME_NOT_SCHEDULED");
     return;
   }
   if (!finalText.trim()) { await exclude(lastTag,"step limit"); throw new Error("PROVIDER_ROTATION_RETRY: TASK_NOT_COMPLETED"); }
