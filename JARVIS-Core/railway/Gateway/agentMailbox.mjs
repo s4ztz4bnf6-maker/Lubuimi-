@@ -19,13 +19,15 @@ export async function createAgentKey(sql,name){const key="djo2_ak_"+randomBytes(
 export async function enqueuePackage(sql,p){if(!p.taskRef||!p.expectedAuthor||!p.issue||!p.files?.length)throw Error("Incomplete package");const [r]=await sql`INSERT INTO djo2_delivery_packages(task_ref,payload) VALUES (${p.taskRef},${sql.json(p)}) ON CONFLICT(task_ref) DO NOTHING RETURNING id`;return r?.id??null;}
 export async function handleAgentRequest(req,{sql,verifyPR=verifyPullRequest}){
  const path=new URL(req.url).pathname;
+ const check=path==="/v1/agent/auth/check";
  const next=path==="/v1/agent/tasks/next";
  const m=path.match(/^\/v1\/agent\/tasks\/(\d+)\/(result|heartbeat)$/);
- if(req.method!=="POST"||(!next&&!m))return null;
+ if(req.method!=="POST"||(!next&&!m&&!check))return null;
  const key=req.headers.get("authorization")?.match(/^Bearer (\S+)$/)?.[1];
  if(!key)return json(401,{error:"unauthorized"});
  const [a]=await sql`SELECT id FROM djo2_agent_keys WHERE key_hash=${hash(key)} AND revoked_at IS NULL`;
  if(!a)return json(401,{error:"unauthorized"});
+ if(check)return new Response(null,{status:204,headers:{"cache-control":"no-store"}});
  await sql`UPDATE djo2_delivery_packages SET status='unknown' WHERE status='claimed' AND claim_expires<now()`;
  if(next){const [p]=await sql`UPDATE djo2_delivery_packages SET status='claimed',claimed_by=${a.id},fence=fence+1,claim_expires=now()+interval '30 minutes' WHERE id=(SELECT id FROM djo2_delivery_packages WHERE status='ready' ORDER BY id FOR UPDATE SKIP LOCKED LIMIT 1) RETURNING *`;return p?json(200,{...p.payload,id:String(p.id),fence:String(p.fence),lease_expires:p.claim_expires}):new Response(null,{status:204});}
  let b;try{const t=await req.text();if(t.length>10000)return json(413,{error:"too large"});b=JSON.parse(t);}catch{return json(400,{error:"invalid JSON"});}
