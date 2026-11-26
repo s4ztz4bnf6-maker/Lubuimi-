@@ -43,3 +43,21 @@ export function autoSectionize(text,budget){
  if(!instructions.length)instructions.push("Complete the task subject to all pinned rules.");
  return {pinned,instructions,warnings};
 }
+
+ // Candidates must originate from the server-side verified tariff registry.
+export function planWithEscalation(base,raw,candidates){
+ const failures=[];
+ for(const candidate of candidates.filter(c=>c.zeroSpendVerified===true&&Number.isSafeInteger(c.limit)&&c.limit>=100).sort((a,b)=>a.limit-b.limit)){
+  try{
+   const section=autoSectionize(raw,candidate.limit);
+   const pinned=[...new Set([...(base.pinned??[]),...section.pinned])];
+   if(estimateRequest(pinned)>Math.floor(candidate.limit*.25))throw Error("PINNED_OVERFLOW");
+   const steps=planContextSteps({...base,pinned,sections:section.instructions,model:candidate.model,limit:candidate.limit});
+   return {candidate,steps,warnings:section.warnings};
+  }catch(e){
+   if(!["PINNED_OVERFLOW","INSTRUCTIONS_EXCEED_MODEL","TASK_TOO_LARGE"].includes(e.message))throw e;
+   failures.push(e.message);
+  }
+ }
+ throw Error("NO_MODEL_AVAILABLE: "+(failures.join(",")||"NO_VERIFIED_ZERO_SPEND_MODEL"));
+}
