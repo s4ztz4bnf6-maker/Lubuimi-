@@ -1355,7 +1355,16 @@ try {
   let lastTag = "unknown";
   const seenToolCalls = new Map<string, number>();
   let finalText = "";
-  for (let step = 0; step < 12; step++) {
+  const historyOffset = messages.length;
+  const taskHash = accountCrypto.createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex");
+  const resumable = !incomeTask && !goodiesTask && !/^CLAIM ACTION/i.test(String(task.title||""));
+  const safeNames = new Set(["web_search","web_research","calculator","memory_search","read_tool_result","github_delivery_readiness"]);
+  let startStep = 0;
+  if(resumable){
+    const [saved] = await sql`SELECT note FROM djo2_task_checkpoints WHERE task_id=${task.id} AND phase='research_context_v1' ORDER BY id DESC LIMIT 1`;
+    if(saved){const state=JSON.parse(saved.note);if(state.taskHash===taskHash && Number.isSafeInteger(state.nextStep) && state.nextStep>=0 && Array.isArray(state.history)){startStep=state.nextStep;messages.push(...state.history);}}
+  }
+  for (let step = startStep; step < startStep + 12; step++) {
     if(await isKilled(sql)) throw new Error("KILL_SWITCH");
     const result = await ask(messages, tools, excluded, exclude);
     lastTag = result._djoProviderTag || providerTag(result._jarvisProvider);
@@ -1370,6 +1379,7 @@ try {
     }
     for(const call of message.tool_calls){
       const name=call.function?.name;
+      if(resumable && !safeNames.has(String(name))) throw new Error("RESEARCH_RESUME_EXTERNAL_ACTION_BLOCKED");
       const signature = JSON.stringify([name, JSON.parse(call.function.arguments || "{}")], (_key, value) => value && typeof value === "object" && !Array.isArray(value) ? Object.fromEntries(Object.keys(value).sort().map(k => [k, value[k]])) : value);
       const repeats = (seenToolCalls.get(signature) || 0) + 1;
       seenToolCalls.set(signature, repeats);
@@ -1379,6 +1389,11 @@ try {
         if(["web_research","web_search","calculator"].includes(String(name)) && !incomeTask && !goodiesTask) await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"research_evidence",JSON.stringify({tool:name,result}));
       }catch(e){if(e instanceof Error && /UNKNOWN_OUTCOME|KILL_SWITCH/.test(e.message))throw e;messages.push({role:"tool",tool_call_id:call.id,content:JSON.stringify({error:e instanceof Error?e.message:"Tool execution failed"})});}
     }
+    if(resumable) await sql`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${task.id},${Number(task.attempt_count||0)+1},${step},'research_context_v1',${JSON.stringify({taskHash,nextStep:step+1,history:messages.slice(historyOffset)})})`;
+  }
+  if (!finalText.trim() && resumable) {
+    await sql`UPDATE agent_tasks SET status='retry_wait',next_retry_at=NOW()+INTERVAL '30 seconds',error=NULL,completed_at=NULL,attempt_count=GREATEST(0,attempt_count-1) WHERE id=${task.id} AND status='running'`;
+    return;
   }
   if (!finalText.trim()) { await exclude(lastTag,"step limit"); throw new Error("PROVIDER_ROTATION_RETRY: TASK_NOT_COMPLETED"); }
   await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,12,"result_ready",JSON.stringify({resultLength:finalText.length}));
