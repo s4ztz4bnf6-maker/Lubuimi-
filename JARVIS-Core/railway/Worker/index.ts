@@ -205,12 +205,12 @@ await sql.begin(async tx=>{await tx.unsafe(admissionMigration.replace(/^\s*BEGIN
 console.log("DJO2_ADMISSION_SCHEMA_READY");
 await sql.unsafe(`CREATE OR REPLACE FUNCTION djo2_guard_task_admission() RETURNS trigger LANGUAGE plpgsql AS $djo2$
 BEGIN
- IF NEW.status::text NOT IN ('queued','running','retry_wait') THEN RETURN NEW; END IF;
+ IF NEW.status::text NOT IN ('queued','running') THEN RETURN NEW; END IF;
  IF TG_OP='UPDATE' THEN
-   IF OLD.status::text IN ('queued','running','retry_wait') THEN RETURN NEW; END IF;
+   IF OLD.status::text IN ('queued','running') THEN RETURN NEW; END IF;
  END IF;
- IF NOT djo2_queue_has_room(TG_RELID::regclass,'status',ARRAY['queued','running','retry_wait'],50) THEN
-   NEW.status := 'failed'; NEW.error := '[DJO2_POLICY:queue_full:owner] Admission deferred; queue capacity reached';
+ IF NOT djo2_queue_has_room(TG_RELID::regclass,'status',ARRAY['queued','running'],50) THEN
+   NEW.status := 'retry_wait'; NEW.next_retry_at := NOW() + INTERVAL '15 seconds'; NEW.error := '[DJO2_POLICY:queue_full:owner] Admission deferred; queue capacity reached';
  END IF;
  RETURN NEW;
 END $djo2$;`);
@@ -222,10 +222,10 @@ console.log("DJO2_ADMISSION_TRIGGER_READY");
  // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
  // Isolated rollback-only admission selftest; no production task or slot is modified.
  await sql.begin(async tx=>{
-   await tx.unsafe("CREATE TEMP TABLE djo2_admission_probe(status text,error text) ON COMMIT DROP");
+   await tx.unsafe("CREATE TEMP TABLE djo2_admission_probe(status text,error text,next_retry_at timestamptz) ON COMMIT DROP");
    await tx.unsafe("CREATE TRIGGER djo2_probe_guard BEFORE INSERT OR UPDATE OF status ON djo2_admission_probe FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission()");
    for(let i=0;i<51;i++)await tx.unsafe("INSERT INTO djo2_admission_probe(status) VALUES ('queued')");
-   const [probe]=await tx`SELECT count(*) FILTER(WHERE status='queued')::int AS admitted,count(*) FILTER(WHERE status='failed' AND error LIKE '[DJO2_POLICY:queue_full:%')::int AS deferred FROM djo2_admission_probe`;
+   const [probe]=await tx`SELECT count(*) FILTER(WHERE status='queued')::int AS admitted,count(*) FILTER(WHERE status='retry_wait' AND next_retry_at IS NOT NULL AND error LIKE '[DJO2_POLICY:queue_full:%')::int AS deferred FROM djo2_admission_probe`;
    if(probe.admitted!==50||probe.deferred!==1)throw Error("DJO2_ADMISSION_SELFTEST_FAILED");
    console.log("DJO2_ADMISSION_SELFTEST_PASS",JSON.stringify(probe));
  });
@@ -809,16 +809,19 @@ if (!modelConfigured) {
   await sql`UPDATE agent_tasks SET prompt=REPLACE(prompt, 'Prioritize this mission after the owner''s 100-BTC mission.', 'This mission has equal priority with the user''s 100-BTC Bitcoin mission. Process both fairly in turn across worker cycles; neither mission should be starved or permanently outrank the other.') WHERE title ILIKE '%Instagram Growth Mission%' AND status='queued'`;
   const freeTasks = await sql.begin(async tx => {
     const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
-      WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
+      WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
       ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
     if (!rows.length) return [];
+    const admitted = [];
     for (const row of rows) {
-      await tx`UPDATE agent_tasks SET status='running', started_at=NOW(), last_attempt_at=NOW(),
-        attempt_count=attempt_count+1, next_retry_at=NULL, error=NULL WHERE id=${row.id}`;
+      const [claim] = await tx`UPDATE agent_tasks SET status='running' WHERE id=${row.id} RETURNING status`;
+      if (claim?.status !== 'running') continue;
+      await tx`UPDATE agent_tasks SET started_at=NOW(), last_attempt_at=NOW(), attempt_count=attempt_count+1, next_retry_at=NULL, error=NULL WHERE id=${row.id}`;
+      admitted.push(row);
     }
-    return rows;
+    return admitted;
   });
   if (!freeTasks.length) {
     const [smokeDone] = await sql`SELECT id FROM agent_audit WHERE event='free_research_smoke_test_passed' LIMIT 1`;
@@ -1257,16 +1260,19 @@ try {
 
 const tasks = await sql.begin(async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
-    WHERE status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())
+    WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
     ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
   if (!rows.length) return [];
-  for (const row of rows) {
-    await tx`UPDATE agent_tasks SET status='running', started_at=NOW(), last_attempt_at=NOW(),
-      attempt_count=attempt_count+1, next_retry_at=NULL, error=NULL WHERE id=${row.id}`;
-  }
-  return rows;
+  const admitted = [];
+    for (const row of rows) {
+      const [claim] = await tx`UPDATE agent_tasks SET status='running' WHERE id=${row.id} RETURNING status`;
+      if (claim?.status !== 'running') continue;
+      await tx`UPDATE agent_tasks SET started_at=NOW(), last_attempt_at=NOW(), attempt_count=attempt_count+1, next_retry_at=NULL, error=NULL WHERE id=${row.id}`;
+      admitted.push(row);
+    }
+    return admitted;
 });
 if (!tasks.length) {
   console.log("JARVIS Worker: no queued tasks.");
