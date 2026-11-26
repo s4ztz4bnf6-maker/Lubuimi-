@@ -11,4 +11,27 @@ DO $$ BEGIN
  BEGIN DELETE FROM djo2_delivery_authorization_audit WHERE task_id=987655; RAISE EXCEPTION 'TEST_FAILED'; EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'AUDIT_HISTORY_IMMUTABLE' THEN RAISE; END IF; END;
  BEGIN TRUNCATE djo2_delivery_authorization_audit; RAISE EXCEPTION 'TEST_FAILED'; EXCEPTION WHEN raise_exception THEN IF SQLERRM<>'AUDIT_HISTORY_IMMUTABLE' THEN RAISE; END IF; END;
 END $$;
+-- A conflicting audit event must roll back the authorization insert.
+INSERT INTO djo2_delivery_authorization_audit(task_id,repo,issue_number,action,payload_sha256,event,actor)
+VALUES(987656,'fixture/repo',1,'claim',repeat('c',64),'issued','fixture');
+DO $ BEGIN
+ BEGIN
+ INSERT INTO djo2_delivery_authorizations(task_id,repo,issue_number,action,payload_sha256,eligibility_evidence,expires_at)
+ VALUES(987656,'fixture/repo',1,'claim',repeat('c',64),'{"bounty_id":"fixture"}',NOW()+interval '1 hour');
+ RAISE EXCEPTION 'EXPECTED_AUDIT_CONFLICT';
+ EXCEPTION WHEN unique_violation THEN NULL; END;
+ IF EXISTS(SELECT 1 FROM djo2_delivery_authorizations WHERE task_id=987656) THEN RAISE EXCEPTION 'ATOMIC_ROLLBACK_FAILED'; END IF;
+END $;
+CREATE ROLE djo2_ci_audit_writer NOLOGIN;
+GRANT SELECT,INSERT,UPDATE ON djo2_delivery_authorizations TO djo2_ci_audit_writer;
+SET LOCAL ROLE djo2_ci_audit_writer;
+DO $ BEGIN
+ BEGIN
+ INSERT INTO djo2_delivery_authorizations(task_id,repo,issue_number,action,payload_sha256,eligibility_evidence,expires_at)
+ VALUES(987657,'fixture/repo',1,'claim',repeat('d',64),'{"bounty_id":"fixture"}',NOW()+interval '1 hour');
+ RAISE EXCEPTION 'EXPECTED_AUDIT_PERMISSION_FAILURE';
+ EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+ IF EXISTS(SELECT 1 FROM djo2_delivery_authorizations WHERE task_id=987657) THEN RAISE EXCEPTION 'ATOMIC_ROLLBACK_FAILED'; END IF;
+END $;
+RESET ROLE;
 ROLLBACK;
