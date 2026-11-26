@@ -31,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test Companion/agent-auth/credentials.test.mjs
+      - run: node --test Companion/agent-auth/*.test.mjs
       - name: Run rollback-only SQL assertions
         env:
           PGPASSWORD: test_password
