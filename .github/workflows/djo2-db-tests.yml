@@ -42,3 +42,5 @@ jobs:
           git grep -n -i 'djo2_delivery_authorizations' HEAD -- :/JARVIS-Core
           git grep -q 'CREATE TABLE IF NOT EXISTS djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger.sql
           git grep -q 'FROM djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger-store.mjs
+      - name: Test separated authorization roles in disposable database
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-roles.sql
