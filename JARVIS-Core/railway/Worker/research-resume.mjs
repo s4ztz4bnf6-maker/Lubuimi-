@@ -15,3 +15,14 @@ export function decideRetry(message, task, classifyFailure, nextAction) {
   const retry = decision.action === "retry";
   return { failureClass, decision, retry, outcome: retry ? "retry_wait" : "failed" };
 }
+
+/** Schedule a running task; persisted checkpoints remain the source of resume position. */
+export async function planeFortsetzung(taskId, step, grund, delayMs, { sql }) {
+  const delay = delayMs ?? 30000;
+  if (!Number.isSafeInteger(delay) || delay < 0) throw new RangeError("Invalid retry delay");
+  if (step != null && (!Number.isSafeInteger(step) || step < 0)) throw new RangeError("Invalid resume step");
+  const rows = await sql`UPDATE agent_tasks SET status='retry_wait',
+    next_retry_at=NOW()+${delay}::bigint*INTERVAL '1 millisecond'
+    WHERE id=${taskId} AND status='running' RETURNING id`;
+  return { taskId, step: step ?? null, grund, delayMs: delay, scheduled: rows.length === 1 };
+}
