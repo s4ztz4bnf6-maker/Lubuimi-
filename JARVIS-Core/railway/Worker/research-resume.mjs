@@ -25,6 +25,7 @@ export async function planeFortsetzung(taskId, step, grund, delayMs, { sql }) {
     const [checkpoint] = await sql`SELECT note FROM djo2_task_checkpoints
       WHERE task_id=${taskId} AND phase='research_context_v1'
       ORDER BY id DESC LIMIT 1`;
+    if (!checkpoint) return { taskId, step: null, grund, delayMs: delay, scheduled: false };
     if (checkpoint) {
       const state = JSON.parse(checkpoint.note);
       if (!Number.isSafeInteger(state?.nextStep) || state.nextStep < 0)
