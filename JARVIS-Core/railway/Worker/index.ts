@@ -1,3 +1,13 @@
+// Retry only database-only claim transactions; never wrap external effects.
+async function claimDbTransaction(sql, fn) {
+  for (let retry=0;;retry++) {
+    try { return await sql.begin("isolation level serializable", fn); }
+    catch (error) {
+      if (!["40001","40P01"].includes(error?.code) || retry>=4) throw error;
+      await new Promise(resolve=>setTimeout(resolve,Math.min(250,25*2**retry)));
+    }
+  }
+}
 import { selectResearchHistory, decideRetry, persistiereFortsetzungAtomar, persistiereNeuenCheckpoint } from "./research-resume.mjs";
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 // DJO² IA – All rights reserved / Alle Rechte vorbehalten. See ../../LICENSE.
@@ -807,7 +817,7 @@ if (remainingContacts > 0) {
 
 if (!modelConfigured) {
   await sql`UPDATE agent_tasks SET prompt=REPLACE(prompt, 'Prioritize this mission after the owner''s 100-BTC mission.', 'This mission has equal priority with the user''s 100-BTC Bitcoin mission. Process both fairly in turn across worker cycles; neither mission should be starved or permanently outrank the other.') WHERE title ILIKE '%Instagram Growth Mission%' AND status='queued'`;
-  const freeTasks = await sql.begin(async tx => {
+  const freeTasks = await claimDbTransaction(sql, async tx => {
     const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
       WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
       ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
@@ -1258,7 +1268,7 @@ try {
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
 
-const tasks = await sql.begin(async tx => {
+const tasks = await claimDbTransaction(sql, async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
     WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
     ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
