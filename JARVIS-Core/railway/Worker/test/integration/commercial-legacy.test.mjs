@@ -25,5 +25,18 @@ test("legacy JSON checkpoint blocks concurrent immutable claims",{timeout:30000}
  await Promise.all([2,3].map(taskId=>assert.rejects(executeCommercialOrder({...opts,taskId,identity,legacyKeys:[commercialOrderKey(legacy)],submit}),/LEGACY_COMMERCIAL_ORDER_BLOCKED/)));
  assert.equal(calls,1);
  assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n,before);
+ const old2=githubCommercialIdentity({repo:"old/repo",issue:13,action:"deliver"});
+ const new2=immutableGitHubIdentity({repositoryId:123,issueId:457,action:"deliver"});
+ const outcomes=await Promise.allSettled([
+ executeCommercialOrder({...opts,taskId:2,identity:old2,legacyKeys:[commercialOrderKey(new2)],submit}),
+ executeCommercialOrder({...opts,taskId:3,identity:new2,legacyKeys:[commercialOrderKey(old2)],submit})
+ ]);
+ assert.equal(outcomes.filter(r=>r.status==="fulfilled").length,1);
+ assert.equal(outcomes.filter(r=>r.status==="rejected"&&/LEGACY_COMMERCIAL_ORDER_BLOCKED/.test(r.reason.message)).length,1);
+ assert.equal(calls,2);
+ const events=await sql`SELECT phase,note FROM djo2_task_checkpoints WHERE task_id IN (2,3)`;
+ assert.equal(events.length,4);
+ assert.equal(events.filter(r=>r.phase==="token_budget_v1"&&JSON.parse(r.note).status==="RESERVED").length,1);
+ assert.equal(events.filter(r=>r.phase==="commercial_order_v1"&&JSON.parse(r.note).status==="SETTLED").length,1);
  }finally{await sql.end();}
 });
