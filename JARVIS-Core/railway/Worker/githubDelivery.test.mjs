@@ -5,7 +5,7 @@ test("offline delivery, replay and missing credentials",async t=>{
  const old=process.env.GITHUB_DELIVERY_TOKEN, original=globalThis.fetch;
  t.after(()=>{globalThis.fetch=original;if(old===undefined)delete process.env.GITHUB_DELIVERY_TOKEN;else process.env.GITHUB_DELIVERY_TOKEN=old;});
  const calls=[];let saved,started=false;
- const sql=(q,...v)=>{if(typeof q==="string")return q;const s=q.join(" ");if(s.includes("system_flags"))return [];if(s.includes("INSERT INTO")){if(started)return [];started=true;return [{}];}if(s.includes("UPDATE")){saved=v[1];return [];}if(s.includes("SELECT status"))return [{status:"done",result:saved}];throw Error(s);};sql.json=x=>x;
+ const sql=(q,...v)=>{if(typeof q==="string")return q;const s=q.reduce((out,part,i)=>out+part+(i<v.length?String(v[i]):""),"");if(s.includes("system_flags"))return [];if(s.includes("INSERT INTO")){if(started)return [];started=true;return [{}];}if(s.includes("UPDATE")){saved=v[1];return [];}if(s.includes("SELECT status"))return [{status:"done",result:saved}];throw Error(s);};sql.json=x=>x;
  delete process.env.GITHUB_DELIVERY_TOKEN;
  globalThis.fetch=async()=>{throw Error("unexpected network");};
  await assert.rejects(githubDelivery(sql,1,"deliver",{}),/MissingDeliveryCredentials/);
