@@ -74,6 +74,23 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     await conflictCheck;
     const [unchanged] = await run(tx => tx`SELECT attempt_count FROM agent_tasks WHERE id=${id}`);
     assert.equal(unchanged.attempt_count,0);
+    const error = '[DJO2_POLICY:queue_full:owner] Admission deferred; queue capacity reached';
+    await run(tx => tx`INSERT INTO agent_tasks(title,prompt,status,attempt_count,started_at,error) VALUES
+      ('recover-yes','fixture','failed',0,NULL,${error}),
+      ('recover-attempt','fixture','failed',1,NULL,${error}),
+      ('recover-started','fixture','failed',0,NOW(),${error}),
+      ('recover-other','fixture','failed',0,NULL,'other error')`);
+    const recovery = await readFile(new URL('../../004_rehydrate_queue_full.sql',import.meta.url),'utf8');
+    await run(tx => tx.unsafe(recovery));
+    const recovered = await run(tx => tx`SELECT title,status,next_retry_at,attempt_count FROM agent_tasks WHERE title LIKE 'recover-%'`);
+    assert.equal(recovered.length,4);
+    for (const row of recovered) {
+      assert.equal(row.status,row.title==='recover-yes'?'retry_wait':'failed');
+      if (row.title==='recover-yes') { assert.ok(row.next_retry_at); assert.equal(row.attempt_count,0); }
+    }
+    const again = await run(tx => tx.unsafe(recovery));
+    assert.equal(again.count,0);
+
 
   } finally {
     try { await sql.unsafe('DROP SCHEMA IF EXISTS ' + schema + ' CASCADE'); }
