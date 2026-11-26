@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import postgres from 'postgres';
+import {inspectAuthorizedDelivery,deliveryDigest} from '../../deliveryDispatcher.mjs';
 import { reserveDelivery, resolveAuthorizedDeliveryIdentity } from '../../delivery-ledger-store.mjs';
 
 test('real admission trigger: parallel overflow and recovery', async () => {
@@ -74,6 +75,17 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     for(const args of [[102,'fixture/repo',2,'claim',hash],[103,'fixture/repo',2,'claim',hash],[104,'fixture/repo',2,'claim',hash],[999,'fixture/repo',2,'claim',hash],[101,'other/repo',2,'claim',hash],[101,'fixture/repo',3,'claim',hash],[101,'fixture/repo',2,'deliver',hash],[101,'fixture/repo',2,'claim','b'.repeat(64)]]) {
       await assert.rejects(resolve(...args),/VERIFIED_BOUNTY_IDENTITY_REQUIRED/);
     }
+    const preflightArgs={repo:'fixture/repo',issue:2,body:'verified'};
+    const digest=deliveryDigest('claim',preflightArgs);
+    await run(tx=>tx`INSERT INTO djo2_delivery_authorizations(task_id,repo,issue_number,action,payload_sha256,eligibility_evidence,expires_at) VALUES (105,'fixture/repo',2,'claim',${digest},'{"bounty_id":"preflight-fixture"}'::jsonb,NOW()+INTERVAL '1 hour')`);
+    const preflight={sql:resolverSql,taskId:105,action:'claim',args:preflightArgs,isKilled:async()=>false,token:'fixture'};
+    const before=await run(tx=>tx`SELECT count(*)::int AS n FROM bounty_deliveries`);
+    assert.deepEqual(await inspectAuthorizedDelivery(preflight),{status:'blocked',reason:'MIGRATION_LOCKED_INCOMPLETE_HISTORY',identity:{bountyId:'preflight-fixture',repo:'fixture/repo',issueNumber:2}});
+    await assert.rejects(inspectAuthorizedDelivery({...preflight,args:{...preflightArgs,body:'changed'}}),/ELIGIBILITY_GATE_REQUIRED/);
+    await assert.rejects(inspectAuthorizedDelivery({...preflight,isKilled:async()=>true}),/KILL_SWITCH/);
+    await run(tx=>tx`UPDATE djo2_delivery_authorizations SET revoked_at=NOW() WHERE task_id=105`);
+    await assert.rejects(inspectAuthorizedDelivery(preflight),/ELIGIBILITY_GATE_REQUIRED/);
+    assert.deepEqual(await run(tx=>tx`SELECT count(*)::int AS n FROM bounty_deliveries`),before);
     const scoped = {begin: run};
     const input = {idempotencyKey:'adapter-key',bountyId:'fixture',repo:'fixture/repo',issueNumber:2};
     const reservations = await Promise.all([reserveDelivery(scoped,input),reserveDelivery(scoped,input)]);
