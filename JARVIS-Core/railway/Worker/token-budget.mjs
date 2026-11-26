@@ -2,7 +2,10 @@ import {createHash} from "node:crypto";
 const integer=(n,min=0)=>Number.isSafeInteger(n)&&n>=min;
 export async function changeTokenBudget(taskId,taskHash,limit,callId,action,amount,{sql,scope=null,result}){
  if(!integer(limit,1)||!(action==="audit"?amount===null:integer(amount,action==="reserve"?1:0))||!["reserve","settle","audit"].includes(action)||typeof callId!=="string"||!callId.trim())throw new Error("Invalid budget operation");
- return sql.begin(async tx=>{
+ return sql.begin(tx=>changeTokenBudgetInTransaction(taskId,taskHash,limit,callId,action,amount,{tx,scope,result}));
+}
+export async function changeTokenBudgetInTransaction(taskId,taskHash,limit,callId,action,amount,{tx,scope=null,result}){
+ if(!integer(limit,1)||!(action==="audit"?amount===null:integer(amount,action==="reserve"?1:0))||!["reserve","settle","audit"].includes(action)||typeof callId!=="string"||!callId.trim())throw new Error("Invalid budget operation");
   const [task]=await tx`SELECT id,title,prompt,status,attempt_count FROM agent_tasks WHERE id=${taskId} FOR UPDATE`;
   if(!task||createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex")!==taskHash)throw new Error("Task mismatch");
   const rows=await tx`SELECT note FROM djo2_task_checkpoints WHERE task_id=${taskId} AND phase='token_budget_v1' ORDER BY id`;
@@ -34,5 +37,4 @@ export async function changeTokenBudget(taskId,taskHash,limit,callId,action,amou
   state.set(callId,event);
   await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${Number(task.attempt_count||0)+1},0,'token_budget_v1',${JSON.stringify(event)})`;
   return {created:true,...totals(),overrun:event.actual!==null&&event.actual>event.reserved};
- });
 }
