@@ -1,3 +1,22 @@
+function classifyFailure(err){
+ const s=String(err?.message??err??"").toLowerCase();
+ if(s.includes("unknown_outcome"))return "unknown_outcome";
+ if(s.includes("kill_switch"))return "killed";
+ if(/\b(401|403)\b|forbidden|unauthorized|bad credentials|missingdeliverycredentials|resource not accessible/.test(s))return "auth";
+ if(/context_budget_exceeded|context_length_exceeded|maximum context|context window|too many tokens|\b413\b/.test(s))return "context_budget";
+ if(/\b429\b|rate.?limit|quota|resource_exhausted/.test(s))return "rate_limit";
+ if(/timeout|timed out|econnreset|aborted|\b(408|425|500|502|503|504)\b|fetch failed/.test(s))return "timeout";
+ if(/all_providers_excluded|all providers tried|all configured inference providers failed/.test(s))return "providers_exhausted";
+ if(/task_not_completed|empty response|empty_model_response|no message|tool_loop_detected/.test(s))return "no_result";
+ if(/json|syntax|unexpected token|invalid.tool/.test(s))return "bad_output";
+ return "unknown";
+}
+function nextAction(cls,attempts){
+ if(["unknown_outcome","auth","killed"].includes(cls))return {action:cls==="killed"?"stop":"owner",delayMs:0};
+ const caps={rate_limit:6,timeout:4,context_budget:3,providers_exhausted:3,no_result:3,bad_output:3,unknown:2};
+ if(attempts>=caps[cls])return {action:"owner",delayMs:0};
+ return {action:"retry",delayMs:Math.min(3600000,(cls==="timeout"?60000:cls==="providers_exhausted"?1800000:300000)*2**Math.max(0,attempts-1))};
+}
 import { dispatchDelivery } from "./deliveryDispatcher.mjs";
 import { identityMessages } from "./identity.mjs";
 import { githubDelivery, checkDeliveryReady } from "./githubDelivery.mjs";
@@ -17,7 +36,7 @@ import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
 const env = Bun.env;
-const maxParallelTasks = Math.max(1, Math.min(4, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
+const maxParallelTasks = Math.max(1, Math.min(3, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
 // INVARIANT: selftest gate precedes all external calls and regular initialization; only isolated DB access is allowed before it.
@@ -175,7 +194,7 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_earnings_ledger (
   received_at TIMESTAMPTZ
 )`;
 await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automatisch wieder aufgenommen: Worker-Lauf länger als 10 Minuten ohne Abschluss.', next_retry_at=NULL WHERE status='running' AND started_at < NOW()-INTERVAL '10 minutes'`;
-await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
+await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND error NOT LIKE '[DJO2_POLICY:%' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
 
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
 const [deliveryTables]=await sql`SELECT to_regclass('public.bounty_deliveries')::text AS ledger`;
@@ -1333,16 +1352,14 @@ try {
   console.log("JARVIS Worker completed task " + task.id);
 } catch (e) {
   const message = e instanceof Error ? e.message : "Unknown worker error";
-  const quotaExceeded = /HTTP 429:.*(quota|RESOURCE_EXHAUSTED|rate.?limit|per day)/is.test(message);
-  const transient = /HTTP (408|425|429|500|502|503|504)|timed? ?out|timeout|ECONNRESET|EAI_AGAIN|fetch failed|network/i.test(message);
-  const retry = (transient || message.startsWith("PROVIDER_ROTATION_RETRY:")) && Number(task.attempt_count || 0) + 1 < Number(task.max_attempts || 3);
-  const retryDelayMinutes = Math.min(60, 5 * Math.pow(2, Number(task.attempt_count || 0)));
-  const outcome = quotaExceeded ? "queued" : (retry ? "retry_wait" : "failed");
-  const scheduledRetry = retry && !quotaExceeded;
-  if(quotaExceeded){const retryMatch=message.match(/retry in\s+(?:(\d+)h)?(?:(\d+)m)?/i);const cooldownMinutes=Math.max(60,Math.min(1440,(Number(retryMatch?.[1]||0)*60+Number(retryMatch?.[2]||0)+5)||600));await sql.unsafe("INSERT INTO jarvis_provider_cooldowns(provider,cooldown_until,reason,updated_at) VALUES ($1,NOW()+make_interval(mins=>$2),$3,NOW()) ON CONFLICT(provider) DO UPDATE SET cooldown_until=GREATEST(jarvis_provider_cooldowns.cooldown_until,EXCLUDED.cooldown_until),reason=EXCLUDED.reason,updated_at=NOW()",["google-gemini",cooldownMinutes,message.slice(0,1200)]);}
-  await sql`UPDATE agent_tasks SET status=${outcome}, error=${message},
-    next_retry_at=CASE WHEN ${scheduledRetry} THEN NOW() + make_interval(mins => ${retryDelayMinutes}) ELSE NULL END,
-    completed_at=CASE WHEN ${scheduledRetry} THEN NULL ELSE NOW() END WHERE id=${task.id}`;
+  const failureClass=classifyFailure(message);
+  const decision=nextAction(failureClass,Number(task.attempt_count||0)+1);
+  const retry=decision.action==="retry";
+  const outcome=retry?"retry_wait":"failed";
+  const transient=retry;
+  const storedError="[DJO2_POLICY:"+failureClass+":"+decision.action+"] "+message;
+  await sql`UPDATE agent_tasks SET status=${outcome}, error=${storedError}, next_retry_at=CASE WHEN ${retry} THEN NOW()+make_interval(secs=>${decision.delayMs/1000}) ELSE NULL END, completed_at=CASE WHEN ${retry} THEN NULL ELSE NOW() END WHERE id=${task.id}`;
+  console.log("DJO2_FAILURE_POLICY",JSON.stringify({taskId:task.id,failureClass,action:decision.action,attempt:Number(task.attempt_count||0)+1}));
   await sql`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error)
     VALUES (${task.id},${Number(task.attempt_count||0)+1},${outcome},${message})
     ON CONFLICT(task_id,attempt_number) DO UPDATE SET outcome=EXCLUDED.outcome,error=EXCLUDED.error,finished_at=NOW()`;
