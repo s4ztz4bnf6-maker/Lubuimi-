@@ -1,4 +1,4 @@
-import { selectResearchHistory } from "./research-resume.mjs";
+import { selectResearchHistory, decideRetry } from "./research-resume.mjs";
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 // DJO² IA – All rights reserved / Alle Rechte vorbehalten. See ../../LICENSE.
 function classifyFailure(err){
@@ -1412,10 +1412,7 @@ try {
   console.log("JARVIS Worker completed task " + task.id);
 } catch (e) {
   const message = e instanceof Error ? e.message : "Unknown worker error";
-  const failureClass=classifyFailure(message);
-  const decision=nextAction(failureClass,Number(task.attempt_count||0)+1);
-  const retry=decision.action==="retry";
-  const outcome=retry?"retry_wait":"failed";
+  const { failureClass, decision, retry, outcome } = decideRetry(message, task, classifyFailure, nextAction);
   const transient=retry;
   const storedError="[DJO2_POLICY:"+failureClass+":"+decision.action+"] "+message;
   await sql`UPDATE agent_tasks SET status=${outcome}, error=${storedError}, next_retry_at=CASE WHEN ${retry} THEN NOW()+make_interval(secs=>${decision.delayMs/1000}) ELSE NULL END, completed_at=CASE WHEN ${retry} THEN NULL ELSE NOW() END WHERE id=${task.id}`;
