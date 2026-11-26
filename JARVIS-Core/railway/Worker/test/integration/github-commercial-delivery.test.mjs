@@ -31,3 +31,25 @@ test("GitHub delivery authorization revocation and ambiguous receipt",{timeout:3
  assert.equal(rows.filter(r=>JSON.parse(r.note).status==="UNKNOWN_USAGE_PENDING_AUDIT").length,4);
  }finally{await sql.end();}
 });
+
+test("GitHub delivery kill switch before and after durable reservation",{timeout:30000},async()=>{
+ const url=new URL(process.env.DATABASE_URL);
+ assert.equal(url.hostname,"localhost");assert.equal(url.pathname,"/djo2_test");
+ const sql=postgres(url.toString(),{max:4,connection:{search_path:"github_kill_test"}});
+ try{
+ await sql`CREATE SCHEMA github_kill_test`;
+ await sql`CREATE TABLE agent_tasks(id bigint PRIMARY KEY,title text,prompt text,status text,attempt_count integer)`;
+ await sql`CREATE TABLE djo2_task_checkpoints(id bigserial PRIMARY KEY,task_id bigint,attempt integer,step integer,phase text,note text)`;
+ await sql`CREATE TABLE djo2_delivery_authorizations(task_id bigint,repo text,issue_number integer,action text,payload_sha256 text,revoked_at timestamptz,expires_at timestamptz,eligibility_evidence text,test_evidence text)`;
+ await sql`INSERT INTO agent_tasks VALUES(1,'title','prompt','running',0)`;
+ const args={repo:"org/repo",issue:2115,action:"claim"};
+ await sql`INSERT INTO djo2_delivery_authorizations VALUES(1,${args.repo},${args.issue},${args.action},${deliveryDigest(args.action,args)},NULL,NOW()+interval '1 hour','eligible',NULL)`;
+ const opts={sql,taskId:1,taskHash:createHash("sha256").update(JSON.stringify(["title","prompt"])).digest("hex"),limit:2000,reserved:100,args,token:"test-only",verifyZeroSpend:async()=>({independentVerification:true,costEur:0,unitCostEur:0,payAsYouGo:false,overageEnabled:false,paidFallbackEnabled:false}),execute:()=>assert.fail("unexpected transport")};
+ await assert.rejects(executeAuthorizedGitHubDelivery({...opts,isKilled:async()=>true}),/KILL_SWITCH/);
+ assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n,0);
+ await assert.rejects(executeAuthorizedGitHubDelivery({...opts,isKilled:async()=> (await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints WHERE phase='commercial_order_v1'`)[0].n>0}),/KILL_SWITCH/);
+ const rows=await sql`SELECT note FROM djo2_task_checkpoints ORDER BY id`;
+ assert.equal(rows.length,4);
+ assert.equal(rows.filter(r=>JSON.parse(r.note).status==="UNKNOWN_USAGE_PENDING_AUDIT").length,2);
+ }finally{await sql.end();}
+});
