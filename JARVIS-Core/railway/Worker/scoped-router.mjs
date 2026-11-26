@@ -14,7 +14,7 @@ export function createScopedRouter({approvedRoutes,transport,maxOutput=1024,safe
   const usage=response?.usage;
   const normalized={totalTokens:usage?.total_tokens??usage?.totalTokens,inputTokens:usage?.prompt_tokens??usage?.inputTokens,outputTokens:usage?.completion_tokens??usage?.outputTokens};
   const actual=actualTokens(normalized);
-  if(response?.isPaid===true||Number(response?.costEur??0)>0)throw Object.assign(new Error("ZERO_SPEND_VIOLATION"),{actualUsage:actual});
+  if(response?.isPaid===true||response?.costEur!==0)throw Object.assign(new Error("ZERO_SPEND_VIOLATION"),{actualUsage:actual});
   return {result:response?.choices?.[0]?.message,usage:normalized};
  };
 }
