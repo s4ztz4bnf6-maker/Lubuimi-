@@ -46,3 +46,16 @@ jobs:
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-roles.sql
       - name: Test atomic authorization audit triggers
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
+      - name: Exercise exact prepared trigger role migration in disposable PostgreSQL
+        run: |
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' delivery-authorization-trigger-roles.sql > test-trigger-roles-body.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('test-authorization-audit.sql')
+          s = p.read_text()
+          start = s.index('CREATE ROLE djo2_ci_trigger_owner NOLOGIN;')
+          end = s.index('REVOKE ALL ON FUNCTION public.djo2_record_authorization_event() FROM PUBLIC;', start)
+          end += len('REVOKE ALL ON FUNCTION public.djo2_record_authorization_event() FROM PUBLIC;')
+          p.write_text(s[:start] + chr(92) + 'ir test-trigger-roles-body.sql' + s[end:])
+          PY
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
