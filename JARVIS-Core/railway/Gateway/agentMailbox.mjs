@@ -5,6 +5,14 @@ const json=(s,b)=>Response.json(b,{status:s});
 export async function initAgentMailbox(sql){
  await sql`CREATE TABLE IF NOT EXISTS djo2_agent_keys (id bigserial PRIMARY KEY,name text NOT NULL,key_hash text UNIQUE NOT NULL,revoked_at timestamptz)`;
  await sql`CREATE TABLE IF NOT EXISTS djo2_delivery_packages (id bigserial PRIMARY KEY,task_ref text UNIQUE NOT NULL,payload jsonb NOT NULL,status text NOT NULL DEFAULT 'ready',claimed_by bigint,fence bigint NOT NULL DEFAULT 0,claim_expires timestamptz,verification jsonb,updated_at timestamptz DEFAULT now())`;
+ await provisionConfiguredAgent(sql);
+}
+export async function provisionConfiguredAgent(sql){
+ const digest=process.env.DJO2_EXTERNAL_AGENT_KEY_HASH;
+ if(!digest)return;
+ if(!/^[a-f0-9]{64}$/.test(digest))throw Error("Invalid external agent key hash");
+ await sql`INSERT INTO djo2_agent_keys(name,key_hash) VALUES ('external-agent',${digest}) ON CONFLICT(key_hash) DO NOTHING`;
+ console.info("[AgentMailbox] configured external agent key registered");
 }
 export async function createAgentKey(sql,name){const key="djo2_ak_"+randomBytes(32).toString("base64url");await sql`INSERT INTO djo2_agent_keys(name,key_hash) VALUES (${name},${hash(key)})`;return key;}
 export async function enqueuePackage(sql,p){if(!p.taskRef||!p.expectedAuthor||!p.issue||!p.files?.length)throw Error("Incomplete package");const [r]=await sql`INSERT INTO djo2_delivery_packages(task_ref,payload) VALUES (${p.taskRef},${sql.json(p)}) ON CONFLICT(task_ref) DO NOTHING RETURNING id`;return r?.id??null;}
