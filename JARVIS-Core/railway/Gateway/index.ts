@@ -18,6 +18,7 @@ import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
 import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
+import { initAgentMailbox, handleAgentRequest } from "./agentMailbox.mjs";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
 
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -53,6 +54,8 @@ await sql`
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )
 `;
+let agentMailboxReady = false;
+try { await initAgentMailbox(sql); agentMailboxReady = true; } catch { console.error("[AgentMailbox] initialization failed"); }
 if (env.JARVIS_BRIDGE_REPOSITORY) {
   try {
     await initMailboxSchema(sql);
@@ -645,6 +648,11 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (url.pathname.startsWith("/v1/agent/tasks/")) {
+      if (!agentMailboxReady) return json({error:"mailbox_unavailable"},503);
+      const result = await handleAgentRequest(req,{sql});
+      if (result) return result;
+    }
 
     if (url.pathname === "/v1/customer/wishes" && req.method === "POST") {
       const token=req.headers.get("x-customer-wish-token")||"";
