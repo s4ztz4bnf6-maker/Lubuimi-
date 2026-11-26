@@ -19,5 +19,5 @@ test('result-ready checkpoint precedes task completion', () => {
 });
 test('existing external effect guards remain wired', () => {
   assert.match(source, /await runToolOnce\(sql,task\.id/);
-  assert.match(source, /await dispatchDelivery\(\{sql,taskId:task\.id/);
+  assert.match(source, /await executeAuthorizedGitHubDelivery\(\)/);
 });
