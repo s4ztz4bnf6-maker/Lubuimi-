@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 import {createHash} from "node:crypto";
 export const estimateRequest = value => Math.ceil(Buffer.byteLength(JSON.stringify(value),"utf8")/2.5);
-export function planContextSteps({system,pinned=[],goal,sections,materialParts=[""],tools=[],model,limit,maxSteps=40}){
- if(!Array.isArray(sections)||!sections.length||!sections.every(x=>typeof x==="string"&&x.trim())||!Array.isArray(pinned)||!pinned.every(x=>typeof x==="string")||!Array.isArray(materialParts)||!materialParts.length||!materialParts.every(x=>typeof x==="string")||!Number.isSafeInteger(limit)||limit<=0)throw Error("INVALID_CONTEXT_PLAN");
+export function planContextSteps({taskId,system,pinned=[],goal,sections,materialParts=[""],tools=[],model,limit,maxSteps=40}){
+ if(taskId===undefined||taskId===null||!Array.isArray(sections)||!sections.length||!sections.every(x=>typeof x==="string"&&x.trim())||!Array.isArray(pinned)||!pinned.every(x=>typeof x==="string")||!Array.isArray(materialParts)||!materialParts.length||!materialParts.every(x=>typeof x==="string")||!Number.isSafeInteger(limit)||limit<=0)throw Error("INVALID_CONTEXT_PLAN");
  if(sections.length*materialParts.length>Math.min(40,maxSteps))throw Error("TASK_TOO_LARGE");
  const fixed=[...system,...(pinned.length?[{role:"system",content:pinned.join("\n")}]:[])];
  const steps=[];
@@ -17,8 +17,29 @@ export function planContextSteps({system,pinned=[],goal,sections,materialParts=[
    const candidate=[...chosen,tool];
    if(estimateRequest(candidate)-estimateRequest([])<=Math.floor(remaining*.3)&&estimateRequest({model,messages,tools:candidate})+700<=limit)chosen.push(tool);
   }
-  const id=createHash("sha256").update(JSON.stringify({model,messages,tools:chosen,index:steps.length})).digest("hex");
+  const id=createHash("sha256").update(JSON.stringify({taskId,limit,model,messages,tools:chosen,index:steps.length})).digest("hex");
   steps.push({id,messages,tools:chosen});
  }
  return steps;
+}
+
+const MUST = /\b(muss|müssen|darf nicht|dürfen nicht|niemals|nie|verbindlich|zero-spend|ohne freigabe|verboten|must|shall|never|prohibited|do not|only)\b/iu;
+export function autoSectionize(text,budget){
+ if(typeof text!=="string"||!text.trim()||!Number.isSafeInteger(budget)||budget<100)throw Error("INVALID_CONTEXT_PLAN");
+ const pinned=[],instructions=[],warnings=[];
+ const max=Math.floor(budget*.15),cap=Math.floor(budget*.25);
+ for(const piece of text.split(/\n{2,}|\n(?=\s*(?:\d+[.)]\s|[-*•]\s|#{1,4}\s))/u).filter(x=>x.trim())){
+  if(MUST.test(piece)){
+   pinned.push(piece);
+   if(estimateRequest(pinned)>cap)throw Error("PINNED_OVERFLOW");
+   continue;
+  }
+  if(estimateRequest(piece)<=max){instructions.push(piece);continue;}
+  for(const sentence of piece.split(/(?<=[.!?])\s+/u)){
+   if(estimateRequest(sentence)>max)throw Error("INSTRUCTIONS_EXCEED_MODEL");
+   instructions.push(sentence);
+  }
+ }
+ if(!instructions.length)instructions.push("Complete the task subject to all pinned rules.");
+ return {pinned,instructions,warnings};
 }
