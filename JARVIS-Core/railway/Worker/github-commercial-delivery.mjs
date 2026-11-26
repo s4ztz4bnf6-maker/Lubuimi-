@@ -1,3 +1,4 @@
+import {validateGitHubDeliveryReceipt} from "./github-delivery-receipt.mjs";
 import {githubCommercialIdentity} from "./github-commercial-identity.mjs";
 import {executeCommercialOrder} from "./commercial-order-idempotency.mjs";
 import {dispatchDelivery,verifyDeliveryAuthorization} from "./deliveryDispatcher.mjs";
@@ -13,6 +14,8 @@ export async function executeAuthorizedGitHubDelivery({sql,taskId,taskHash,limit
  },
  submit:async context=>{
   if(await isKilled(sql))throw Error("KILL_SWITCH");
-  return dispatchDelivery({sql,taskId,action:args.action,args,isKilled,token,execute:(db,id,action,payload)=>execute(db,id,action,payload,context)});
+  const response=await dispatchDelivery({sql,taskId,action:args.action,args,isKilled,token,execute:(db,id,action,payload)=>execute(db,id,action,payload,context)});
+  validateGitHubDeliveryReceipt(response,args);
+  return response;
  }});
 }
