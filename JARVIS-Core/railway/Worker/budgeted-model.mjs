@@ -15,9 +15,11 @@ export async function budgetedModelCall({sql,taskId,taskHash,totalLimit,reserved
  try{response=await runModel({callId,reserved});}
  catch(error){
   if(Number.isSafeInteger(error?.actualUsage)&&error.actualUsage>=0)await change("settle",error.actualUsage);
+  else await change("audit",null);
   throw error;
  }
- const actual=actualTokens(response?.usage);
+ let actual;
+ try{actual=actualTokens(response?.usage);}catch(error){await change("audit",null);throw error;}
  const budget=await change("settle",actual);
  if(response.result===undefined)throw new Error("MISSING_MODEL_RESULT");
  return {result:response.result,callId,actual,budget};
