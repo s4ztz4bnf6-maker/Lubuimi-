@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import postgres from 'postgres';
+import { reserveDelivery } from '../../delivery-ledger-store.mjs';
 
 test('real admission trigger: parallel overflow and recovery', async () => {
   const url = new URL(process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/djo2_test');
@@ -61,6 +62,19 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     assert.equal(existing.upstream_repo,'fixture/repo');
     assert.equal(existing.issue_number,1);
     assert.equal(existing.delivery_status,'pending');
+    const scoped = {begin: run};
+    const input = {idempotencyKey:'adapter-key',bountyId:'fixture',repo:'fixture/repo',issueNumber:2};
+    const reservations = await Promise.all([reserveDelivery(scoped,input),reserveDelivery(scoped,input)]);
+    assert.deepEqual(reservations.map(x=>x.status).sort(),['existing','registered']);
+    assert.equal(reservations[0].record.id,reservations[1].record.id);
+    assert.equal(reservations[0].record.delivery_status,'pending');
+    assert.equal(reservations[0].record.claim_entitled,false);
+    for (const change of [{bountyId:'other'},{repo:'other/repo'},{issueNumber:3}]) {
+      await assert.rejects(reserveDelivery(scoped,{...input,...change}),/DELIVERY_IDEMPOTENCY_MISMATCH/);
+    }
+    await assert.rejects(reserveDelivery(scoped,{...input,idempotencyKey:''}),/INVALID_DELIVERY_RESERVATION/);
+    await assert.rejects(reserveDelivery(scoped,{...input,issueNumber:0}),/INVALID_DELIVERY_RESERVATION/);
+
 
     await assert.rejects(run(tx => tx`UPDATE bounty_deliveries SET delivery_status='delivered' WHERE idempotency_key='fixture-key'`), e => e.code === '23514');
     let ready;
