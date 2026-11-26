@@ -10,3 +10,11 @@ export async function reserveDelivery(sql, {idempotencyKey,bountyId,repo,issueNu
   return {status:"existing",record:existing};
  });
 }
+
+// Resolve only a current server-side authorization. Model input is never an identity source.
+export async function resolveAuthorizedDeliveryIdentity(sql,taskId,repo,issueNumber,action,payloadSha256) {
+ if(!Number.isSafeInteger(Number(taskId))||Number(taskId)<1||!/^[-\w.]+\/[-\w.]+$/.test(repo)||!Number.isSafeInteger(issueNumber)||issueNumber<1||!["claim","deliver"].includes(action)||! /^[a-f0-9]{64}$/.test(payloadSha256))throw Error("INVALID_DELIVERY_IDENTITY");
+ const [row]=await sql`SELECT repo,issue_number,eligibility_evidence FROM djo2_delivery_authorizations WHERE task_id=${taskId} AND repo=${repo} AND issue_number=${issueNumber} AND action=${action} AND payload_sha256=${payloadSha256} AND revoked_at IS NULL AND expires_at>NOW()`;
+ if(!row||typeof row.eligibility_evidence?.bounty_id!=="string"||!row.eligibility_evidence.bounty_id.trim())throw Error("VERIFIED_BOUNTY_IDENTITY_REQUIRED");
+ return {bountyId:row.eligibility_evidence.bounty_id,repo:row.repo,issueNumber:row.issue_number};
+}
