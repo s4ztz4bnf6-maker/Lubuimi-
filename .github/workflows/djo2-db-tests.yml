@@ -38,4 +38,7 @@ jobs:
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f audit-delivery-readonly.sql
       - name: Inventory authorization references in checked-out worker and server code
         run: |
-          git grep -n -i 'djo2_delivery_authorizations' -- JARVIS-Core || test "$?" -eq 1
+          git rev-parse HEAD
+          git grep -n -i 'djo2_delivery_authorizations' HEAD -- :/JARVIS-Core
+          git grep -q 'CREATE TABLE IF NOT EXISTS djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger.sql
+          git grep -q 'FROM djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger-store.mjs
