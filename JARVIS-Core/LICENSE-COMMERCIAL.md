@@ -15,3 +15,6 @@ The owner states that the earlier Apache-2.0 designation resulted from a misunde
 ## Binding owner policy confirmation — 2026-11-26
 
 The owner confirms proprietary paid licensing for new original DJO² IA material within their licensing authority. New commercial permissions require a separately agreed written paid license before use. No new royalty-free grant is intended. Existing valid grants, third-party rights and mandatory statutory exceptions remain unaffected. This confirmation is a licensing policy, not a signed agreement with any customer.
+
+
+Owner policy confirmation — 2026-11-26: All new permissions for protected original DJO² IA material within the rights holder's authority require a separate written paid agreement, including commercial and noncommercial licensing. No new royalty-free grant is intended. Fees are negotiated; no automatic payment obligation arises. Existing valid grants, third-party licenses and statutory exceptions remain unaffected. This policy does not establish ownership of third-party material.
