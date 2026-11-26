@@ -16,6 +16,24 @@ export async function provisionConfiguredAgent(sql){
  console.info("[AgentMailbox] configured external agent key registered");
 }
 export async function createAgentKey(sql,name){const key="djo2_ak_"+randomBytes(32).toString("base64url");await sql`INSERT INTO djo2_agent_keys(name,key_hash) VALUES (${name},${hash(key)})`;return key;}
+export async function rotateAgentKey(sql,name){
+ if(typeof name!=="string"||!name.trim()||name.length>160||name==="external-agent")throw Error("Invalid managed agent name");
+ const key="djo2_ak_"+randomBytes(32).toString("base64url");
+ await sql.begin(async tx=>{
+  await tx`SELECT pg_advisory_xact_lock(hashtextextended(${name},0))`;
+  await tx`UPDATE djo2_agent_keys SET revoked_at=now() WHERE name=${name} AND revoked_at IS NULL`;
+  await tx`INSERT INTO djo2_agent_keys(name,key_hash) VALUES (${name},${hash(key)})`;
+ });
+ return key;
+}
+export async function revokeAgentKeys(sql,name){
+ if(typeof name!=="string"||!name.trim()||name.length>160||name==="external-agent")throw Error("Invalid managed agent name");
+ return sql.begin(async tx=>{
+  await tx`SELECT pg_advisory_xact_lock(hashtextextended(${name},0))`;
+  const rows=await tx`UPDATE djo2_agent_keys SET revoked_at=now() WHERE name=${name} AND revoked_at IS NULL RETURNING id`;
+  return rows.length;
+ });
+}
 export async function enqueuePackage(sql,p){if(!p.taskRef||!p.expectedAuthor||!p.issue||!p.files?.length)throw Error("Incomplete package");const [r]=await sql`INSERT INTO djo2_delivery_packages(task_ref,payload) VALUES (${p.taskRef},${sql.json(p)}) ON CONFLICT(task_ref) DO NOTHING RETURNING id`;return r?.id??null;}
 export async function handleAgentRequest(req,{sql,verifyPR=verifyPullRequest}){
  const path=new URL(req.url).pathname;
