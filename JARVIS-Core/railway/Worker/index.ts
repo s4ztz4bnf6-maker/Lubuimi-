@@ -1160,7 +1160,12 @@ function budgetInference(messages,tools,model){
  let selected=groups.slice(Math.max(first+1,0));
  let compact=[...fixed,...mandatory,...selected.flat()];
  while(selected.length>1&&!fits(compact,ranked.slice(0,1))){selected.shift();compact=[...fixed,...mandatory,...selected.flat()];}
- const chosen=[];for(const t of ranked){if(fits(compact,[...chosen,t]))chosen.push(t);}
+ const chosen=[];
+ const toolCap=Math.max(0,Math.floor((limit-estimate({model,messages:compact,tools:[]}))*0.3));
+ for(const t of ranked){
+   const candidate=[...chosen,t];
+   if(estimate(candidate)-estimate([])<=toolCap && fits(compact,candidate))chosen.push(t);
+ }
  if(!chosen.length&&tools.length || !fits(compact,chosen)){
  console.warn("DJO2_CONTEXT_BUDGET",JSON.stringify({model,limit,output,systemEstimate:estimate(fixed),instructionEstimate:estimate(mandatory),historyEstimate:estimate(selected.flat()),toolEstimate:estimate(tools),toolCount:tools.length,totalEstimate:estimate({model,messages:compact,tools})}));
  throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
