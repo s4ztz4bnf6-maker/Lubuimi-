@@ -1,8 +1,16 @@
+import {createHash} from "node:crypto";
 import {changeTokenBudget} from "./token-budget.mjs";
 import {actualTokens} from "./budgeted-model.mjs";
 import {persistBudgetedCheckpoint} from "./budget-checkpoint.mjs";
+export function scopedCallId(taskId,taskHash,planHash,phase,seq){
+ if(!Number.isSafeInteger(seq)||!(phase==="semantic_segment_v1"&&seq>0||phase==="semantic_synthesis_v1"&&seq===0))throw new Error("Invalid scope");
+ return "call:"+createHash("sha256").update(JSON.stringify([String(taskId),taskHash,planHash,phase,seq])).digest("hex");
+}
 export async function executeScopedModel({sql,taskId,taskHash,totalLimit,planHash,phase,seq,callId,reserved,runModel}){
  const scope={planHash,phase,seq};
+ const expected=scopedCallId(taskId,taskHash,planHash,phase,seq);
+ if(callId!==undefined&&callId!==expected)throw new Error("Conflicting call ID");
+ callId=expected;
  const change=(action,amount,result)=>changeTokenBudget(taskId,taskHash,totalLimit,callId,action,amount,{sql,scope,result});
  const reservation=await change("reserve",reserved);
  let actual,result;
