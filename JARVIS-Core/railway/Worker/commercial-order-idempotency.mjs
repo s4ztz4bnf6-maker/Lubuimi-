@@ -1,4 +1,5 @@
 import {createHash} from "node:crypto";
+import {verifyCommercialSchema} from "./worker-commercial-guard.mjs";
 import {changeTokenBudgetInTransaction} from "./token-budget.mjs";
 export function commercialOrderKey({namespace,externalOrderId,operation}){
  if(![namespace,externalOrderId,operation].every(v=>typeof v==="string"&&v.trim()&&v===v.trim()))throw new Error("INVALID_COMMERCIAL_IDENTITY");
@@ -11,6 +12,7 @@ export async function executeCommercialOrder({sql,taskId,taskHash,limit,reserved
  const key=commercialOrderKey(identity);
  const change=(tx,action,amount)=>changeTokenBudgetInTransaction(taskId,taskHash,limit,key,action,amount,{tx,scope:null});
  if(await verifyRoute()!==true)throw new Error("UNVERIFIED_ZERO_SPEND_ROUTE");
+ await verifyCommercialSchema(sql);
  const claim=await sql.begin(async tx=>{
   await tx`SELECT pg_advisory_xact_lock(hashtextextended(${key},0))`;
   const rows=await tx`SELECT task_id,note FROM djo2_task_checkpoints WHERE phase='commercial_order_v1' AND note::jsonb->>'key'=${key} ORDER BY id DESC LIMIT 1`;
