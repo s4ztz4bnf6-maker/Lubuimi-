@@ -54,6 +54,14 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     const deliveries = await Promise.allSettled([insertDelivery(),insertDelivery()]);
     assert.equal(deliveries.filter(x => x.status === 'fulfilled').length,1);
     assert.equal(deliveries.find(x => x.status === 'rejected').reason.code,'23505');
+    const duplicate = await run(tx => tx`INSERT INTO bounty_deliveries(idempotency_key,bounty_id,upstream_repo,issue_number) VALUES ('fixture-key','fixture','fixture/repo',1) ON CONFLICT (idempotency_key) DO NOTHING RETURNING id`);
+    assert.equal(duplicate.length,0);
+    const [existing] = await run(tx => tx`SELECT bounty_id,upstream_repo,issue_number,delivery_status FROM bounty_deliveries WHERE idempotency_key='fixture-key'`);
+    assert.equal(existing.bounty_id,'fixture');
+    assert.equal(existing.upstream_repo,'fixture/repo');
+    assert.equal(existing.issue_number,1);
+    assert.equal(existing.delivery_status,'pending');
+
     await assert.rejects(run(tx => tx`UPDATE bounty_deliveries SET delivery_status='delivered' WHERE idempotency_key='fixture-key'`), e => e.code === '23514');
     let ready;
     const readDone = new Promise(resolve => { ready = resolve; });
