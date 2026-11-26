@@ -39,3 +39,26 @@ jobs:
         env:
           PGPASSWORD: test_password
         run: psql -h 127.0.0.1 -p 5432 -U postgres -d companion_auth_test -v ON_ERROR_STOP=1 -f Companion/agent-auth/test-schema-setup.sql
+      - uses: oven-sh/setup-bun@v2
+      - name: Verify original and exercise Bun wrapper
+        env:
+          DATABASE_URL: postgres://postgres:test_password@127.0.0.1:5432/companion_auth_test
+          COMPANION_PUBLIC_ORIGIN: https://companion.example
+          DJO2_WRAPPER_TEST: '1'
+          PORT: '3099'
+          PGPASSWORD: test_password
+        run: |
+          set -eu
+          test "$(git hash-object JARVIS-Core/railway/Companion/index.ts)" = 2ec048bd8552ff515c86b8ce902d9f30c8fef0a1
+          test "$(wc -c < JARVIS-Core/railway/Companion/index.ts)" -eq 1690071
+          psql -h 127.0.0.1 -U postgres -d companion_auth_test -v ON_ERROR_STOP=1 -c "CREATE TABLE jarvis_sessions(token_hash text PRIMARY KEY, expires_at timestamptz); INSERT INTO jarvis_sessions VALUES ('$(printf test-owner | sha256sum | cut -d' ' -f1)',NULL);"
+          bun JARVIS-Core/railway/Companion/start-agent-auth.ts > /tmp/wrapper.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; cat /tmp/wrapper.log' EXIT
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:3099/; then break; fi; sleep 1; done
+          test "$(curl -fsS http://127.0.0.1:3099/)" = fixture
+          token=$(curl -fsS -X POST http://127.0.0.1:3099/api/agent-auth/issue -H 'Origin: https://companion.example' -H 'Cookie: jarvis_session=test-owner' -H 'Content-Type: application/json' -d '{"scopes":["agent:read"]}' | jq -er .token)
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/agent-auth/status)" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/approvals/pending)" = 403
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/agent-auth/spend)" = 403
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3099/api/agent-auth/status)" = 401
