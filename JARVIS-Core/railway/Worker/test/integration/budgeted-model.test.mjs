@@ -16,6 +16,12 @@ test("budgeted adapter retains unknown usage and accounts for valid and excess u
  const taskHash=createHash("sha256").update(JSON.stringify(["title","prompt"])).digest("hex");
  const invoke=(reserved,runModel)=>budgetedModelCall({sql,taskId:1,taskHash,totalLimit:1000,reserved,runModel});
  await assert.rejects(invoke(250,async({reserved})=>{assert.equal(reserved,250);return {result:"unknown"};}),/UNKNOWN_MODEL_USAGE/);
+ const auditRows=await sql`SELECT note FROM djo2_task_checkpoints WHERE phase='token_budget_v1' ORDER BY id`;
+ const audit=JSON.parse(auditRows.at(-1).note);
+ assert.equal(audit.status,"UNKNOWN_USAGE_PENDING_AUDIT");
+ assert.equal(audit.actual,null);
+ assert.equal(audit.reserved,250);
+ assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints WHERE phase IN ('semantic_segment_v1','semantic_synthesis_v1')`)[0].n,0);
  const good=await invoke(300,async({reserved,callId})=>{assert.equal(reserved,300);assert.ok(callId);return {result:"ok",usage:{inputTokens:120,outputTokens:80,totalTokens:200}};});
  assert.equal(good.result,"ok");assert.equal(good.actual,200);assert.equal(good.budget.used,200);assert.equal(good.budget.reserved,250);
  const excess=await invoke(100,async()=>({result:"excess",usage:{totalTokens:150}}));
