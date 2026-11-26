@@ -63,3 +63,37 @@ export async function persistiereFortsetzungAtomar(taskId, taskHash, nextStep, h
     return {scheduled:true,step:nextStep};
   });
 }
+
+/** Persist one newly completed research step and optionally queue continuation.
+ * The caller must supply the actual completed read-only step's history.
+ */
+export async function persistiereNeuenCheckpoint(taskId, taskHash, nextStep, history, attempt, {sql, delayMs = null}) {
+  if (!Number.isSafeInteger(nextStep) || nextStep < 1 || !Number.isSafeInteger(attempt) || attempt < 1)
+    throw new RangeError("Invalid checkpoint position or attempt");
+  if (delayMs !== null && (!Number.isSafeInteger(delayMs) || delayMs < 0))
+    throw new RangeError("Invalid retry delay");
+  const note = JSON.stringify({taskHash,nextStep,history});
+  if (!selectResearchHistory(note,taskHash) || !history.length) throw new Error("Invalid research history");
+  return sql.begin(async tx => {
+    const [task] = await tx`SELECT id,title,prompt,status,attempt_count FROM agent_tasks WHERE id=${taskId} FOR UPDATE`;
+    if (!task || task.status !== "running") return {saved:false,grund:"nicht_laufend"};
+    const actualHash = createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex");
+    if (actualHash !== taskHash || Number(task.attempt_count||0)+1 !== attempt)
+      return {saved:false,grund:"veralteter_versuch"};
+    const [saved] = await tx`SELECT step,note FROM djo2_task_checkpoints WHERE task_id=${taskId} AND phase='research_context_v1' ORDER BY id DESC LIMIT 1`;
+    const previous = selectResearchHistory(saved?.note,taskHash);
+    if (previous && Number(saved.step) !== previous.nextStep-1) throw new Error("Invalid previous checkpoint");
+    if (nextStep !== (previous?.nextStep ?? 0)+1) throw new Error("Unbelegter Fortschrittssprung");
+    const prefix = previous?.history ?? [];
+    if (history.length <= prefix.length || JSON.stringify(history.slice(0,prefix.length)) !== JSON.stringify(prefix))
+      throw new Error("Inkonsistenter Kontext");
+    await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note)
+      VALUES(${taskId},${attempt},${nextStep-1},'research_context_v1',${note})`;
+    if (delayMs !== null) {
+      const rows = await tx`UPDATE agent_tasks SET status='retry_wait',next_retry_at=NOW()+${delayMs}::bigint*INTERVAL '1 millisecond',error=NULL,completed_at=NULL,attempt_count=GREATEST(0,attempt_count-1)
+        WHERE id=${taskId} AND status='running' RETURNING id`;
+      if (rows.length !== 1) throw new Error("UPDATE ohne genau eine betroffene Zeile");
+    }
+    return {saved:true,nextStep,scheduled:delayMs!==null};
+  });
+}
