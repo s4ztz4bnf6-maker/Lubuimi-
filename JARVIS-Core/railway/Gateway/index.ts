@@ -18,7 +18,7 @@ import { expandedSearchTerms, queryBatch } from "./src/freegoods-catalog";
 import { rankLeads } from "./src/freegoods-ranking";
 import { discoverPublicLeads } from "./src/freegoods-discovery";
 import postgres from "postgres";
-import { initAgentMailbox, handleAgentRequest } from "./agentMailbox.mjs";
+import { initAgentMailbox, handleAgentRequest, createAgentKey, enqueuePackage } from "./agentMailbox.mjs";
 import { initMailboxSchema, startMailboxPolling } from "./src/mailbox-service";
 
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
@@ -648,6 +648,17 @@ const server = Bun.serve({
   port: Number(env.PORT || 3000),
   async fetch(req) {
     const url = new URL(req.url);
+    if (req.method === "POST" && ["/v1/owner/agent-keys","/v1/owner/delivery-packages"].includes(url.pathname)) {
+      if (!ownerAuthorized(req)) return json({error:"unauthorized"},401);
+      if (!agentMailboxReady) return json({error:"mailbox_unavailable"},503);
+      let body:any; try { const raw=await req.text(); if(raw.length>500000)return json({error:"too_large"},413); body=JSON.parse(raw); } catch {return json({error:"invalid_json"},400);}
+      if(url.pathname.endsWith("agent-keys")){
+        if(typeof body.name!=="string"||!body.name.trim()||body.name.length>100)return json({error:"invalid_name"},400);
+        return json({key:await createAgentKey(sql,body.name)},201);
+      }
+      if(!body.taskRef||!body.owner||!body.repo||!body.base||!body.branch||!body.expectedAuthor||!Number.isSafeInteger(body.issue)||body.issue<1||!Array.isArray(body.files)||!body.files.length||!body.files.every((f:any)=>typeof f.path==="string"&&typeof f.content==="string")||! /^[a-f0-9]{40}$/.test(body.expectedHeadSha||""))return json({error:"invalid_package"},400);
+      const id=await enqueuePackage(sql,body);return json({id:id===null?null:String(id),duplicate:id===null},id===null?409:201);
+    }
     if (url.pathname.startsWith("/v1/agent/tasks/")) {
       if (!agentMailboxReady) return json({error:"mailbox_unavailable"},503);
       const result = await handleAgentRequest(req,{sql});
