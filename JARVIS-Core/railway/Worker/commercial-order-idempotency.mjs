@@ -17,7 +17,7 @@ export async function executeCommercialOrder({sql,taskId,taskHash,limit,reserved
  await verifyCommercialSchema(sql);
  const claim=await sql.begin(async tx=>{
   for(const k of keys)await tx`SELECT pg_advisory_xact_lock(hashtextextended(${k},0))`;
-  const rows=await tx`SELECT task_id,note FROM djo2_task_checkpoints WHERE phase='commercial_order_v1' AND note::jsonb->>'key'=ANY(${keys}::text[]) ORDER BY id DESC`;
+  const rows=await tx`SELECT task_id,note FROM djo2_task_checkpoints WHERE phase='commercial_order_v1' AND (note::jsonb->>'key'=ANY(${keys}::text[]) OR COALESCE(note::jsonb->'aliases','[]'::jsonb) ?| ${keys}::text[]) ORDER BY id DESC`;
   if(rows.length){
    const old=JSON.parse(rows[0].note);
    if(rows.some(r=>JSON.parse(r.note).key!==key))throw Error("LEGACY_COMMERCIAL_ORDER_BLOCKED");
@@ -28,11 +28,11 @@ export async function executeCommercialOrder({sql,taskId,taskHash,limit,reserved
   if(!task||task.status!=="running"||createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex")!==taskHash)throw new Error("Task mismatch");
   const reservation=await change(tx,"reserve",reserved);
   if(reservation.created!==true)throw new Error("DUPLICATE_COMMERCIAL_ORDER_BLOCKED");
-  await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${Number(task.attempt_count||0)+1},0,'commercial_order_v1',${JSON.stringify({key,taskHash,status:"SUBMITTED"})})`;
+  await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${Number(task.attempt_count||0)+1},0,'commercial_order_v1',${JSON.stringify({key,aliases:keys,taskHash,status:"SUBMITTED"})})`;
   return {reused:false};
  });
  if(claim.reused)return {key,result:claim.result,actualUsage:claim.actualUsage,reused:true};
- const append=async(tx,status,extra={})=>tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) SELECT id,COALESCE(attempt_count,0)+1,0,'commercial_order_v1',${JSON.stringify({key,taskHash,status,...extra})} FROM agent_tasks WHERE id=${taskId}`;
+ const append=async(tx,status,extra={})=>tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) SELECT id,COALESCE(attempt_count,0)+1,0,'commercial_order_v1',${JSON.stringify({key,aliases:keys,taskHash,status,...extra})} FROM agent_tasks WHERE id=${taskId}`;
 
  let response;
  try{
