@@ -1,0 +1,14 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { issueAgentCredential, authorizeAgent } from './credentials.mjs';
+const { token, record } = issueAgentCredential(['agent:read']);
+const header = `Bearer ${token}`;
+test('valid credential', () => assert.equal(authorizeAgent(header, record, 'agent:read').status, 200));
+test('wrong token', () => assert.equal(authorizeAgent('Bearer '+(token[0]==='a'?'b':'a')+token.slice(1), record, 'agent:read').status, 401));
+test('missing header', () => assert.equal(authorizeAgent(undefined, record, 'agent:read').status, 401));
+test('expired', () => assert.equal(authorizeAgent(header, record, 'agent:read', {now:record.expiresAt}).status, 401));
+test('revoked', () => assert.equal(authorizeAgent(header, {...record,revoked:true}, 'agent:read').status, 401));
+test('scope denied', () => assert.equal(authorizeAgent(header, record, 'agent:execute').status, 403));
+test('spend denied', () => assert.equal(authorizeAgent(header, record, 'agent:read', {requiresSpend:true}).status, 403));
+test('no plaintext in record', () => assert.ok(!JSON.stringify(record).includes(token)));
+test('invalid issuance', () => {assert.throws(()=>issueAgentCredential(['admin']));assert.throws(()=>issueAgentCredential(['agent:read'],0));});

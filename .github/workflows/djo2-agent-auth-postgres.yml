@@ -1,0 +1,65 @@
+name: DJO2 agent auth PostgreSQL
+on:
+  push:
+    branches: [djo2/companion-agent-auth-production-base-20261126]
+    paths:
+      - 'Companion/agent-auth/**'
+      - '.github/workflows/djo2-agent-auth-postgres.yml'
+      - 'JARVIS-Core/railway/Companion/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auth:
+    if: github.ref == 'refs/heads/djo2/companion-agent-auth-production-base-20261126'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: companion_auth_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d companion_auth_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --ignore-scripts postgres@3.4.7
+      - run: node --test Companion/agent-auth/*.test.mjs
+        env:
+          DJO2_TEST_DATABASE_URL: postgres://postgres:test_password@127.0.0.1:5432/companion_auth_test
+      - name: Run rollback-only SQL assertions
+        env:
+          PGPASSWORD: test_password
+        run: psql -h 127.0.0.1 -p 5432 -U postgres -d companion_auth_test -v ON_ERROR_STOP=1 -f Companion/agent-auth/test-schema-setup.sql
+      - uses: oven-sh/setup-bun@v2
+      - name: Verify original and exercise Bun wrapper
+        env:
+          DATABASE_URL: postgres://postgres:test_password@127.0.0.1:5432/companion_auth_test
+          COMPANION_PUBLIC_ORIGIN: https://companion.example
+          DJO2_WRAPPER_TEST: '1'
+          PORT: '3099'
+          PGPASSWORD: test_password
+        run: |
+          set -eu
+          test "$(git hash-object JARVIS-Core/railway/Companion/index.ts)" = cc0ac9daca0cfec593dc5d5b76b0a51767a59160
+          test "$(wc -c < JARVIS-Core/railway/Companion/index.ts)" -eq 1769240
+          psql -h 127.0.0.1 -U postgres -d companion_auth_test -v ON_ERROR_STOP=1 -c "CREATE TABLE jarvis_sessions(token_hash text PRIMARY KEY, expires_at timestamptz); INSERT INTO jarvis_sessions VALUES ('$(printf test-owner | sha256sum | cut -d' ' -f1)',NULL);"
+          bun JARVIS-Core/railway/Companion/start-agent-auth.ts > /tmp/wrapper.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; cat /tmp/wrapper.log' EXIT
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:3099/; then break; fi; sleep 1; done
+          test "$(curl -fsS http://127.0.0.1:3099/)" = fixture
+          token=$(curl -fsS -X POST http://127.0.0.1:3099/api/agent-auth/issue -H 'Origin: https://companion.example' -H 'Cookie: jarvis_session=test-owner' -H 'Content-Type: application/json' -d '{"scopes":["agent:read"]}' | jq -er .token)
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/agent-auth/status)" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/approvals/pending)" = 403
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/agent-auth/spend)" = 403
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3099/api/agent-auth/status)" = 401
