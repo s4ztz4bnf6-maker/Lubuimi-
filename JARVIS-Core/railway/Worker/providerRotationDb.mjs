@@ -16,7 +16,7 @@ export async function setFlag(sql,key,value,schema="public"){await sql`INSERT IN
 export async function runToolOnce(sql,id,tool,args,exec,schema="public"){
  if(await isKilled(sql,schema))throw new Error("KILL_SWITCH");
  const tid=String(id),key=effectKey(tool,args);
- const ins=await sql`INSERT INTO ${table(sql,schema,"djo2_task_effects")}(task_id,effect_key,tool,status) VALUES(${tid},${key},${tool},'started') ON CONFLICT DO NOTHING RETURNING effect_key`;
+ const ins=await sql`INSERT INTO ${table(sql,schema,"djo2_task_effects")}(task_id,effect_key,tool,status) VALUES(${tid},${key},${tool},'started') ON CONFLICT (task_id,effect_key) DO NOTHING RETURNING effect_key`;
  if(!ins.length){const [row]=await sql`SELECT status,result FROM ${table(sql,schema,"djo2_task_effects")} WHERE task_id=${tid} AND effect_key=${key}`;if(row?.status==="done")return {status:"replayed",result:row.result};return {status:"unknown",message:"UNKNOWN_OUTCOME: reconcile before retry"};}
  try{if(await isKilled(sql,schema))throw new Error("KILL_SWITCH");const result=await exec();await sql`UPDATE ${table(sql,schema,"djo2_task_effects")} SET status='done',result=${sql.json(result??null)},updated_at=now() WHERE task_id=${tid} AND effect_key=${key}`;return {status:"done",result};}
  catch(e){return {status:"unknown",message:"UNKNOWN_OUTCOME: reconcile before retry"};}
