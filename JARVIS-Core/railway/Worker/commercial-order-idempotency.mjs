@@ -6,18 +6,21 @@ export function commercialOrderKey({namespace,externalOrderId,operation}){
  return "order_"+createHash("sha256").update(JSON.stringify([namespace,externalOrderId,operation])).digest("hex");
 }
 // Durable global claim in the existing checkpoint store. All callers must use this guard.
-export async function executeCommercialOrder({sql,taskId,taskHash,limit,reserved,identity,verifyRoute,submit}){
+export async function executeCommercialOrder({sql,taskId,taskHash,limit,reserved,identity,legacyKeys=[],verifyRoute,submit}){
  if(typeof verifyRoute!=="function"||typeof submit!=="function")throw new Error("MISSING_COMMERCIAL_HANDLER");
  if(!Number.isSafeInteger(reserved)||reserved<1||!Number.isSafeInteger(limit)||limit<reserved)throw new Error("INVALID_COMMERCIAL_BUDGET");
  const key=commercialOrderKey(identity);
+ if(!Array.isArray(legacyKeys)||legacyKeys.some(k=>typeof k!=="string"||!/^order_[a-f0-9]{64}$/.test(k)))throw Error("INVALID_LEGACY_KEYS");
+ const keys=[...new Set([key,...legacyKeys])].sort();
  const change=(tx,action,amount)=>changeTokenBudgetInTransaction(taskId,taskHash,limit,key,action,amount,{tx,scope:null});
  if(await verifyRoute()!==true)throw new Error("UNVERIFIED_ZERO_SPEND_ROUTE");
  await verifyCommercialSchema(sql);
  const claim=await sql.begin(async tx=>{
-  await tx`SELECT pg_advisory_xact_lock(hashtextextended(${key},0))`;
-  const rows=await tx`SELECT task_id,note FROM djo2_task_checkpoints WHERE phase='commercial_order_v1' AND note::jsonb->>'key'=${key} ORDER BY id DESC LIMIT 1`;
+  for(const k of keys)await tx`SELECT pg_advisory_xact_lock(hashtextextended(${k},0))`;
+  const rows=await tx`SELECT task_id,note FROM djo2_task_checkpoints WHERE phase='commercial_order_v1' AND note::jsonb->>'key'=ANY(${keys}::text[]) ORDER BY id DESC`;
   if(rows.length){
    const old=JSON.parse(rows[0].note);
+   if(rows.some(r=>JSON.parse(r.note).key!==key))throw Error("LEGACY_COMMERCIAL_ORDER_BLOCKED");
    if(old.status==="SETTLED"&&String(rows[0].task_id)===String(taskId)&&old.taskHash===taskHash&&Object.hasOwn(old,"result"))return {reused:true,...old};
    throw new Error("DUPLICATE_COMMERCIAL_ORDER_BLOCKED");
   }
