@@ -44,3 +44,5 @@ jobs:
           git grep -q 'FROM djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger-store.mjs
       - name: Test separated authorization roles in disposable database
         run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-roles.sql
+      - name: Test atomic authorization audit triggers
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
