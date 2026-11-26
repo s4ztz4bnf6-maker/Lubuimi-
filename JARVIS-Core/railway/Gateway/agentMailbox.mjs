@@ -25,7 +25,7 @@ export async function handleAgentRequest(req,{sql,verifyPR=verifyPullRequest}){
  if(m[2]==="heartbeat"){const rows=await sql`UPDATE djo2_delivery_packages SET claim_expires=now()+interval '30 minutes' WHERE id=${p.id} AND fence=${p.fence} AND status='claimed' AND claim_expires>now() RETURNING id`;return json(rows.length?200:409,{renewed:!!rows.length});}
  if(p.status==="verified")return json(200,{status:"verified",verification:p.verification});
  if(!["claimed","unknown"].includes(p.status)||!Number.isSafeInteger(b.number)||b.number<1||!p.payload.expectedHeadSha)return json(409,{error:"missing trusted evidence or invalid state"});
- const q=p.payload;const v=await verifyPR({owner:q.owner,repo:q.repo,number:b.number,expectedAuthor:q.expectedAuthor,expectedIssue:q.issue,expectedHeadSha:q.expectedHeadSha,expectedPaths:q.files.map(f=>f.path)});
+ const q=p.payload;const v=await verifyPR({owner:q.owner,repo:q.repo,number:b.number,expectedAuthor:q.expectedAuthor,expectedIssue:q.issue,expectedHeadSha:q.expectedHeadSha,expectedPaths:q.files.map(f=>f.path),expectedFiles:q.files,expectedBase:q.base,expectedBranch:q.branch});
  if(!v.verified)return json(422,v);
  const rows=await sql`UPDATE djo2_delivery_packages SET status='verified',verification=${sql.json({...v,number:b.number})},updated_at=now() WHERE id=${p.id} AND fence=${p.fence} AND claimed_by=${a.id} AND status IN ('claimed','unknown') RETURNING id`;
  return json(rows.length?200:409,{status:rows.length?"verified":"conflict"});
