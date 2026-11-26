@@ -1,0 +1,38 @@
+name: DJO2 agent auth PostgreSQL
+on:
+  push:
+    branches: [djo2/companion-agent-auth-20261126]
+    paths:
+      - 'Companion/agent-auth/**'
+      - '.github/workflows/djo2-agent-auth-postgres.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  auth:
+    if: github.ref == 'refs/heads/djo2/companion-agent-auth-20261126'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: companion_auth_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d companion_auth_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test Companion/agent-auth/credentials.test.mjs
+      - name: Run rollback-only SQL assertions
+        env:
+          PGPASSWORD: test_password
+        run: psql -h 127.0.0.1 -p 5432 -U postgres -d companion_auth_test -v ON_ERROR_STOP=1 -f Companion/agent-auth/test-schema-setup.sql
