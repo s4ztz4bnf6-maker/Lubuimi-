@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import postgres from 'postgres';
-import { reserveDelivery } from '../../delivery-ledger-store.mjs';
+import { reserveDelivery, resolveAuthorizedDeliveryIdentity } from '../../delivery-ledger-store.mjs';
 
 test('real admission trigger: parallel overflow and recovery', async () => {
   const url = new URL(process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/djo2_test');
@@ -62,6 +62,18 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     assert.equal(existing.upstream_repo,'fixture/repo');
     assert.equal(existing.issue_number,1);
     assert.equal(existing.delivery_status,'pending');
+    const resolverSql = (strings,...values) => run(tx=>tx(strings,...values));
+    const hash='a'.repeat(64);
+    await run(tx=>tx`INSERT INTO djo2_delivery_authorizations(task_id,repo,issue_number,action,payload_sha256,eligibility_evidence,expires_at,revoked_at) VALUES
+      (101,'fixture/repo',2,'claim',${hash},'{"bounty_id":"verified-fixture"}'::jsonb,NOW()+INTERVAL '1 hour',NULL),
+      (102,'fixture/repo',2,'claim',${hash},'{"bounty_id":"expired"}'::jsonb,NOW()-INTERVAL '1 hour',NULL),
+      (103,'fixture/repo',2,'claim',${hash},'{"bounty_id":"revoked"}'::jsonb,NOW()+INTERVAL '1 hour',NOW()),
+      (104,'fixture/repo',2,'claim',${hash},'{}'::jsonb,NOW()+INTERVAL '1 hour',NULL)`);
+    const resolve=(...args)=>resolveAuthorizedDeliveryIdentity(resolverSql,...args);
+    assert.deepEqual(await resolve(101,'fixture/repo',2,'claim',hash),{bountyId:'verified-fixture',repo:'fixture/repo',issueNumber:2});
+    for(const args of [[102,'fixture/repo',2,'claim',hash],[103,'fixture/repo',2,'claim',hash],[104,'fixture/repo',2,'claim',hash],[999,'fixture/repo',2,'claim',hash],[101,'other/repo',2,'claim',hash],[101,'fixture/repo',3,'claim',hash],[101,'fixture/repo',2,'deliver',hash],[101,'fixture/repo',2,'claim','b'.repeat(64)]]) {
+      await assert.rejects(resolve(...args),/VERIFIED_BOUNTY_IDENTITY_REQUIRED/);
+    }
     const scoped = {begin: run};
     const input = {idempotencyKey:'adapter-key',bountyId:'fixture',repo:'fixture/repo',issueNumber:2};
     const reservations = await Promise.all([reserveDelivery(scoped,input),reserveDelivery(scoped,input)]);
