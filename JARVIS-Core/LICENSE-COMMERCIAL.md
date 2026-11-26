@@ -11,3 +11,7 @@ Product: DJO² IA (Joehoch2).
 ## Owner clarification — 2026-11-25
 
 The owner states that the earlier Apache-2.0 designation resulted from a misunderstanding during AI-assisted project administration and did not reflect the owner's stated intention to receive compensation for their work. The owner expressly requests proprietary, paid commercial licensing for new original contributions over which they hold the necessary rights. This clarification records the owner's position; it does not retroactively revoke any valid prior license grants or alter third-party rights.
+
+## Binding owner policy confirmation — 2026-11-26
+
+The owner confirms proprietary paid licensing for new original DJO² IA material within their licensing authority. New commercial permissions require a separately agreed written paid license before use. No new royalty-free grant is intended. Existing valid grants, third-party rights and mandatory statutory exceptions remain unaffected. This confirmation is a licensing policy, not a signed agreement with any customer.
