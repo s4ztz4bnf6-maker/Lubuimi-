@@ -28,8 +28,8 @@ export async function changeTokenBudget(taskId,taskHash,limit,callId,action,amou
   }else{
    if(!old)throw new Error("Unknown reservation");
    if(old.actual!==null){if(old.actual!==amount||(scope!==null&&JSON.stringify(old.result)!==JSON.stringify(result)))throw new Error("Conflicting settlement");return {created:false,...totals()};}
-   if(scope!==null&&result===undefined)throw new Error("Missing scoped result");
-   event={...old,actual:amount,status:"SETTLED",...(scope!==null?{result}: {})};
+   
+   event={...old,actual:amount,status:scope!==null&&result===undefined?"SETTLED_NO_RESULT":"SETTLED",...(scope!==null?{result}: {})};
   }
   state.set(callId,event);
   await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${Number(task.attempt_count||0)+1},0,'token_budget_v1',${JSON.stringify(event)})`;
