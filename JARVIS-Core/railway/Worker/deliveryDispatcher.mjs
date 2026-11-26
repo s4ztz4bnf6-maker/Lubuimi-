@@ -23,5 +23,6 @@ export async function inspectAuthorizedDelivery({sql,taskId,action,args,isKilled
  await verifyDeliveryAuthorization({sql,taskId,action,args,isKilled,token});
  const {resolveAuthorizedDeliveryIdentity}=await import("./delivery-ledger-store.mjs");
  const identity=await resolveAuthorizedDeliveryIdentity(sql,taskId,args.repo,args.issue,action,deliveryDigest(action,args));
+ if(await isKilled(sql))throw Error("KILL_SWITCH");
  return {status:"blocked",reason:"MIGRATION_LOCKED_INCOMPLETE_HISTORY",identity};
 }
