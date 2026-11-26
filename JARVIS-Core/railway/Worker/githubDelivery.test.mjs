@@ -20,9 +20,10 @@ test("offline delivery, replay and missing credentials",async t=>{
  if(p==="/repos/up/proj/forks")return R(202,{full_name:"me/proj",owner:{login:"me"}});
  if(p==="/repos/me/proj/git/commits/abc")return R(200,{});
  if(p==="/repos/me/proj/git/refs")return R(201,{});
+ if(p==="/repos/me/proj/contents/a.txt?ref=h")return R(200,{encoding:"base64",content:"eA=="});
  if(p.startsWith("/repos/me/proj/contents/a.txt"))return R(m==="GET"?404:201,{});
  if(p==="/repos/up/proj/pulls"&&m==="POST"){assert.equal(JSON.parse(o.body).head,"me:djo2-task-1");return R(201,{number:7,head:{sha:"h"}});}
- if(p==="/repos/up/proj/pulls/7")return R(200,{number:7,html_url:"https://github.com/up/proj/pull/7",head:{sha:"h"},state:"open"});
+ if(p==="/repos/up/proj/pulls/7")return R(200,{number:7,html_url:"https://github.com/up/proj/pull/7",head:{sha:"h"},state:"open",user:{login:"me"},base:{repo:{full_name:"up/proj"}},body:"B\n\nRefs #1\n<!-- djo2-task:1 -->"});
  throw Error("unexpected mock request "+m+" "+p);
  };
  const args={repo:"up/proj",issue:1,files:[{path:"a.txt",content:"x"}],title:"T",body:"B"};
