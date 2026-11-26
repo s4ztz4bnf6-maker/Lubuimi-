@@ -36,8 +36,15 @@ END $audit$;
 RESET ROLE;
 
 -- Exercise the restricted writer with explicit minimal audit insertion grants.
-GRANT INSERT ON djo2_delivery_authorization_audit TO djo2_ci_audit_writer;
-GRANT USAGE ON SEQUENCE djo2_delivery_authorization_audit_id_seq TO djo2_ci_audit_writer;
+-- Test a trigger-only writer under a dedicated non-login function owner.
+CREATE ROLE djo2_ci_trigger_owner NOLOGIN;
+GRANT USAGE ON SCHEMA public TO djo2_ci_trigger_owner;
+GRANT INSERT ON djo2_delivery_authorization_audit TO djo2_ci_trigger_owner;
+GRANT USAGE ON SEQUENCE djo2_delivery_authorization_audit_id_seq TO djo2_ci_trigger_owner;
+ALTER FUNCTION public.djo2_record_authorization_event() OWNER TO djo2_ci_trigger_owner;
+ALTER FUNCTION public.djo2_record_authorization_event() SECURITY DEFINER;
+REVOKE ALL ON FUNCTION public.djo2_record_authorization_event() FROM PUBLIC;
+REVOKE ALL ON djo2_delivery_authorization_audit FROM djo2_ci_audit_writer;
 REVOKE UPDATE ON djo2_delivery_authorizations FROM djo2_ci_audit_writer;
 GRANT UPDATE(revoked_at) ON djo2_delivery_authorizations TO djo2_ci_audit_writer;
 SET LOCAL ROLE djo2_ci_audit_writer;
@@ -47,6 +54,7 @@ UPDATE djo2_delivery_authorizations SET revoked_at=NOW() WHERE task_id=987658;
 DO $restricted$ BEGIN
  BEGIN UPDATE djo2_delivery_authorizations SET expires_at=NOW() WHERE task_id=987658; RAISE EXCEPTION 'UNEXPECTED_UPDATE'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
  BEGIN DELETE FROM djo2_delivery_authorization_audit; RAISE EXCEPTION 'UNEXPECTED_DELETE'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+ BEGIN INSERT INTO djo2_delivery_authorization_audit(task_id,repo,issue_number,action,payload_sha256,event,actor) VALUES(987659,'fixture/repo',1,'claim',repeat('f',64),'issued','forged'); RAISE EXCEPTION 'UNEXPECTED_DIRECT_INSERT'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END $restricted$;
 RESET ROLE;
 DO $restricted$ BEGIN
