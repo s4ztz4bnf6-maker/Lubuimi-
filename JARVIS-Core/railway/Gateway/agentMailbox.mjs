@@ -12,6 +12,7 @@ export async function provisionConfiguredAgent(sql){
  if(!digest)return;
  if(!/^[a-f0-9]{64}$/.test(digest))throw Error("Invalid external agent key hash");
  await sql`INSERT INTO djo2_agent_keys(name,key_hash) VALUES ('external-agent',${digest}) ON CONFLICT(key_hash) DO NOTHING`;
+ await sql`UPDATE djo2_agent_keys SET revoked_at=now() WHERE name='external-agent' AND key_hash<>${digest} AND revoked_at IS NULL`;
  console.info("[AgentMailbox] configured external agent key registered");
 }
 export async function createAgentKey(sql,name){const key="djo2_ak_"+randomBytes(32).toString("base64url");await sql`INSERT INTO djo2_agent_keys(name,key_hash) VALUES (${name},${hash(key)})`;return key;}
