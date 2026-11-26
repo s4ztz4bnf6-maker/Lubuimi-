@@ -9,6 +9,6 @@ export function validateGitHubDeliveryReceipt(response,args){
  const expected="/"+repo.toLowerCase()+(action==="claim"?"/issues/"+issue:"/pull/"+id);
  if(url.origin!=="https://github.com"||url.username||url.password||url.pathname.toLowerCase()!==expected||url.search)throw Error("GITHUB_DELIVERY_UNVERIFIED");
  if(action==="claim"&&url.hash!=="#issuecomment-"+id)throw Error("GITHUB_DELIVERY_UNVERIFIED");
- if(action==="deliver"&&(!/^[a-f0-9]{40}$/i.test(r.headSha??"")||url.hash))throw Error("GITHUB_DELIVERY_UNVERIFIED");
+ if(action==="deliver"&&(r.issue!==issue||!/^[a-f0-9]{40}$/i.test(r.headSha??"")||url.hash))throw Error("GITHUB_DELIVERY_UNVERIFIED");
  return r;
 }
