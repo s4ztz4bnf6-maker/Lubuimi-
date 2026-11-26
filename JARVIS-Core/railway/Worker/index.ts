@@ -1326,6 +1326,8 @@ if (env.JARVIS_BROWSER_MCP_URL) {
   }
 }
 async function callBrowserTool(name: string, args: any) {
+  // Browser actions can submit forms or trigger external writes; fail closed until history is verified.
+  throw Error("MIGRATION_LOCKED_INCOMPLETE_HISTORY");
   const run = browserCallChain.then(() => browserMcpClient.callTool({ name, arguments: args }));
   browserCallChain = run.then(() => undefined, () => undefined);
   return run;
