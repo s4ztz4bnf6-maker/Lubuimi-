@@ -38,5 +38,12 @@ test("legacy JSON checkpoint blocks concurrent immutable claims",{timeout:30000}
  assert.equal(events.length,4);
  assert.equal(events.filter(r=>r.phase==="token_budget_v1"&&JSON.parse(r.note).status==="RESERVED").length,1);
  assert.equal(events.filter(r=>r.phase==="commercial_order_v1"&&JSON.parse(r.note).status==="SETTLED").length,1);
+ const old3=githubCommercialIdentity({repo:"old/repo",issue:14,action:"deliver"});
+ const new3=immutableGitHubIdentity({repositoryId:123,issueId:458,action:"deliver"});
+ await executeCommercialOrder({...opts,taskId:1,identity:new3,legacyKeys:[commercialOrderKey(old3)],submit});
+ const count=(await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n;
+ await assert.rejects(executeCommercialOrder({...opts,taskId:2,identity:old3,submit}),/LEGACY_COMMERCIAL_ORDER_BLOCKED/);
+ assert.equal(calls,3);
+ assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n,count);
  }finally{await sql.end();}
 });
