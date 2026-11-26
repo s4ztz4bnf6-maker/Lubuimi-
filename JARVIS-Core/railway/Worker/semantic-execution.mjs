@@ -15,15 +15,21 @@ export async function executeSemanticPlan(taskId, taskHash, {sql, contextLimit, 
   });
  }
  async function stage(seq,phase,run){
-  return locked(async(tx,task,plan)=>{
+  async function read(tx,plan){
    const rows=await tx`SELECT note FROM djo2_task_checkpoints WHERE task_id=${taskId} AND phase=${phase} AND step=${seq} ORDER BY id DESC LIMIT 1`;
-   if(rows.length){
-    const saved=JSON.parse(rows[0].note);
-    if(saved.planHash!==plan.hash||saved.taskHash!==taskHash) throw new Error("Conflicting result");
-    return saved.result;
-   }
-   const result=await run(plan,tx);
-   if(result===undefined) throw new Error("Missing result");
+   if(!rows.length) return {found:false};
+   const saved=JSON.parse(rows[0].note);
+   if(saved.planHash!==plan.hash||saved.taskHash!==taskHash) throw new Error("Conflicting result");
+   return {found:true,result:saved.result};
+  }
+  const snapshot=await locked(async(tx,_task,plan)=>({plan,saved:await read(tx,plan)}));
+  if(snapshot.saved.found) return snapshot.saved.result;
+  const result=await run(snapshot.plan);
+  if(result===undefined) throw new Error("Missing result");
+  return locked(async(tx,task,plan)=>{
+   if(plan.hash!==snapshot.plan.hash) throw new Error("Plan changed during computation");
+   const saved=await read(tx,plan);
+   if(saved.found) return saved.result;
    const note=JSON.stringify({planHash:plan.hash,taskHash,result});
    await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${Number(task.attempt_count||0)+1},${seq},${phase},${note})`;
    return JSON.parse(note).result;
