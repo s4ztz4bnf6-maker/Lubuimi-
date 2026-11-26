@@ -14,6 +14,8 @@ function client(token){
  }};
 }
 export async function githubDelivery(sql,taskId,action,args){
+ // Fail closed before credentials, network requests or external mutations.
+ throw Error("MIGRATION_LOCKED_INCOMPLETE_HISTORY");
  const gh=client(await deliveryToken());
  if(!taskId||!["claim","deliver"].includes(action)||!/^[-\w.]+\/[-\w.]+$/.test(args.repo)||!Number.isSafeInteger(args.issue)||args.issue<1)throw Error("Invalid delivery request");
  const up="/repos/"+args.repo, issue=await gh(up+"/issues/"+args.issue);
