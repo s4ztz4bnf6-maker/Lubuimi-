@@ -34,4 +34,22 @@ DO $audit$ BEGIN
  IF EXISTS(SELECT 1 FROM djo2_delivery_authorizations WHERE task_id=987657) THEN RAISE EXCEPTION 'ATOMIC_ROLLBACK_FAILED'; END IF;
 END $audit$;
 RESET ROLE;
+
+-- Exercise the restricted writer with explicit minimal audit insertion grants.
+GRANT INSERT ON djo2_delivery_authorization_audit TO djo2_ci_audit_writer;
+GRANT USAGE ON SEQUENCE djo2_delivery_authorization_audit_id_seq TO djo2_ci_audit_writer;
+REVOKE UPDATE ON djo2_delivery_authorizations FROM djo2_ci_audit_writer;
+GRANT UPDATE(revoked_at) ON djo2_delivery_authorizations TO djo2_ci_audit_writer;
+SET LOCAL ROLE djo2_ci_audit_writer;
+INSERT INTO djo2_delivery_authorizations(task_id,repo,issue_number,action,payload_sha256,eligibility_evidence,expires_at)
+VALUES(987658,'fixture/repo',1,'claim',repeat('e',64),'{"bounty_id":"fixture"}',NOW()+interval '1 hour');
+UPDATE djo2_delivery_authorizations SET revoked_at=NOW() WHERE task_id=987658;
+DO $restricted$ BEGIN
+ BEGIN UPDATE djo2_delivery_authorizations SET expires_at=NOW() WHERE task_id=987658; RAISE EXCEPTION 'UNEXPECTED_UPDATE'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+ BEGIN DELETE FROM djo2_delivery_authorization_audit; RAISE EXCEPTION 'UNEXPECTED_DELETE'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END $restricted$;
+RESET ROLE;
+DO $restricted$ BEGIN
+ IF (SELECT count(*) FROM djo2_delivery_authorization_audit WHERE task_id=987658)<>2 THEN RAISE EXCEPTION 'RESTRICTED_AUDIT_COUNT'; END IF;
+END $restricted$;
 ROLLBACK;
