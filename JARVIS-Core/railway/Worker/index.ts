@@ -202,7 +202,7 @@ await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)
 const admissionMigration=await Bun.file(new URL("./003_admission.sql",import.meta.url)).text();
 await sql.begin(async tx=>{await tx.unsafe(admissionMigration.replace(/^\s*BEGIN\s*;/i,"").replace(/COMMIT\s*;\s*$/i,""));});
 console.log("DJO2_ADMISSION_SCHEMA_READY");
-await sql.unsafe(`CREATE OR REPLACE FUNCTION djo2_guard_task_admission() RETURNS trigger LANGUAGE plpgsql AS $
+await sql.unsafe(`CREATE OR REPLACE FUNCTION djo2_guard_task_admission() RETURNS trigger LANGUAGE plpgsql AS $djo2$
 BEGIN
  IF NEW.status::text NOT IN ('queued','running','retry_wait') THEN RETURN NEW; END IF;
  IF TG_OP='UPDATE' THEN
@@ -212,10 +212,10 @@ BEGIN
    NEW.status := 'failed'; NEW.error := '[DJO2_POLICY:queue_full:owner] Admission deferred; queue capacity reached';
  END IF;
  RETURN NEW;
-END $;`);
+END $djo2$;`);
 await sql.begin(async tx=>{
  await tx`SELECT pg_advisory_xact_lock(hashtext('djo2_admission_install'))`;
- await tx.unsafe(`DO $ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid='agent_tasks'::regclass AND tgname='djo2_guard_task_admission') THEN CREATE TRIGGER djo2_guard_task_admission BEFORE INSERT OR UPDATE OF status ON agent_tasks FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission(); END IF; END $;`);
+ await tx.unsafe(`DO $djo2$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid='agent_tasks'::regclass AND tgname='djo2_guard_task_admission') THEN CREATE TRIGGER djo2_guard_task_admission BEFORE INSERT OR UPDATE OF status ON agent_tasks FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission(); END IF; END $djo2$;`);
 });
 console.log("DJO2_ADMISSION_TRIGGER_READY");
  // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
