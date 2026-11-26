@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
+// DJO² IA – Alle Rechte vorbehalten.
 import {deliveryToken} from "./githubAuth.mjs";
 import {runToolOnce} from "./providerRotationDb.mjs";
 const enc=encodeURIComponent;
@@ -21,8 +23,8 @@ export async function githubDelivery(sql,taskId,action,args){
  return runToolOnce(sql,taskId,"github_"+action,{repo:args.repo,issue:args.issue},async()=>{
  if(action==="claim"){
  const path=up+"/issues/"+args.issue+"/comments";
- for(let i=1;i<=10;i++){const rows=await gh(path+"?per_page=100&page="+i);const found=rows.find(x=>x.user?.login===me&&x.body?.includes(marker));if(found)return {url:found.html_url,id:found.id};if(rows.length<100)break;if(i===10)throw Error("Reconciliation limit");}
- const c=await gh(path,"POST",{body:String(args.body)+"\n\n"+marker});return {url:c.html_url,id:c.id};
+ for(let i=1;i<=10;i++){const rows=await gh(path+"?per_page=100&page="+i);const found=rows.find(x=>x.user?.login===me&&x.body?.includes(marker));if(found)return {url:found.html_url,id:found.id,verified:true};if(rows.length<100)break;if(i===10)throw Error("Reconciliation limit");}
+ const c=await gh(path,"POST",{body:String(args.body)+"\n\n"+marker});const proof=await gh(up+"/issues/comments/"+c.id);if(proof.user?.login!==me||proof.issue_url!=="https://api.github.com"+up+"/issues/"+args.issue||!proof.body?.includes(marker)||!proof.html_url)throw Error("UNKNOWN_OUTCOME: comment verification failed");return {url:proof.html_url,id:proof.id,verified:true};
  }
  const branch="djo2-task-"+String(taskId).replace(/[^\w-]/g,"");
  if(!Array.isArray(args.files)||!args.files.length||args.files.length>20)throw Error("Invalid files");
@@ -32,8 +34,11 @@ export async function githubDelivery(sql,taskId,action,args){
  let ready=false;for(let i=0;i<20;i++){try{await gh(target+"/git/commits/"+sha);ready=true;break}catch(e){if(e.status!==404&&e.status!==409)throw e;await sleep(1500)}}if(!ready)throw Error("Fork not ready");
  await gh(target+"/git/refs","POST",{ref:"refs/heads/"+branch,sha});
  for(const f of args.files){const p=target+"/contents/"+f.path.split("/").map(enc).join("/");let old;try{old=(await gh(p+"?ref="+enc(branch))).sha}catch(e){if(e.status!==404)throw e;}await gh(p,"PUT",{branch,message:"DJO2: "+f.path,content:Buffer.from(f.content).toString("base64"),...(old?{sha:old}:{})});}
- const pr=await gh(up+"/pulls","POST",{title:String(args.title),body:String(args.body),base,head:fork.owner.login+":"+branch});
- const proof=await gh(up+"/pulls/"+pr.number);if(proof.head.sha!==pr.head.sha||!(proof.state==="open"||proof.merged))throw Error("PR not verified");
+ const pr=await gh(up+"/pulls","POST",{title:String(args.title),body:String(args.body)+"\n\nRefs #"+args.issue+"\n"+marker,base,head:fork.owner.login+":"+branch});
+ const proof=await gh(up+"/pulls/"+pr.number);
+ if(proof.head.sha!==pr.head.sha||!(proof.state==="open"||proof.merged)||proof.draft||proof.user?.login!==me||proof.base?.repo?.full_name?.toLowerCase()!==args.repo.toLowerCase()||!proof.body?.includes(marker)||!proof.body?.includes("Refs #"+args.issue)||!proof.html_url)throw Error("UNKNOWN_OUTCOME: PR not verified");
+ for(const f of args.files){const p=target+"/contents/"+f.path.split("/").map(enc).join("/");const actual=await gh(p+"?ref="+enc(proof.head.sha));if(actual.encoding!=="base64"||Buffer.from(actual.content,"base64").compare(Buffer.from(f.content,"utf8"))!==0)throw Error("UNKNOWN_OUTCOME: delivered file mismatch");}
+ 
  return {number:proof.number,url:proof.html_url,headSha:proof.head.sha,verified:true};
  });
 }
