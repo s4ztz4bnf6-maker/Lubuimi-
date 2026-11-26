@@ -48,6 +48,33 @@ test('real admission trigger: parallel overflow and recovery', async () => {
     const [promoted] = await run(tx => tx`UPDATE agent_tasks SET status='running' WHERE id=${id} RETURNING *`);
     assert.equal(promoted.status,'running');
     assert.equal(promoted.attempt_count,0);
+    const ledger = await readFile(new URL('../../delivery-ledger.sql', import.meta.url), 'utf8');
+    await run(tx => tx.unsafe(ledger));
+    const insertDelivery = () => run(tx => tx`INSERT INTO bounty_deliveries(idempotency_key,bounty_id,upstream_repo,issue_number) VALUES ('fixture-key','fixture','fixture/repo',1)`);
+    const deliveries = await Promise.allSettled([insertDelivery(),insertDelivery()]);
+    assert.equal(deliveries.filter(x => x.status === 'fulfilled').length,1);
+    assert.equal(deliveries.find(x => x.status === 'rejected').reason.code,'23505');
+    await assert.rejects(run(tx => tx`UPDATE bounty_deliveries SET delivery_status='delivered' WHERE idempotency_key='fixture-key'`), e => e.code === '23514');
+    let ready;
+    const readDone = new Promise(resolve => { ready = resolve; });
+    let release;
+    const committed = new Promise(resolve => { release = resolve; });
+    const conflicting = sql.begin('isolation level serializable', async tx => {
+      await tx.unsafe('SET LOCAL search_path TO ' + schema + ', public');
+      await tx`SELECT attempt_count FROM agent_tasks WHERE id=${id}`;
+      ready();
+      await committed;
+      await tx`UPDATE agent_tasks SET attempt_count=attempt_count+1 WHERE id=${id}`;
+    });
+    const conflictCheck = assert.rejects(conflicting, e => e.code === '40001');
+    await readDone;
+    try {
+      await run(tx => tx`UPDATE agent_tasks SET title='changed' WHERE id=${id}`);
+    } finally { release(); }
+    await conflictCheck;
+    const [unchanged] = await run(tx => tx`SELECT attempt_count FROM agent_tasks WHERE id=${id}`);
+    assert.equal(unchanged.attempt_count,0);
+
   } finally {
     try { await sql.unsafe('DROP SCHEMA IF EXISTS ' + schema + ' CASCADE'); }
     finally { await sql.end(); }
