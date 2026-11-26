@@ -26,9 +26,20 @@ test("GitHub delivery authorization revocation and ambiguous receipt",{timeout:3
  assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n,0);
  await assert.rejects(executeAuthorizedGitHubDelivery({...opts,verifyZeroSpend:async()=>{await sql`UPDATE djo2_delivery_authorizations SET revoked_at=NOW()`;return tariff;}}),/ELIGIBILITY_GATE_REQUIRED/);
  const next={...args,issue:13};await authorize(next);
- await assert.rejects(executeAuthorizedGitHubDelivery({...opts,args:next,execute:async()=>({ok:false})}),/COMMERCIAL_RESPONSE_UNVERIFIED/);
- const rows=await sql`SELECT note FROM djo2_task_checkpoints`;
- assert.equal(rows.filter(r=>JSON.parse(r.note).status==="UNKNOWN_USAGE_PENDING_AUDIT").length,4);
+ await assert.rejects(executeAuthorizedGitHubDelivery({...opts,args:next,execute:async()=>({ok:false})}),/GITHUB_DELIVERY_UNVERIFIED/);
+ for(const [i,badIssue] of [undefined,999,"2115"].entries()){
+ const a={...args,issue:2115+i};await authorize(a);
+ await assert.rejects(executeAuthorizedGitHubDelivery({...opts,args:a,execute:async()=>({status:"done",costEur:0,usageVerified:true,actualUsage:10,result:{verified:true,issue:badIssue,number:7,url:"https://github.com/org/repo/pull/7",headSha:"a".repeat(40)}})}),/GITHUB_DELIVERY_UNVERIFIED/);
+ const before=(await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n;
+ await assert.rejects(executeAuthorizedGitHubDelivery({...opts,args:a}),/DUPLICATE_COMMERCIAL_ORDER_BLOCKED/);
+ assert.equal((await sql`SELECT count(*)::int AS n FROM djo2_task_checkpoints`)[0].n,before);
+ }
+ const rows=await sql`SELECT phase,note FROM djo2_task_checkpoints`;
+ for(const phase of ["commercial_order_v1","token_budget_v1"]){
+ const events=rows.filter(r=>r.phase===phase).map(r=>JSON.parse(r.note));
+ assert.equal(events.filter(r=>r.status==="UNKNOWN_USAGE_PENDING_AUDIT").length,5);
+ assert.equal(events.filter(r=>r.status==="SETTLED").length,0);
+ }
  }finally{await sql.end();}
 });
 
