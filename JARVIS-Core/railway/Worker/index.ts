@@ -199,7 +199,8 @@ await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automa
 await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND error NOT LIKE '[DJO2_POLICY:%' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
 
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
-await sql.unsafe(await Bun.file(new URL("./003_admission.sql",import.meta.url)).text());
+const admissionMigration=await Bun.file(new URL("./003_admission.sql",import.meta.url)).text();
+await sql.begin(async tx=>{await tx.unsafe(admissionMigration.replace(/^\s*BEGIN\s*;/i,"").replace(/COMMIT\s*;\s*$/i,""));});
 console.log("DJO2_ADMISSION_SCHEMA_READY");
 await sql.unsafe(`CREATE OR REPLACE FUNCTION djo2_guard_task_admission() RETURNS trigger LANGUAGE plpgsql AS $
 BEGIN
@@ -222,7 +223,7 @@ console.log("DJO2_ADMISSION_TRIGGER_READY");
  await sql.begin(async tx=>{
    await tx.unsafe("CREATE TEMP TABLE djo2_admission_probe(status text,error text) ON COMMIT DROP");
    await tx.unsafe("CREATE TRIGGER djo2_probe_guard BEFORE INSERT OR UPDATE OF status ON djo2_admission_probe FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission()");
-   await tx.unsafe("INSERT INTO djo2_admission_probe(status) SELECT 'queued' FROM generate_series(1,51)");
+   for(let i=0;i<51;i++)await tx.unsafe("INSERT INTO djo2_admission_probe(status) VALUES ('queued')");
    const [probe]=await tx`SELECT count(*) FILTER(WHERE status='queued')::int AS admitted,count(*) FILTER(WHERE status='failed' AND error LIKE '[DJO2_POLICY:queue_full:%')::int AS deferred FROM djo2_admission_probe`;
    if(probe.admitted!==50||probe.deferred!==1)throw Error("DJO2_ADMISSION_SELFTEST_FAILED");
    console.log("DJO2_ADMISSION_SELFTEST_PASS",JSON.stringify(probe));
