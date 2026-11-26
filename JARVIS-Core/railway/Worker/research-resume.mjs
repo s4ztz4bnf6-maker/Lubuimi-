@@ -8,3 +8,10 @@ export function selectResearchHistory(note, taskHash) {
     return { nextStep: state.nextStep, history: state.history };
   } catch { return null; }
 }
+
+export function decideRetry(message, task, classifyFailure, nextAction) {
+  const failureClass = classifyFailure(message);
+  const decision = nextAction(failureClass, Number(task.attempt_count || 0) + 1);
+  const retry = decision.action === "retry";
+  return { failureClass, decision, retry, outcome: retry ? "retry_wait" : "failed" };
+}
