@@ -5,12 +5,18 @@ const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
 test('bounded slice resumes at persisted step', () => {
   assert.match(source, /for \(let step = startStep; step < startStep \+ 12; step\+\+\)/);
   assert.match(source, /startStep=state.nextStep/);
+  assert.ok(source.includes('persistiereFortsetzungAtomar(task.id, taskHash, state.nextStep, state.history, 30000, {sql})'));
 });
 test('slice exhaustion queues rather than fails', () => {
-  assert.match(source, /if \(!finalText.trim\(\) && resumable\) \{[\s\S]*?status='retry_wait',next_retry_at=NOW\(\)\+INTERVAL '30 seconds'/);
+  assert.match(source, /if \(!finalText.trim\(\) && resumable\) \{[\s\S]*?await persistiereFortsetzungAtomar\(/);
+  assert.ok(source.includes('if (!continuation.scheduled) throw'));
+  const helper = readFileSync(new URL('../research-resume.mjs', import.meta.url), 'utf8');
+  assert.match(helper, /sql\.begin\(async tx =>/);
+  assert.match(helper, /status='retry_wait'/);
 });
 test('structured history excludes legacy notes', () => {
   assert.ok(source.includes("phase<>'research_context_v1'"));
+  assert.ok(source.includes('selectResearchHistory(saved?.note, taskHash)'));
   assert.ok(source.includes('if(!restoredHistory && priorCheckpoints.length)'));
   assert.ok(source.includes('if(restoredHistory) messages.push(...restoredHistory)'));
 });
