@@ -18,3 +18,6 @@ Owner instruction, 2026-11-25: DJO² IA (Jojo AI, formerly JARVIS AI) offers no 
 Confirmed by owner on 2026-11-26: proprietary paid licensing remains the binding policy for new authorized original DJO² IA releases. Prior valid grants and third-party rights remain unaffected.
 
 Owner reaffirmation, 2026-11-26: All rights in original DJO² IA agent-authentication code, database adapters and schemas, tests, CI workflows, documentation and subsequent authorized original developments are reserved to their lawful rights holders. No ownership transfer, new royalty-free grant or sublicense is intended by repository publication or successful testing. New permissions require a separate written paid agreement, subject to existing valid grants, third-party rights and mandatory law. Test success does not alter ownership or license terms.
+
+
+Owner policy confirmation — 2026-11-26: All new permissions for protected original DJO² IA material within the rights holder's authority require a separate written paid agreement, including commercial and noncommercial licensing. No new royalty-free grant is intended. Fees are negotiated; no automatic payment obligation arises. Existing valid grants, third-party licenses and statutory exceptions remain unaffected. This policy does not establish ownership of third-party material.
