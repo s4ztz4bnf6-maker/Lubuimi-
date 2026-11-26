@@ -24,7 +24,10 @@ test('legacy fallback remains available', () => {
   assert.match(source, /if\(!restoredHistory && priorCheckpoints.length\) messages.push/);
 });
 test('context checkpoint uses non-null serialized history', () => {
-  assert.ok(source.includes('JSON.stringify({taskHash,nextStep:step+1,history:messages.slice(historyOffset)})'));
+  assert.ok(source.includes('persistiereNeuenCheckpoint(task.id, taskHash, step+1, messages.slice(historyOffset)'));
+  assert.ok(source.includes('delayMs: step === startStep+11 ? 30000 : null'));
+  assert.ok(source.includes('if (!saved.saved) throw'));
+  assert.ok(source.includes('if (saved.scheduled) return'));
 });
 test('successful answer bypasses slice requeue', () => {
   assert.ok(source.includes('if (!finalText.trim() && resumable)'));
