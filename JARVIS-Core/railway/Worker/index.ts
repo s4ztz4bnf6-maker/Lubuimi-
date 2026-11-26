@@ -197,6 +197,8 @@ await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automa
 await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND error NOT LIKE '[DJO2_POLICY:%' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
 
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
+await sql.unsafe(await Bun.file(new URL("./003_admission.sql",import.meta.url)).text());
+console.log("DJO2_ADMISSION_SCHEMA_READY");
 const [deliveryTables]=await sql`SELECT to_regclass('public.bounty_deliveries')::text AS ledger`;
 if(!deliveryTables?.ledger)throw Error("DELIVERY_LEDGER_MISSING");
 console.log("DJO2 delivery ledger initialized; GitHub delivery credential configured="+Boolean(env.GITHUB_DELIVERY_TOKEN));
