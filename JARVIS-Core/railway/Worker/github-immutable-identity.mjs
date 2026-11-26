@@ -4,6 +4,6 @@ export function immutableGitHubIdentity({repositoryId,issueId,action}){
 }
 export function verifyImmutableGitHubReceipt(expected,receipt){
  immutableGitHubIdentity(expected);
- if(receipt?.repositoryId!==expected.repositoryId||receipt?.issueId!==expected.issueId)throw Error("GITHUB_IMMUTABLE_IDENTITY_MISMATCH");
+ if(receipt?.repositoryId!==expected.repositoryId||receipt?.issueId!==expected.issueId||receipt?.action!==expected.action)throw Error("GITHUB_IMMUTABLE_IDENTITY_MISMATCH");
  return true;
 }
