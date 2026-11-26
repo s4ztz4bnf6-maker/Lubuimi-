@@ -21,3 +21,11 @@ test("history verifier blocks mismatched identities and unavailable evidence",as
  }
  await assert.rejects(retrieveGitHubMapping({...input,repositoryId:"123"}));
 });
+
+test("history verifier rejects missing and type-confused API fields",async t=>{
+ let responses=[];
+ t.mock.method(globalThis,"fetch",async()=>({ok:true,json:async()=>responses.shift()}));
+ for(const pair of [[{},issue],[{...repository,id:"123"},issue],[{...repository,full_name:undefined},issue],[repository,{}],[repository,{...issue,id:"456"}],[repository,{...issue,number:"12"}],[repository,{...issue,repository_url:undefined}],[repository,null]]){
+ responses=[...pair];await assert.rejects(retrieveGitHubMapping(input));
+ }
+});
