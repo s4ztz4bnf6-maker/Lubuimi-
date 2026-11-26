@@ -63,3 +63,42 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/approvals/pending)" = 403
           test "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $token" http://127.0.0.1:3099/api/agent-auth/spend)" = 403
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3099/api/agent-auth/status)" = 401
+      - name: Full Companion startup and agent auth acceptance
+        env:
+          PGPASSWORD: test_password
+        run: |
+          set -eu
+          test "$(git hash-object JARVIS-Core/railway/Companion/index.ts)" = cc0ac9daca0cfec593dc5d5b76b0a51767a59160
+          test "$(wc -c < JARVIS-Core/railway/Companion/index.ts)" -eq 1769240
+          # The original Companion runs an automatic Tor probe. Refuse this test if Tor is installed.
+          test ! -x /usr/bin/tor
+          test ! -x /bin/tor
+          createdb -h 127.0.0.1 -U postgres companion_full_test
+          pid=''
+          cleanup() {
+            if [ -n "$pid" ]; then kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; fi
+            dropdb -h 127.0.0.1 -U postgres --force companion_full_test
+          }
+          trap cleanup EXIT
+          db() { psql -h 127.0.0.1 -U postgres -d companion_full_test -v ON_ERROR_STOP=1 "$@"; }
+          db -c "CREATE TABLE agent_memory(id bigserial PRIMARY KEY,memory_key text UNIQUE NOT NULL,title text,content text,source_type text,confidence text);"
+          env -i PATH="$PATH" HOME="$HOME" CI=true DATABASE_URL=postgres://postgres:test_password@127.0.0.1:5432/companion_full_test COMPANION_PUBLIC_ORIGIN=https://companion.example PORT=3100 bun JARVIS-Core/railway/Companion/start-agent-auth.ts >/tmp/full-companion.log 2>&1 &
+          pid=$!
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:3100/health >/dev/null; then break; fi; if ! kill -0 "$pid" 2>/dev/null; then cat /tmp/full-companion.log; exit 1; fi; sleep 1; done
+          curl -fsS http://127.0.0.1:3100/health | jq -e '.ok == true'
+          db -c "INSERT INTO jarvis_sessions(token_hash,expires_at) VALUES ('$(printf test-owner | sha256sum | cut -d' ' -f1)',NULL);"
+          curl -fsS -H 'Cookie: jarvis_session=test-owner' http://127.0.0.1:3100/api/session | jq -e '.authenticated == true'
+          curl -fsS http://127.0.0.1:3100/api/session | jq -e '.authenticated == false'
+          token=$(curl -fsS -X POST http://127.0.0.1:3100/api/agent-auth/issue -H 'Origin: https://companion.example' -H 'Cookie: jarvis_session=test-owner' -H 'Content-Type: application/json' -d '{"scopes":["agent:read"]}' | jq -er .token)
+          hash=$(printf '%s' "$token" | sha256sum | cut -d' ' -f1)
+          status() { curl -sS -o /dev/null -w '%{http_code}' "$@"; }
+          curl -fsS -H "Authorization: Bearer $token" http://127.0.0.1:3100/api/agent-auth/status | jq -e '.authenticated == true and .spendAllowed == false'
+          test "$(status -H "Authorization: Bearer $token" http://127.0.0.1:3100/api/approvals/pending)" = 403
+          test "$(status -H "Authorization: Bearer $token" http://127.0.0.1:3100/api/agent-auth/spend)" = 403
+          test "$(status http://127.0.0.1:3100/api/agent-auth/status)" = 401
+          db -c "UPDATE djo2_agent_credentials SET expires_at=now()-interval '1 second' WHERE token_hash='$hash';"
+          test "$(status -H "Authorization: Bearer $token" http://127.0.0.1:3100/api/agent-auth/status)" = 401
+          db -c "UPDATE djo2_agent_credentials SET expires_at=now()+interval '1 hour',revoked=true WHERE token_hash='$hash';"
+          test "$(status -H "Authorization: Bearer $token" http://127.0.0.1:3100/api/agent-auth/status)" = 401
+          cleanup
+          trap - EXIT
