@@ -21,21 +21,16 @@ export async function planeFortsetzung(taskId, step, grund, delayMs, { sql, task
   const delay = delayMs ?? 30000;
   if (!Number.isSafeInteger(delay) || delay < 0) throw new RangeError("Invalid retry delay");
   if (step != null && (!Number.isSafeInteger(step) || step < 0)) throw new RangeError("Invalid resume step");
-  if (step == null) {
-    const [checkpoint] = await sql`SELECT note FROM djo2_task_checkpoints
-      WHERE task_id=${taskId} AND phase='research_context_v1'
-      ORDER BY id DESC LIMIT 1`;
-    if (!checkpoint) return { taskId, step: null, grund, delayMs: delay, scheduled: false };
-    if (checkpoint) {
-      let state;
-      try { state = JSON.parse(checkpoint.note); } catch { state = null; }
-      if (typeof taskHash !== 'string' || !taskHash || state?.taskHash !== taskHash)
-        return { taskId, step: null, grund, delayMs: delay, scheduled: false };
-      if (!Number.isSafeInteger(state?.nextStep) || state.nextStep < 0)
-        throw new Error("Invalid checkpoint resume step");
-      step = state.nextStep;
-    }
-  }
+  const [checkpoint] = await sql`SELECT note FROM djo2_task_checkpoints
+    WHERE task_id=${taskId} AND phase='research_context_v1'
+    ORDER BY id DESC LIMIT 1`;
+  let state;
+  try { state = JSON.parse(checkpoint?.note); } catch { state = null; }
+  if (typeof taskHash !== 'string' || !taskHash || state?.taskHash !== taskHash)
+    return { taskId, step: null, grund, delayMs: delay, scheduled: false };
+  step = step ?? state.nextStep;
+  if (!Number.isSafeInteger(step) || step < 0)
+    throw new Error("Invalid checkpoint resume step");
   const rows = await sql`UPDATE agent_tasks SET status='retry_wait',
     next_retry_at=NOW()+${delay}::bigint*INTERVAL '1 millisecond'
     WHERE id=${taskId} AND status='running' RETURNING id`;
