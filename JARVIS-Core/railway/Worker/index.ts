@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
+// DJO² IA – All rights reserved / Alle Rechte vorbehalten. See ../../LICENSE.
 function classifyFailure(err){
  const s=String(err?.message??err??"").toLowerCase();
  if(s.includes("unknown_outcome"))return "unknown_outcome";
@@ -215,6 +217,17 @@ await sql.begin(async tx=>{
  await tx.unsafe(`DO $ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid='agent_tasks'::regclass AND tgname='djo2_guard_task_admission') THEN CREATE TRIGGER djo2_guard_task_admission BEFORE INSERT OR UPDATE OF status ON agent_tasks FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission(); END IF; END $;`);
 });
 console.log("DJO2_ADMISSION_TRIGGER_READY");
+ // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
+ // Isolated rollback-only admission selftest; no production task or slot is modified.
+ await sql.begin(async tx=>{
+   await tx.unsafe("CREATE TEMP TABLE djo2_admission_probe(status text,error text) ON COMMIT DROP");
+   await tx.unsafe("CREATE TRIGGER djo2_probe_guard BEFORE INSERT OR UPDATE OF status ON djo2_admission_probe FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission()");
+   await tx.unsafe("INSERT INTO djo2_admission_probe(status) SELECT 'queued' FROM generate_series(1,51)");
+   const [probe]=await tx`SELECT count(*) FILTER(WHERE status='queued')::int AS admitted,count(*) FILTER(WHERE status='failed' AND error LIKE '[DJO2_POLICY:queue_full:%')::int AS deferred FROM djo2_admission_probe`;
+   if(probe.admitted!==50||probe.deferred!==1)throw Error("DJO2_ADMISSION_SELFTEST_FAILED");
+   console.log("DJO2_ADMISSION_SELFTEST_PASS",JSON.stringify(probe));
+ });
+
 
 const [deliveryTables]=await sql`SELECT to_regclass('public.bounty_deliveries')::text AS ledger`;
 if(!deliveryTables?.ledger)throw Error("DELIVERY_LEDGER_MISSING");
