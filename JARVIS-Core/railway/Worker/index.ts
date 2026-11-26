@@ -1,4 +1,4 @@
-import { selectResearchHistory, decideRetry, persistiereFortsetzungAtomar } from "./research-resume.mjs";
+import { selectResearchHistory, decideRetry, persistiereFortsetzungAtomar, persistiereNeuenCheckpoint } from "./research-resume.mjs";
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 // DJO² IA – All rights reserved / Alle Rechte vorbehalten. See ../../LICENSE.
 function classifyFailure(err){
@@ -1393,7 +1393,11 @@ try {
         if(["web_research","web_search","calculator"].includes(String(name)) && !incomeTask && !goodiesTask) await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"research_evidence",JSON.stringify({tool:name,result}));
       }catch(e){if(e instanceof Error && /UNKNOWN_OUTCOME|KILL_SWITCH/.test(e.message))throw e;messages.push({role:"tool",tool_call_id:call.id,content:JSON.stringify({error:e instanceof Error?e.message:"Tool execution failed"})});}
     }
-    if(resumable) await sql`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${task.id},${Number(task.attempt_count||0)+1},${step},'research_context_v1',${JSON.stringify({taskHash,nextStep:step+1,history:messages.slice(historyOffset)})})`;
+    if(resumable) {
+      const saved = await persistiereNeuenCheckpoint(task.id, taskHash, step+1, messages.slice(historyOffset), Number(task.attempt_count||0)+1, {sql, delayMs: step === startStep+11 ? 30000 : null});
+      if (!saved.saved) throw new Error("RESEARCH_CHECKPOINT_NOT_SAVED");
+      if (saved.scheduled) return;
+    }
   }
   if (!finalText.trim() && resumable) {
     const [saved] = await sql`SELECT note FROM djo2_task_checkpoints WHERE task_id=${task.id} AND phase='research_context_v1' ORDER BY id DESC LIMIT 1`;
