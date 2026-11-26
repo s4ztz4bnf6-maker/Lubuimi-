@@ -199,6 +199,23 @@ await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NU
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
 await sql.unsafe(await Bun.file(new URL("./003_admission.sql",import.meta.url)).text());
 console.log("DJO2_ADMISSION_SCHEMA_READY");
+await sql.unsafe(`CREATE OR REPLACE FUNCTION djo2_guard_task_admission() RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+ IF NEW.status::text NOT IN ('queued','running','retry_wait') THEN RETURN NEW; END IF;
+ IF TG_OP='UPDATE' THEN
+   IF OLD.status::text IN ('queued','running','retry_wait') THEN RETURN NEW; END IF;
+ END IF;
+ IF NOT djo2_queue_has_room(TG_RELID::regclass,'status',ARRAY['queued','running','retry_wait'],50) THEN
+   NEW.status := 'failed'; NEW.error := '[DJO2_POLICY:queue_full:owner] Admission deferred; queue capacity reached';
+ END IF;
+ RETURN NEW;
+END $;`);
+await sql.begin(async tx=>{
+ await tx`SELECT pg_advisory_xact_lock(hashtext('djo2_admission_install'))`;
+ await tx.unsafe(`DO $ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid='agent_tasks'::regclass AND tgname='djo2_guard_task_admission') THEN CREATE TRIGGER djo2_guard_task_admission BEFORE INSERT OR UPDATE OF status ON agent_tasks FOR EACH ROW EXECUTE FUNCTION djo2_guard_task_admission(); END IF; END $;`);
+});
+console.log("DJO2_ADMISSION_TRIGGER_READY");
+
 const [deliveryTables]=await sql`SELECT to_regclass('public.bounty_deliveries')::text AS ledger`;
 if(!deliveryTables?.ledger)throw Error("DELIVERY_LEDGER_MISSING");
 console.log("DJO2 delivery ledger initialized; GitHub delivery credential configured="+Boolean(env.GITHUB_DELIVERY_TOKEN));
