@@ -17,3 +17,11 @@ export async function dispatchDelivery({sql,taskId,action,args,execute,isKilled,
  await verifyDeliveryAuthorization({sql,taskId,action,args,isKilled,token});
  return execute(sql,taskId,action,args);
 }
+
+ // Read-only preflight: never reserves or dispatches while history is locked.
+export async function inspectAuthorizedDelivery({sql,taskId,action,args,isKilled,token}){
+ await verifyDeliveryAuthorization({sql,taskId,action,args,isKilled,token});
+ const {resolveAuthorizedDeliveryIdentity}=await import("./delivery-ledger-store.mjs");
+ const identity=await resolveAuthorizedDeliveryIdentity(sql,taskId,args.repo,args.issue,action,deliveryDigest(action,args));
+ return {status:"blocked",reason:"MIGRATION_LOCKED_INCOMPLETE_HISTORY",identity};
+}
