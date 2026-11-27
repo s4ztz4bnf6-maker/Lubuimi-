@@ -111,18 +111,11 @@ await initializeRegistration(sql);
 await initUara(sql);
 await initRotation(sql);
 console.log("DJO2 UARA persistent storage initialized");
-await sql`CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
-await sql`CREATE TABLE IF NOT EXISTS agent_tasks (
-  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',
-  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,
-  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ
-)`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ`;
-await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ`;
-await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
+const { createSchemaRegistry } = await import("./src/bootstrap.ts");
+const coreSchema = createSchemaRegistry();
+coreSchema.registerSchema({name:"worker-core",tables:["jarvis_provider_cooldowns","agent_tasks"],ddl:["CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())","CREATE TABLE IF NOT EXISTS agent_tasks (\n  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',\n  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,\n  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ\n)","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ","CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)"]});
+await coreSchema.ensureSchema(async statement=>({rows:await sql.unsafe(statement)}));
+await coreSchema.validateSchema(async statement=>({rows:await sql.unsafe(statement)}));
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
 if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
   // Keep providers registered so they can recover after cooldown.
