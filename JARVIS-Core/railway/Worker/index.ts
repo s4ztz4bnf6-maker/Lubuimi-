@@ -1530,4 +1530,13 @@ async function runWorkerCore(tasks: Awaited<ReturnType<typeof claimTasks>>) {
     await sql.end();
   }
 }
-await runWorkerCore(tasks);
+const { main: runMain } = await import("./src/bootstrap.ts");
+await runMain({
+  // Existing production initialization remains above until phase extraction is complete.
+  enforceIsolation: async () => { throw Error("E2E_BOOTSTRAP_PENDING_CORE_INTEGRATION"); },
+  initializeDatabase: async () => {},
+  validateSchema: async () => { await coreSchema.validateSchema(async statement => ({rows:await sql.unsafe(statement)})); },
+  createWorker: () => ({run: () => runWorkerCore(tasks)}),
+  initializeBusinessServices: async () => {},
+  startBackgroundSchedulers: async () => {}
+}, env);
