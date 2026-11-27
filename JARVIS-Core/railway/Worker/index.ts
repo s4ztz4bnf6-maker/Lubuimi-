@@ -1178,11 +1178,14 @@ function budgetInference(messages,tools,model){
  return {messages:compact,tools:chosen,output};
 }
 async function isVerifiedZeroSpendRoute(provider){
-  // Fail closed: both deployment approval and current database authorization are required.
   try {
     const records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES || "[]");
-    if(!Array.isArray(records)||!records.some(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl&&r.zeroSpendVerified===true&&r.billingDisabled===true&&typeof r.evidence==="string"&&r.evidence.trim().length>0&&Date.parse(r.expiresAt)>Date.now()))return false;
-    const [row]=await sql`SELECT 1 AS authorized FROM djo2_zero_spend_routes WHERE provider=${provider.name} AND model=${provider.model} AND endpoint=${provider.baseUrl} AND zero_spend_verified IS TRUE AND billing_disabled IS TRUE AND length(trim(proof_ref))>0 AND revoked_at IS NULL AND expires_at>clock_timestamp() LIMIT 1`;
+    if(!Array.isArray(records))return false;
+    const matches=records.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl);
+    if(matches.length!==1)return false;
+    const r=matches[0];
+    if(r.zeroSpendVerified!==true||r.billingDisabled!==true||typeof r.evidence!=="string"||!r.evidence.trim()||!Number.isFinite(Date.parse(r.expiresAt))||Date.parse(r.expiresAt)<=Date.now())return false;
+    const [row]=await sql`SELECT 1 AS authorized FROM djo2_zero_spend_routes WHERE provider=${provider.name} AND model=${provider.model} AND endpoint=${provider.baseUrl} AND zero_spend_verified IS TRUE AND billing_disabled IS TRUE AND proof_ref=${r.evidence.trim()} AND revoked_at IS NULL AND expires_at>clock_timestamp() AND ${new Date(r.expiresAt)}::timestamptz>clock_timestamp() LIMIT 1`;
     return row?.authorized===1;
   } catch { return false; }
 }
