@@ -1,3 +1,4 @@
+import { routeContextBudget } from "./context-budget.mjs";
 import { createHash as contextSynthesisHash } from "node:crypto";
 import { synthesizeContext } from "./context-synthesis.mjs";
 import { planWithEscalation } from "./context-step-plan.mjs";
@@ -1136,15 +1137,19 @@ class ContextSplitRequiredError extends Error {
  readonly code = "CONTEXT_SPLIT_REQUIRED";
  constructor(){super("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");this.name="ContextSplitRequiredError";}
 }
-function budgetInference(messages,tools,model){
- const output=Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024));
+function budgetForProvider(provider){
+ let records=[];
+ try{records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES||"[]");}catch{}
+ const matches=Array.isArray(records)?records.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl):[];
+ const r=matches.length===1?matches[0]:null;
+ const profile=r?.capacityVerified===true&&r.zeroSpendVerified===true&&r.billingDisabled===true&&r.evidence&&Date.parse(r.expiresAt)>Date.now()?r:null;
+ const requested=Math.max(256,Math.min(4096,Math.floor(Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024)));
+ return routeContextBudget(profile,requested);
+}
+function budgetInference(messages,tools,provider){
+ const model=provider.model;
+ const {output,input:limit}=budgetForProvider(provider);
  const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
- // Explicit per-model context windows; unknown models retain a conservative fallback.
- let windows: Record<string, number> = {};
- try { const parsed=JSON.parse(env.JARVIS_MODEL_CONTEXT_WINDOWS || "{}"); if(parsed && typeof parsed==="object" && !Array.isArray(parsed)) windows=parsed; } catch {}
- const configured=Object.prototype.hasOwnProperty.call(windows,model)?Number(windows[model]):NaN;
- const contextWindow=Number.isSafeInteger(configured)&&configured>=2048&&configured<=2000000?configured:6500;
- const limit=Math.max(0,contextWindow-output-512);
  const fits=(m,t)=>estimate({model,messages:m,tools:t})<=limit;
  if(fits(messages,tools))return {messages,tools,output};
  const fixed=messages.filter(m=>m.role==="system");
@@ -1201,7 +1206,7 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
   const orderedProviders=filterProviders(authorizedProviders,excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
   if(!orderedProviders.length) throw new Error(authorizedProviders.length?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
   for(const provider of orderedProviders){try{
-    const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
+    const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider);
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
@@ -1429,12 +1434,9 @@ try {
       // Analysis-only fallback: never substitute text for a required external action.
       if(incomeTask || goodiesTask || !resumable || messages.some(m=>m.role==="tool"||m.tool_calls?.length)) throw error;
       const candidates=[];
-      let windows={};try{windows=JSON.parse(env.JARVIS_MODEL_CONTEXT_WINDOWS||"{}");}catch{}
       for(const p of providerCandidates){
         if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
-        const configured=Number(windows?.[p.model]);
-        const window=Number.isSafeInteger(configured)&&configured>=2048&&configured<=2000000?configured:6500;
-        candidates.push({model:p.model,limit:window-Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024))-512,zeroSpendVerified:true});
+        candidates.push({model:p.model,limit:budgetForProvider(p).input,zeroSpendVerified:true});
       }
       const system=messages.filter(m=>m.role==="system");
       const raw=messages.filter(m=>m.role==="user").map(m=>String(m.content||"")).join("\n\n");
@@ -1455,7 +1457,7 @@ try {
         let fits=false;
         for(const p of providerCandidates){
           if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
-          try{budgetInference(portableMessages(identityMessages(prompt),p.name),[],p.model);fits=true;break;}catch(e){if(!(e instanceof ContextSplitRequiredError))throw e;}
+          try{budgetInference(portableMessages(identityMessages(prompt),p.name),[],p);fits=true;break;}catch(e){if(!(e instanceof ContextSplitRequiredError))throw e;}
         }
         if(!fits)throw new ContextSplitRequiredError();
         const id=contextSynthesisHash("sha256").update(JSON.stringify({kind:"synthesis-v1",taskId:String(task.id),prompt})).digest("hex");
