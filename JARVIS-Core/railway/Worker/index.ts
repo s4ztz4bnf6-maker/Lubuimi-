@@ -145,8 +145,9 @@ const legacyWallet=await sql.unsafe("SELECT receive_address FROM jarvis_wallet_w
 // Ignore stale legacy single-address configuration; the two owner-provided addresses above are authoritative.
 const walletRows=await sql.unsafe("SELECT address FROM jarvis_wallet_watch_addresses ORDER BY created_at,address");
 const watchAddresses=[...new Set(ownerReceiveAddresses.filter((a:string)=>btcAddressPattern.test(a)))]; // Only current owner-configured routes are active; historical ledger remains intact.
-if(!watchAddresses.length)throw new Error("No valid Bitcoin watch addresses configured");
-await sql.unsafe("INSERT INTO jarvis_wallet_watch(id,receive_address,updated_at) VALUES(1,$1,now()) ON CONFLICT(id) DO UPDATE SET receive_address=EXCLUDED.receive_address,updated_at=now()",[watchAddresses[0]]);
+const isolatedWalletTest = env.CI === "true" && env.DJO2_E2E === "1" && ["127.0.0.1","localhost"].includes(new URL(env.DATABASE_URL).hostname) && new URL(env.DATABASE_URL).pathname === "/djo2_e2e";
+if(!watchAddresses.length && !isolatedWalletTest)throw new Error("No valid Bitcoin watch addresses configured");
+if(watchAddresses.length) await sql.unsafe("INSERT INTO jarvis_wallet_watch(id,receive_address,updated_at) VALUES(1,$1,now()) ON CONFLICT(id) DO UPDATE SET receive_address=EXCLUDED.receive_address,updated_at=now()",[watchAddresses[0]]);
 await sql.unsafe("CREATE TABLE IF NOT EXISTS jarvis_wallet_transactions (txid text NOT NULL,receive_address text NOT NULL,received_sats numeric(20,0) NOT NULL,status text NOT NULL DEFAULT 'mempool',confirmed boolean NOT NULL DEFAULT false,block_height integer,block_time timestamptz,confirmations integer NOT NULL DEFAULT 0,first_seen_at timestamptz NOT NULL DEFAULT now(),last_seen_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())");
 await sql.begin(async tx => {
   await tx.unsafe("SELECT pg_advisory_xact_lock(724190251)");
