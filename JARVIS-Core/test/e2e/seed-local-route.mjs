@@ -9,7 +9,7 @@ export async function seedLocalRoute(sql, endpoint) {
  await sql.begin(async tx=>{
  const [dbCheck]=await tx`SELECT current_database() AS name, current_user AS role, (inet_server_addr() <<= inet '127.0.0.0/8' OR inet_server_addr() <<= inet '172.16.0.0/12' OR inet_server_addr() <<= inet '10.0.0.0/8' OR inet_server_addr() <<= inet '192.168.0.0/16') AS local_address`;
  if(dbCheck.name!=="djo2_e2e" || dbCheck.role!=="e2e" || dbCheck.local_address!==true || db.username!=="e2e" || !["postgres:","postgresql:"].includes(db.protocol) || db.search || db.hash || process.env.GITHUB_ACTIONS!=="true") throw Error("CI database required");
- await tx`SET LOCAL search_path TO pg_catalog, public, pg_temp`;
+ await tx`SET LOCAL search_path TO public, pg_catalog, pg_temp`;
  for(const file of ["zero-spend-routes.sql","zero-spend-capacity.sql","zero-spend-quota-groups.sql","zero-spend-quota-reserve-function.sql"]){
  const source=await readFile(new URL("../../railway/Worker/"+file,import.meta.url),"utf8");
  if(!/ROLLBACK;\s*$/.test(source))throw Error("Expected preparation migration");
