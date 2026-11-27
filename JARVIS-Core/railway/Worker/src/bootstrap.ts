@@ -56,3 +56,22 @@ export function productionOnly<T>(name:string,fn:()=>T,env=process.env):T|undefi
  if(loadConfig(env).isolatedE2E){console.log("DJO2_SKIPPED "+name);return undefined;}
  return fn();
 }
+
+export function e2eRunId(env=process.env):string|null{
+ if(!loadConfig(env).isolatedE2E)return null;
+ const id=env.DJO2_E2E_RUN_ID;
+ if(!id||!/^[A-Za-z0-9_-]{6,64}$/.test(id))throw Error("E2E_GUARD invalid DJO2_E2E_RUN_ID");
+ return id;
+}
+export function assertTestTasksOnly<T extends {e2e_run_id?:string|null}>(tasks:T[],env=process.env):T[]{
+ const id=e2eRunId(env);
+ if(id!==null&&tasks.some(t=>t.e2e_run_id!==id))throw Error("E2E_FOREIGN_TASK");
+ return tasks;
+}
+export function localProvidersOnly<T extends {baseUrl:string}>(providers:T[],env=process.env):T[]{
+ const c=loadConfig(env);
+ if(!c.isolatedE2E)return providers;
+ const local=providers.filter(p=>{try{const u=new URL(p.baseUrl);return ["http:","https:"].includes(u.protocol)&&["127.0.0.1","[::1]"].includes(u.hostname)&&!u.username&&!u.password&&c.allowedPorts.includes(Number(u.port||(u.protocol==="https:"?443:80)));}catch{return false;}});
+ if(!local.length)throw Error("E2E_NO_LOCAL_PROVIDER");
+ return local;
+}
