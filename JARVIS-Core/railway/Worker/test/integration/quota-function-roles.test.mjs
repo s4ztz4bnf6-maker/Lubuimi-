@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import postgres from "postgres";
 import {readFile} from "node:fs/promises";
 import {randomUUID} from "node:crypto";
+import {spawn} from "node:child_process";
 test("quota runtime can execute reservation but cannot access base tables",async()=>{
  const sql=postgres(process.env.DATABASE_URL,{max:1});
  try{
@@ -29,6 +30,32 @@ test("quota runtime can execute reservation but cannot access base tables",async
  const audit=await readFile(new URL("../../zero-spend-quota-role-audit.sql",import.meta.url),"utf8");
  await sql.unsafe(audit);
  await sql`RESET ROLE`;
+ const childId=randomUUID();
+ const code=`
+ import postgres from "postgres";
+ import {readFile} from "node:fs/promises";
+ const sql=postgres(process.env.DATABASE_URL,{max:1,connection:{search_path:"djo2_quota_role_test"}});
+ await sql\`SET ROLE djo2_quota_runtime\`;
+ const source=await readFile("index.ts","utf8");
+ const start=source.indexOf("      const quotaRecords=");
+ const end=source.indexOf("      const responseText=",start);
+ if(start<0||end<=start)throw Error("MISSING_WORKER_GUARD");
+ const run=new (Object.getPrototypeOf(async function(){}).constructor)("env","provider","bounded","liveBudget","crypto","sql","fetch","ContextSplitRequiredError",source.slice(start,end));
+ const provider={name:"test",model:"a",baseUrl:"endpoint"};
+ const env={DJO2_VERIFIED_ZERO_SPEND_ROUTES:JSON.stringify([{provider:"test",model:"a",baseUrl:"endpoint",evidence:"route-proof",quotaProofRef:"quota-proof"}])};
+ await run(env,provider,{messages:[],tools:[],output:512},{input:20000},{randomUUID:()=>process.argv[1]},sql,async()=>{console.log("FETCH_BOUNDARY");await new Promise(()=>{setInterval(()=>{},1000)});},Error);
+ `;
+ const child=spawn(process.execPath,["--input-type=module","-e",code,childId],{cwd:new URL("../../",import.meta.url),stdio:["ignore","pipe","pipe"]});
+ try{
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error("CHILD_TIMEOUT")),15000);child.stdout.on("data",d=>{if(String(d).includes("FETCH_BOUNDARY")){clearTimeout(timer);resolve();}});child.once("exit",()=>{clearTimeout(timer);reject(Error("CHILD_EXIT"));});});
+ await new Promise(resolve=>{child.once("exit",resolve);child.kill("SIGKILL");});
+ const [charge]=await sql`SELECT reserved_tokens::int AS tokens FROM djo2_zero_spend_quota_reservations WHERE reservation_id=${childId}::uuid`;
+ assert.ok(charge.tokens>512);
+ await sql`SET ROLE djo2_quota_runtime`;
+ const [next]=await sql`SELECT * FROM djo2_reserve_quota_group(${randomUUID()}::uuid,'test','a','endpoint','route-proof','quota-proof',3000::bigint,1000::bigint)`;
+ assert.equal(next.reason,"GROUP_QUOTA_EXHAUSTED");
+ }finally{if(child.exitCode===null&&child.signalCode===null)child.kill("SIGKILL");await sql`RESET ROLE`;}
+
  const [row]=await sql`SELECT reserved_tokens::int AS tokens FROM djo2_zero_spend_quota_reservations WHERE reservation_id=${id}::uuid`;assert.equal(row.tokens,4000);
  }finally{await sql.end();}
 });
