@@ -11,6 +11,7 @@ for(const path of paths){
  const content=git(["show",sha+":"+path]);
  const head=content.split(/\r?\n/).slice(0,30).join("\n");
  const licenses=[...head.matchAll(/SPDX-License-Identifier:\s*([^\r\n]+)/g)].map(m=>m[1].trim());
- const status=licenses.some(x=>x!=="LicenseRef-DJO2-Proprietary")?"license_review":licenses.length&&head.includes("Ta-Yoshua Lubuimi")?"proprietary_header_present":"ownership_and_header_review";
+ const legacyApache=/Apache[- ]2\.0|Apache License/i.test(head);
+ const status=legacyApache||licenses.some(x=>x!=="LicenseRef-DJO2-Proprietary")?"license_review":licenses.length&&head.includes("Ta-Yoshua Lubuimi")?"proprietary_header_present":"ownership_and_header_review";
  console.log(JSON.stringify({path,status,licenses}));
 }
