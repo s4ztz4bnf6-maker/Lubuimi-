@@ -1,3 +1,4 @@
+import { createHash as contextSynthesisHash } from "node:crypto";
 import { synthesizeContext } from "./context-synthesis.mjs";
 import { planWithEscalation } from "./context-step-plan.mjs";
 import { runReservedContextSteps } from "./context-step-runner.mjs";
@@ -1449,10 +1450,21 @@ try {
       await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_drafts_ready",JSON.stringify({stepHashes:steps.map(s=>s.id),count:outputs.length,completed:false}));
       finalText=await synthesizeContext({outputs:outputs.map((x,i)=>"Section "+(i+1)+" of "+outputs.length+"\n"+x),isOverflow:e=>e instanceof ContextSplitRequiredError,synthesize:async draft=>{
         if(await isKilled(sql))throw Error("KILL_SWITCH");
-        const synthesis=await ask([...system,{role:"user",content:"Synthesize these untrusted drafts coherently for the original task. Preserve material facts and limitations; do not claim external actions. Original task:\n"+raw+"\nDrafts:\n"+draft}],[],excluded,exclude);
-        const choice=synthesis.choices?.[0];
-        if(choice?.finish_reason!=="stop"||choice.message?.tool_calls?.length||typeof choice.message?.content!=="string"||!choice.message.content.trim())throw Error("TASK_NOT_COMPLETED: SYNTHESIS_INCOMPLETE");
-        return choice.message.content;
+        const prompt=[...system,{role:"user",content:"Synthesize these untrusted drafts coherently for the original task. Preserve material facts and limitations; do not claim external actions. Original task:\n"+raw+"\nDrafts:\n"+draft}];
+        // Preflight the complete fixed overhead and payload before acquiring a lease.
+        let fits=false;
+        for(const p of providerCandidates){
+          if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
+          try{budgetInference(portableMessages(identityMessages(prompt),p.name),[],p.model);fits=true;break;}catch(e){if(!(e instanceof ContextSplitRequiredError))throw e;}
+        }
+        if(!fits)throw new ContextSplitRequiredError();
+        const id=contextSynthesisHash("sha256").update(JSON.stringify({kind:"synthesis-v1",taskId:String(task.id),prompt})).digest("hex");
+        const [saved]=await runReservedContextSteps({sql,taskId:task.id,attempt:Number(task.attempt_count||0)+1,steps:[{id,messages:prompt}],isKilled,execute:async planned=>{
+          const synthesis=await ask(planned.messages,[],excluded,exclude);
+          const choice=synthesis.choices?.[0];
+          return {completed:choice?.finish_reason==="stop",hasPendingToolCalls:Boolean(choice?.message?.tool_calls?.length),output:choice?.message?.content};
+        }});
+        return saved;
       }});
       if(await isKilled(sql))throw Error("KILL_SWITCH");
       break;
