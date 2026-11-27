@@ -5,6 +5,10 @@ on:
     paths:
       - 'JARVIS-Core/railway/Worker/**'
       - '.github/workflows/djo2-network-isolation.yml'
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - '.github/workflows/djo2-network-isolation.yml'
   workflow_dispatch:
 permissions:
   contents: read
