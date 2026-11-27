@@ -1415,7 +1415,15 @@ try {
   const safeNames = new Set(["web_search","web_research","calculator","memory_search","read_tool_result","github_delivery_readiness"]);
   for (let step = startStep; step < startStep + 12; step++) {
     if(await isKilled(sql)) throw new Error("KILL_SWITCH");
-    const result = await ask(messages, tools, excluded, exclude);
+    let result;
+    try {
+      result = await ask(messages, tools, excluded, exclude);
+    } catch (error) {
+      if (!(error instanceof ContextSplitRequiredError)) throw error;
+      // Persist the split boundary without marking the task or any tool effect complete.
+      await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_required",JSON.stringify({taskId:String(task.id),step,hasPendingToolCalls:false,completed:false}));
+      throw error;
+    }
     lastTag = result._djoProviderTag || providerTag(result._jarvisProvider);
     const message = result.choices?.[0]?.message;
     if (!message) throw new Error("Model returned no message");
