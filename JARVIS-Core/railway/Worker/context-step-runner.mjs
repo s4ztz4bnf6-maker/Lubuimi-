@@ -11,7 +11,7 @@ export async function runReservedContextSteps({sql,taskId,attempt,steps,execute,
   let output;
   if(lease.status==="completed")output=lease.result;
   else {
-   if(lease.status!=="acquired"||!lease.token)throw Error("CONTEXT_STEP_"+lease.status.toUpperCase());
+   if(lease.status!=="acquired"||!lease.token)throw Error(lease.status==="reconcile_required"?"UNKNOWN_OUTCOME: CONTEXT_STEP_RECONCILE_REQUIRED":"CONTEXT_STEP_"+lease.status.toUpperCase());
    if(await isKilled(sql))throw Error("KILL_SWITCH");
    const outcome=await execute(step);
    if(outcome?.completed!==true||outcome.hasPendingToolCalls!==false||typeof outcome.output!=="string"||!outcome.output.trim())throw Error("STEP_NOT_FINAL");
