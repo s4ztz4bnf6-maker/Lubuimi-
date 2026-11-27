@@ -1137,18 +1137,25 @@ class ContextSplitRequiredError extends Error {
  readonly code = "CONTEXT_SPLIT_REQUIRED";
  constructor(){super("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");this.name="ContextSplitRequiredError";}
 }
-function budgetForProvider(provider){
+async function budgetForProvider(provider){
+ if(!await isVerifiedZeroSpendRoute(provider))throw Error("ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
  let records=[];
  try{records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES||"[]");}catch{}
  const matches=Array.isArray(records)?records.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl):[];
  const r=matches.length===1?matches[0]:null;
- const profile=r?.capacityVerified===true&&r.zeroSpendVerified===true&&r.billingDisabled===true&&r.evidence&&Date.parse(r.expiresAt)>Date.now()?r:null;
+ let profile=null;
+ if(r?.capacityVerified===true&&typeof r.capacityProofRef==="string"&&r.capacityProofRef.trim()){
+  try{
+   const [row]=await sql`SELECT verified_context_window,verified_max_input_tokens,verified_max_output_tokens FROM djo2_zero_spend_routes WHERE provider=${provider.name} AND model=${provider.model} AND endpoint=${provider.baseUrl} AND zero_spend_verified IS TRUE AND billing_disabled IS TRUE AND revoked_at IS NULL AND expires_at>clock_timestamp() AND proof_ref=${r.evidence.trim()} AND capacity_proof_ref=${r.capacityProofRef.trim()} AND capacity_expires_at>clock_timestamp() AND verified_context_window=${r.contextWindow} AND verified_max_output_tokens=${r.maxOutputTokens} AND verified_max_input_tokens IS NOT DISTINCT FROM ${r.maxInputTokens??null}::integer`;
+   if(row)profile={contextWindow:row.verified_context_window,maxOutputTokens:row.verified_max_output_tokens,maxInputTokens:row.verified_max_input_tokens};
+  }catch(e){if(e?.code!=="42703")throw e;}
+ }
  const requested=Math.max(256,Math.min(4096,Math.floor(Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024)));
  return routeContextBudget(profile,requested);
 }
-function budgetInference(messages,tools,provider){
+async function budgetInference(messages,tools,provider){
  const model=provider.model;
- const {output,input:limit}=budgetForProvider(provider);
+ const {output,input:limit}=await budgetForProvider(provider);
  const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
  const fits=(m,t)=>estimate({model,messages:m,tools:t})<=limit;
  if(fits(messages,tools))return {messages,tools,output};
@@ -1206,12 +1213,13 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
   const orderedProviders=filterProviders(authorizedProviders,excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
   if(!orderedProviders.length) throw new Error(authorizedProviders.length?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
   for(const provider of orderedProviders){try{
-    const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider);
+    const bounded=await budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider);
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
       
-      if(!await isVerifiedZeroSpendRoute(provider))throw new Error("ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
+      const liveBudget=await budgetForProvider(provider);
+      if(bounded.output>liveBudget.output||Math.ceil(new TextEncoder().encode(JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools})).length/2.5)>liveBudget.input)throw new ContextSplitRequiredError();
       const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
@@ -1436,7 +1444,7 @@ try {
       const candidates=[];
       for(const p of providerCandidates){
         if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
-        candidates.push({model:p.model,limit:budgetForProvider(p).input,zeroSpendVerified:true});
+        candidates.push({model:p.model,limit:(await budgetForProvider(p)).input,zeroSpendVerified:true});
       }
       const system=messages.filter(m=>m.role==="system");
       const raw=messages.filter(m=>m.role==="user").map(m=>String(m.content||"")).join("\n\n");
@@ -1457,7 +1465,7 @@ try {
         let fits=false;
         for(const p of providerCandidates){
           if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
-          try{budgetInference(portableMessages(identityMessages(prompt),p.name),[],p);fits=true;break;}catch(e){if(!(e instanceof ContextSplitRequiredError))throw e;}
+          try{await budgetInference(portableMessages(identityMessages(prompt),p.name),[],p);fits=true;break;}catch(e){if(!(e instanceof ContextSplitRequiredError))throw e;}
         }
         if(!fits)throw new ContextSplitRequiredError();
         const id=contextSynthesisHash("sha256").update(JSON.stringify({kind:"synthesis-v1",taskId:String(task.id),prompt})).digest("hex");
