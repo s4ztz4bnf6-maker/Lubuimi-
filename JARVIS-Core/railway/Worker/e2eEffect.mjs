@@ -17,6 +17,6 @@ export const maybeE2eTools = ({sql,taskId}) => {
  const r=await fetch(u);if(!r.ok) throw Error("lookup HTTP "+r.status);
  const j=await r.json();return j.found===true?{found:true,result:j.result}:null;
  });
- return out.status==="unknown"?out.message:JSON.stringify(out.result);
+ return out.status==="unknown"?out.message:out.result;
  }}];
 };
