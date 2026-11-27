@@ -66,3 +66,38 @@ jobs:
           sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-routes.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
           sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-roles.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-zero-spend-roles.sql
+  crash-resume:
+    if: github.event.repository.private == false
+    needs: tests
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: djo2_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d djo2_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://e2e:e2e@127.0.0.1:5432/djo2_e2e
+      DJO2_E2E: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: bun install
+        working-directory: JARVIS-Core/railway/Worker
+      - run: node --test JARVIS-Core/test/e2e/e2eGuard.test.mjs
+      - run: node --test JARVIS-Core/test/e2e/worker-crash-resume.e2e.test.mjs
