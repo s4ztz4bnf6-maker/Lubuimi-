@@ -209,8 +209,9 @@ await sql`CREATE TABLE IF NOT EXISTS jarvis_earnings_ledger (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   received_at TIMESTAMPTZ
 )`;
-await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automatisch wieder aufgenommen: Worker-Lauf länger als 10 Minuten ohne Abschluss.', next_retry_at=NULL WHERE status='running' AND started_at < NOW()-make_interval(secs=>${env.DJO2_E2E === "1" && env.CI === "true" && env.WORKER_LEASE_SECONDS === "2" ? 2 : 600})`;
-await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND error NOT LIKE '[DJO2_POLICY:%' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
+if (testRunId !== null) await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS e2e_run_id TEXT`;
+await sql`UPDATE agent_tasks SET status='queued', started_at=NULL, error='Automatisch wieder aufgenommen: Worker-Lauf länger als 10 Minuten ohne Abschluss.', next_retry_at=NULL WHERE status='running' AND started_at < NOW()-make_interval(secs=>${env.DJO2_E2E === "1" && env.CI === "true" && env.WORKER_LEASE_SECONDS === "2" ? 2 : 600}) ${testRunId !== null ? sql`AND e2e_run_id = ${testRunId}` : sql``}`;
+await sql`UPDATE agent_tasks SET status='queued', attempt_count=0, started_at=NULL, completed_at=NULL, error='Nach Wiederherstellung des Provider-Kontingents und Begrenzung der Parallelität erneut eingereiht.', next_retry_at=NULL WHERE status='failed' AND error NOT LIKE '[DJO2_POLICY:%' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%HTTP 503%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%') ${testRunId !== null ? sql`AND e2e_run_id = ${testRunId}` : sql``}`;
 
 await sql.unsafe(await Bun.file(new URL("./delivery-ledger.sql",import.meta.url)).text());
 const admissionMigration=await Bun.file(new URL("./003_admission.sql",import.meta.url)).text();
@@ -1302,7 +1303,6 @@ try {
 } catch(e) { console.error("SGL discovery failed",String(e)); }
 }, env);
 
-if (testRunId !== null) await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS e2e_run_id TEXT`;
 async function claimTasks() {
 return claimDbTransaction(sql, async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts ${testRunId !== null ? tx`, e2e_run_id` : tx``} FROM agent_tasks
