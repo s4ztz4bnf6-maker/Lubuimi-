@@ -26,7 +26,7 @@ test('legacy fallback remains available', () => {
 test('context checkpoint uses non-null serialized history', () => {
   assert.ok(source.includes('persistiereNeuenCheckpoint(task.id, taskHash, step+1, messages.slice(historyOffset)'));
   assert.ok(source.includes('delayMs: step === startStep+11 ? 30000 : null'));
-  assert.ok(source.includes('if (!saved.saved) throw'));
+  assert.match(source, /if \(!saved\.saved\) \{ console\.warn\("DJO2_CHECKPOINT_REJECTED", String\(task\.id\), saved\.grund\); return; \}/);
   assert.ok(source.includes('if (saved.scheduled) return'));
 });
 test('successful answer bypasses slice requeue', () => {
