@@ -410,7 +410,7 @@ if(env.DJO2_PROTON_BROWSER_PROBE==="true"){
   const response=await page.goto("https://mail.proton.me/",{waitUntil:"domcontentloaded",timeout:25000});
   console.log("DJO2 Proton browser probe "+JSON.stringify({status:response?.status(),host:new URL(page.url()).hostname,authenticated:false}));
  }catch(e){console.log("DJO2 Proton browser probe failed "+String(e?.message||e).slice(0,250));}
- finally{await browser?.close();}
+ finally{try{await browser?.close();}catch{console.log("DJO2 Proton browser cleanup failed");}}
 }
 // UARA: fail-closed registration adapter registry. No external submission without a reviewed adapter.
 await sql`CREATE TABLE IF NOT EXISTS djo2_registration_adapters (
