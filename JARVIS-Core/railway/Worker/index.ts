@@ -58,7 +58,7 @@ import { isIP } from "node:net";
 
 // Bootstrap guard runs before opening the database or starting business services.
 const env = Bun.env;
-const { e2eRunId, assertTestTasksOnly, localProvidersOnly } = await import("./src/bootstrap.ts");
+const { e2eRunId, assertTestTasksOnly, localProvidersOnly, productionOnly } = await import("./src/bootstrap.ts");
 const testRunId = e2eRunId(env);
 if (env.DJO2_E2E === "1") {
   const { loadConfig } = await import("./src/bootstrap.ts");
@@ -1254,6 +1254,7 @@ await sql`CREATE TABLE IF NOT EXISTS agent_task_attempts (
   UNIQUE(task_id, attempt_number)
 )`;
 await sql`CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)`;
+await productionOnly('commercial-discovery-and-requeue', async () => {
 if (modelConfigured) {
   await sql`UPDATE agent_tasks SET status='queued', error=NULL, completed_at=NULL, next_retry_at=NULL
     WHERE status='blocked_configuration' AND (title ILIKE '%bitcoin%' OR title ILIKE '%bounty%' OR title ILIKE '%software%qa%' OR title ILIKE 'CLAIM ACTION%' OR prompt ILIKE '%paid task%' OR prompt ILIKE '%microjob%' OR prompt ILIKE '%BTC%' OR prompt ILIKE '%sats%')`;
@@ -1287,6 +1288,7 @@ try {
   await sql`INSERT INTO sgl_discovery_runs(leads,errors) VALUES (${sglLeads},${sglErrors})`;
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
+}, env);
 
 if (testRunId !== null) await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS e2e_run_id TEXT`;
 async function claimTasks() {
