@@ -1177,12 +1177,19 @@ function budgetInference(messages,tools,model){
  console.log("DJO2_CONTEXT_ADAPTED",JSON.stringify({model,limit,before:estimate({model,messages,tools}),after:estimate({model,messages:compact,tools:chosen}),toolsBefore:tools.length,toolsAfter:chosen.length}));
  return {messages:compact,tools:chosen,output};
 }
+function isVerifiedZeroSpendRoute(provider){
+  // Exact server-controlled route approval; names and free-tier labels are not evidence.
+  try {
+    const records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES || "[]");
+    return Array.isArray(records)&&records.some(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl&&r.zeroSpendVerified===true&&r.billingDisabled===true&&typeof r.evidence==="string"&&r.evidence.trim().length>0&&Number.isFinite(Date.parse(r.expiresAt))&&Date.parse(r.expiresAt)>Date.now());
+  } catch { return false; }
+}
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
   let splitRequired=false;
-  const orderedProviders=filterProviders(providerCandidates,excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
-  if(!orderedProviders.length) throw new Error(ALL_EXCLUDED);
+  const orderedProviders=filterProviders(providerCandidates.filter(p=>isVerifiedZeroSpendRoute(p)),excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
+  if(!orderedProviders.length) throw new Error(providerCandidates.some(isVerifiedZeroSpendRoute)?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
   for(const provider of orderedProviders){try{
     const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
     const data=await providerGuard.run(provider.name,async()=>{
