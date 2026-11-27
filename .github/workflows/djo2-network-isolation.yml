@@ -25,3 +25,5 @@ jobs:
         with:
           node-version: '24'
       - run: node scripts/expect-pass-count.mjs 7 -- node --experimental-transform-types tests/network-isolation.test.mts
+      - name: E2E guard regressions (exactly five checks)
+        run: node scripts/expect-pass-count.mjs 5 -- node --experimental-transform-types tests/e2e-guards.test.mts
