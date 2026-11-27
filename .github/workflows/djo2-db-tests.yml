@@ -59,3 +59,10 @@ jobs:
           p.write_text(s[:start] + chr(92) + 'ir test-trigger-roles-body.sql' + s[end:])
           PY
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
+
+      - name: Exercise zero-spend schema and effective roles in disposable PostgreSQL
+        run: |
+          test "$(psql "$DATABASE_URL" -Atc 'SELECT current_database()')" = djo2_test
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-routes.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-roles.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-zero-spend-roles.sql
