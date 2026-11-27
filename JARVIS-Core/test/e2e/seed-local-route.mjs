@@ -1,17 +1,24 @@
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
+import {readFile} from "node:fs/promises";
+import {randomUUID} from "node:crypto";
 export async function seedLocalRoute(sql, endpoint) {
- const u=new URL(endpoint);
- if(process.env.CI!=="true" || process.env.DJO2_E2E!=="1" || u.protocol!=="http:" || u.hostname!=="127.0.0.1" || !u.port) throw Error("CI loopback only");
- const model="e2e",provider="keyless-openai-compatible",evidence="ci-loopback-fixture";
+ const u=new URL(endpoint), db=new URL(process.env.DATABASE_URL||"");
+ if(process.env.CI!=="true" || process.env.DJO2_E2E!=="1" || u.protocol!=="http:" || u.hostname!=="127.0.0.1" || !u.port || u.username || u.password || u.search || u.hash || db.hostname!=="127.0.0.1" || db.pathname!=="/djo2_e2e") throw Error("CI loopback only");
+ const provider="djo2-e2e-local",model="djo2-e2e-test",evidence="ci-loopback-fixture",quotaProofRef="ci-loopback-quota",group="ci-"+randomUUID();
  const expiresAt=new Date(Date.now()+3600000).toISOString();
- await sql`CREATE TABLE IF NOT EXISTS djo2_zero_spend_routes (
- provider text NOT NULL, model text NOT NULL, endpoint text NOT NULL,
- zero_spend_verified boolean NOT NULL, billing_disabled boolean NOT NULL,
- proof_ref text NOT NULL, expires_at timestamptz NOT NULL, revoked_at timestamptz,
- verified_context_window integer, verified_max_input_tokens integer, verified_max_output_tokens integer,
- capacity_proof_ref text, capacity_expires_at timestamptz,
- PRIMARY KEY(provider,model,endpoint))`;
- await sql`INSERT INTO djo2_zero_spend_routes(provider,model,endpoint,zero_spend_verified,billing_disabled,proof_ref,expires_at,verified_context_window,verified_max_input_tokens,verified_max_output_tokens,capacity_proof_ref,capacity_expires_at)
- VALUES(${provider},${model},${endpoint},true,true,${evidence},${expiresAt},32768,30000,2048,${evidence},${expiresAt})`;
- return {JARVIS_KEYLESS_MODEL_BASE_URL:endpoint,JARVIS_KEYLESS_MODEL_NAME:model,DJO2_VERIFIED_ZERO_SPEND_ROUTES:JSON.stringify([{provider,model,baseUrl:endpoint,zeroSpendVerified:true,billingDisabled:true,evidence,expiresAt,contextWindow:32768,maxInputTokens:30000,maxOutputTokens:2048,capacityProofRef:evidence}])};
+ await sql.begin(async tx=>{
+ const [dbCheck]=await tx`SELECT current_database() AS name, inet_server_addr()::text AS address`;
+ if(dbCheck.name!=="djo2_e2e" || dbCheck.address!=="127.0.0.1/32" && dbCheck.address!=="127.0.0.1") throw Error("CI database required");
+ await tx`SET LOCAL search_path TO pg_catalog, public, pg_temp`;
+ for(const file of ["zero-spend-routes.sql","zero-spend-capacity.sql","zero-spend-quota-groups.sql","zero-spend-quota-reserve-function.sql"]){
+ const source=await readFile(new URL("../../railway/Worker/"+file,import.meta.url),"utf8");
+ if(!/ROLLBACK;\s*$/.test(source))throw Error("Expected preparation migration");
+ await tx.unsafe(source.replace(/^([\s\S]*?)\bBEGIN;/,"$1").replace(/ROLLBACK;\s*$/,""));
+ }
+ await tx`INSERT INTO djo2_zero_spend_quota_groups(quota_group_key,tpm,tpd,rpm,rpd,proof_ref,expires_at) VALUES(${group},1000000,10000000,1000,10000,${quotaProofRef},${expiresAt})`;
+ await tx`INSERT INTO djo2_zero_spend_routes(provider,model,endpoint,zero_spend_verified,billing_disabled,proof_ref,expires_at,verified_context_window,verified_max_input_tokens,verified_max_output_tokens,capacity_proof_ref,capacity_expires_at,quota_group_key) VALUES(${provider},${model},${endpoint},true,true,${evidence},${expiresAt},32768,30000,2048,${evidence},${expiresAt},${group})`;
+ const [probe]=await tx`SELECT * FROM djo2_reserve_quota_group(${randomUUID()}::uuid,${provider},${model},${endpoint},${evidence},${quotaProofRef},1::bigint,1::bigint)`;
+ if(probe?.granted!==true || probe.reason!=="RESERVED")throw Error("CI quota probe failed");
+ });
+ return {DJO2_E2E_MODEL_URL:endpoint,DJO2_VERIFIED_ZERO_SPEND_ROUTES:JSON.stringify([{provider,model,baseUrl:endpoint,zeroSpendVerified:true,billingDisabled:true,evidence,expiresAt,capacityVerified:true,contextWindow:32768,maxInputTokens:30000,maxOutputTokens:2048,capacityProofRef:evidence,quotaProofRef}])};
 }
