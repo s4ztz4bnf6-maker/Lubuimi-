@@ -1494,7 +1494,8 @@ try {
   if (!finalText.trim()) { await exclude(lastTag,"step limit"); throw new Error("PROVIDER_ROTATION_RETRY: TASK_NOT_COMPLETED"); }
   await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,12,"result_ready",JSON.stringify({resultLength:finalText.length}));
   await clearExcluded(sql,task.id);
-  await sql`UPDATE agent_tasks SET status='completed', result=${finalText}, completed_at=NOW(), error=NULL, next_retry_at=NULL WHERE id=${task.id}`;
+  const completedRows = await sql`UPDATE agent_tasks SET status='completed', result=${finalText}, completed_at=NOW(), error=NULL, next_retry_at=NULL WHERE id=${task.id} AND status='running' AND attempt_count=${Number(task.attempt_count||0)+1} RETURNING id`;
+  if (completedRows.length !== 1) { console.warn('DJO2_STALE_COMPLETION',String(task.id)); return; }
   await sql`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error)
     VALUES (${task.id},${Number(task.attempt_count||0)+1},'completed',NULL)
     ON CONFLICT(task_id,attempt_number) DO UPDATE SET outcome='completed',error=NULL,finished_at=NOW()`;
@@ -1507,7 +1508,8 @@ try {
   const { failureClass, decision, retry, outcome } = decideRetry(message, task, classifyFailure, nextAction);
   const transient=retry;
   const storedError="[DJO2_POLICY:"+failureClass+":"+decision.action+"] "+message;
-  await sql`UPDATE agent_tasks SET status=${outcome}, error=${storedError}, next_retry_at=CASE WHEN ${retry} THEN NOW()+make_interval(secs=>${decision.delayMs/1000}) ELSE NULL END, completed_at=CASE WHEN ${retry} THEN NULL ELSE NOW() END WHERE id=${task.id}`;
+  const failedRows = await sql`UPDATE agent_tasks SET status=${outcome}, error=${storedError}, next_retry_at=CASE WHEN ${retry} THEN NOW()+make_interval(secs=>${decision.delayMs/1000}) ELSE NULL END, completed_at=CASE WHEN ${retry} THEN NULL ELSE NOW() END WHERE id=${task.id} AND status='running' AND attempt_count=${Number(task.attempt_count||0)+1} RETURNING id`;
+  if (failedRows.length !== 1) { console.warn('DJO2_STALE_FAILURE',String(task.id)); return; }
   console.log("DJO2_FAILURE_POLICY",JSON.stringify({taskId:task.id,failureClass,action:decision.action,attempt:Number(task.attempt_count||0)+1}));
   await sql`INSERT INTO agent_task_attempts(task_id,attempt_number,outcome,error)
     VALUES (${task.id},${Number(task.attempt_count||0)+1},${outcome},${message})
