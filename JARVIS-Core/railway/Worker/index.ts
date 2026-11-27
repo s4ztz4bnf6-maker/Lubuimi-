@@ -1177,26 +1177,29 @@ function budgetInference(messages,tools,model){
  console.log("DJO2_CONTEXT_ADAPTED",JSON.stringify({model,limit,before:estimate({model,messages,tools}),after:estimate({model,messages:compact,tools:chosen}),toolsBefore:tools.length,toolsAfter:chosen.length}));
  return {messages:compact,tools:chosen,output};
 }
-function isVerifiedZeroSpendRoute(provider){
-  // Exact server-controlled route approval; names and free-tier labels are not evidence.
+async function isVerifiedZeroSpendRoute(provider){
+  // Fail closed: both deployment approval and current database authorization are required.
   try {
     const records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES || "[]");
-    return Array.isArray(records)&&records.some(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl&&r.zeroSpendVerified===true&&r.billingDisabled===true&&typeof r.evidence==="string"&&r.evidence.trim().length>0&&Number.isFinite(Date.parse(r.expiresAt))&&Date.parse(r.expiresAt)>Date.now());
+    if(!Array.isArray(records)||!records.some(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl&&r.zeroSpendVerified===true&&r.billingDisabled===true&&typeof r.evidence==="string"&&r.evidence.trim().length>0&&Date.parse(r.expiresAt)>Date.now()))return false;
+    const [row]=await sql`SELECT 1 AS authorized FROM djo2_zero_spend_routes WHERE provider=${provider.name} AND model=${provider.model} AND endpoint=${provider.baseUrl} AND zero_spend_verified IS TRUE AND billing_disabled IS TRUE AND length(trim(proof_ref))>0 AND revoked_at IS NULL AND expires_at>clock_timestamp() LIMIT 1`;
+    return row?.authorized===1;
   } catch { return false; }
 }
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
   let splitRequired=false;
-  const orderedProviders=filterProviders(providerCandidates.filter(p=>isVerifiedZeroSpendRoute(p)),excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
-  if(!orderedProviders.length) throw new Error(providerCandidates.some(isVerifiedZeroSpendRoute)?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
+  const authorizedProviders=(await Promise.all(providerCandidates.map(async p=>await isVerifiedZeroSpendRoute(p)?p:null))).filter(p=>p!==null);
+  const orderedProviders=filterProviders(authorizedProviders,excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
+  if(!orderedProviders.length) throw new Error(authorizedProviders.length?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
   for(const provider of orderedProviders){try{
     const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
       
-      if(!isVerifiedZeroSpendRoute(provider))throw new Error("ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
+      if(!await isVerifiedZeroSpendRoute(provider))throw new Error("ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
       const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
