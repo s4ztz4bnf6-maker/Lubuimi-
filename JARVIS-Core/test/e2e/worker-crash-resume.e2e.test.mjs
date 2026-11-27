@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import http from "node:http";
 import {spawn} from "node:child_process";
 import {once} from "node:events";
-import postgres from "postgres";
+import postgres from "../../railway/Worker/node_modules/postgres/src/index.js";
 import {seedLocalRoute} from "./seed-local-route.mjs";
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function wait(fn,label,ms=90000){const end=Date.now()+ms;while(Date.now()<end){const v=await fn();if(v)return v;await sleep(150);}throw Error("Timeout: "+label);}
@@ -32,7 +32,7 @@ for(const mode of ["A","B"])test(mode+": real worker crash and recovery",{timeou
  const message=n?{role:"assistant",content:"",tool_calls:[{id:"step-"+n,type:"function",function:{name:"e2e_external_effect",arguments:JSON.stringify({step:n})}}]}:{role:"assistant",content:"E2E_DONE"};
  res.setHeader("content-type","application/json");res.end(JSON.stringify({id:"fixture",object:"chat.completion",model:"e2e",choices:[{index:0,message,finish_reason:n?"tool_calls":"stop"}]}));
  });
- function start(env){const p=spawn("bun",["run","railway/Worker/index.ts"],{cwd:new URL("../../",import.meta.url),env,stdio:["ignore","pipe","pipe"]});const w={p,log:"",done:once(p,"exit")};p.stdout.on("data",d=>w.log+=d);p.stderr.on("data",d=>w.log+=d);workers.push(w);return w;}
+ function start(env){const p=spawn("bun",["run","index.ts"],{cwd:new URL("../../railway/Worker/",import.meta.url),env,stdio:["ignore","pipe","pipe"]});const w={p,log:"",done:once(p,"exit")};p.stdout.on("data",d=>w.log+=d);p.stderr.on("data",d=>w.log+=d);workers.push(w);return w;}
  async function kill(w){if(w.p.exitCode===null&&w.p.signalCode===null)w.p.kill("SIGKILL");return w.done;}
  try{
  await sql`CREATE TABLE IF NOT EXISTS agent_tasks(id BIGSERIAL PRIMARY KEY,title text NOT NULL,prompt text NOT NULL,status text NOT NULL DEFAULT 'queued',result text,error text,attempt_count integer NOT NULL DEFAULT 0,max_attempts integer NOT NULL DEFAULT 3,next_retry_at timestamptz,last_attempt_at timestamptz,created_at timestamptz NOT NULL DEFAULT now(),started_at timestamptz,completed_at timestamptz)`;
