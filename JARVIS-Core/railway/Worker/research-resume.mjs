@@ -54,7 +54,7 @@ export async function persistiereFortsetzungAtomar(taskId, taskHash, nextStep, h
         JSON.stringify(state.history) !== JSON.stringify(history))
       throw new Error("Unbelegter Fortschritt oder inkonsistenter Kontext");
     await tx`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note)
-      VALUES(${taskId},${Number(task.attempt_count||0)+1},${nextStep-1},'research_context_v1',${JSON.stringify({taskHash,nextStep,history})})`;
+      VALUES(${taskId},${Number(task.attempt_count||0)},${nextStep-1},'research_context_v1',${JSON.stringify({taskHash,nextStep,history})})`;
     const rows = await tx`UPDATE agent_tasks SET status='retry_wait',
       next_retry_at=NOW()+${delayMs}::bigint*INTERVAL '1 millisecond',
       error=NULL,completed_at=NULL,attempt_count=GREATEST(0,attempt_count-1)
@@ -78,7 +78,7 @@ export async function persistiereNeuenCheckpoint(taskId, taskHash, nextStep, his
     const [task] = await tx`SELECT id,title,prompt,status,attempt_count FROM agent_tasks WHERE id=${taskId} FOR UPDATE`;
     if (!task || task.status !== "running") return {saved:false,grund:"nicht_laufend"};
     const actualHash = createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex");
-    if (actualHash !== taskHash || Number(task.attempt_count||0)+1 !== attempt)
+    if (actualHash !== taskHash || Number(task.attempt_count||0) !== attempt)
       return {saved:false,grund:"veralteter_versuch"};
     const [saved] = await tx`SELECT step,note FROM djo2_task_checkpoints WHERE task_id=${taskId} AND phase='research_context_v1' ORDER BY id DESC LIMIT 1`;
     const previous = selectResearchHistory(saved?.note,taskHash);
