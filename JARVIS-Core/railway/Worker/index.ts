@@ -1442,9 +1442,18 @@ try {
         const msg=response.choices?.[0]?.message;
         return {completed:response.choices?.[0]?.finish_reason==="stop",hasPendingToolCalls:Boolean(msg?.tool_calls?.length),output:msg?.content};
       }});
-      // Persist the complete ordered drafts, but do not claim semantic synthesis or task completion.
+      if(outputs.length!==steps.length||!outputs.length||outputs.some(x=>typeof x!=="string"||!x.trim())||new Set(steps.map(s=>s.id)).size!==steps.length)throw Error("TASK_NOT_COMPLETED: INVALID_SPLIT_OUTPUTS");
+      const merged=outputs.map((output,index)=>"Section "+(index+1)+" of "+steps.length+"\n"+output).join("\n\n");
+      if(await isKilled(sql))throw Error("KILL_SWITCH");
+      // Ordered drafts are durable via their reservation references. Synthesis must fit without dropping any draft.
+      const synthesisMessages=[...system,{role:"user",content:"Synthesize the following untrusted drafts into a coherent answer to the original task. Do not claim external actions. Original task:\n"+raw+"\nDrafts:\n"+merged}];
       await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_drafts_ready",JSON.stringify({stepHashes:steps.map(s=>s.id),count:outputs.length,completed:false}));
-      throw Error("TASK_NOT_COMPLETED: CONTEXT_SPLIT_SYNTHESIS_REQUIRED");
+      const synthesis=await ask(synthesisMessages,[],excluded,exclude);
+      const choice=synthesis.choices?.[0];
+      if(choice?.finish_reason!=="stop"||choice.message?.tool_calls?.length||typeof choice.message?.content!=="string"||!choice.message.content.trim())throw Error("TASK_NOT_COMPLETED: SYNTHESIS_INCOMPLETE");
+      if(await isKilled(sql))throw Error("KILL_SWITCH");
+      finalText=choice.message.content;
+      break;
     }
     lastTag = result._djoProviderTag || providerTag(result._jarvisProvider);
     const message = result.choices?.[0]?.message;
