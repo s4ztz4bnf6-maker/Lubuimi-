@@ -802,6 +802,9 @@ if (remainingContacts > 0) {
 
 }, env);
 
+if (!modelConfigured && env.DJO2_E2E === "1") {
+  throw new Error("E2E_LOCAL_MODEL_REQUIRED");
+}
 if (!modelConfigured) {
   await sql`UPDATE agent_tasks SET prompt=REPLACE(prompt, 'Prioritize this mission after the owner''s 100-BTC mission.', 'This mission has equal priority with the user''s 100-BTC Bitcoin mission. Process both fairly in turn across worker cycles; neither mission should be starved or permanently outrank the other.') WHERE title ILIKE '%Instagram Growth Mission%' AND status='queued'`;
   const freeTasks = await claimDbTransaction(sql, async tx => {
