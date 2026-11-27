@@ -29,7 +29,7 @@ test("durable split and synthesis replay, expired lease and pending tools",async
  assert.equal(await synth(),"merged 3");assert.equal(await synth(),"merged 3");assert.equal(calls,3);
  const expired=hash("expired");await acquireContextStep(sql,2168,expired);
  await sql`UPDATE djo2_context_step_reservations SET lease_until=NOW()-INTERVAL '1 second' WHERE step_hash=${expired}`;
- await assert.rejects(run([{id:expired}],execute),/RECONCILE_REQUIRED/);
+ await assert.rejects(run([{id:expired}],execute),/UNKNOWN_OUTCOME: CONTEXT_STEP_RECONCILE_REQUIRED/);
  await assert.rejects(run([{id:hash("pending")}],async()=>({completed:true,hasPendingToolCalls:true,output:"not final"})),/STEP_NOT_FINAL/);
  assert.equal(calls,3);
  const childCode=`
@@ -49,7 +49,7 @@ test("durable split and synthesis replay, expired lease and pending tools",async
  const exited=new Promise(resolve=>child.once("exit",(_code,signal)=>resolve(signal)));
  child.kill("SIGKILL");assert.equal(await exited,"SIGKILL");
  await sql`UPDATE djo2_context_step_reservations SET lease_until=NOW()-INTERVAL '1 second' WHERE step_hash=${interrupted}`;
- await assert.rejects(run([steps[0],{id:interrupted}],execute),/RECONCILE_REQUIRED/);
+ await assert.rejects(run([steps[0],{id:interrupted}],execute),/UNKNOWN_OUTCOME: CONTEXT_STEP_RECONCILE_REQUIRED/);
  assert.equal(calls,3);
  }finally{if(child.exitCode===null&&child.signalCode===null)child.kill("SIGKILL");}
  }finally{await sql`SET search_path TO public`;await sql`DROP SCHEMA IF EXISTS djo2_runner_recovery_test CASCADE`;await sql.end();}
