@@ -5,6 +5,8 @@ export function loadConfig(env=process.env):Config {
  const dbUrl=env.DATABASE_URL??"";
  const allowedPorts=(env.DJO2_E2E_PORTS??"").split(",").filter(Boolean).map(Number);
  if(isolatedE2E){
+ if(Object.keys(env).some(k=>k.startsWith("RAILWAY_")))throw Error("E2E_ISOLATION_VIOLATION Railway environment forbidden");
+ if(env.CREDENTIAL_KEY)throw Error("E2E_ISOLATION_VIOLATION unexpected credential key");
  const u=new URL(dbUrl);
  if(env.CI!=="true"||!["postgres:","postgresql:"].includes(u.protocol)||u.hostname!=="127.0.0.1"||u.pathname!=="/djo2_e2e"||u.search||u.hash)throw Error("E2E_GUARD invalid isolated database");
  if(Object.keys(env).some(k=>env[k]&&/TOKEN|SECRET|API_KEY|PRIVATE_KEY|PASSWORD/i.test(k)))throw Error("E2E_GUARD unexpected credential");
