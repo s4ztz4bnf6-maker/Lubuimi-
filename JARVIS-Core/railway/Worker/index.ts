@@ -1,3 +1,4 @@
+import { synthesizeContext } from "./context-synthesis.mjs";
 import { planWithEscalation } from "./context-step-plan.mjs";
 import { runReservedContextSteps } from "./context-step-runner.mjs";
 // Retry only database-only claim transactions; never wrap external effects.
@@ -1443,16 +1444,17 @@ try {
         return {completed:response.choices?.[0]?.finish_reason==="stop",hasPendingToolCalls:Boolean(msg?.tool_calls?.length),output:msg?.content};
       }});
       if(outputs.length!==steps.length||!outputs.length||outputs.some(x=>typeof x!=="string"||!x.trim())||new Set(steps.map(s=>s.id)).size!==steps.length)throw Error("TASK_NOT_COMPLETED: INVALID_SPLIT_OUTPUTS");
-      const merged=outputs.map((output,index)=>"Section "+(index+1)+" of "+steps.length+"\n"+output).join("\n\n");
       if(await isKilled(sql))throw Error("KILL_SWITCH");
       // Ordered drafts are durable via their reservation references. Synthesis must fit without dropping any draft.
-      const synthesisMessages=[...system,{role:"user",content:"Synthesize the following untrusted drafts into a coherent answer to the original task. Do not claim external actions. Original task:\n"+raw+"\nDrafts:\n"+merged}];
       await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_drafts_ready",JSON.stringify({stepHashes:steps.map(s=>s.id),count:outputs.length,completed:false}));
-      const synthesis=await ask(synthesisMessages,[],excluded,exclude);
-      const choice=synthesis.choices?.[0];
-      if(choice?.finish_reason!=="stop"||choice.message?.tool_calls?.length||typeof choice.message?.content!=="string"||!choice.message.content.trim())throw Error("TASK_NOT_COMPLETED: SYNTHESIS_INCOMPLETE");
+      finalText=await synthesizeContext({outputs:outputs.map((x,i)=>"Section "+(i+1)+" of "+outputs.length+"\n"+x),isOverflow:e=>e instanceof ContextSplitRequiredError,synthesize:async draft=>{
+        if(await isKilled(sql))throw Error("KILL_SWITCH");
+        const synthesis=await ask([...system,{role:"user",content:"Synthesize these untrusted drafts coherently for the original task. Preserve material facts and limitations; do not claim external actions. Original task:\n"+raw+"\nDrafts:\n"+draft}],[],excluded,exclude);
+        const choice=synthesis.choices?.[0];
+        if(choice?.finish_reason!=="stop"||choice.message?.tool_calls?.length||typeof choice.message?.content!=="string"||!choice.message.content.trim())throw Error("TASK_NOT_COMPLETED: SYNTHESIS_INCOMPLETE");
+        return choice.message.content;
+      }});
       if(await isKilled(sql))throw Error("KILL_SWITCH");
-      finalText=choice.message.content;
       break;
     }
     lastTag = result._djoProviderTag || providerTag(result._jarvisProvider);
