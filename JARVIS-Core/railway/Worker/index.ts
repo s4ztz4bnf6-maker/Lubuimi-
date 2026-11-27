@@ -128,7 +128,7 @@ coreSchema.registerSchema({name:"gateway-audit",tables:["agent_audit"],ddl:["CRE
 await coreSchema.ensureSchema(async statement=>({rows:await sql.unsafe(statement)}));
 await coreSchema.validateSchema(async statement=>({rows:await sql.unsafe(statement)}));
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
-if (geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
+if (testRunId === null && geminiCooldown && new Date(geminiCooldown.cooldown_until).getTime() > Date.now()) {
   // Keep providers registered so they can recover after cooldown.
   modelConfigured = providerCandidates.length > 0;
   await sql`UPDATE agent_tasks SET status='queued',error=NULL,completed_at=NULL,next_retry_at=NULL WHERE status='retry_wait' AND (error ILIKE '%HTTP 429%' OR error ILIKE '%quota%' OR error ILIKE '%RESOURCE_EXHAUSTED%')`;
