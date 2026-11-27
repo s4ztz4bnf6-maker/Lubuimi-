@@ -61,12 +61,8 @@ const env = Bun.env;
 const { e2eRunId, assertTestTasksOnly, localProvidersOnly, productionOnly } = await import("./src/bootstrap.ts");
 const testRunId = e2eRunId(env);
 if (env.DJO2_E2E === "1") {
-  const { loadConfig } = await import("./src/bootstrap.ts");
-  const { enforceNetworkAllowlist } = await import("./src/network-isolation.ts");
-  const config = loadConfig(env);
-  enforceNetworkAllowlist(config.allowedPorts);
-  // Fail closed until the shared schema and isolated core runner are wired.
-  throw new Error("E2E_BOOTSTRAP_PENDING_CORE_INTEGRATION");
+  const { enforceIsolation } = await import("./src/bootstrap.ts");
+  await enforceIsolation(env);
 }
 const maxParallelTasks = Math.max(1, Math.min(3, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
@@ -1565,7 +1561,7 @@ async function runWorkerCore(tasks: Awaited<ReturnType<typeof claimTasks>>) {
 const { main: runMain } = await import("./src/bootstrap.ts");
 await runMain({
   // Existing production initialization remains above until phase extraction is complete.
-  enforceIsolation: async () => { throw Error("E2E_BOOTSTRAP_PENDING_CORE_INTEGRATION"); },
+  enforceIsolation: async () => { const { enforceIsolation } = await import("./src/bootstrap.ts"); await enforceIsolation(env); },
   initializeDatabase: async () => {},
   validateSchema: async () => { await coreSchema.validateSchema(async statement => ({rows:await sql.unsafe(statement)})); },
   createWorker: () => ({run: () => runWorkerCore(tasks)}),
