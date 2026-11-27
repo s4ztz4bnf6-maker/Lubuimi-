@@ -17,7 +17,7 @@ function fixture({zero=false,insertError=false,changed=false}={}) {
       if(q.includes("SELECT step,note")) return [draft.checkpoints.at(-1)];
       if(q.includes("INSERT INTO")) {
         if(insertError) throw Error("insert failed");
-        assert.equal(params[1],2);
+        assert.equal(params[1],draft.task.attempt_count);
         draft.checkpoints.push({step:params[2],note:params[3]});
         return [];
       }
