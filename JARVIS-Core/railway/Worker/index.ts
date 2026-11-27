@@ -99,6 +99,11 @@ if (env.MODEL_PROVIDER) { const preferred = providerCandidates.findIndex(p => p.
 
 // Startup probes are disabled: all inference must use the authorized ask path.
 
+if (testRunId !== null) {
+  const endpoint = new URL(env.DJO2_E2E_MODEL_URL || "");
+  if (endpoint.protocol !== "http:" || endpoint.hostname !== "127.0.0.1" || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) throw Error("E2E_INVALID_MODEL_ENDPOINT");
+  providerCandidates = [{ name: "djo2-e2e-local", baseUrl: endpoint.toString().replace(/\/$/, ""), apiKey: "", model: "djo2-e2e-test" }];
+}
 providerCandidates = localProvidersOnly(providerCandidates, env);
 let modelConfigured = providerCandidates.length > 0;
 console.log("JARVIS provider probe: geminiKeyPresent="+Boolean(env.GEMINI_API_KEY)+"; providers="+providerCandidates.map(p=>p.name).join(","));
