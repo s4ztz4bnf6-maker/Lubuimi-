@@ -1,3 +1,4 @@
+import "./src/e2e-preload.ts";
 import { routeContextBudget } from "./context-budget.mjs";
 import { createHash as contextSynthesisHash } from "node:crypto";
 import { synthesizeContext } from "./context-synthesis.mjs";
