@@ -114,6 +114,7 @@ console.log("DJO2 UARA persistent storage initialized");
 const { createSchemaRegistry } = await import("./src/bootstrap.ts");
 const coreSchema = createSchemaRegistry();
 coreSchema.registerSchema({name:"worker-core",tables:["jarvis_provider_cooldowns","agent_tasks"],ddl:["CREATE TABLE IF NOT EXISTS jarvis_provider_cooldowns (provider TEXT PRIMARY KEY, cooldown_until TIMESTAMPTZ NOT NULL, reason TEXT, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())","CREATE TABLE IF NOT EXISTS agent_tasks (\n  id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, prompt TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'queued',\n  result TEXT, error TEXT, attempt_count INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 3,\n  next_retry_at TIMESTAMPTZ, last_attempt_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ\n)","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS attempt_count INTEGER NOT NULL DEFAULT 0","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS max_attempts INTEGER NOT NULL DEFAULT 3","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMPTZ","ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS last_attempt_at TIMESTAMPTZ","CREATE INDEX IF NOT EXISTS agent_tasks_retry_idx ON agent_tasks(status, next_retry_at, created_at)"]});
+coreSchema.registerSchema({name:"worker-recovery",requires:["worker-core"],tables:["djo2_task_checkpoints","djo2_tool_results","agent_learning_events","agent_task_attempts"],ddl:["CREATE TABLE IF NOT EXISTS djo2_task_checkpoints (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, attempt INTEGER NOT NULL, step INTEGER NOT NULL, phase TEXT NOT NULL, note TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())","CREATE TABLE IF NOT EXISTS djo2_tool_results (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, tool_name TEXT NOT NULL, payload TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())","CREATE TABLE IF NOT EXISTS agent_learning_events (id BIGSERIAL PRIMARY KEY, event TEXT NOT NULL, detail JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())","CREATE TABLE IF NOT EXISTS agent_task_attempts (\n  id BIGSERIAL PRIMARY KEY,\n  task_id BIGINT NOT NULL,\n  attempt_number INTEGER NOT NULL,\n  outcome TEXT NOT NULL,\n  error TEXT,\n  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  finished_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  UNIQUE(task_id, attempt_number)\n)"]});
 await coreSchema.ensureSchema(async statement=>({rows:await sql.unsafe(statement)}));
 await coreSchema.validateSchema(async statement=>({rows:await sql.unsafe(statement)}));
 const [geminiCooldown] = await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider='google-gemini'`;
@@ -447,7 +448,7 @@ await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confiden
 const [storedPaymentPolicy] = await sql`SELECT content FROM agent_memory WHERE memory_key='owner:djo2-payment-policy-v1'`;
 console.log("DJO2 owner payment policy PostgreSQL readback="+(storedPaymentPolicy?.content===ownerPaymentPolicy));
 
-await sql`CREATE TABLE IF NOT EXISTS djo2_task_checkpoints (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, attempt INTEGER NOT NULL, step INTEGER NOT NULL, phase TEXT NOT NULL, note TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+// djo2_task_checkpoints initialized by core schema registry.
 await sql`CREATE INDEX IF NOT EXISTS djo2_task_checkpoints_lookup ON djo2_task_checkpoints(task_id,id DESC)`;
 await sql`CREATE TABLE IF NOT EXISTS djo2_verified_task_priority (
  task_id BIGINT PRIMARY KEY, funding_tier INTEGER NOT NULL CHECK(funding_tier BETWEEN 1 AND 3),
@@ -466,7 +467,7 @@ if(previousMemoryProbe) {
  console.log("DJO2_MEMORY_SELFTEST: marker committed; recovery verification pending next execution");
 }
 
-await sql`CREATE TABLE IF NOT EXISTS djo2_tool_results (id BIGSERIAL PRIMARY KEY, task_id BIGINT NOT NULL, tool_name TEXT NOT NULL, payload TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
+// djo2_tool_results initialized by core schema registry.
 async function boundedToolResult(taskId,name,result){
  const payload=JSON.stringify(result)??"null";
  if(new TextEncoder().encode(payload).length<=900)return payload;
@@ -477,17 +478,8 @@ async function saveDjoCheckpoint(taskId,attempt,step,phase,note) {
  await sql`INSERT INTO djo2_task_checkpoints(task_id,attempt,step,phase,note) VALUES(${taskId},${attempt},${step},${phase},${String(note).slice(0,12000)})`;
 }
 
-await sql`CREATE TABLE IF NOT EXISTS agent_learning_events (id BIGSERIAL PRIMARY KEY, event TEXT NOT NULL, detail JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`;
-await sql`CREATE TABLE IF NOT EXISTS agent_task_attempts (
-  id BIGSERIAL PRIMARY KEY,
-  task_id BIGINT NOT NULL,
-  attempt_number INTEGER NOT NULL,
-  outcome TEXT NOT NULL,
-  error TEXT,
-  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  finished_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(task_id, attempt_number)
-)`;
+// agent_learning_events initialized by core schema registry.
+// agent_task_attempts initialized by core schema registry.
 async function storeLearning(taskId, title, content, sourceType) {
   const memoryKey = "task:" + taskId;
   const safeContent = String(content || "").slice(0, 16000);
