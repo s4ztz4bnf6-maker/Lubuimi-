@@ -1405,6 +1405,12 @@ try {
   tools.push(...e2eTools.map(({run,...definition})=>definition));
   tools.push(...browserToolDefinitions);
   tools.push({type:"function",function:{name:"read_tool_result",description:"Read a bounded excerpt of a stored result belonging to the current task. Offset is in characters.",parameters:{type:"object",properties:{id:{type:"string"},offset:{type:"integer"}},required:["id","offset"],additionalProperties:false}}});
+  if (testRunId !== null) {
+    const allowedTestTools = new Set(["calculator", "read_tool_result", ...e2eTools.map(t => t.function.name)]);
+    for (let i = tools.length - 1; i >= 0; i--) {
+      if (!allowedTestTools.has(tools[i].function.name)) tools.splice(i, 1);
+    }
+  }
   const taskHash = accountCrypto.createHash("sha256").update(JSON.stringify([task.title,task.prompt])).digest("hex");
   const resumable = !incomeTask && !goodiesTask && !/^CLAIM ACTION/i.test(String(task.title||""));
   let startStep = 0;
@@ -1490,6 +1496,7 @@ try {
     }
     for(const call of message.tool_calls){
       const name=call.function?.name;
+      if(testRunId !== null && !tools.some(t => t.function.name === name)) throw Error("E2E_TOOL_NOT_ALLOWED");
       if(resumable && !safeNames.has(String(name))) throw new Error("RESEARCH_RESUME_EXTERNAL_ACTION_BLOCKED");
       const signature = JSON.stringify([name, JSON.parse(call.function.arguments || "{}")], (_key, value) => value && typeof value === "object" && !Array.isArray(value) ? Object.fromEntries(Object.keys(value).sort().map(k => [k, value[k]])) : value);
       const repeats = (seenToolCalls.get(signature) || 0) + 1;
