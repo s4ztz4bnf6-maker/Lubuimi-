@@ -4,7 +4,8 @@ export const maybeE2eTools = ({sql,taskId}) => {
  if(process.env.DJO2_E2E !== "1") return [];
  return [{type:"function",function:{name:"e2e_external_effect",description:"Test-only external effect",parameters:{type:"object",properties:{step:{type:"integer"}},required:["step"],additionalProperties:false}},run:async(args)=>{
  const base=new URL(process.env.E2E_EFFECT_URL);
- if(base.protocol!=="http:" || base.hostname!=="127.0.0.1") throw Error("E2E requires loopback");
+ const ports=(process.env.DJO2_E2E_PORTS??"").split(",").filter(Boolean).map(Number);
+ if(process.env.CI!=="true" || base.protocol!=="http:" || base.hostname!=="127.0.0.1" || base.username || base.password || !ports.includes(Number(base.port||80))) throw Error("E2E requires approved CI loopback endpoint");
  if(!Number.isSafeInteger(args.step)||args.step<1) throw Error("Invalid step");
  const key=`e2e-${taskId}-step-${args.step}`;
  const out=await runToolOnce(sql,taskId,"e2e_external_effect",args,async()=>{
