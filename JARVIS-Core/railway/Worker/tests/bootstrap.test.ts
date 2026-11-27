@@ -19,3 +19,17 @@ test("E2E skips business services",async()=>{
  await main({enforceIsolation:async()=>{calls.push("isolation");},initializeDatabase:async()=>{calls.push("db");},validateSchema:async()=>{calls.push("schema");},createWorker:()=>({run:async()=>{calls.push("run");}}),initializeBusinessServices:async()=>{calls.push("business");},startBackgroundSchedulers:async()=>{calls.push("scheduler");}},env);
  expect(calls).toEqual(["isolation","db","schema","run"]);
 });
+
+test("invalid E2E configuration never invokes startup dependencies",async()=>{
+ const calls:string[]=[];
+ const deps={enforceIsolation:async()=>{calls.push("isolation");},initializeDatabase:async()=>{calls.push("db");},validateSchema:async()=>{calls.push("schema");},createWorker:()=>({run:async()=>{calls.push("run");}}),initializeBusinessServices:async()=>{calls.push("business");},startBackgroundSchedulers:async()=>{calls.push("scheduler");}};
+ await expect(main(deps,{...env,CI:"false"})).rejects.toThrow("E2E_GUARD");
+ expect(calls).toEqual([]);
+});
+test("schema dependency failure precedes all DDL",async()=>{
+ const r=createSchemaRegistry(),calls:string[]=[];
+ r.registerSchema({name:"valid",tables:["a"],ddl:["a"]});
+ r.registerSchema({name:"broken",requires:["missing"],tables:["b"],ddl:["b"]});
+ await expect(r.ensureSchema(async s=>{calls.push(s);return {rows:[]};})).rejects.toThrow("SCHEMA_MODULE_MISSING missing");
+ expect(calls).toEqual([]);
+});
