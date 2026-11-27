@@ -36,6 +36,7 @@ for(const mode of ["A","B"])test(mode+": real worker crash and recovery",{timeou
  async function kill(w){if(w.p.exitCode===null&&w.p.signalCode===null)w.p.kill("SIGKILL");return w.done;}
  try{
  await sql`CREATE TABLE IF NOT EXISTS agent_tasks(id BIGSERIAL PRIMARY KEY,title text NOT NULL,prompt text NOT NULL,status text NOT NULL DEFAULT 'queued',result text,error text,attempt_count integer NOT NULL DEFAULT 0,max_attempts integer NOT NULL DEFAULT 3,next_retry_at timestamptz,last_attempt_at timestamptz,created_at timestamptz NOT NULL DEFAULT now(),started_at timestamptz,completed_at timestamptz)`;
+ await sql`CREATE TABLE IF NOT EXISTS agent_audit(id BIGSERIAL PRIMARY KEY,event text NOT NULL,detail jsonb,created_at timestamptz NOT NULL DEFAULT now())`;
  const route=await seedLocalRoute(sql,llm.url+"/v1");
  const env={PATH:process.env.PATH,HOME:process.env.HOME,CI:"true",DJO2_E2E:"1",DATABASE_URL:process.env.DATABASE_URL,WORKER_LEASE_SECONDS:"2",E2E_EFFECT_URL:effect.url,...route};
  const [task]=await sql`INSERT INTO agent_tasks(title,prompt,max_attempts) VALUES('E2E_CRASH_TASK','Use e2e_external_effect for steps 1, 2, 3 in order and synthesize E2E_DONE.',5) RETURNING id`;taskId=task.id;
