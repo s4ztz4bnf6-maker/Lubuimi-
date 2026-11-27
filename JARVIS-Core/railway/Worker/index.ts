@@ -1284,7 +1284,8 @@ try {
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
 
-const tasks = await claimDbTransaction(sql, async tx => {
+async function claimTasks() {
+return claimDbTransaction(sql, async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
     WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
     ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
@@ -1300,6 +1301,8 @@ const tasks = await claimDbTransaction(sql, async tx => {
     }
     return admitted;
 });
+}
+const tasks = await claimTasks();
 if (!tasks.length) {
   console.log("JARVIS Worker: no queued tasks.");
   await sql.end();
@@ -1310,7 +1313,7 @@ let browserMcpClient: any = null;
 let browserToolDefinitions: any[] = [];
 const browserToolNames = new Set<string>();
 let browserCallChain: Promise<any> = Promise.resolve();
-if (env.JARVIS_BROWSER_MCP_URL) {
+if (env.DJO2_E2E !== "1" && env.JARVIS_BROWSER_MCP_URL) {
   try {
     browserMcpClient = new Client({ name: "jarvis-autonomous-worker", version: "1.0.0" });
     const transport = new StreamableHTTPClientTransport(new URL(env.JARVIS_BROWSER_MCP_URL));
@@ -1518,7 +1521,13 @@ try {
   console.error("JARVIS Worker task " + outcome + " " + task.id + ": " + message);
 }
 }
-await Promise.all(tasks.map(task => processTask(task)));
-console.log("JARVIS Worker parallel batch finished: " + tasks.length + " task(s).");
-try { await browserMcpClient?.close(); } catch {}
-await sql.end();
+async function runWorkerCore(tasks: Awaited<ReturnType<typeof claimTasks>>) {
+  try {
+    await Promise.all(tasks.map(task => processTask(task)));
+    console.log("JARVIS Worker parallel batch finished: " + tasks.length + " task(s).");
+  } finally {
+    try { await browserMcpClient?.close(); } catch {}
+    await sql.end();
+  }
+}
+await runWorkerCore(tasks);
