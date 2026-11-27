@@ -1479,7 +1479,7 @@ try {
     }
     if(resumable) {
       const saved = await persistiereNeuenCheckpoint(task.id, taskHash, step+1, messages.slice(historyOffset), Number(task.attempt_count||0)+1, {sql, delayMs: step === startStep+11 ? 30000 : null});
-      if (!saved.saved) throw new Error("RESEARCH_CHECKPOINT_NOT_SAVED");
+      if (!saved.saved) { console.warn("DJO2_CHECKPOINT_REJECTED", String(task.id), saved.grund); return; }
       if (saved.scheduled) return;
     }
   }
