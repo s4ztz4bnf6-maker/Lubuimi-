@@ -417,7 +417,7 @@ const mailPolicy="Use existing free Proton Mail account via https://mail.proton.
 await sql`INSERT INTO agent_memory(memory_key,title,content,source_type,confidence) VALUES ('owner:proton-free-mail-v1','Free Proton webmail mandate',${mailPolicy},'owner_instruction','owner_directive') ON CONFLICT(memory_key) DO UPDATE SET content=EXCLUDED.content,updated_at=NOW() WHERE agent_memory.content IS DISTINCT FROM EXCLUDED.content`;
 
 // Public, unauthenticated browser probe only; never send mailbox credentials to a model.
-if(env.DJO2_PROTON_BROWSER_PROBE==="true"){
+if(env.DJO2_E2E !== "1" && env.DJO2_PROTON_BROWSER_PROBE==="true"){
  let browser;
  try {
   const {chromium}=await import("playwright");
