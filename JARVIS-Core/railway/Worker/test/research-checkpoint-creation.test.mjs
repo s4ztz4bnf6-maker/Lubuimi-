@@ -6,7 +6,7 @@ const hash=createHash("sha256").update(JSON.stringify(["title","prompt"])).diges
 const old=[{role:"assistant",content:"old"}];
 const next=[...old,{role:"assistant",content:"new"}];
 function fixture({previous=true,zero=false}={}) {
- let state={task:{id:1,title:"title",prompt:"prompt",status:"running",attempt_count:1},checkpoints:previous?[{step:2,note:JSON.stringify({taskHash:hash,nextStep:3,history:old})}]:[]};
+ let state={task:{id:1,title:"title",prompt:"prompt",status:"running",attempt_count:2},checkpoints:previous?[{step:2,note:JSON.stringify({taskHash:hash,nextStep:3,history:old})}]:[]};
  const sql={begin:async fn=>{
   const draft=structuredClone(state);
   const tx=async(strings,...p)=>{
