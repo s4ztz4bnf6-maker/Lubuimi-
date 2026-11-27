@@ -1128,6 +1128,10 @@ function portableMessages(messages:any[], providerName:string) {
   return out;
 }
 // Preserve instructions and tool-call/result groups; omit only complete older turns.
+class ContextSplitRequiredError extends Error {
+ readonly code = "CONTEXT_SPLIT_REQUIRED";
+ constructor(){super("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");this.name="ContextSplitRequiredError";}
+}
 function budgetInference(messages,tools,model){
  const output=Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024));
  const estimate=x=>Math.ceil(new TextEncoder().encode(JSON.stringify(x)).length/2.5);
@@ -1168,7 +1172,7 @@ function budgetInference(messages,tools,model){
  }
  if(!chosen.length&&tools.length || !fits(compact,chosen)){
  console.warn("DJO2_CONTEXT_BUDGET",JSON.stringify({model,limit,output,systemEstimate:estimate(fixed),instructionEstimate:estimate(mandatory),historyEstimate:estimate(selected.flat()),toolEstimate:estimate(tools),toolCount:tools.length,totalEstimate:estimate({model,messages:compact,tools})}));
- throw Error("CONTEXT_BUDGET_EXCEEDED: task must be split without truncating instructions");
+ throw new ContextSplitRequiredError();
  }
  console.log("DJO2_CONTEXT_ADAPTED",JSON.stringify({model,limit,before:estimate({model,messages,tools}),after:estimate({model,messages:compact,tools:chosen}),toolsBefore:tools.length,toolsAfter:chosen.length}));
  return {messages:compact,tools:chosen,output};
@@ -1176,13 +1180,15 @@ function budgetInference(messages,tools,model){
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
+  let splitRequired=false;
   const orderedProviders=filterProviders(providerCandidates,excluded).sort((a,b)=>Number(b.name==="keyless-openai-compatible"&&b.model==="kilo-auto/free")-Number(a.name==="keyless-openai-compatible"&&a.model==="kilo-auto/free"));
   if(!orderedProviders.length) throw new Error(ALL_EXCLUDED);
   for(const provider of orderedProviders){try{
+    const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
-      const bounded=budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider.model);
+      
       const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
@@ -1204,8 +1210,9 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
       return result;
     });
     data._jarvisProvider=provider.name;data._djoProviderTag=providerTag(provider);console.log("JARVIS inference provider selected: "+provider.name+" / "+provider.model);return data;
-  }catch(error){const reason=error instanceof Error?error.message:"unknown provider error";if(shouldRotate(reason)) { const tag=providerTag(provider); await onExclude(tag,reason); excluded.add(tag); }
+  }catch(error){if(error instanceof ContextSplitRequiredError){splitRequired=true;continue;}const reason=error instanceof Error?error.message:"unknown provider error";if(shouldRotate(reason)) { const tag=providerTag(provider); await onExclude(tag,reason); excluded.add(tag); }
     const remaining=providerGuard.remainingMs(provider.name);if(remaining>0){await sql`INSERT INTO jarvis_provider_cooldowns(provider,cooldown_until,reason) VALUES (${provider.name},${new Date(Date.now()+remaining)},${"provider cooldown"}) ON CONFLICT(provider) DO UPDATE SET cooldown_until=GREATEST(jarvis_provider_cooldowns.cooldown_until,EXCLUDED.cooldown_until),reason=EXCLUDED.reason,updated_at=NOW()`;}if(provider.name.startsWith("google-gemini")&&/HTTP 429:.*(quota|RESOURCE_EXHAUSTED|rate.?limit|per day)/is.test(reason))geminiQuotaBlocked=true;failures.push(provider.name+": "+reason);console.error("JARVIS inference provider unavailable: "+provider.name+" — "+reason);}}
+  if(splitRequired&&failures.length===0)throw new ContextSplitRequiredError();
   throw new Error("All configured inference providers failed: "+failures.join(" | ").slice(0,2400));
 }
 await sql`
