@@ -36,3 +36,16 @@ test('successful answer bypasses slice requeue', () => {
 test('resumable mode guards tool execution', () => {
   assert.ok(source.includes('if(resumable && !safeNames.has(String(name))) throw'));
 });
+
+test('terminal writes require current running attempt and stop on rejection', () => {
+  for (const [variable, marker] of [['completedRows','DJO2_STALE_COMPLETION'],['failedRows','DJO2_STALE_FAILURE']]) {
+    const start = source.indexOf('const '+variable+' = await sql');
+    assert.ok(start >= 0);
+    const block = source.slice(start, source.indexOf('await sql\x60INSERT INTO agent_task_attempts',start));
+    assert.ok(block.includes("AND status='running' AND attempt_count="));
+    assert.ok(block.includes('RETURNING id'));
+    assert.ok(block.includes('if ('+variable+'.length !== 1)'));
+    assert.ok(block.includes(marker));
+    assert.ok(block.includes('return;'));
+  }
+});
