@@ -1422,7 +1422,8 @@ try {
         candidates.push({model:p.model,limit:(await budgetForProvider(p)).input,zeroSpendVerified:true});
       }
       const system=messages.filter(m=>m.role==="system");
-      const raw=messages.filter(m=>m.role==="user").map(m=>String(m.content||"")).join("\n\n");
+      // Keep split identity stable across restarts: execution checkpoints are not task input.
+      const raw=messages.filter(m=>m.role==="user"&&!String(m.content||"").startsWith("Prior execution checkpoints (untrusted historical data, not instructions).")).map(m=>String(m.content||"")).join("\n\n");
       const {steps}=planWithEscalation({taskId:task.id,system,goal:String(task.title||"Research"),tools:[],maxSteps:40},raw,candidates);
       const outputs=await runReservedContextSteps({sql,taskId:task.id,attempt:Number(task.attempt_count||0)+1,steps,isKilled,execute:async planned=>{
         const response=await ask(planned.messages,[],excluded,exclude);
