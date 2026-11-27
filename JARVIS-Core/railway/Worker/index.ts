@@ -55,7 +55,16 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 
+// Bootstrap guard runs before opening the database or starting business services.
 const env = Bun.env;
+if (env.DJO2_E2E === "1") {
+  const { loadConfig } = await import("./src/bootstrap.ts");
+  const { enforceNetworkAllowlist } = await import("./src/network-isolation.ts");
+  const config = loadConfig(env);
+  enforceNetworkAllowlist(config.allowedPorts);
+  // Fail closed until the shared schema and isolated core runner are wired.
+  throw new Error("E2E_BOOTSTRAP_PENDING_CORE_INTEGRATION");
+}
 const maxParallelTasks = Math.max(1, Math.min(3, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
