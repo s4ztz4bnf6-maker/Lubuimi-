@@ -1212,7 +1212,7 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
     data._jarvisProvider=provider.name;data._djoProviderTag=providerTag(provider);console.log("JARVIS inference provider selected: "+provider.name+" / "+provider.model);return data;
   }catch(error){if(error instanceof ContextSplitRequiredError){splitRequired=true;continue;}const reason=error instanceof Error?error.message:"unknown provider error";if(shouldRotate(reason)) { const tag=providerTag(provider); await onExclude(tag,reason); excluded.add(tag); }
     const remaining=providerGuard.remainingMs(provider.name);if(remaining>0){await sql`INSERT INTO jarvis_provider_cooldowns(provider,cooldown_until,reason) VALUES (${provider.name},${new Date(Date.now()+remaining)},${"provider cooldown"}) ON CONFLICT(provider) DO UPDATE SET cooldown_until=GREATEST(jarvis_provider_cooldowns.cooldown_until,EXCLUDED.cooldown_until),reason=EXCLUDED.reason,updated_at=NOW()`;}if(provider.name.startsWith("google-gemini")&&/HTTP 429:.*(quota|RESOURCE_EXHAUSTED|rate.?limit|per day)/is.test(reason))geminiQuotaBlocked=true;failures.push(provider.name+": "+reason);console.error("JARVIS inference provider unavailable: "+provider.name+" — "+reason);}}
-  if(splitRequired&&failures.length===0)throw new ContextSplitRequiredError();
+  if(splitRequired){const error=new ContextSplitRequiredError();Object.assign(error,{providerFailures:failures});throw error;}
   throw new Error("All configured inference providers failed: "+failures.join(" | ").slice(0,2400));
 }
 await sql`
