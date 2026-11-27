@@ -22,6 +22,20 @@ test("quota runtime can execute reservation but cannot access base tables",async
  const roles=await sql`SELECT rolname,rolcanlogin,rolsuper FROM pg_roles WHERE rolname IN ('djo2_quota_owner','djo2_quota_runtime')`;
  assert.equal(roles.length,2);assert.ok(roles.every(r=>!r.rolcanlogin&&!r.rolsuper));
  await sql`SET ROLE djo2_quota_runtime`;
+ const rejectedIds=[];
+ for(const isolation of ["repeatable read","serializable","read uncommitted"]){
+  const rejectedId=randomUUID();rejectedIds.push(rejectedId);
+  await sql.begin("isolation level "+isolation,async tx=>{
+   const [denied]=await tx`SELECT * FROM djo2_reserve_quota_group(${rejectedId}::uuid,'test','a','endpoint','route-proof','quota-proof',3000::bigint,1000::bigint)`;
+   assert.equal(denied.granted,false);assert.equal(denied.reason,"UNSUPPORTED_TRANSACTION_ISOLATION");
+  });
+ }
+ await sql`RESET ROLE`;
+ for(const rejectedId of rejectedIds){
+  const [row]=await sql`SELECT count(*)::int AS n FROM djo2_zero_spend_quota_reservations WHERE reservation_id=${rejectedId}::uuid`;
+  assert.equal(row.n,0);
+ }
+ await sql`SET ROLE djo2_quota_runtime`;
  const id=randomUUID();
  const [result]=await sql`SELECT * FROM djo2_reserve_quota_group(${id}::uuid,'test','a','endpoint','route-proof','quota-proof',3000::bigint,1000::bigint)`;
  assert.equal(result.granted,true);
