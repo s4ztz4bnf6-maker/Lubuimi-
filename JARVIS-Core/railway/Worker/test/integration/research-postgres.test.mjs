@@ -11,7 +11,7 @@ test("real PostgreSQL checkpoint, rollback and concurrent scheduling",async()=>{
  try {
  await sql`CREATE TABLE agent_tasks(id bigint PRIMARY KEY,title text,prompt text,status text,attempt_count integer,next_retry_at timestamptz,error text,completed_at timestamptz)`;
  await sql`CREATE TABLE djo2_task_checkpoints(id bigserial PRIMARY KEY,task_id bigint,attempt integer NOT NULL,step integer NOT NULL,phase text NOT NULL,note text NOT NULL)`;
- await sql`INSERT INTO agent_tasks VALUES(1,'title','prompt','running',1,NULL,NULL,NULL)`;
+ await sql`INSERT INTO agent_tasks VALUES(1,'title','prompt','running',2,NULL,NULL,NULL)`;
  const hash=createHash("sha256").update(JSON.stringify(["title","prompt"])).digest("hex");
  const history=[{role:"assistant",content:"first"}];
  assert.equal((await persistiereNeuenCheckpoint(1,hash,1,history,2,{sql})).saved,true);
