@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {githubDelivery} from "./githubDelivery.mjs";
-test("offline delivery, replay and missing credentials",async t=>{
+test.skip("historical unlocked delivery protocol (retained until migration clearance)",async t=>{
  const old=process.env.GITHUB_DELIVERY_TOKEN, original=globalThis.fetch;
  t.after(()=>{globalThis.fetch=original;if(old===undefined)delete process.env.GITHUB_DELIVERY_TOKEN;else process.env.GITHUB_DELIVERY_TOKEN=old;});
  const calls=[];let saved,started=false;
- const sql=(q,...v)=>{if(typeof q==="string")return q;const s=q.join(" ");if(s.includes("system_flags"))return [];if(s.includes("INSERT INTO")){if(started)return [];started=true;return [{}];}if(s.includes("UPDATE")){saved=v[1];return [];}if(s.includes("SELECT status"))return [{status:"done",result:saved}];throw Error(s);};sql.json=x=>x;
+ const sql=(q,...v)=>{if(typeof q==="string")return q;const s=q.reduce((out,part,i)=>out+part+(i<v.length?String(v[i]):""),"");if(s.includes("system_flags"))return [];if(s.includes("INSERT INTO")){if(started)return [];started=true;return [{}];}if(s.includes("UPDATE")){saved=v[1];return [];}if(s.includes("SELECT status"))return [{status:"done",result:saved}];throw Error(s);};sql.json=x=>x;
  delete process.env.GITHUB_DELIVERY_TOKEN;
  globalThis.fetch=async()=>{throw Error("unexpected network");};
  await assert.rejects(githubDelivery(sql,1,"deliver",{}),/MissingDeliveryCredentials/);
@@ -31,4 +31,35 @@ test("offline delivery, replay and missing credentials",async t=>{
  assert.ok(calls.indexOf("POST /repos/up/proj/forks")<calls.indexOf("POST /repos/me/proj/git/refs"));
  assert.ok(calls.indexOf("PUT /repos/me/proj/contents/a.txt")<calls.indexOf("POST /repos/up/proj/pulls"));
  const replay=await githubDelivery(sql,1,"deliver",args);assert.equal(replay.status,"replayed");assert.equal(calls.filter(x=>x==="POST /repos/up/proj/pulls").length,1);
+});
+
+// SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
+import {runToolOnce} from "./providerRotationDb.mjs";
+test("legacy delivery fails closed before network or database access",async t=>{
+ const original=globalThis.fetch;
+ t.after(()=>{globalThis.fetch=original;});
+ let calls=0;
+ globalThis.fetch=async()=>{calls++;throw Error("unexpected network");};
+ const sql=()=>{calls++;throw Error("unexpected database");};
+ for(const action of ["claim","deliver"]){
+  await assert.rejects(githubDelivery(sql,1,action,{migrationComplete:true}),/MIGRATION_LOCKED_INCOMPLETE_HISTORY/);
+ }
+ assert.equal(calls,0);
+});
+test("database effect replay does not repeat external callback",async()=>{
+ let started=false,saved,calls=0;
+ const sql=(q,...v)=>{
+  if(typeof q==="string")return q;
+  const query=q.join(" ");
+  if(query.includes("system_flags")||v.includes("public.djo2_system_flags"))return [];
+  if(query.includes("INSERT INTO")){if(started)return [];started=true;return [{}];}
+  if(query.includes("UPDATE")){saved=v[1];return [];}
+  if(query.includes("SELECT status"))return [{status:"done",result:saved}];
+  throw Error(query);
+ };
+ sql.json=x=>x;
+ const exec=async()=>{calls++;return {number:7};};
+ const first=await runToolOnce(sql,1,"fixture",{issue:1},exec);
+ const second=await runToolOnce(sql,1,"fixture",{issue:1},exec);
+ assert.equal(first.status,"done");assert.equal(second.status,"replayed");assert.deepEqual(second.result,{number:7});assert.equal(calls,1);
 });

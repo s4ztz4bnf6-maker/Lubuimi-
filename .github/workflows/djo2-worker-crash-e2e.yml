@@ -1,0 +1,43 @@
+name: DJO2 Worker Crash E2E
+on:
+  workflow_dispatch:
+  push:
+    branches: [djo2/worker-context-budget-20261126]
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - 'JARVIS-Core/test/e2e/**'
+      - '.github/workflows/djo2-worker-crash-e2e.yml'
+permissions:
+  contents: read
+jobs:
+  crash-resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: djo2_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d djo2_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://e2e:e2e@127.0.0.1:5432/djo2_e2e
+      DJO2_E2E: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: bun install
+        working-directory: JARVIS-Core/railway/Worker
+      - run: node --test JARVIS-Core/test/e2e/e2eGuard.test.mjs
+      - run: node --test JARVIS-Core/test/e2e/worker-crash-resume.e2e.test.mjs

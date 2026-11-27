@@ -14,6 +14,8 @@ function client(token){
  }};
 }
 export async function githubDelivery(sql,taskId,action,args){
+ // Fail closed before credentials, network requests or external mutations.
+ throw Error("MIGRATION_LOCKED_INCOMPLETE_HISTORY");
  const gh=client(await deliveryToken());
  if(!taskId||!["claim","deliver"].includes(action)||!/^[-\w.]+\/[-\w.]+$/.test(args.repo)||!Number.isSafeInteger(args.issue)||args.issue<1)throw Error("Invalid delivery request");
  const up="/repos/"+args.repo, issue=await gh(up+"/issues/"+args.issue);
@@ -36,10 +38,10 @@ export async function githubDelivery(sql,taskId,action,args){
  for(const f of args.files){const p=target+"/contents/"+f.path.split("/").map(enc).join("/");let old;try{old=(await gh(p+"?ref="+enc(branch))).sha}catch(e){if(e.status!==404)throw e;}await gh(p,"PUT",{branch,message:"DJO2: "+f.path,content:Buffer.from(f.content).toString("base64"),...(old?{sha:old}:{})});}
  const pr=await gh(up+"/pulls","POST",{title:String(args.title),body:String(args.body)+"\n\nRefs #"+args.issue+"\n"+marker,base,head:fork.owner.login+":"+branch});
  const proof=await gh(up+"/pulls/"+pr.number);
- if(proof.head.sha!==pr.head.sha||!(proof.state==="open"||proof.merged)||proof.draft||proof.user?.login!==me||proof.base?.repo?.full_name?.toLowerCase()!==args.repo.toLowerCase()||!proof.body?.includes(marker)||!proof.body?.includes("Refs #"+args.issue)||!proof.html_url)throw Error("UNKNOWN_OUTCOME: PR not verified");
+ if(proof.head.sha!==pr.head.sha||!(proof.state==="open"||proof.merged)||proof.draft||proof.user?.login!==me||proof.base?.repo?.full_name?.toLowerCase()!==args.repo.toLowerCase()||!proof.body?.includes(marker)||!proof.body?.split(/\r?\n/).includes("Refs #"+args.issue)||!proof.html_url)throw Error("UNKNOWN_OUTCOME: PR not verified");
  for(const f of args.files){const p=target+"/contents/"+f.path.split("/").map(enc).join("/");const actual=await gh(p+"?ref="+enc(proof.head.sha));if(actual.encoding!=="base64"||Buffer.from(actual.content,"base64").compare(Buffer.from(f.content,"utf8"))!==0)throw Error("UNKNOWN_OUTCOME: delivered file mismatch");}
  
- return {number:proof.number,url:proof.html_url,headSha:proof.head.sha,verified:true};
+ return {number:proof.number,url:proof.html_url,headSha:proof.head.sha,issue:args.issue,verified:true};
  });
 }
 

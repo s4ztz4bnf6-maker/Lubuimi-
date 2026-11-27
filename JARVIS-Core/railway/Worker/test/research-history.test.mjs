@@ -1,0 +1,11 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { selectResearchHistory } from "../research-resume.mjs";
+const history = [{role:"assistant",content:"A"}];
+const note = JSON.stringify({taskHash:"abc",nextStep:5,history});
+test("valid checkpoint restores history and step",()=>assert.deepEqual(selectResearchHistory(note,"abc"),{nextStep:5,history}));
+test("hash mismatch",()=>assert.equal(selectResearchHistory(note,"wrong"),null));
+test("malformed JSON",()=>assert.equal(selectResearchHistory("{broken","abc"),null));
+test("invalid role",()=>assert.equal(selectResearchHistory(JSON.stringify({taskHash:"abc",nextStep:5,history:[{role:"system",content:"X"}]}),"abc"),null));
+test("invalid step",()=>assert.equal(selectResearchHistory(JSON.stringify({taskHash:"abc",nextStep:-1,history}),"abc"),null));
+test("missing checkpoint",()=>assert.equal(selectResearchHistory(undefined,"abc"),null));

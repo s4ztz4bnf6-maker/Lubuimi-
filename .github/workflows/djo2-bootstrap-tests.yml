@@ -1,0 +1,18 @@
+name: DJO2 Bootstrap Regression
+on:
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - '.github/workflows/djo2-bootstrap-tests.yml'
+permissions:
+  contents: read
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Worker bootstrap regression tests
+        working-directory: JARVIS-Core/railway/Worker
+        run: bun test tests/bootstrap.test.ts

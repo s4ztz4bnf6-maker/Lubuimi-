@@ -101,3 +101,31 @@ test("invalid state and missing ID cannot change durable state",async()=>{
  assert.deepEqual(await snapshot(),before);
  }finally{await sql.end();}
 });
+
+test("reserved external effect is reconciled after reconnect without another execution", {timeout: 20000}, async()=>{
+ const url=process.env.DATABASE_URL;
+ assert.ok(url);
+ assert.equal(new URL(url).pathname,"/testdb","isolated CI database required");
+ const id=crypto.randomUUID(),schema="djo2_selftest_"+id.replaceAll("-","").slice(0,16);
+ let sql=postgres(url);
+ let calls=0,lookups=0,key;
+ try{
+  await sql`CREATE SCHEMA ${sql(schema)}`;
+  await initRotation(sql,schema);
+  const first=await runToolOnce(sql,id,"submit",{step:2},async ctx=>{calls++;key=ctx.effectKey;throw Error("response lost");},schema);
+  assert.equal(first.status,"unknown");
+  await sql.end();sql=postgres(url);
+  const never=async()=>{calls++;throw Error("duplicate execution");};
+  const absent=await runToolOnce(sql,id,"submit",{step:2},never,schema,async()=>({found:false}));
+  assert.equal(absent.status,"unknown");
+  const recovered=await runToolOnce(sql,id,"submit",{step:2},never,schema,async ctx=>{
+   lookups++;assert.equal(ctx.taskId,id);assert.equal(ctx.effectKey,key);
+   return {found:true,result:{receipt:"confirmed"}};
+  });
+  assert.deepEqual(recovered,{status:"replayed",result:{receipt:"confirmed"}});
+  assert.equal(calls,1);assert.equal(lookups,1);
+  await sql.end();sql=postgres(url);
+  assert.deepEqual(await runToolOnce(sql,id,"submit",{step:2},never,schema),recovered);
+  assert.equal(calls,1);
+ }finally{await sql`DROP SCHEMA IF EXISTS ${sql(schema)} CASCADE`;await sql.end();}
+});
