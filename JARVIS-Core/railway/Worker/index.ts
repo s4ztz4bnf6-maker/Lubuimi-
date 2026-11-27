@@ -1186,6 +1186,15 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
       
       const liveBudget=await budgetForProvider(provider);
       if(bounded.output>liveBudget.output||Math.ceil(new TextEncoder().encode(JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools})).length/2.5)>liveBudget.input)throw new ContextSplitRequiredError();
+      const quotaRecords=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES||"[]");
+      const quotaMatches=Array.isArray(quotaRecords)?quotaRecords.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl):[];
+      const quotaRoute=quotaMatches.length===1?quotaMatches[0]:null;
+      if(!quotaRoute||typeof quotaRoute.quotaProofRef!=="string"||!quotaRoute.quotaProofRef.trim()||typeof quotaRoute.evidence!=="string"||!quotaRoute.evidence.trim())throw Error("QUOTA_PROOF_UNAVAILABLE");
+      const inputTokens=Math.ceil(new TextEncoder().encode(JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output})).length/2.5);
+      if(inputTokens>liveBudget.input)throw new ContextSplitRequiredError();
+      const reservationId=crypto.randomUUID();
+      const [reservation]=await sql`SELECT * FROM djo2_reserve_quota_group(${reservationId}::uuid,${provider.name},${provider.model},${provider.baseUrl},${quotaRoute.evidence.trim()},${quotaRoute.quotaProofRef.trim()},${inputTokens}::bigint,${bounded.output}::bigint)`;
+      if(reservation?.granted!==true)throw Error("PROTECTED_QUOTA_RESERVATION_DENIED:"+String(reservation?.reason||"UNKNOWN"));
       const response=await fetch(provider.baseUrl.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{...(provider.apiKey?{authorization:"Bearer "+provider.apiKey}:{}),"content-type":"application/json"},body:JSON.stringify({model:provider.model,messages:bounded.messages,tools:bounded.tools,tool_choice:"auto",temperature:(provider.name.startsWith("google-gemini")||provider.name==="google-ai-third")?1:0.2,max_tokens:bounded.output}),signal:AbortSignal.timeout(25000)});
       const responseText=await response.text();
       if(!response.ok){const failure:any=new Error("HTTP "+response.status+": "+responseText.slice(0,700));failure.status=response.status;failure.body=responseText;failure.headers=response.headers;throw failure;}
