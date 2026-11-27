@@ -1,3 +1,5 @@
+import { planWithEscalation } from "./context-step-plan.mjs";
+import { runReservedContextSteps } from "./context-step-runner.mjs";
 // Retry only database-only claim transactions; never wrap external effects.
 async function claimDbTransaction(sql, fn) {
   for (let retry=0;;retry++) {
@@ -1422,7 +1424,27 @@ try {
       if (!(error instanceof ContextSplitRequiredError)) throw error;
       // Persist the split boundary without marking the task or any tool effect complete.
       await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_required",JSON.stringify({taskId:String(task.id),step,hasPendingToolCalls:false,completed:false}));
-      throw error;
+      // Analysis-only fallback: never substitute text for a required external action.
+      if(incomeTask || goodiesTask || !resumable || messages.some(m=>m.role==="tool"||m.tool_calls?.length)) throw error;
+      const candidates=[];
+      let windows={};try{windows=JSON.parse(env.JARVIS_MODEL_CONTEXT_WINDOWS||"{}");}catch{}
+      for(const p of providerCandidates){
+        if(excluded.has(providerTag(p))||!await isVerifiedZeroSpendRoute(p))continue;
+        const configured=Number(windows?.[p.model]);
+        const window=Number.isSafeInteger(configured)&&configured>=2048&&configured<=2000000?configured:6500;
+        candidates.push({model:p.model,limit:window-Math.max(256,Math.min(1024,Number(env.JARVIS_MAX_OUTPUT_TOKENS)||1024))-512,zeroSpendVerified:true});
+      }
+      const system=messages.filter(m=>m.role==="system");
+      const raw=messages.filter(m=>m.role==="user").map(m=>String(m.content||"")).join("\n\n");
+      const {steps}=planWithEscalation({taskId:task.id,system,goal:String(task.title||"Research"),tools:[],maxSteps:40},raw,candidates);
+      const outputs=await runReservedContextSteps({sql,taskId:task.id,attempt:Number(task.attempt_count||0)+1,steps,isKilled,execute:async planned=>{
+        const response=await ask(planned.messages,[],excluded,exclude);
+        const msg=response.choices?.[0]?.message;
+        return {completed:response.choices?.[0]?.finish_reason==="stop",hasPendingToolCalls:Boolean(msg?.tool_calls?.length),output:msg?.content};
+      }});
+      // Persist the complete ordered drafts, but do not claim semantic synthesis or task completion.
+      await saveDjoCheckpoint(task.id,Number(task.attempt_count||0)+1,step,"context_split_drafts_ready",JSON.stringify({stepHashes:steps.map(s=>s.id),count:outputs.length,completed:false}));
+      throw Error("TASK_NOT_COMPLETED: CONTEXT_SPLIT_SYNTHESIS_REQUIRED");
     }
     lastTag = result._djoProviderTag || providerTag(result._jarvisProvider);
     const message = result.choices?.[0]?.message;
