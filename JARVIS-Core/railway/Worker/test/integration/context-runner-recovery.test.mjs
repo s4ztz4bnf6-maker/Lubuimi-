@@ -1,3 +1,4 @@
+import {spawn} from "node:child_process";
 // SPDX-License-Identifier: LicenseRef-DJO2-Proprietary
 import {test} from "node:test";
 import assert from "node:assert/strict";
@@ -31,5 +32,25 @@ test("durable split and synthesis replay, expired lease and pending tools",async
  await assert.rejects(run([{id:expired}],execute),/RECONCILE_REQUIRED/);
  await assert.rejects(run([{id:hash("pending")}],async()=>({completed:true,hasPendingToolCalls:true,output:"not final"})),/STEP_NOT_FINAL/);
  assert.equal(calls,3);
+ const childCode=`
+ import postgres from "postgres";
+ import {runReservedContextSteps} from "./context-step-runner.mjs";
+ const sql=postgres(process.env.DATABASE_URL,{max:1});
+ await sql\`SET search_path TO djo2_runner_recovery_test\`;
+ await runReservedContextSteps({sql,taskId:2168,attempt:2,steps:[{id:process.argv[1]},{id:process.argv[2]}],isKilled:async()=>false,execute:async step=>{
+ if(step.id===process.argv[1])throw Error("DUPLICATE_MODEL_CALL");
+ console.log("RESERVED");await new Promise(()=>{setInterval(()=>{},1000)});
+ }});
+ `;
+ const interrupted=hash("interrupted");
+ const child=spawn(process.execPath,["--input-type=module","-e",childCode,steps[0].id,interrupted],{cwd:new URL("../../",import.meta.url),stdio:["ignore","pipe","pipe"]});
+ try{
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error("CHILD_TIMEOUT")),10000);child.stdout.on("data",d=>{if(String(d).includes("RESERVED")){clearTimeout(timer);resolve();}});child.once("exit",()=>{clearTimeout(timer);reject(Error("CHILD_EXITED_EARLY"));});child.once("error",reject);});
+ const exited=new Promise(resolve=>child.once("exit",(_code,signal)=>resolve(signal)));
+ child.kill("SIGKILL");assert.equal(await exited,"SIGKILL");
+ await sql`UPDATE djo2_context_step_reservations SET lease_until=NOW()-INTERVAL '1 second' WHERE step_hash=${interrupted}`;
+ await assert.rejects(run([steps[0],{id:interrupted}],execute),/RECONCILE_REQUIRED/);
+ assert.equal(calls,3);
+ }finally{if(child.exitCode===null&&child.signalCode===null)child.kill("SIGKILL");}
  }finally{await sql`SET search_path TO public`;await sql`DROP SCHEMA IF EXISTS djo2_runner_recovery_test CASCADE`;await sql.end();}
 });
