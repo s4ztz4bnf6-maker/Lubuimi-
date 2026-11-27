@@ -58,6 +58,8 @@ import { isIP } from "node:net";
 
 // Bootstrap guard runs before opening the database or starting business services.
 const env = Bun.env;
+const { e2eRunId, assertTestTasksOnly, localProvidersOnly } = await import("./src/bootstrap.ts");
+const testRunId = e2eRunId(env);
 if (env.DJO2_E2E === "1") {
   const { loadConfig } = await import("./src/bootstrap.ts");
   const { enforceNetworkAllowlist } = await import("./src/network-isolation.ts");
@@ -79,7 +81,7 @@ if (process.env.DJO2_SELFTEST_ID) {
 }
 const geminiKey = String(env.GEMINI_API_KEY || "").replace(/^\s*API\s+/i, "").trim();
 console.log("JARVIS Gemini key diagnostic: format=" + (geminiKey.startsWith("AQ.") ? "AQ" : geminiKey.startsWith("AIza") ? "AIza" : "other") + "; length=" + geminiKey.length + "; whitespace=" + /\s/.test(geminiKey) + "; wrapped=" + (/^["']/.test(geminiKey) || /["']$/.test(geminiKey)));
-const providerCandidates = [];
+let providerCandidates = [];
 if (env.OLLAMA_BASE_URL) providerCandidates.push({ name: "self-hosted-ollama", baseUrl: env.OLLAMA_BASE_URL.replace(/\/$/, ""), apiKey: env.OLLAMA_API_KEY || "", model: env.OLLAMA_MODEL || "gemma4:e2b" });
 const customModelBase = (env.MODEL_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
 if (env.MODEL_API_KEY) providerCandidates.push({ name: "custom-openai-compatible", baseUrl: customModelBase, apiKey: env.MODEL_API_KEY, model: env.MODEL_NAME || "gpt-4o-mini" });
@@ -97,6 +99,7 @@ if (env.MODEL_PROVIDER) { const preferred = providerCandidates.findIndex(p => p.
 
 // Startup probes are disabled: all inference must use the authorized ask path.
 
+providerCandidates = localProvidersOnly(providerCandidates, env);
 let modelConfigured = providerCandidates.length > 0;
 console.log("JARVIS provider probe: geminiKeyPresent="+Boolean(env.GEMINI_API_KEY)+"; providers="+providerCandidates.map(p=>p.name).join(","));
 async function freeInference(prompt,maxTokens=256){
@@ -1285,13 +1288,15 @@ try {
   console.log("SGL discovery run "+JSON.stringify({leads:sglLeads,errors:sglErrors,verified:false}));
 } catch(e) { console.error("SGL discovery failed",String(e)); }
 
+if (testRunId !== null) await sql`ALTER TABLE agent_tasks ADD COLUMN IF NOT EXISTS e2e_run_id TEXT`;
 async function claimTasks() {
 return claimDbTransaction(sql, async tx => {
-  const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
-    WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
+  const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts ${testRunId !== null ? tx`, e2e_run_id` : tx``} FROM agent_tasks
+    WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts ${testRunId !== null ? tx`AND e2e_run_id = ${testRunId}` : tx``}
     ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
+  assertTestTasksOnly(rows, env);
   if (!rows.length) return [];
   const admitted = [];
     for (const row of rows) {
@@ -1303,7 +1308,7 @@ return claimDbTransaction(sql, async tx => {
     return admitted;
 });
 }
-const tasks = await claimTasks();
+const tasks = assertTestTasksOnly(await claimTasks(), env);
 if (!tasks.length) {
   console.log("JARVIS Worker: no queued tasks.");
   await sql.end();
