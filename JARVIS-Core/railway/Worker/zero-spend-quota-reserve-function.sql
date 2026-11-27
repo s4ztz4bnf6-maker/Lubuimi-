@@ -7,6 +7,7 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path FROM CURRENT AS $reserve$
 DECLARE g djo2_zero_spend_quota_groups%ROWTYPE;
  k text; total numeric; mt numeric; dt numeric; mr bigint; dr bigint; stamp timestamptz;
 BEGIN
+ IF current_setting('transaction_isolation') <> 'read committed' THEN RETURN QUERY SELECT false,'UNSUPPORTED_TRANSACTION_ISOLATION'; RETURN; END IF;
  IF p_id IS NULL OR p_input IS NULL OR p_output IS NULL OR p_input<=0 OR p_output<=0 OR p_input>2000000 OR p_output>2000000 THEN
  RETURN QUERY SELECT false,'INVALID_PARAMETERS'; RETURN; END IF;
  total:=p_input::numeric+p_output;
