@@ -500,6 +500,7 @@ async function storeLearning(taskId, title, content, sourceType) {
 
 
 
+await productionOnly("peer-outreach-and-inbox", async () => {
 /* JARVIS_SWARMMEMO_PEER_BATCH_V1
    Owner-authorized, one-time identical outreach to three additional active public agents.
 */
@@ -798,6 +799,8 @@ if (remainingContacts > 0) {
 }
 
 
+
+}, env);
 
 if (!modelConfigured) {
   await sql`UPDATE agent_tasks SET prompt=REPLACE(prompt, 'Prioritize this mission after the owner''s 100-BTC mission.', 'This mission has equal priority with the user''s 100-BTC Bitcoin mission. Process both fairly in turn across worker cycles; neither mission should be starved or permanently outrank the other.') WHERE title ILIKE '%Instagram Growth Mission%' AND status='queued'`;
