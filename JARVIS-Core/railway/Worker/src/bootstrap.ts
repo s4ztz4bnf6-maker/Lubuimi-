@@ -39,3 +39,20 @@ export async function main(deps:Deps,env=process.env){
  if(!c.isolatedE2E){await deps.initializeBusinessServices(c);await deps.startBackgroundSchedulers(c);}
  console.log("DJO2_READY");await worker.run();
 }
+
+ 
+// Keep the validated configuration and the independently tested network guard.
+let isolationPorts: string | undefined;
+export async function enforceIsolation(env=process.env){
+ const c=loadConfig(env);
+ if(!c.isolatedE2E)throw Error("E2E_REQUIRES_ISOLATED_MODE");
+ const key=JSON.stringify([...new Set(c.allowedPorts)].sort((a,b)=>a-b));
+ if(isolationPorts!==undefined){if(isolationPorts!==key)throw Error("E2E_GUARD isolation configuration changed");return;}
+ const {enforceNetworkAllowlist}=await import("./network-isolation.ts");
+ enforceNetworkAllowlist(c.allowedPorts);
+ isolationPorts=key;
+}
+export function productionOnly<T>(name:string,fn:()=>T,env=process.env):T|undefined{
+ if(loadConfig(env).isolatedE2E){console.log("DJO2_SKIPPED "+name);return undefined;}
+ return fn();
+}
