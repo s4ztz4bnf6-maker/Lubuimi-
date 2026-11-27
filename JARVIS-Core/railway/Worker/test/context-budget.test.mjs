@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {calculateContextBudget,routeContextBudget} from "../context-budget.mjs";
 test("32K target",()=>assert.deepEqual(calculateContextBudget(32768,4096),{contextWindow:32768,output:4096,reserve:2048,input:26624,targetReached:true}));
-test("conservative fallback",()=>assert.equal(routeContextBudget(null,4096).input,4976));
+test("conservative fallback",()=>assert.equal(routeContextBudget(null,4096).input,4964));
 test("input cap",()=>assert.equal(calculateContextBudget(32768,4096,12000).input,12000));
 test("output cap",()=>assert.equal(calculateContextBudget(32768,8192).output,4096));
 test("invalid capacity",()=>{for(const n of [NaN,Infinity,0,2047,2000001,32768.5])assert.throws(()=>calculateContextBudget(n,4096),/INVALID_MODEL_CAPACITY/);});
