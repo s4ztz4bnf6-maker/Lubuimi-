@@ -1,0 +1,41 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import postgres from "postgres";
+import {createHash} from "node:crypto";
+import {changeTokenBudget} from "../../token-budget.mjs";
+test("token reservations isolate concurrent calls and retain unknown usage",async()=>{
+ const url=new URL(process.env.DATABASE_URL);
+ assert.equal(url.hostname,"localhost");
+ assert.equal(url.pathname,"/djo2_test");
+ const sql=postgres(url.toString(),{max:4,connection:{search_path:"token_budget_test"}});
+ try{
+ await sql`CREATE SCHEMA token_budget_test`;
+ await sql`CREATE TABLE agent_tasks(id bigint PRIMARY KEY,title text,prompt text,status text,attempt_count integer)`;
+ await sql`CREATE TABLE djo2_task_checkpoints(id bigserial PRIMARY KEY,task_id bigint,attempt integer,step integer,phase text,note text)`;
+ await sql`INSERT INTO agent_tasks VALUES(1,'title','prompt','running',0)`;
+ const hash=createHash("sha256").update(JSON.stringify(["title","prompt"])).digest("hex");
+ const change=(id,action,amount)=>changeTokenBudget(1,hash,1000,id,action,amount,{sql});
+ const pair=await Promise.all([change("a","reserve",400),change("b","reserve",400)]);
+ assert.ok(pair.every(r=>r.created));
+ const a=await change("a","settle",500);
+ assert.equal(a.overrun,true);
+ assert.equal(a.used,500);
+ assert.equal(a.reserved,400);
+ assert.equal(a.available,100);
+ const replay=await change("a","settle",500);
+ assert.equal(replay.created,false);
+ assert.equal(replay.used,500);
+ assert.equal(replay.reserved,400);
+ await assert.rejects(change("a","settle",501),/Conflicting/);
+ await assert.rejects(change("missing","settle",0),/Unknown/);
+ await assert.rejects(change("b","settle",null),/Invalid/);
+ await assert.rejects(change("c","reserve",250),/BUDGET_RESERVATION_FAILED/);
+ const c=await change("c","reserve",100);
+ assert.equal(c.available,0);
+ const over=await change("c","settle",200);
+ assert.equal(over.used,700);
+ assert.equal(over.reserved,400);
+ assert.equal(over.available,-100);
+ await assert.rejects(change("d","reserve",1),/BUDGET_RESERVATION_FAILED/);
+ }finally{await sql.end();}
+});

@@ -1,0 +1,22 @@
+name: JARVIS Gateway Mailbox Tests
+on:
+  push:
+    branches: [jarvis-core]
+    paths:
+      - "JARVIS-Core/railway/Gateway/**"
+      - ".github/workflows/jarvis-mailbox-tests.yml"
+  workflow_dispatch:
+jobs:
+  mailbox:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.4"
+      - name: Mailbox client tests
+        run: bun test JARVIS-Core/railway/Gateway/tests/mailbox.test.ts
+      - name: Compile mailbox modules
+        run: bun build JARVIS-Core/railway/Gateway/src/mailbox-service.ts --target=bun --outdir=/tmp/jarvis-mailbox-build

@@ -1,0 +1,29 @@
+name: DJO2 network isolation
+on:
+  push:
+    branches: [djo2/worker-context-budget-20261126]
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - '.github/workflows/djo2-network-isolation.yml'
+  pull_request:
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - '.github/workflows/djo2-network-isolation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  network-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/expect-pass-count.mjs 7 -- node --experimental-transform-types tests/network-isolation.test.mts
+      - name: E2E guard regressions (exactly five checks)
+        run: node scripts/expect-pass-count.mjs 5 -- node --experimental-transform-types tests/e2e-guards.test.mts

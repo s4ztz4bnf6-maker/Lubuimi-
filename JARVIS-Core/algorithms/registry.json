@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0",
+  "title": "Algorithmus",
+  "modules": [
+    {
+      "id": "second-good-life",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "trading",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "sales",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "chat",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "quality and cost"
+    },
+    {
+      "id": "bounty",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "exchange",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "finance",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "verified risk-adjusted net contribution"
+    },
+    {
+      "id": "cybersecurity",
+      "license": "LicenseRef-DJO2-Proprietary",
+      "status": "planned",
+      "sourceExport": true,
+      "versionHistory": true,
+      "rollback": true,
+      "objective": "security and reliability"
+    }
+  ],
+  "design": {
+    "navigation": "Algorithmus",
+    "views": [
+      "overview",
+      "source",
+      "versions",
+      "evaluation",
+      "license"
+    ],
+    "controls": [
+      "copy",
+      "export",
+      "test",
+      "rollback"
+    ]
+  },
+  "guardrails": {
+    "zeroSpend": true,
+    "liveTrading": false,
+    "automaticProductionPromotion": false
+  }
+}

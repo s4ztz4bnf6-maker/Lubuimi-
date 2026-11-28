@@ -1,0 +1,10 @@
+# DJODJO IA — brand migration
+SPDX-License-Identifier: Apache-2.0
+Owner-selected brand: DJODJO IA (D J O D J O), Intelligent Artificial. Former brand: JARVIS AI. Proposed future legal name: DJODJO IA AUTONOMOUS HOLDINGS LLC; registry amendment and availability not verified. Retain existing accurate legal identity in formal records until amendment. Preserve historical copyright notices, license rights, audit records, service identifiers, database names, secrets and compatibility aliases. Public products: Second Good Life (independent public brand, no DJODJO co-branding); DJODJO Exchange. Internal departments: DJODJO Trading, Cashflow, Cybersecurity, Algorithmus. No paid filings without owner approval.
+Second Good Life retains its previously approved independent logo: green infinity arrows, two hands passing a golden gift. Exact motto: My Treasure, Your Pleasure. No DJODJO name or logo in its public brand presentation.
+
+## Approved visual identity
+Owner approved image generation c494bc8a-455a-4a43-9ff2-3a7ee39cdf23: white background, blue/cyan/violet infinity ribbon, DJO², THE ART OF INTELLIGENCE above smaller blue DJODJO IA. Use on app, website, invoices, correspondence and dossiers; retain accurate registered legal name on formal documents. Digital emblem may rotate gently, respecting reduced-motion preferences. Second Good Life remains separate. Logo asset not covered by software license merely by this document; trademark registration not verified.
+
+## Final approved artwork (supersedes earlier artwork)
+Generation 62dd457e-cd8a-474f-bb25-3765a2a98150. Same infinity emblem and DJO², with cyan-blue-violet gradient also on THE ART OF INTELLIGENCE, smaller DJODJO IA below. Owner approved. Brand assets reserved to their respective rights holder to the extent legally protectable; no trademark license granted by Apache-2.0 software licensing. Trademark application intended, not filed or verified. Apply across app, website, invoices and dossiers, except independent Second Good Life. Preserve registered legal identity until verified amendment.

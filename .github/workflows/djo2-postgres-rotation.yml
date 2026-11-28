@@ -1,0 +1,39 @@
+name: DJO2 PostgreSQL rotation integration
+on:
+  pull_request:
+    branches: [jarvis-core]
+    paths:
+      - 'JARVIS-Core/railway/Worker/**'
+      - '.github/workflows/djo2-postgres-rotation.yml'
+permissions:
+  contents: read
+jobs:
+  postgres-rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: node --test test/providerRotation.test.mjs test/providerRotationDb.test.mjs
+      - run: node --test test/providerRotationDb.integration.mjs
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb

@@ -1,0 +1,25 @@
+name: DJO2 queued-first PostgreSQL
+on:
+  pull_request:
+    branches: [jarvis-core]
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: claimtest
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - working-directory: JARVIS-Core/railway/Worker
+        run: bun install
+      - working-directory: JARVIS-Core/railway/Worker
+        env:
+          DATABASE_URL: postgres://postgres:test@127.0.0.1:5432/claimtest
+        run: bun run claim-queued-postgres.test.mjs

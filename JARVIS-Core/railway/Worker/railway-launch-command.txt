@@ -1,0 +1,5 @@
+# REDACTED — NOT A DEPLOYABLE COMMAND
+
+The original inline Railway launch command contained owner Bitcoin receive addresses inside its compressed payload. It has been intentionally removed from this public development branch to prevent further disclosure.
+
+Do not reconstruct this command from Git history or use this file for deployment. Recover the current command from the authenticated Railway service configuration and inject only owner-approved receive addresses through private runtime configuration. The public source snapshot in `index.ts` is intentionally redacted and is not deployable as-is.

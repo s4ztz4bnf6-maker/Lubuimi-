@@ -1,0 +1,103 @@
+name: djo2-db-tests
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [jarvis-core]
+jobs:
+  tests:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: djo2_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/djo2_test
+    defaults:
+      run:
+        working-directory: JARVIS-Core/railway/Worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: node --test test/*.test.mjs
+      - run: node --test test/integration/*.test.mjs
+
+      - name: Execute read-only authorization audit against disposable PostgreSQL
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f delivery-ledger.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE TABLE IF NOT EXISTS public.djo2_task_effects (task_id text NOT NULL, effect_key text NOT NULL, PRIMARY KEY(task_id,effect_key))'
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f audit-delivery-readonly.sql
+      - name: Inventory authorization references in checked-out worker and server code
+        run: |
+          git rev-parse HEAD
+          git grep -n -i 'djo2_delivery_authorizations' HEAD -- :/JARVIS-Core
+          git grep -q 'CREATE TABLE IF NOT EXISTS djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger.sql
+          git grep -q 'FROM djo2_delivery_authorizations' HEAD -- :/JARVIS-Core/railway/Worker/delivery-ledger-store.mjs
+      - name: Test separated authorization roles in disposable database
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-roles.sql
+      - name: Test atomic authorization audit triggers
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
+      - name: Exercise exact prepared trigger role migration in disposable PostgreSQL
+        run: |
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' delivery-authorization-trigger-roles.sql > test-trigger-roles-body.sql
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('test-authorization-audit.sql')
+          s = p.read_text()
+          start = s.index('CREATE ROLE djo2_ci_trigger_owner NOLOGIN;')
+          end = s.index('REVOKE ALL ON FUNCTION public.djo2_record_authorization_event() FROM PUBLIC;', start)
+          end += len('REVOKE ALL ON FUNCTION public.djo2_record_authorization_event() FROM PUBLIC;')
+          p.write_text(s[:start] + chr(92) + 'ir test-trigger-roles-body.sql' + s[end:])
+          PY
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-authorization-audit.sql
+
+      - name: Exercise zero-spend schema and effective roles in disposable PostgreSQL
+        run: |
+          test "$(psql "$DATABASE_URL" -Atc 'SELECT current_database()')" = djo2_test
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-routes.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
+          sed '/^BEGIN;$/d; /^ROLLBACK;$/d' zero-spend-roles.sql | psql "$DATABASE_URL" -v ON_ERROR_STOP=1
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f test-zero-spend-roles.sql
+  crash-resume:
+    if: github.event.repository.private == false
+    needs: tests
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: djo2_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d djo2_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://e2e:e2e@127.0.0.1:5432/djo2_e2e
+      DJO2_E2E: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: bun install
+        working-directory: JARVIS-Core/railway/Worker
+      - run: node --test JARVIS-Core/test/e2e/e2eGuard.test.mjs
+      - run: node --test JARVIS-Core/test/e2e/worker-crash-resume.e2e.test.mjs

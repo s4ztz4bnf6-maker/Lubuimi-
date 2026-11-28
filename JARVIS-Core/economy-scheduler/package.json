@@ -1,0 +1,18 @@
+{
+  "name": "jarvis-agent-economy-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Additive scheduler for JARVIS LLC agent services, BTC settlement and self-development tasks",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "postgres": "^3.4.7"
+  },
+  "license": "UNLICENSED"
+}

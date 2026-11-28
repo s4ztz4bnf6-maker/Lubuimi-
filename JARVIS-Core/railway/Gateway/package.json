@@ -1,0 +1,16 @@
+{
+  "name": "djo2-gateway",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "check": "bun build ./index.ts --target=bun --outdir=/tmp/jarvis-gateway-check",
+    "test": "bun test tests/mailbox.test.ts src/opportunity-triage.test.ts src/freegoods-commerce.test.ts src/freegoods-discovery.test.ts src/freegoods-ranking.test.ts src/freegoods-catalog.test.ts src/freegoods-routing.test.ts src/service-opportunity.test.ts src/agent-discovery.test.ts src/agent-revenue-integration.test.ts src/exchange-ai.test.ts src/valuation-metrics.test.ts src/service-quoting.test.ts src/customer-app.test.ts src/customer-inquiries.test.ts src/customer-intent.test.ts src/customer-wishlist.test.ts src/model-capability-router.test.ts src/public-bounty-feed.test.ts"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5",
+    "@aws-sdk/client-s3": "^3.800.0",
+    "pdfkit": "^0.17.2"
+  },
+  "license": "UNLICENSED"
+}
