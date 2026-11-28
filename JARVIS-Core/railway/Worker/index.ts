@@ -1,3 +1,4 @@
+import { capOutputTokens } from "./token-cap.mjs";
 import "./src/e2e-preload.ts";
 import { routeContextBudget } from "./context-budget.mjs";
 import { createHash as contextSynthesisHash } from "node:crypto";
@@ -118,7 +119,7 @@ providerCandidates = localProvidersOnly(providerCandidates, env);
 let modelConfigured = providerCandidates.length > 0;
 console.log("JARVIS provider probe: geminiKeyPresent="+Boolean(env.GEMINI_API_KEY)+"; providers="+providerCandidates.map(p=>p.name).join(","));
 async function freeInference(prompt,maxTokens=256){
-  const result = await ask([{role:"system",content:"You are DJO² IA. Synthesize only the supplied evidence. Distinguish verified facts from claims; do not invent sources or outcomes."},{role:"user",content:String(prompt||"").slice(0,12000)}], []);
+  const result = await ask([{role:"system",content:"You are DJO² IA. Synthesize only the supplied evidence. Distinguish verified facts from claims; do not invent sources or outcomes."},{role:"user",content:String(prompt||"").slice(0,12000)}], [], new Set<string>(), undefined, {maxOutputTokens:maxTokens});
   const answer = String(result.choices?.[0]?.message?.content || "").trim();
   if (!answer) throw new Error("Configured model provider returned an empty response");
   return answer.slice(0, Math.max(256, Math.min(16000, Number(maxTokens)*40 || 10000)));
@@ -1212,7 +1213,7 @@ async function isVerifiedZeroSpendRoute(provider){
   if(!result.ok&&testRunId===null)console.log("DJO2_ZERO_SPEND_ROUTE_DIAGNOSIS",JSON.stringify({provider:provider.name,reason:result.reason,sqlstate:result.sqlstate}));
   return result.ok;
 }
-async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
+async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}, opts?: {maxOutputTokens?: number}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
   const failures=[];
   let splitRequired=false;
@@ -1221,6 +1222,8 @@ async function ask(messages, tools, excluded = new Set<string>(), onExclude = as
   if(!orderedProviders.length) throw new Error(authorizedProviders.length?ALL_EXCLUDED:"ZERO_SPEND_VERIFIED_ROUTE_UNAVAILABLE");
   for(const provider of orderedProviders){try{
     const bounded=await budgetInference(portableMessages(identityMessages(messages),provider.name),tools,provider);
+    bounded.output=capOutputTokens(bounded.output,opts?.maxOutputTokens);
+    if(bounded.output<=0)throw Error("OUTPUT_TOKEN_BUDGET_EXHAUSTED");
     const data=await providerGuard.run(provider.name,async()=>{
       const [saved]=await sql`SELECT cooldown_until FROM jarvis_provider_cooldowns WHERE provider=${provider.name} AND cooldown_until>NOW()`;
       if(saved) throw new Error("Persisted provider cooldown until "+new Date(saved.cooldown_until).toISOString());
