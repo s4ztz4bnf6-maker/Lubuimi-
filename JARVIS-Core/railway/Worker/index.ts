@@ -1350,7 +1350,11 @@ return claimDbTransaction(sql, async tx => {
     return admitted;
 });
 }
-const tasks = assertTestTasksOnly(await claimTasks(), env);
+// Do not consume task attempts when no inference route is authorized.
+const preclaimAuthorized = await Promise.all(providerCandidates.map(p => isVerifiedZeroSpendRoute(p)));
+const preclaimBlocked = !preclaimAuthorized.some(ok => ok === true);
+if (preclaimBlocked) console.log("DJO2_PROVIDER_PRECLAIM_BLOCKED", JSON.stringify({reason:"no_verified_route", candidates:providerCandidates.length}));
+const tasks = assertTestTasksOnly(preclaimBlocked ? [] : await claimTasks(), env);
 if (!tasks.length) {
   console.log("JARVIS Worker: no queued tasks.");
   if (testRunId === null) {
