@@ -1189,17 +1189,28 @@ async function budgetInference(messages,tools,provider){
  console.log("DJO2_CONTEXT_ADAPTED",JSON.stringify({model,limit,before:estimate({model,messages,tools}),after:estimate({model,messages:compact,tools:chosen}),toolsBefore:tools.length,toolsAfter:chosen.length}));
  return {messages:compact,tools:chosen,output};
 }
-async function isVerifiedZeroSpendRoute(provider){
-  try {
-    const records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES || "[]");
-    if(!Array.isArray(records))return false;
-    const matches=records.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl);
-    if(matches.length!==1)return false;
-    const r=matches[0];
-    if(r.zeroSpendVerified!==true||r.billingDisabled!==true||typeof r.evidence!=="string"||!r.evidence.trim()||!Number.isFinite(Date.parse(r.expiresAt))||Date.parse(r.expiresAt)<=Date.now())return false;
+async function checkZeroSpendRoute(provider){
+  let records;
+  if(!env.DJO2_VERIFIED_ZERO_SPEND_ROUTES)return {ok:false,reason:"env_missing"};
+  try{records=JSON.parse(env.DJO2_VERIFIED_ZERO_SPEND_ROUTES);}catch{return {ok:false,reason:"env_json_invalid"};}
+  if(!Array.isArray(records))return {ok:false,reason:"env_not_array"};
+  if(records.some(r=>r===null||typeof r!=="object"))return {ok:false,reason:"env_invalid_record"};
+  const matches=records.filter(r=>r.provider===provider.name&&r.model===provider.model&&r.baseUrl===provider.baseUrl);
+  if(matches.length!==1)return {ok:false,reason:matches.length?"env_ambiguous":"env_no_match"};
+  const r=matches[0];
+  if(r.zeroSpendVerified!==true||r.billingDisabled!==true)return {ok:false,reason:"env_flags"};
+  if(typeof r.evidence!=="string"||!r.evidence.trim())return {ok:false,reason:"env_no_evidence"};
+  if(!Number.isFinite(Date.parse(r.expiresAt))||Date.parse(r.expiresAt)<=Date.now())return {ok:false,reason:"env_expired"};
+  try{
     const [row]=await sql`SELECT 1 AS authorized FROM djo2_zero_spend_routes WHERE provider=${provider.name} AND model=${provider.model} AND endpoint=${provider.baseUrl} AND zero_spend_verified IS TRUE AND billing_disabled IS TRUE AND proof_ref=${r.evidence.trim()} AND revoked_at IS NULL AND expires_at>clock_timestamp() AND ${new Date(r.expiresAt)}::timestamptz>clock_timestamp() LIMIT 1`;
-    return row?.authorized===1;
-  } catch { return false; }
+    
+    return row?.authorized===1?{ok:true,reason:"ok"}:{ok:false,reason:row?"db_unexpected_result":"db_no_row"};
+  }catch(e){return {ok:false,reason:"db_error",sqlstate:/^[0-9A-Z]{5}$/.test(String(e?.code??""))?e.code:undefined};}
+}
+async function isVerifiedZeroSpendRoute(provider){
+  const result=await checkZeroSpendRoute(provider);
+  if(!result.ok&&testRunId===null)console.log("DJO2_ZERO_SPEND_ROUTE_DIAGNOSIS",JSON.stringify({provider:provider.name,reason:result.reason,sqlstate:result.sqlstate}));
+  return result.ok;
 }
 async function ask(messages, tools, excluded = new Set<string>(), onExclude = async (_tag:string,_reason:string) => {}) {
   if(!providerCandidates.length) throw new Error("No inference provider configured. Add at least one provider API key in Railway variables.");
