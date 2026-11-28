@@ -1,0 +1,14 @@
+<!-- SPDX-License-Identifier: LicenseRef-DJO2-Proprietary -->
+# DJO² IA — Revenue baseline — 2026-11-28
+Owner: Ta-Yoshua Lubuimi, to the extent of owned or acquired rights. All rights reserved under JARVIS-Core/LICENSE; preserve third-party rights and notices; no new Apache-2.0 grant.
+## Objective
+Worldwide 24/7 legitimate paid work in supported fiat and BTC: software, GitHub and BTC bounties, authorized security, research, data analysis, agent collaboration, licensing and Second Good Life. Discover, qualify, verify terms, accept with authority, execute, test, deliver, obtain acceptance, invoice, verify actual receipt. No additional spend, advance payments or paid inference fallback.
+SGL: free goods matching, verified logistics cost plus 30% service fee, minimum EUR 2.49; invoice after acceptance; exclude prohibited resale; no advance funding.
+## Verified baseline
+Last verified production commit 7d48a57d2f0158496bb3790906b0ed7650ddfe42; Railway deployment f64ede6b-c2f8-4ee2-8eeb-4cf67a90b85b SUCCESS; CI 11/11. Bun/TypeScript worker, PostgreSQL, Companion, Gateway, Peer Worker. Dynamic context budgeting, task splitting, checkpoints, crash recovery, token cap, provider rotation, zero-spend gate. Live memory recovery and payment policy readback. Last observed 4853 total tasks, 1874 claimable, 2065 completed, 568 failed, 240 exhausted, 0 running. BTC bounty task 4852 queued; no verified new revenue.
+## Blocker
+DJO2_PROVIDER_PRECLAIM_BLOCKED: no_verified_route; 0/6 routes authorized; DJO2_VERIFIED_ZERO_SPEND_ROUTES absent. Candidates keyless-openai-compatible, custom-openai-compatible, google-gemini-free-tier, google-gemini-fallback-free-tier, google-ai-third, groq-free-tier. API keys do not prove account billing restrictions. Require real account evidence, exact provider/model/endpoint, expiry, matching ENV and PostgreSQL authorization, capacity and quota proof.
+## Next implementation (not yet complete)
+Audit existing djo2_reserve_quota_group and settlement SQL; no competing ledger. Persist reservation-specific dispatch intent, settle verified usage, fail closed on unknown outcomes, prevent unsafe rotation and refund. Persistent claim identity, monotonic effect state, no ABA or duplicate effects. Preserve attempt history. Deterministic dispatcher for non-inference work, verified commercial prioritization, delivery and payment verification. Self-programming via isolated branch, tests, audit, authorized deployment and rollback. Test real PostgreSQL concurrency and SIGKILL recovery. No fabricated proofs, receipts or deployment claims.
+## Preservation
+Preserve all tracked source, research, existing licenses, memory, conversations, voice transcripts, checkpoints, step results, audit and financial records. No destructive migration or reset. This Git checkpoint preserves tracked source, not live database contents, secrets, external files or ChatGPT memory. No production changes authorized by this checkpoint itself.
