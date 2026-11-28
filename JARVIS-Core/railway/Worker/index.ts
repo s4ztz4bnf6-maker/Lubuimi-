@@ -67,6 +67,20 @@ if (env.DJO2_E2E === "1") {
 const maxParallelTasks = Math.max(1, Math.min(3, Number(env.JARVIS_MAX_PARALLEL_TASKS || 1)));
 if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const sql = postgres(env.DATABASE_URL, { max: 30, idle_timeout: 15, connect_timeout: 15 });
+if (env.DJO2_MAINTENANCE?.trim()) {
+  try {
+    if (testRunId !== null || env.DJO2_SELFTEST_ID) throw new Error("MAINTENANCE_MODE_CONFLICT");
+    const { diagnoseDatabase } = await import("./maintenance-readonly.mjs");
+    console.log(JSON.stringify(await diagnoseDatabase(sql, env.DJO2_MAINTENANCE.trim())));
+    await sql.end();
+    process.exit(0);
+  } catch (error) {
+    console.error("DJO2_MAINTENANCE_FAILED", error?.code ?? error?.message ?? "unknown");
+    await sql.end();
+    process.exit(1);
+  }
+}
+
 // INVARIANT: selftest gate precedes all external calls and regular initialization; only isolated DB access is allowed before it.
 if (process.env.DJO2_SELFTEST_ID) {
   try {
