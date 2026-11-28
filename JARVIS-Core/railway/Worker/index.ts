@@ -1345,6 +1345,10 @@ if (!tasks.length) {
       const { diagnoseDatabase } = await import("./maintenance-readonly.mjs");
       console.log("DJO2_LIVE_QUEUE_DIAGNOSIS", JSON.stringify(await diagnoseDatabase(sql, "diagnose")));
       console.log("DJO2_LIVE_TASK_DIAGNOSIS", JSON.stringify(await diagnoseDatabase(sql, "task:2115")));
+      const { inspectClaimTriggers } = await import("./claim-trigger-readonly.mjs");
+      const triggers = await inspectClaimTriggers(sql);
+      console.log("DJO2_LIVE_CLAIM_TRIGGERS", JSON.stringify(triggers.map(({name,enabled,function_name}: any)=>({name,enabled,function_name}))));
+
     } catch (error) {
       console.warn("DJO2_LIVE_DIAGNOSIS_FAILED", error?.code ?? "unknown");
     }
