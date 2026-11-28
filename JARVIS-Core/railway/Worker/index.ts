@@ -826,7 +826,8 @@ if (!modelConfigured) {
   const freeTasks = await claimDbTransaction(sql, async tx => {
     const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts FROM agent_tasks
       WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts
-      ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+      ORDER BY CASE WHEN status='queued' THEN 0 ELSE 1 END,
+      COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
     if (!rows.length) return [];
@@ -1322,7 +1323,8 @@ async function claimTasks() {
 return claimDbTransaction(sql, async tx => {
   const rows = await tx`SELECT id, title, prompt, attempt_count, max_attempts ${testRunId !== null ? tx`, e2e_run_id` : tx``} FROM agent_tasks
     WHERE (status='queued' OR (status='retry_wait' AND next_retry_at <= NOW())) AND attempt_count < max_attempts ${testRunId !== null ? tx`AND e2e_run_id = ${testRunId}` : tx``}
-    ORDER BY COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
+    ORDER BY CASE WHEN status='queued' THEN 0 ELSE 1 END,
+      COALESCE((SELECT p.funding_tier FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       COALESCE((SELECT p.expected_hourly FROM djo2_verified_task_priority p WHERE p.task_id=agent_tasks.id AND p.expires_at>NOW()),0) DESC,
       created_at ASC, id ASC FOR UPDATE SKIP LOCKED LIMIT ${maxParallelTasks}`;
   assertTestTasksOnly(rows, env);
