@@ -1340,6 +1340,16 @@ return claimDbTransaction(sql, async tx => {
 const tasks = assertTestTasksOnly(await claimTasks(), env);
 if (!tasks.length) {
   console.log("JARVIS Worker: no queued tasks.");
+  if (testRunId === null) {
+    try {
+      const { diagnoseDatabase } = await import("./maintenance-readonly.mjs");
+      console.log("DJO2_LIVE_QUEUE_DIAGNOSIS", JSON.stringify(await diagnoseDatabase(sql, "diagnose")));
+      console.log("DJO2_LIVE_TASK_DIAGNOSIS", JSON.stringify(await diagnoseDatabase(sql, "task:2115")));
+    } catch (error) {
+      console.warn("DJO2_LIVE_DIAGNOSIS_FAILED", error?.code ?? "unknown");
+    }
+  }
+
   await sql.end();
   process.exit(0);
 }
